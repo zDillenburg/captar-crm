@@ -1236,7 +1236,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Imprimir / PDF
           </button>
-          <button class="chip" onclick="exportCSV()" style="display:flex;align-items:center;gap:6px">
+          <button class="chip" onclick="exportCSV('leads')" style="display:flex;align-items:center;gap:6px">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Exportar CSV
           </button>
@@ -5426,32 +5426,7 @@ function setMbn(page){
   if(el)el.classList.add('active');
 }
 
-// ─────────────────────────────────────────
-// EXPORT CSV
-// ─────────────────────────────────────────
-function exportCSV(){
-  const esc=s=>'"'+(s==null?'':String(s).replace(/"/g,'""'))+'"';
-  // Leads export
-  const leadsRows=[['Nome','Telefone','E-mail','Tipo','Valor','Origem','Status','Dias']];
-  LEADS_DATA.forEach(l=>leadsRows.push([esc(l.nome),esc(l.tel),esc(l.email),esc(l.tipo),esc(l.valor),esc(l.origem),esc(l.coluna),esc(l.dias)]));
-  // Transactions export
-  const txRows=[['Tipo','Descrição','Categoria','Data','Valor (R$)']];
-  TRANSACOES.entradas.forEach(t=>txRows.push(['Entrada',esc(t.desc),esc(t.cat),esc(t.data),t.val]));
-  TRANSACOES.saidas.forEach(t=>txRows.push(['Saída',esc(t.desc),esc(t.cat),esc(t.data),t.val]));
-  const csv=[
-    '=== LEADS ===',
-    leadsRows.map(r=>r.join(',')).join('\n'),
-    '',
-    '=== FINANCEIRO ===',
-    txRows.map(r=>r.join(',')).join('\n'),
-  ].join('\n');
-  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download='relatorio-grupo-captar.csv';a.click();
-  URL.revokeObjectURL(url);
-  showToast('CSV exportado com sucesso!','success');
-}
+// exportCSV(tipo) definida na seção FERRAMENTAS abaixo
 
 // ─────────────────────────────────────────
 // CHIP TOGGLE (generic)
@@ -7350,7 +7325,7 @@ function exportCSV(tipo){
     filename='leads-captar.csv';
   } else if(tipo==='imoveis'){
     headers=['Título','Tipo','Cidade','Valor','Status','Área','Quartos','Banheiros'];
-    rows=IMOVEIS_DATA.map(i=>[esc(i.titulo),esc(i.tipo),esc(i.cidade),esc(i.valor),esc(i.status),esc(i.area),esc(i.quartos),esc(i.banheiros)]);
+    rows=IMOVEIS.map(i=>[esc(i.titulo),esc(i.tipo),esc(i.cidade),esc(i.valor),esc(i.status),esc(i.area),esc(i.quartos),esc(i.banheiros)]);
     filename='imoveis-captar.csv';
   } else if(tipo==='locacoes'){
     headers=['Inquilino','Telefone','Imóvel','Valor','Dia Venc','Início','Fim','Status','% Comissão','Corretor'];
@@ -7377,7 +7352,7 @@ function exportBackupJSON(){
   const backup={
     exportado_em:new Date().toISOString(),
     leads:LEADS_DATA,
-    imoveis:IMOVEIS_DATA,
+    imoveis:IMOVEIS,
     locacoes:LOCACOES,
     visitas:VISITAS,
     financeiro:TRANSACOES
@@ -7553,7 +7528,7 @@ function renderRelatorioPDF(){
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px">
       ${[
         {l:'Total de Leads',v:LEADS_DATA.length,c:'#c453bb',s:''},
-        {l:'Imóveis Ativos',v:IMOVEIS_DATA.filter(i=>i.status!=='vendido').length,c:'#60a5fa',s:''},
+        {l:'Imóveis Ativos',v:IMOVEIS.filter(i=>i.status!=='vendido').length,c:'#60a5fa',s:''},
         {l:'Locações Ativas',v:LOCACOES.length,c:'#34d399',s:''},
         {l:'Receita Mensal',v:fmtBRL(recMensal),c:'#fbbf24',s:''},
         {l:'Entradas',v:fmtBRL(totalEnt),c:'#34d399',s:''},
