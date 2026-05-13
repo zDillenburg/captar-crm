@@ -651,7 +651,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .toggle-switch input:checked + .toggle-slider{background:var(--p);border-color:var(--p)}
 .toggle-switch input:checked + .toggle-slider:before{transform:translateX(20px)}
 .geral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-@media(max-width:768px){.geral-grid{grid-template-columns:1fr 1fr}.admin-tabs-nav{flex-wrap:nowrap}}
+@media(max-width:768px){.geral-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:1200px){.pag-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.pag-kpis{grid-template-columns:1fr 1fr}.admin-grid{grid-template-columns:1fr}}
 @media(max-width:900px){#page-pagamentos>div[style*="grid-template-columns"]{grid-template-columns:1fr!important}}
@@ -851,6 +851,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .ferr-export-card:hover{border-color:var(--p);background:rgba(133,2,119,.06);transform:translateY(-2px)}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:700px){.calc-grid{grid-template-columns:1fr}}
+@media(max-width:400px){.kpi-grid{grid-template-columns:1fr}.loc-summary,.vis-summary{grid-template-columns:1fr}}
+/* ═══ MOBILE GRID FIXES ═══ */
+@media(max-width:640px){
+  /* Grids CSS fixos */
+  .modal-grid,.relat-charts,.config-grid,.geral-grid{grid-template-columns:1fr!important}
+  /* WhatsApp em massa e Contratos form+preview */
+  .wa-grid,.contratos-form-grid{grid-template-columns:1fr!important}
+  /* Catch-all para grids inline 1fr 1fr dentro de modais e páginas */
+  .modal [style*="grid-template-columns:1fr 1fr"],
+  .slide-over [style*="grid-template-columns:1fr 1fr"],
+  .page-content [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+  /* Admin e relatórios */
+  .relat-charts{gap:12px}
+  .config-grid{gap:12px}
+}
 .calc-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px}
 .calc-title{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:16px}
 .calc-result{background:var(--bg3);border-radius:var(--r);padding:16px;margin-top:12px;text-align:center}
@@ -2022,7 +2037,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         </div>
         <!-- WhatsApp em Massa -->
         <div class="ferr-tab-pane" id="ferr-pane-wa">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="wa-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
             <div>
               <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:12px">1️⃣ Selecione os destinatários</div>
               <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
@@ -2084,7 +2099,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
           <div class="contrato-card" onclick="selecionarContrato('ficha',this)"><div style="font-size:28px;margin-bottom:8px">👤</div><div style="font-size:13px;font-weight:700">Ficha Cadastral</div></div>
         </div>
         <div id="contratos-form-area" style="display:none">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+          <div class="contratos-form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
             <div>
               <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:14px" id="contratos-form-title">Dados do Contrato</div>
               <div id="contratos-fields"></div>
