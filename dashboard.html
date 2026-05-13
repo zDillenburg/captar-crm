@@ -840,6 +840,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 
 /* ═══ FOLLOW-UP ALERT NOTIF ═══ */
 .notif-followup{border-left:3px solid #f59e0b}
+
+/* ═══ FERRAMENTAS ═══ */
+.ferr-tabs-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.ferr-tab-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:var(--bg2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.ferr-tab-btn.active{background:var(--p);color:#fff;border-color:var(--p)}
+.ferr-tab-pane{display:none}.ferr-tab-pane.active{display:block}
+.ferr-export-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+.ferr-export-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px 14px;text-align:center;cursor:pointer;transition:all .2s}
+.ferr-export-card:hover{border-color:var(--p);background:rgba(133,2,119,.06);transform:translateY(-2px)}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.calc-grid{grid-template-columns:1fr}}
+.calc-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px}
+.calc-title{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:16px}
+.calc-result{background:var(--bg3);border-radius:var(--r);padding:16px;margin-top:12px;text-align:center}
+.calc-result-val{font-size:28px;font-weight:800;color:var(--p)}
+.calc-result-lbl{font-size:11px;color:var(--t3);margin-top:4px}
+.chip{padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:var(--bg2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer}
+.chip.active{background:var(--p);color:#fff;border-color:var(--p)}
+
+/* ═══ CONTRATOS ═══ */
+.contrato-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r2);padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s}
+.contrato-card:hover,.contrato-card.selected{border-color:var(--p);background:rgba(133,2,119,.07);transform:translateY(-2px)}
+.contrato-card.selected{box-shadow:0 0 0 2px var(--p)}
 </style>
 </head>
 <body>
@@ -920,6 +943,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
         Locação
       </button>
+      <button class="nav-item" onclick="navigate('contratos',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+        Contratos
+      </button>
       <div class="nav-section-label">Operacional</div>
       <button class="nav-item" onclick="navigate('visitas',this)">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
@@ -951,6 +978,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
       <button class="nav-item" onclick="navigate('financeiro',this)">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         Gestão Financeira
+      </button>
+      <button class="nav-item" onclick="navigate('ferramentas',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        Ferramentas
       </button>
       <div class="nav-section-label">Conta</div>
       <button class="nav-item" id="nav-admin" style="display:none" onclick="navigate('admin',this)">
@@ -1411,6 +1442,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
                   <th>Valor / Mês</th>
                   <th>Vencimento</th>
                   <th>Vigência</th>
+                  <th>Comissão</th>
                   <th>Situação</th>
                   <th>Ações</th>
                 </tr>
@@ -1945,6 +1977,130 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         <div id="loteamentos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px"></div>
       </div><!-- /page-loteamentos -->
 
+      <!-- ══════ FERRAMENTAS ══════ -->
+      <div class="page" id="page-ferramentas">
+        <div class="ferr-tabs-nav">
+          <button class="ferr-tab-btn active" onclick="switchFerrTab('exportar',this)">📥 Exportar Dados</button>
+          <button class="ferr-tab-btn" onclick="switchFerrTab('calc',this)">🧮 Calculadoras</button>
+          <button class="ferr-tab-btn" onclick="switchFerrTab('wa',this)">📲 WhatsApp em Massa</button>
+          <button class="ferr-tab-btn" onclick="switchFerrTab('aniversarios',this)">🎂 Aniversários</button>
+          <button class="ferr-tab-btn" onclick="switchFerrTab('relatorio',this)">📄 Relatório PDF</button>
+        </div>
+        <!-- Exportar -->
+        <div class="ferr-tab-pane active" id="ferr-pane-exportar">
+          <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">Exportar Dados</div>
+          <div style="font-size:12px;color:var(--t3);margin-bottom:20px">Baixe suas tabelas em CSV (abre no Excel) ou faça backup completo em JSON</div>
+          <div class="ferr-export-grid">
+            <div class="ferr-export-card" onclick="exportCSV('leads')"><div style="font-size:32px;margin-bottom:8px">👥</div><div style="font-size:13px;font-weight:700;color:var(--t1)">Leads / CRM</div><div style="font-size:11px;color:var(--t3);margin-top:4px">Exportar CSV</div></div>
+            <div class="ferr-export-card" onclick="exportCSV('imoveis')"><div style="font-size:32px;margin-bottom:8px">🏠</div><div style="font-size:13px;font-weight:700;color:var(--t1)">Imóveis</div><div style="font-size:11px;color:var(--t3);margin-top:4px">Exportar CSV</div></div>
+            <div class="ferr-export-card" onclick="exportCSV('locacoes')"><div style="font-size:32px;margin-bottom:8px">📄</div><div style="font-size:13px;font-weight:700;color:var(--t1)">Locações</div><div style="font-size:11px;color:var(--t3);margin-top:4px">Exportar CSV</div></div>
+            <div class="ferr-export-card" onclick="exportCSV('visitas')"><div style="font-size:32px;margin-bottom:8px">📍</div><div style="font-size:13px;font-weight:700;color:var(--t1)">Visitas</div><div style="font-size:11px;color:var(--t3);margin-top:4px">Exportar CSV</div></div>
+            <div class="ferr-export-card" onclick="exportCSV('financeiro')"><div style="font-size:32px;margin-bottom:8px">💰</div><div style="font-size:13px;font-weight:700;color:var(--t1)">Financeiro</div><div style="font-size:11px;color:var(--t3);margin-top:4px">Exportar CSV</div></div>
+            <div class="ferr-export-card" onclick="exportBackupJSON()" style="border-color:rgba(133,2,119,.4);background:rgba(133,2,119,.05)"><div style="font-size:32px;margin-bottom:8px">💾</div><div style="font-size:13px;font-weight:700;color:#c453bb">Backup Completo</div><div style="font-size:11px;color:var(--t3);margin-top:4px">Tudo em JSON</div></div>
+          </div>
+        </div>
+        <!-- Calculadoras -->
+        <div class="ferr-tab-pane" id="ferr-pane-calc">
+          <div class="calc-grid">
+            <div class="calc-card">
+              <div class="calc-title">🏦 Calculadora de Financiamento</div>
+              <div class="form-group"><label class="form-label">Valor do Imóvel (R$)</label><input class="form-input" id="ferr-fin-valor" type="number" placeholder="500000" oninput="calcFinanciamentoFerr()"/></div>
+              <div class="form-group"><label class="form-label">Entrada (R$)</label><input class="form-input" id="ferr-fin-entrada" type="number" placeholder="100000" oninput="calcFinanciamentoFerr()"/></div>
+              <div class="form-group"><label class="form-label">Taxa de Juros ao mês (%)</label><input class="form-input" id="ferr-fin-taxa" type="number" step="0.01" placeholder="0.79" oninput="calcFinanciamentoFerr()"/></div>
+              <div class="form-group"><label class="form-label">Prazo (meses)</label><input class="form-input" id="ferr-fin-prazo" type="number" placeholder="360" oninput="calcFinanciamentoFerr()"/></div>
+              <div class="calc-result" id="ferr-fin-result"><div style="font-size:12px;color:var(--t3)">Preencha os campos para calcular</div></div>
+            </div>
+            <div class="calc-card">
+              <div class="calc-title">📈 Calculadora de ROI</div>
+              <div class="form-group"><label class="form-label">Valor do Imóvel (R$)</label><input class="form-input" id="roi-valor" type="number" placeholder="400000" oninput="calcROI()"/></div>
+              <div class="form-group"><label class="form-label">Aluguel Mensal (R$)</label><input class="form-input" id="roi-aluguel" type="number" placeholder="2500" oninput="calcROI()"/></div>
+              <div class="form-group"><label class="form-label">Valorização Anual (%)</label><input class="form-input" id="roi-valorizacao" type="number" step="0.1" placeholder="6" oninput="calcROI()"/></div>
+              <div class="form-group"><label class="form-label">Custos mensais (IPTU, cond. R$)</label><input class="form-input" id="roi-custos" type="number" placeholder="300" oninput="calcROI()"/></div>
+              <div class="calc-result" id="calc-roi-result"><div style="font-size:12px;color:var(--t3)">Preencha os campos para calcular</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- WhatsApp em Massa -->
+        <div class="ferr-tab-pane" id="ferr-pane-wa">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:12px">1️⃣ Selecione os destinatários</div>
+              <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+                <button class="chip active" onclick="waFiltrarLista('leads',this)">Leads</button>
+                <button class="chip" onclick="waFiltrarLista('inquilinos',this)">Inquilinos</button>
+              </div>
+              <div id="wa-lista" style="max-height:340px;overflow-y:auto;padding-right:4px"></div>
+              <div style="margin-top:10px;display:flex;gap:8px">
+                <button class="btn-add" style="font-size:11px;padding:5px 12px" onclick="waSelecionarTodos(true)">✅ Todos</button>
+                <button class="btn-cancel" style="font-size:11px;padding:5px 12px" onclick="waSelecionarTodos(false)">✗ Nenhum</button>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:12px">2️⃣ Escreva a mensagem</div>
+              <div class="form-group">
+                <textarea class="form-input" id="wa-msg" rows="6" placeholder="Ex: Olá {nome}! Temos novidades no nosso portfólio imobiliário." style="resize:vertical"></textarea>
+                <div style="font-size:11px;color:var(--t3);margin-top:6px">Use <strong style="color:var(--pl)">{nome}</strong> para personalizar</div>
+              </div>
+              <button class="btn-add" style="width:100%;justify-content:center;gap:8px;padding:12px" onclick="gerarLinksWA()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Gerar Links WhatsApp
+              </button>
+              <div id="wa-links-result" style="margin-top:14px"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Aniversários -->
+        <div class="ferr-tab-pane" id="ferr-pane-aniversarios">
+          <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">🎂 Aniversários de Clientes</div>
+          <div style="font-size:12px;color:var(--t3);margin-bottom:20px">Leads que fazem aniversário este mês ou em breve.</div>
+          <div id="ferr-aniversarios-list"><div style="text-align:center;padding:40px;color:var(--t3)">Carregando...</div></div>
+        </div>
+        <!-- Relatório PDF -->
+        <div class="ferr-tab-pane" id="ferr-pane-relatorio">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--t1)">📄 Relatório Executivo</div>
+              <div style="font-size:12px;color:var(--t3);margin-top:3px">Resumo completo do mês para compartilhar com a equipe ou gestores</div>
+            </div>
+            <button class="btn-add" style="gap:8px" onclick="imprimirRelatorio()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Imprimir / Salvar PDF
+            </button>
+          </div>
+          <div id="ferr-relatorio-preview" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:32px"></div>
+        </div>
+      </div><!-- /page-ferramentas -->
+
+      <!-- ══════ CONTRATOS ══════ -->
+      <div class="page" id="page-contratos">
+        <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">📋 Gerar Contratos Pré-Prontos</div>
+        <div style="font-size:12px;color:var(--t3);margin-bottom:20px">Selecione um modelo, preencha os dados e imprima ou salve como PDF</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:28px" id="contratos-cards">
+          <div class="contrato-card" onclick="selecionarContrato('locacao_res',this)"><div style="font-size:28px;margin-bottom:8px">🏠</div><div style="font-size:13px;font-weight:700">Locação Residencial</div></div>
+          <div class="contrato-card" onclick="selecionarContrato('locacao_com',this)"><div style="font-size:28px;margin-bottom:8px">🏢</div><div style="font-size:13px;font-weight:700">Locação Comercial</div></div>
+          <div class="contrato-card" onclick="selecionarContrato('compra_venda',this)"><div style="font-size:28px;margin-bottom:8px">🤝</div><div style="font-size:13px;font-weight:700">Compra e Venda</div></div>
+          <div class="contrato-card" onclick="selecionarContrato('recibo',this)"><div style="font-size:28px;margin-bottom:8px">🧾</div><div style="font-size:13px;font-weight:700">Recibo de Pagamento</div></div>
+          <div class="contrato-card" onclick="selecionarContrato('autorizacao',this)"><div style="font-size:28px;margin-bottom:8px">📝</div><div style="font-size:13px;font-weight:700">Autorização de Venda</div></div>
+          <div class="contrato-card" onclick="selecionarContrato('ficha',this)"><div style="font-size:28px;margin-bottom:8px">👤</div><div style="font-size:13px;font-weight:700">Ficha Cadastral</div></div>
+        </div>
+        <div id="contratos-form-area" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:14px" id="contratos-form-title">Dados do Contrato</div>
+              <div id="contratos-fields"></div>
+              <button class="btn-add" style="width:100%;justify-content:center;gap:8px;padding:12px;margin-top:12px" onclick="imprimirContrato()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Imprimir / Salvar PDF
+              </button>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:14px">Pré-visualização</div>
+              <div id="contratos-preview" style="background:#fff;color:#111;border:1px solid var(--border);border-radius:var(--r2);padding:28px;font-size:12px;line-height:1.7;max-height:600px;overflow-y:auto;white-space:pre-wrap;font-family:Georgia,serif"></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /page-contratos -->
+
     </div><!-- /page-content -->
   </div><!-- /main -->
 </div><!-- /app -->
@@ -2057,6 +2213,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
       <div class="full form-group">
         <label class="form-label">Observações</label>
         <input class="form-input" type="text" id="m-obs" placeholder="Detalhes do contato, preferências, urgência…"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">🎂 Data de Nascimento</label>
+        <input class="form-input" type="date" id="m-data-nasc"/>
       </div>
     </div>
     <div class="modal-actions">
@@ -2797,6 +2957,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
           <option value="avencer">A Vencer</option>
         </select>
       </div>
+      <div class="form-group"><label class="form-label">% Comissão (imob/corretor)</label><input class="form-input" id="edit-loc-pct" type="number" min="0" max="100" step="0.1" placeholder="Ex: 10"/></div>
+      <div class="form-group"><label class="form-label">Quem recebe a comissão</label><input class="form-input" id="edit-loc-comrec" type="text" placeholder="Ex: Imobiliária / João Silva"/></div>
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="document.getElementById('modal-loc-edit').classList.remove('open')">Cancelar</button>
@@ -3162,6 +3324,7 @@ async function showApp(){
   checkBlockedUser();
   checkUserAvisos();
   initDemoMode();
+  setTimeout(()=>checkLembretes(),1000);
 }
 
 async function doLogout(){
@@ -3265,6 +3428,8 @@ const pageMeta={
   pagamentos:{title:'Pagamentos',sub:'Cobranças, vencimentos e recebimento via Pix'},
   admin:{title:'Administração',sub:'Gestão completa da plataforma'},
   config:{title:'Configurações',sub:'Dados do perfil e preferências'},
+  ferramentas:{title:'Ferramentas',sub:'Exportar dados, calculadoras e utilidades'},
+  contratos:{title:'Contratos',sub:'Gerar contratos e documentos imobiliários prontos'},
 };
 
 function navigate(page, btn){
@@ -3312,6 +3477,8 @@ function initPage(page){
   if(page==='corretores') renderCorretores();
   if(page==='loteamentos') renderLoteamentos();
   if(page==='calendario') initCalendario();
+  if(page==='ferramentas') initFerramentas();
+  if(page==='contratos') initContratos();
   if(page==='relatorios') setTimeout(()=>{initPerfChart();initReceitaBar();renderFunnel();renderRelatorioCorretores();},100);
   if(page==='financeiro') setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100);
 }
@@ -3835,6 +4002,7 @@ async function addLead(){
     valor:document.getElementById('m-valor').value||'A definir',
     origem:document.getElementById('m-origem').value,
     obs:document.getElementById('m-obs')?.value?.trim()||'',
+    data_nasc:document.getElementById('m-data-nasc')?.value||null,
     coluna:'novo',dias:0,
     cor:'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0')
   };
@@ -3895,14 +4063,16 @@ function renderLocacao(){populateImovelSelects();
       const diff=Math.round((dv-hoje)/(1000*60*60*24));
       return diff>=0&&diff<=7;
     }).length;
+    const comissaoTotal=LOCACOES.reduce((s,l)=>s+Math.round(Number(l.valor)*(Number(l.pct_comissao||0)/100)),0);
     locKpiVals[0].textContent=ativos;
     locKpiVals[1].textContent=recMensal>0?'R$ '+recMensal.toLocaleString('pt-BR'):'R$ 0';
     locKpiVals[2].textContent=inadimplentes;
     locKpiVals[3].textContent=avencer;
+    if(locKpiVals[4]) locKpiVals[4].textContent=comissaoTotal>0?'R$ '+comissaoTotal.toLocaleString('pt-BR'):'R$ 0';
   }
   const tbody=document.getElementById('loc-tbody');
   if(!LOCACOES.length){
-    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--t3);font-size:13px">Nenhum contrato de locação cadastrado. <button class="link-btn" onclick="document.getElementById('modal-contrato').classList.add('open')">Criar primeiro contrato →</button></td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--t3);font-size:13px">Nenhum contrato de locação cadastrado. <button class="link-btn" onclick="document.getElementById('modal-contrato').classList.add('open')">Criar primeiro contrato →</button></td></tr>`;
     return;
   }
   tbody.innerHTML=LOCACOES.map(l=>{
@@ -3913,6 +4083,7 @@ function renderLocacao(){populateImovelSelects();
       <td style="font-weight:700;color:#c453bb">R$&nbsp;${Number(l.valor).toLocaleString('pt-BR')}</td>
       <td>Dia ${escHTML(String(l.dia))}</td>
       <td class="loc-vigor">${escHTML(l.inicio)} → ${escHTML(l.fim)}</td>
+      <td>${l.pct_comissao>0?`<span style="color:#f59e0b;font-weight:700">${Number(l.pct_comissao).toFixed(1)}%</span><br><span style="font-size:10px;color:var(--t3)">R$ ${Math.round(Number(l.valor)*(Number(l.pct_comissao)/100)).toLocaleString('pt-BR')}</span>`:'<span style="color:var(--t3);font-size:11px">—</span>'}</td>
       <td><span class="pmt-badge ${s.cls}">${s.label}</span></td>
       <td>
         <div style="display:flex;gap:6px">
@@ -4988,6 +5159,8 @@ async function editarContrato(id){
   document.getElementById('edit-loc-inicio').value=l.inicio||'';
   document.getElementById('edit-loc-fim').value=l.fim||'';
   document.getElementById('edit-loc-status').value=l.status||'pendente';
+  document.getElementById('edit-loc-pct').value=l.pct_comissao||'';
+  document.getElementById('edit-loc-comrec').value=l.corretor_comissao||'';
   document.getElementById('modal-loc-edit').classList.add('open');
 }
 
@@ -5004,7 +5177,9 @@ async function salvarEdicaoContrato(){
   const inicio=document.getElementById('edit-loc-inicio').value.trim();
   const fim=document.getElementById('edit-loc-fim').value.trim();
   const status=document.getElementById('edit-loc-status').value;
-  const update={inquilino,tel,imovel,valor,dia,inicio,fim,status};
+  const pct_comissao=parseFloat(document.getElementById('edit-loc-pct').value)||0;
+  const corretor_comissao=document.getElementById('edit-loc-comrec').value.trim();
+  const update={inquilino,tel,imovel,valor,dia,inicio,fim,status,pct_comissao,corretor_comissao};
   const {error}=await _sb.from('locacoes').update(update).eq('id',id);
   if(error){showToast('Erro ao salvar: '+error.message,'error');return;}
   Object.assign(l,update);
@@ -7145,6 +7320,514 @@ async function addTransacao(tipo){
   inited['financeiro']=false;
   renderFinTables();
   showToast(`${tipo==='entrada'?'Entrada':'Saída'} registrada com sucesso!`,'success');
+}
+
+// ══════════════════════════════════════════════════════
+// FERRAMENTAS
+// ══════════════════════════════════════════════════════
+function switchFerrTab(tab,btn){
+  document.querySelectorAll('.ferr-tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ferr-tab-btn').forEach(b=>b.classList.remove('active'));
+  const pane=document.getElementById('ferr-pane-'+tab);
+  if(pane) pane.classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(tab==='aniversarios') renderAniversarios();
+  if(tab==='relatorio') renderRelatorioPDF();
+  if(tab==='wa') waFiltrarLista('leads',document.querySelector('.ferr-tab-pane.active .chip'));
+}
+function initFerramentas(){
+  renderAniversarios();
+  renderRelatorioPDF();
+}
+
+// ── Export CSV ──────────────────────────────────────
+function exportCSV(tipo){
+  const esc=s=>'"'+(s==null?'':String(s).replace(/"/g,'""'))+'"';
+  let headers=[],rows=[],filename='';
+  if(tipo==='leads'){
+    headers=['Nome','Telefone','E-mail','Tipo','Valor','Origem','Status','Dias','Data Nasc'];
+    rows=LEADS_DATA.map(l=>[esc(l.nome),esc(l.tel),esc(l.email),esc(l.tipo),esc(l.valor),esc(l.origem),esc(l.coluna),l.dias||0,esc(l.data_nasc||'')]);
+    filename='leads-captar.csv';
+  } else if(tipo==='imoveis'){
+    headers=['Título','Tipo','Cidade','Valor','Status','Área','Quartos','Banheiros'];
+    rows=IMOVEIS_DATA.map(i=>[esc(i.titulo),esc(i.tipo),esc(i.cidade),esc(i.valor),esc(i.status),esc(i.area),esc(i.quartos),esc(i.banheiros)]);
+    filename='imoveis-captar.csv';
+  } else if(tipo==='locacoes'){
+    headers=['Inquilino','Telefone','Imóvel','Valor','Dia Venc','Início','Fim','Status','% Comissão','Corretor'];
+    rows=LOCACOES.map(l=>[esc(l.inquilino),esc(l.tel),esc(l.imovel),l.valor,l.dia,esc(l.inicio),esc(l.fim),esc(l.status),l.pct_comissao||0,esc(l.corretor_comissao||'')]);
+    filename='locacoes-captar.csv';
+  } else if(tipo==='visitas'){
+    headers=['Lead','Imóvel','Data','Hora','Status','Corretor','Obs'];
+    rows=VISITAS.map(v=>[esc(v.lead_nome||v.lead),esc(v.imovel),esc(v.data),esc(v.hora),esc(v.status),esc(v.corretor||''),esc(v.obs||'')]);
+    filename='visitas-captar.csv';
+  } else if(tipo==='financeiro'){
+    headers=['Tipo','Descrição','Categoria','Data','Valor (R$)'];
+    rows=[
+      ...TRANSACOES.entradas.map(t=>['Entrada',esc(t.desc),esc(t.cat),esc(t.data),t.val]),
+      ...TRANSACOES.saidas.map(t=>['Saída',esc(t.desc),esc(t.cat),esc(t.data),t.val])
+    ];
+    filename='financeiro-captar.csv';
+  }
+  const csv=[headers.join(';'),...rows.map(r=>r.join(';'))].join('\n');
+  downloadFile('﻿'+csv,'text/csv;charset=utf-8;',filename);
+  showToast(`CSV "${filename}" exportado!`,'success');
+}
+
+function exportBackupJSON(){
+  const backup={
+    exportado_em:new Date().toISOString(),
+    leads:LEADS_DATA,
+    imoveis:IMOVEIS_DATA,
+    locacoes:LOCACOES,
+    visitas:VISITAS,
+    financeiro:TRANSACOES
+  };
+  downloadFile(JSON.stringify(backup,null,2),'application/json','backup-captar-'+new Date().toISOString().slice(0,10)+'.json');
+  showToast('Backup JSON gerado!','success');
+}
+
+function downloadFile(content,mime,filename){
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Calculadora Financiamento (Ferramentas) ─────────
+function calcFinanciamentoFerr(){
+  const valor=parseFloat(document.getElementById('ferr-fin-valor')?.value)||0;
+  const entrada=parseFloat(document.getElementById('ferr-fin-entrada')?.value)||0;
+  const taxaMes=parseFloat(document.getElementById('ferr-fin-taxa')?.value)||0;
+  const prazo=parseInt(document.getElementById('ferr-fin-prazo')?.value)||0;
+  const el=document.getElementById('ferr-fin-result');
+  if(!el) return;
+  if(!valor||!taxaMes||!prazo){el.innerHTML='<div style="font-size:12px;color:var(--t3)">Preencha todos os campos para calcular</div>';return;}
+  const principal=valor-entrada;
+  if(principal<=0){el.innerHTML='<div style="font-size:12px;color:#ef4444">Entrada maior que o valor do imóvel</div>';return;}
+  const i=taxaMes/100;
+  const parcela=principal*(i*Math.pow(1+i,prazo))/(Math.pow(1+i,prazo)-1);
+  const totalPago=parcela*prazo;
+  const totalJuros=totalPago-principal;
+  const fmtBRL=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  el.innerHTML=`
+    <div class="calc-result-val">${fmtBRL(parcela)}<span style="font-size:14px;font-weight:400;color:var(--t3)">/mês</span></div>
+    <div class="calc-result-lbl">Parcela mensal (Tabela Price)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+      <div style="background:var(--bg4,var(--bg3));border-radius:6px;padding:10px;text-align:center"><div style="font-size:14px;font-weight:700;color:#60a5fa">${fmtBRL(principal)}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Valor Financiado</div></div>
+      <div style="background:var(--bg4,var(--bg3));border-radius:6px;padding:10px;text-align:center"><div style="font-size:14px;font-weight:700;color:#f87171">${fmtBRL(totalJuros)}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Total em Juros</div></div>
+      <div style="background:var(--bg4,var(--bg3));border-radius:6px;padding:10px;text-align:center;grid-column:1/-1"><div style="font-size:14px;font-weight:700;color:#fbbf24">${fmtBRL(totalPago)}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Total Pago em ${prazo} meses</div></div>
+    </div>`;
+}
+
+// ── Calculadora ROI ──────────────────────────────────
+function calcROI(){
+  const valor=parseFloat(document.getElementById('roi-valor')?.value)||0;
+  const aluguel=parseFloat(document.getElementById('roi-aluguel')?.value)||0;
+  const valorizacao=parseFloat(document.getElementById('roi-valorizacao')?.value)||0;
+  const custos=parseFloat(document.getElementById('roi-custos')?.value)||0;
+  const el=document.getElementById('calc-roi-result');
+  if(!el) return;
+  if(!valor||!aluguel){el.innerHTML='<div style="font-size:12px;color:var(--t3)">Preencha os campos para calcular</div>';return;}
+  const lucroLiq=aluguel-custos;
+  const yieldAnual=(lucroLiq*12/valor)*100;
+  const payback=lucroLiq>0?valor/lucroLiq:0;
+  const val10=(valor*Math.pow(1+(valorizacao/100),10));
+  const fmtBRL=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  el.innerHTML=`
+    <div class="calc-result-val">${yieldAnual.toFixed(2)}%<span style="font-size:14px;font-weight:400;color:var(--t3)"> a.a.</span></div>
+    <div class="calc-result-lbl">Yield / Rentabilidade Anual</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+      <div style="background:var(--bg4,var(--bg3));border-radius:6px;padding:10px;text-align:center"><div style="font-size:14px;font-weight:700;color:#34d399">${fmtBRL(lucroLiq)}/mês</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Lucro Líquido</div></div>
+      <div style="background:var(--bg4,var(--bg3));border-radius:6px;padding:10px;text-align:center"><div style="font-size:14px;font-weight:700;color:#60a5fa">${payback>0?payback.toFixed(0)+' meses':'—'}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Payback</div></div>
+      <div style="background:var(--bg4,var(--bg3));border-radius:6px;padding:10px;text-align:center;grid-column:1/-1"><div style="font-size:14px;font-weight:700;color:#fbbf24">${fmtBRL(val10)}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Valor do imóvel em 10 anos (${valorizacao}%/ano)</div></div>
+    </div>`;
+}
+
+// ── WhatsApp em Massa ────────────────────────────────
+let _waLista=[];
+function waFiltrarLista(tipo,btn){
+  document.querySelectorAll('#ferr-pane-wa .chip').forEach(c=>c.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  if(tipo==='leads') _waLista=LEADS_DATA.map(l=>({nome:l.nome,tel:l.tel,checked:true}));
+  else _waLista=LOCACOES.map(l=>({nome:l.inquilino,tel:l.tel,checked:true}));
+  const el=document.getElementById('wa-lista');
+  if(!el) return;
+  el.innerHTML=_waLista.map((p,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:12px">
+    <input type="checkbox" checked onchange="_waLista[${i}].checked=this.checked" style="accent-color:var(--p)"/>
+    <span style="font-weight:600">${escHTML(p.nome)}</span>
+    <span style="color:var(--t3)">${escHTML(p.tel||'—')}</span>
+  </label>`).join('')||'<div style="color:var(--t3);font-size:12px;padding:20px 0;text-align:center">Nenhum contato cadastrado</div>';
+}
+function waSelecionarTodos(sel){
+  _waLista.forEach(p=>p.checked=sel);
+  document.querySelectorAll('#wa-lista input[type=checkbox]').forEach(cb=>cb.checked=sel);
+}
+function gerarLinksWA(){
+  const msg=document.getElementById('wa-msg')?.value||'';
+  if(!msg.trim()){showToast('Escreva a mensagem antes de gerar','error');return;}
+  const selecionados=_waLista.filter(p=>p.checked&&p.tel&&p.tel!=='—');
+  if(!selecionados.length){showToast('Nenhum contato selecionado com telefone','error');return;}
+  const el=document.getElementById('wa-links-result');
+  el.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:10px">${selecionados.length} links gerados:</div>`+
+    selecionados.map(p=>{
+      const mensagem=msg.replace(/\{nome\}/gi,p.nome);
+      const tel=(p.tel||'').replace(/\D/g,'');
+      const url=`https://wa.me/55${tel}?text=${encodeURIComponent(mensagem)}`;
+      return `<a href="${url}" target="_blank" style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);text-decoration:none;margin-bottom:6px;font-size:12px;color:var(--t1)">
+        <svg width="14" height="14" fill="#25d366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <span style="font-weight:600">${escHTML(p.nome)}</span>
+        <span style="color:var(--t3);font-size:11px">${escHTML(p.tel)}</span>
+      </a>`;
+    }).join('');
+}
+
+// ── Aniversários ─────────────────────────────────────
+function renderAniversarios(){
+  const el=document.getElementById('ferr-aniversarios-list');
+  if(!el) return;
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const leads=LEADS_DATA.filter(l=>l.data_nasc).map(l=>{
+    const nasc=new Date(l.data_nasc);
+    const aniv=new Date(hoje.getFullYear(),nasc.getMonth(),nasc.getDate());
+    if(aniv<hoje) aniv.setFullYear(hoje.getFullYear()+1);
+    const dias=Math.round((aniv-hoje)/(1000*60*60*24));
+    return {...l,dias_ate_aniv:dias,aniv};
+  }).sort((a,b)=>a.dias_ate_aniv-b.dias_ate_aniv).slice(0,20);
+  if(!leads.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--t3)">Nenhum lead com data de nascimento cadastrada. Edite um lead e adicione a data de nascimento.</div>';return;}
+  el.innerHTML=leads.map(l=>{
+    const d=l.dias_ate_aniv;
+    const tag=d===0?'🎉 Hoje!':d===1?'Amanhã':`Em ${d} dias`;
+    const cor=d===0?'#f59e0b':d<=7?'#34d399':'var(--t3)';
+    const tel=(l.tel||'').replace(/\D/g,'');
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div class="mini-avatar" style="background:${l.cor||'#850277'}">${initials(l.nome)}</div>
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${escHTML(l.nome)}</div><div style="font-size:11px;color:var(--t3)">${new Date(l.data_nasc).toLocaleDateString('pt-BR',{day:'2-digit',month:'long'})}</div></div>
+      <div style="font-size:12px;font-weight:700;color:${cor}">${tag}</div>
+      ${tel?`<a href="https://wa.me/55${tel}?text=${encodeURIComponent('Olá '+l.nome+'! Feliz aniversário! 🎉')}" target="_blank" class="btn-add" style="padding:5px 10px;font-size:11px;gap:5px">
+        <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Parabenizar
+      </a>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── Lembretes automáticos ────────────────────────────
+function checkLembretes(){
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const aniversarios=LEADS_DATA.filter(l=>{
+    if(!l.data_nasc) return false;
+    const nasc=new Date(l.data_nasc);
+    return nasc.getDate()===hoje.getDate()&&nasc.getMonth()===hoje.getMonth();
+  });
+  aniversarios.forEach(l=>showToast(`🎂 Hoje é aniversário de ${l.nome}!`,'success'));
+  const em3dias=new Date(hoje);em3dias.setDate(em3dias.getDate()+3);
+  const vencendo=LOCACOES.filter(l=>{
+    if(!l.fim) return false;
+    const partes=l.fim.split('/');
+    if(partes.length!==2) return false;
+    const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const mes=meses.findIndex(m=>m===partes[0]);
+    if(mes<0) return false;
+    const fim=new Date(parseInt(partes[1]),mes+1,0);
+    const diff=Math.round((fim-hoje)/(1000*60*60*24));
+    return diff>=0&&diff<=30;
+  });
+  if(vencendo.length) showToast(`⚠️ ${vencendo.length} contrato(s) de locação vencem em até 30 dias!`,'info');
+}
+
+// ── Relatório PDF ─────────────────────────────────────
+function renderRelatorioPDF(){
+  const el=document.getElementById('ferr-relatorio-preview');
+  if(!el) return;
+  const fmtBRL=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const totalEnt=TRANSACOES.entradas.reduce((s,t)=>s+(Number(t.val)||0),0);
+  const totalSai=TRANSACOES.saidas.reduce((s,t)=>s+(Number(t.val)||0),0);
+  const recMensal=LOCACOES.reduce((s,l)=>s+(Number(l.valor)||0),0);
+  const comissao=LOCACOES.reduce((s,l)=>s+Math.round(Number(l.valor)*(Number(l.pct_comissao||0)/100)),0);
+  el.innerHTML=`
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:20px;font-weight:800;color:var(--p)">Grupo Captar</div>
+      <div style="font-size:13px;color:var(--t3);margin-top:4px">Relatório Executivo — ${new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px">
+      ${[
+        {l:'Total de Leads',v:LEADS_DATA.length,c:'#c453bb',s:''},
+        {l:'Imóveis Ativos',v:IMOVEIS_DATA.filter(i=>i.status!=='vendido').length,c:'#60a5fa',s:''},
+        {l:'Locações Ativas',v:LOCACOES.length,c:'#34d399',s:''},
+        {l:'Receita Mensal',v:fmtBRL(recMensal),c:'#fbbf24',s:''},
+        {l:'Entradas',v:fmtBRL(totalEnt),c:'#34d399',s:''},
+        {l:'Saídas',v:fmtBRL(totalSai),c:'#f87171',s:''},
+        {l:'Resultado',v:fmtBRL(totalEnt-totalSai),c:totalEnt>=totalSai?'#34d399':'#f87171',s:''},
+        {l:'Comissões/Mês',v:fmtBRL(comissao),c:'#f59e0b',s:''},
+        {l:'Inadimplentes',v:LOCACOES.filter(l=>l.status==='atrasado').length,c:'#f87171',s:''},
+      ].map(k=>`<div style="background:var(--bg3);border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:18px;font-weight:800;color:${k.c}">${k.v}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:3px">${k.l}</div>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:11px;color:var(--t3);text-align:center;margin-top:12px">Gerado em ${new Date().toLocaleString('pt-BR')} — Grupo Captar CRM</div>`;
+}
+function imprimirRelatorio(){
+  const content=document.getElementById('ferr-relatorio-preview')?.innerHTML||'';
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Relatório Grupo Captar</title>
+  <style>body{font-family:Arial,sans-serif;padding:32px;color:#111;background:#fff}@media print{body{padding:0}}</style></head>
+  <body>${content}<script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
+}
+
+// ══════════════════════════════════════════════════════
+// CONTRATOS
+// ══════════════════════════════════════════════════════
+let _ctplAtual=null;
+const CONTRATOS_TEMPLATES={
+  locacao_res:{
+    nome:'Contrato de Locação Residencial',
+    fields:[
+      {id:'c_locador',label:'Locador (proprietário)',ph:'Nome completo'},
+      {id:'c_cpf_loc',label:'CPF do Locador',ph:'000.000.000-00'},
+      {id:'c_locatario',label:'Locatário (inquilino)',ph:'Nome completo'},
+      {id:'c_cpf_lct',label:'CPF do Locatário',ph:'000.000.000-00'},
+      {id:'c_imovel',label:'Endereço do Imóvel',ph:'Rua, nº, Bairro, Cidade/UF'},
+      {id:'c_valor',label:'Valor Mensal (R$)',ph:'2.500,00'},
+      {id:'c_inicio',label:'Data de Início',ph:'01/01/2025'},
+      {id:'c_fim',label:'Data de Término',ph:'31/12/2025'},
+      {id:'c_dia',label:'Dia de Vencimento',ph:'10'},
+      {id:'c_cidade',label:'Cidade/UF (assinatura)',ph:'São Paulo/SP'},
+      {id:'c_data_ass',label:'Data da Assinatura',ph:'01/01/2025'},
+    ],
+    gerar(v){return `CONTRATO DE LOCAÇÃO RESIDENCIAL
+
+Pelo presente instrumento particular, ${v.c_locador||'___'}, CPF ${v.c_cpf_loc||'___'}, doravante denominado LOCADOR, e ${v.c_locatario||'___'}, CPF ${v.c_cpf_lct||'___'}, doravante denominado LOCATÁRIO, têm entre si justo e acordado o seguinte:
+
+CLÁUSULA 1ª – DO OBJETO
+O LOCADOR cede ao LOCATÁRIO, para uso residencial, o imóvel situado em: ${v.c_imovel||'___'}.
+
+CLÁUSULA 2ª – DO PRAZO
+O prazo da locação é de ${v.c_inicio||'___'} a ${v.c_fim||'___'}, podendo ser renovado por acordo mútuo.
+
+CLÁUSULA 3ª – DO VALOR
+O aluguel mensal é de R$ ${v.c_valor||'___'}, com vencimento todo dia ${v.c_dia||'___'} de cada mês, sujeito a correção anual pelo IGPM.
+
+CLÁUSULA 4ª – DA UTILIZAÇÃO
+O LOCATÁRIO se compromete a usar o imóvel somente para fins residenciais, conservando-o em boas condições, responsabilizando-se por pequenos reparos.
+
+CLÁUSULA 5ª – DAS PENALIDADES
+O descumprimento de qualquer cláusula implica multa de 3 (três) aluguéis vigentes, além das despesas judiciais cabíveis.
+
+E por estarem justos e acordados, assinam o presente contrato em 2 (duas) vias de igual teor.
+
+${v.c_cidade||'___'}, ${v.c_data_ass||'___'}
+
+
+_________________________________          _________________________________
+${v.c_locador||'LOCADOR'}                                    ${v.c_locatario||'LOCATÁRIO'}
+CPF: ${v.c_cpf_loc||'___'}                                   CPF: ${v.c_cpf_lct||'___'}`;}
+  },
+  locacao_com:{
+    nome:'Contrato de Locação Comercial',
+    fields:[
+      {id:'c_locador',label:'Locador',ph:'Nome ou Razão Social'},
+      {id:'c_locatario',label:'Locatário / Empresa',ph:'Nome ou Razão Social'},
+      {id:'c_cnpj',label:'CNPJ do Locatário',ph:'00.000.000/0001-00'},
+      {id:'c_imovel',label:'Endereço do Imóvel',ph:'Rua, nº, Sala, Bairro, Cidade/UF'},
+      {id:'c_valor',label:'Valor Mensal (R$)',ph:'5.000,00'},
+      {id:'c_inicio',label:'Início',ph:'01/01/2025'},
+      {id:'c_fim',label:'Término',ph:'31/12/2026'},
+      {id:'c_atividade',label:'Atividade Comercial',ph:'Escritório de advocacia'},
+      {id:'c_cidade',label:'Cidade/UF',ph:'São Paulo/SP'},
+      {id:'c_data_ass',label:'Data da Assinatura',ph:'01/01/2025'},
+    ],
+    gerar(v){return `CONTRATO DE LOCAÇÃO COMERCIAL
+
+LOCADOR: ${v.c_locador||'___'}
+LOCATÁRIO: ${v.c_locatario||'___'} — CNPJ: ${v.c_cnpj||'___'}
+
+OBJETO: Imóvel localizado em ${v.c_imovel||'___'}, destinado exclusivamente à atividade de ${v.c_atividade||'___'}.
+
+PRAZO: De ${v.c_inicio||'___'} a ${v.c_fim||'___'}.
+
+VALOR: R$ ${v.c_valor||'___'}/mês, com reajuste anual pelo IGPM/FGV.
+
+O LOCATÁRIO não poderá sublocar, ceder ou emprestar o imóvel sem autorização escrita do LOCADOR. Ao término do contrato, o imóvel deverá ser devolvido nas mesmas condições de recebimento.
+
+${v.c_cidade||'___'}, ${v.c_data_ass||'___'}
+
+
+_________________________________          _________________________________
+LOCADOR                                    LOCATÁRIO`;}
+  },
+  compra_venda:{
+    nome:'Contrato de Compra e Venda',
+    fields:[
+      {id:'c_vendedor',label:'Vendedor',ph:'Nome completo'},
+      {id:'c_cpf_vend',label:'CPF Vendedor',ph:'000.000.000-00'},
+      {id:'c_comprador',label:'Comprador',ph:'Nome completo'},
+      {id:'c_cpf_comp',label:'CPF Comprador',ph:'000.000.000-00'},
+      {id:'c_imovel',label:'Descrição do Imóvel',ph:'Rua, nº, Bairro, Cidade/UF, matrícula'},
+      {id:'c_valor',label:'Valor de Venda (R$)',ph:'350.000,00'},
+      {id:'c_sinal',label:'Sinal / Arras (R$)',ph:'35.000,00'},
+      {id:'c_prazo_pgto',label:'Prazo para saldo restante',ph:'30 dias'},
+      {id:'c_cidade',label:'Cidade/UF',ph:'São Paulo/SP'},
+      {id:'c_data_ass',label:'Data da Assinatura',ph:'01/01/2025'},
+    ],
+    gerar(v){return `CONTRATO PARTICULAR DE COMPRA E VENDA DE IMÓVEL
+
+VENDEDOR: ${v.c_vendedor||'___'}, CPF: ${v.c_cpf_vend||'___'}
+COMPRADOR: ${v.c_comprador||'___'}, CPF: ${v.c_cpf_comp||'___'}
+
+OBJETO: O VENDEDOR vende ao COMPRADOR o imóvel: ${v.c_imovel||'___'}.
+
+VALOR TOTAL: R$ ${v.c_valor||'___'}, dos quais R$ ${v.c_sinal||'___'} são pagos neste ato a título de sinal, e o saldo restante será quitado em ${v.c_prazo_pgto||'___'}.
+
+O VENDEDOR declara que o imóvel está livre e desembaraçado de quaisquer ônus, dívidas ou pendências que possam embaraçar a transmissão da propriedade.
+
+O presente instrumento terá validade até a lavratura da Escritura Pública definitiva.
+
+${v.c_cidade||'___'}, ${v.c_data_ass||'___'}
+
+
+_________________________________          _________________________________
+VENDEDOR                                   COMPRADOR
+CPF: ${v.c_cpf_vend||'___'}                                  CPF: ${v.c_cpf_comp||'___'}`;}
+  },
+  recibo:{
+    nome:'Recibo de Pagamento',
+    fields:[
+      {id:'c_recebedor',label:'Quem recebe',ph:'Nome completo'},
+      {id:'c_cpf_rec',label:'CPF de quem recebe',ph:'000.000.000-00'},
+      {id:'c_pagador',label:'Quem paga',ph:'Nome completo'},
+      {id:'c_valor',label:'Valor (R$)',ph:'2.500,00'},
+      {id:'c_descricao',label:'Referente a',ph:'Aluguel referente a Janeiro/2025'},
+      {id:'c_cidade',label:'Cidade/UF',ph:'São Paulo/SP'},
+      {id:'c_data',label:'Data',ph:'01/01/2025'},
+    ],
+    gerar(v){return `RECIBO DE PAGAMENTO
+
+Eu, ${v.c_recebedor||'___'}, CPF ${v.c_cpf_rec||'___'}, recebi de ${v.c_pagador||'___'} a quantia de R$ ${v.c_valor||'___'} (${v.c_valor?'reais':'___'}), referente a: ${v.c_descricao||'___'}.
+
+Declaro que nada mais tenho a receber referente ao presente, dando plena, geral e irrevogável quitação.
+
+${v.c_cidade||'___'}, ${v.c_data||'___'}
+
+
+_________________________________
+${v.c_recebedor||'Recebedor'}
+CPF: ${v.c_cpf_rec||'___'}`;}
+  },
+  autorizacao:{
+    nome:'Autorização de Venda',
+    fields:[
+      {id:'c_proprietario',label:'Proprietário',ph:'Nome completo'},
+      {id:'c_cpf_prop',label:'CPF',ph:'000.000.000-00'},
+      {id:'c_imovel',label:'Endereço do Imóvel',ph:'Rua, nº, Bairro, Cidade/UF'},
+      {id:'c_valor_min',label:'Valor Mínimo de Venda (R$)',ph:'300.000,00'},
+      {id:'c_comissao',label:'Comissão (%)',ph:'6'},
+      {id:'c_imobiliaria',label:'Imobiliária / Corretor',ph:'Grupo Captar'},
+      {id:'c_prazo',label:'Prazo da Autorização',ph:'90 dias'},
+      {id:'c_cidade',label:'Cidade/UF',ph:'São Paulo/SP'},
+      {id:'c_data',label:'Data',ph:'01/01/2025'},
+    ],
+    gerar(v){return `AUTORIZAÇÃO DE VENDA DE IMÓVEL
+
+Eu, ${v.c_proprietario||'___'}, CPF ${v.c_cpf_prop||'___'}, AUTORIZO ${v.c_imobiliaria||'___'} a intermediar a venda do imóvel localizado em: ${v.c_imovel||'___'}.
+
+VALOR MÍNIMO: R$ ${v.c_valor_min||'___'}
+COMISSÃO: ${v.c_comissao||'___'}% sobre o valor de venda
+PRAZO: ${v.c_prazo||'___'} a partir desta data
+
+O autorizado poderá receber propostas, negociar condições e realizar visitas ao imóvel.
+
+${v.c_cidade||'___'}, ${v.c_data||'___'}
+
+
+_________________________________
+${v.c_proprietario||'Proprietário'}
+CPF: ${v.c_cpf_prop||'___'}`;}
+  },
+  ficha:{
+    nome:'Ficha Cadastral',
+    fields:[
+      {id:'c_nome',label:'Nome Completo',ph:''},
+      {id:'c_cpf',label:'CPF',ph:'000.000.000-00'},
+      {id:'c_rg',label:'RG',ph:''},
+      {id:'c_nasc',label:'Data de Nascimento',ph:'DD/MM/AAAA'},
+      {id:'c_estado_civil',label:'Estado Civil',ph:'Solteiro(a)'},
+      {id:'c_profissao',label:'Profissão',ph:''},
+      {id:'c_renda',label:'Renda Mensal (R$)',ph:''},
+      {id:'c_end',label:'Endereço Atual',ph:'Rua, nº, Bairro, Cidade/UF'},
+      {id:'c_tel',label:'Telefone / WhatsApp',ph:'(00) 9 0000-0000'},
+      {id:'c_email',label:'E-mail',ph:''},
+      {id:'c_interesse',label:'Interesse (imóvel desejado)',ph:''},
+      {id:'c_data',label:'Data',ph:'01/01/2025'},
+    ],
+    gerar(v){return `FICHA CADASTRAL DE CLIENTE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DADOS PESSOAIS
+Nome:              ${v.c_nome||'___'}
+CPF:               ${v.c_cpf||'___'}
+RG:                ${v.c_rg||'___'}
+Nascimento:        ${v.c_nasc||'___'}
+Estado Civil:      ${v.c_estado_civil||'___'}
+Profissão:         ${v.c_profissao||'___'}
+Renda Mensal:      R$ ${v.c_renda||'___'}
+
+CONTATO
+Endereço:          ${v.c_end||'___'}
+Telefone:          ${v.c_tel||'___'}
+E-mail:            ${v.c_email||'___'}
+
+INTERESSE
+${v.c_interesse||'___'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Data: ${v.c_data||'___'}
+
+_________________________________
+Assinatura do Cliente`;}
+  }
+};
+
+function initContratos(){ /* pronto via HTML */ }
+
+let _ctplCurrent=null;
+function selecionarContrato(tipo,card){
+  document.querySelectorAll('.contrato-card').forEach(c=>c.classList.remove('selected'));
+  if(card) card.classList.add('selected');
+  _ctplCurrent=tipo;
+  const tpl=CONTRATOS_TEMPLATES[tipo];
+  if(!tpl) return;
+  document.getElementById('contratos-form-title').textContent='📋 '+tpl.nome;
+  document.getElementById('contratos-fields').innerHTML=tpl.fields.map(f=>`
+    <div class="form-group">
+      <label class="form-label">${escHTML(f.label)}</label>
+      <input class="form-input" id="${f.id}" placeholder="${escHTML(f.ph||'')}" oninput="atualizarPreviewContrato()"/>
+    </div>`).join('');
+  document.getElementById('contratos-form-area').style.display='block';
+  atualizarPreviewContrato();
+}
+function atualizarPreviewContrato(){
+  if(!_ctplCurrent) return;
+  const tpl=CONTRATOS_TEMPLATES[_ctplCurrent];
+  if(!tpl) return;
+  const v={};
+  tpl.fields.forEach(f=>{const el=document.getElementById(f.id);if(el)v[f.id]=el.value;});
+  document.getElementById('contratos-preview').textContent=tpl.gerar(v);
+}
+function imprimirContrato(){
+  if(!_ctplCurrent) return;
+  const tpl=CONTRATOS_TEMPLATES[_ctplCurrent];
+  const v={};
+  tpl.fields.forEach(f=>{const el=document.getElementById(f.id);if(el)v[f.id]=el.value;});
+  const texto=tpl.gerar(v);
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${tpl.nome}</title>
+  <style>body{font-family:Georgia,serif;padding:48px 64px;color:#111;font-size:13px;line-height:1.8;white-space:pre-wrap}h1{font-size:16px}@media print{body{padding:24px}}</style></head>
+  <body>${texto.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}<script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
 }
 </script>
 </body>
