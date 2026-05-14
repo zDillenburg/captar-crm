@@ -912,8 +912,9 @@
     @media (max-width: 768px) {
       .hero {
         min-height: 100dvh;
-        justify-content: flex-end;
-        padding-bottom: 80px;
+        justify-content: center;
+        padding-top: 100px;
+        padding-bottom: 100px;
       }
       .hero-arrow { bottom: 20px; }
     }
@@ -921,9 +922,12 @@
     @media (max-width: 480px) {
       nav { padding: 0 20px; }
       .nav-logo img { height: 36px; }
-      .hero { padding: 100px 20px 64px; }
-      .hero-arrow { bottom: 12px; }
-      .hero-subtitle { font-size: 15px; }
+      .hero {
+        padding: 96px 20px 88px;
+        justify-content: center;
+      }
+      .hero-arrow { bottom: 16px; }
+      .hero-subtitle { font-size: 15px; margin-bottom: 36px; }
       .hero-actions { gap: 12px; }
       .btn-primary, .btn-ghost { padding: 14px 22px; font-size: 13px; }
       .manifesto { padding: 72px 24px; }
@@ -936,8 +940,16 @@
       .footer-contact-item { padding: 14px 16px; }
     }
 
+    @media (max-width: 390px) {
+      .hero { padding: 88px 20px 80px; }
+      .hero-title { font-size: 38px; }
+      .hero-subtitle { font-size: 14px; }
+      .btn-primary, .btn-ghost { padding: 13px 18px; font-size: 13px; }
+    }
+
     @media (max-width: 360px) {
-      .hero-title { font-size: 36px; }
+      .hero { padding: 84px 18px 76px; }
+      .hero-title { font-size: 34px; }
       .nav-links a.nav-contact { padding: 8px 14px; font-size: 12px; }
     }
 
