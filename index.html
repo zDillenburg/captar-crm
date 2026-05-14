@@ -944,6 +944,36 @@
     @media (max-width: 400px) {
       .feat-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── ANIMAÇÕES DE ENTRADA ── */
+    .anim-up {
+      opacity: 0;
+      transform: translateY(32px);
+      transition:
+        opacity .7s cubic-bezier(.16,1,.3,1),
+        transform .7s cubic-bezier(.16,1,.3,1);
+      transition-delay: var(--d, 0ms);
+    }
+    .anim-left {
+      opacity: 0;
+      transform: translateX(-28px);
+      transition:
+        opacity .7s cubic-bezier(.16,1,.3,1),
+        transform .7s cubic-bezier(.16,1,.3,1);
+      transition-delay: var(--d, 0ms);
+    }
+    .anim-right {
+      opacity: 0;
+      transform: translateX(28px);
+      transition:
+        opacity .7s cubic-bezier(.16,1,.3,1),
+        transform .7s cubic-bezier(.16,1,.3,1);
+      transition-delay: var(--d, 0ms);
+    }
+    .anim-up.in, .anim-left.in, .anim-right.in {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
   </style>
 </head>
 <body>
@@ -994,7 +1024,7 @@
   <!-- SOBRE -->
   <section class="sobre" id="sobre">
 
-    <div class="sobre-left">
+    <div class="sobre-left anim-left">
       <span class="sobre-eyebrow">O Grupo Captar</span>
       <h2 class="sobre-title">Somos especialistas em <em style="font-style:normal;color:var(--purple)">autoridade imobiliária.</em></h2>
       <p class="sobre-text">
@@ -1010,7 +1040,7 @@
     </div>
 
     <div class="sobre-right">
-      <div class="sobre-pillar">
+      <div class="sobre-pillar anim-right" style="--d:0ms">
         <div class="sobre-pillar-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
@@ -1019,7 +1049,7 @@
           <p class="sobre-pillar-desc">Você não perde um minuto com marketing. Cuidamos de toda a demanda, do digital ao físico.</p>
         </div>
       </div>
-      <div class="sobre-pillar">
+      <div class="sobre-pillar anim-right" style="--d:100ms">
         <div class="sobre-pillar-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
@@ -1028,7 +1058,7 @@
           <p class="sobre-pillar-desc">Criamos um padrão estético que transmite credibilidade instantânea e diferencia você da concorrência.</p>
         </div>
       </div>
-      <div class="sobre-pillar">
+      <div class="sobre-pillar anim-right" style="--d:200ms">
         <div class="sobre-pillar-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
@@ -1037,7 +1067,7 @@
           <p class="sobre-pillar-desc">Conteúdo estratégico e tráfego pago para colocar os seus imóveis na frente de compradores qualificados.</p>
         </div>
       </div>
-      <div class="sobre-pillar">
+      <div class="sobre-pillar anim-right" style="--d:300ms">
         <div class="sobre-pillar-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
@@ -1052,7 +1082,7 @@
 
   <!-- MANIFESTO -->
   <section class="manifesto" id="manifesto">
-    <div class="manifesto-inner">
+    <div class="manifesto-inner anim-up">
       <span class="manifesto-open-quote">"</span>
       <p class="manifesto-quote">
         Estamos na era digital e o mercado imobiliário<br/>
@@ -1067,7 +1097,7 @@
 
   <!-- SERVICES -->
   <section class="services" id="servicos">
-    <div class="services-header">
+    <div class="services-header anim-up">
       <span class="services-eyebrow">O que oferecemos</span>
       <h2 class="services-title">Dois planos.<br/>Um objetivo.</h2>
       <p class="services-desc">Escolha o nível de presença que a sua marca merece no mercado imobiliário.</p>
@@ -1076,7 +1106,7 @@
     <div class="services-grid">
 
       <!-- Plano 01 -->
-      <div class="service-card">
+      <div class="service-card anim-up" style="--d:0ms">
         <span class="service-number">Plano 01</span>
         <h3 class="service-name">Conteúdo Diário</h3>
         <p class="service-tagline">Domine a atenção do seu cliente todos os dias com uma presença profissional.</p>
@@ -1121,7 +1151,7 @@
       </div>
 
       <!-- Plano 02 -->
-      <div class="service-card highlighted">
+      <div class="service-card highlighted anim-up" style="--d:120ms">
         <span class="service-badge">Mais completo</span>
         <span class="service-number">Plano 02</span>
         <h3 class="service-name">Alta Performance com site</h3>
@@ -1279,7 +1309,7 @@
 
   <!-- CTA FINAL -->
   <section id="contato" class="cta-section">
-    <div class="cta-inner">
+    <div class="cta-inner anim-up">
       <h2 class="cta-title">Pronto para dominar<br/>o seu <em>mercado</em>?</h2>
       <p class="cta-desc">Fale com a nossa equipe agora mesmo e dê o próximo passo para construir a sua autoridade imobiliária.</p>
       <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Grupo%20Captar." target="_blank" class="cta-btn">
@@ -1363,14 +1393,19 @@
       navbar.classList.toggle('scrolled', window.scrollY > 20);
     });
 
-    // Animate feature cards on scroll
+    // Animate elements on scroll
     (function(){
-      const cards = document.querySelectorAll('.feat-card');
-      if(!cards.length) return;
       const obs = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+        entries.forEach(e => {
+          if(e.isIntersecting){
+            e.target.classList.add('visible', 'in');
+            obs.unobserve(e.target);
+          }
+        });
       }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-      cards.forEach(c => obs.observe(c));
+
+      document.querySelectorAll('.feat-card').forEach(el => obs.observe(el));
+      document.querySelectorAll('.anim-up, .anim-left, .anim-right').forEach(el => obs.observe(el));
     })();
 
     // Smooth anchor offset for fixed nav
