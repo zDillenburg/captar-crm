@@ -986,7 +986,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         <span class="nav-badge" id="nav-badge-pag" style="background:#ef4444;display:none">0</span>
       </button>
       <div class="nav-section-label">Análise</div>
-      <button class="nav-item" onclick="navigate('financiamento',this)" style="background:rgba(133,2,119,.12);color:var(--pl);font-weight:700;border:1px solid rgba(133,2,119,.25)">
+      <button class="nav-item" onclick="navigate('financiamento',this)">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/><line x1="12" y1="1" x2="12" y2="3"/></svg>
         Calculadora
       </button>
@@ -2148,13 +2148,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
               Dados do Financiamento
             </div>
 
+            <!-- Toggle SAC / Price -->
+            <div style="display:flex;gap:6px;margin-bottom:20px;background:var(--bg3);border-radius:8px;padding:4px">
+              <button id="fp-btn-price" onclick="setFPMode('price')" style="flex:1;padding:7px;font-size:12px;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:var(--p);color:#fff;transition:all .2s">Tabela Price</button>
+              <button id="fp-btn-sac" onclick="setFPMode('sac')" style="flex:1;padding:7px;font-size:12px;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:transparent;color:var(--t3);transition:all .2s">SAC</button>
+            </div>
+
             <div style="margin-bottom:16px">
               <label class="form-label">💰 Valor do Imóvel (R$)</label>
-              <input class="form-input" id="fp-valor" type="number" placeholder="Ex: 500.000" oninput="calcFP()"/>
+              <input class="form-input" id="fp-valor" type="text" inputmode="numeric" placeholder="Ex: 500.000" oninput="maskFPNum(this);calcFP()"/>
             </div>
             <div style="margin-bottom:16px">
               <label class="form-label">🏦 Entrada (R$)</label>
-              <input class="form-input" id="fp-entrada" type="number" placeholder="Ex: 100.000" oninput="calcFP()"/>
+              <input class="form-input" id="fp-entrada" type="text" inputmode="numeric" placeholder="Ex: 100.000" oninput="maskFPNum(this);calcFP()"/>
             </div>
 
             <!-- Slider de entrada -->
@@ -7508,9 +7514,32 @@ function downloadFile(content,mime,filename){
 }
 
 // ── Calculadora Financiamento (Ferramentas) ─────────
+let _fpMode = 'price';
+function setFPMode(mode){
+  _fpMode = mode;
+  const btnP = document.getElementById('fp-btn-price');
+  const btnS = document.getElementById('fp-btn-sac');
+  if(btnP && btnS){
+    btnP.style.background = mode==='price' ? 'var(--p)' : 'transparent';
+    btnP.style.color      = mode==='price' ? '#fff'     : 'var(--t3)';
+    btnS.style.background = mode==='sac'   ? 'var(--p)' : 'transparent';
+    btnS.style.color      = mode==='sac'   ? '#fff'     : 'var(--t3)';
+  }
+  calcFP();
+}
+function maskFPNum(el){
+  let v = el.value.replace(/\D/g,'');
+  if(v) v = Number(v).toLocaleString('pt-BR');
+  el.value = v;
+}
+function parseFPNum(id){
+  const v = (document.getElementById(id)?.value||'').replace(/\./g,'').replace(',','.');
+  return parseFloat(v)||0;
+}
+
 function calcFP(){
-  const valor   = parseFloat(document.getElementById('fp-valor')?.value)||0;
-  const entrada = parseFloat(document.getElementById('fp-entrada')?.value)||0;
+  const valor   = parseFPNum('fp-valor');
+  const entrada = parseFPNum('fp-entrada');
   const taxaMes = parseFloat(document.getElementById('fp-taxa')?.value)||0;
   const prazo   = parseInt(document.getElementById('fp-prazo')?.value)||0;
   const wrap    = document.getElementById('fp-result-wrap');
@@ -7540,18 +7569,38 @@ function calcFP(){
     wrap.innerHTML=`<div style="background:var(--bg2);border:1px solid rgba(239,68,68,.3);border-radius:var(--r2);padding:28px;text-align:center;color:#ef4444;font-weight:600">A entrada não pode ser maior que o valor do imóvel.</div>`;
     return;
   }
-  const i       = taxaMes/100;
-  const parcela = principal*(i*Math.pow(1+i,prazo))/(Math.pow(1+i,prazo)-1);
-  const total   = parcela*prazo;
-  const juros   = total-principal;
-  const pctJur  = ((juros/principal)*100).toFixed(0);
-  const fmtBRL  = v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const i    = taxaMes/100;
+  const fmtBRL = v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  let parcela, parcelaFinal, total, juros, labelSistema;
+
+  if(_fpMode === 'sac'){
+    const amort  = principal / prazo;
+    parcela      = amort + principal * i;           // 1ª parcela (maior)
+    parcelaFinal = amort + amort * i;               // última parcela (menor)
+    total        = prazo * amort + i * amort * (prazo * (prazo + 1)) / 2;
+    juros        = total - principal;
+    labelSistema = 'SAC';
+  } else {
+    parcela      = principal*(i*Math.pow(1+i,prazo))/(Math.pow(1+i,prazo)-1);
+    parcelaFinal = parcela;
+    total        = parcela*prazo;
+    juros        = total-principal;
+    labelSistema = 'Tabela Price';
+  }
+
+  const pctJur = ((juros/principal)*100).toFixed(0);
+
+  const parcelaInfo = _fpMode==='sac'
+    ? `<div style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1">${fmtBRL(parcela)}</div>
+       <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px">1ª parcela → última: ${fmtBRL(parcelaFinal)}</div>`
+    : `<div style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1">${fmtBRL(parcela)}</div>`;
 
   wrap.innerHTML=`
     <div style="background:linear-gradient(135deg,#1a0118,#3d0138);border-radius:var(--r2);padding:28px;text-align:center;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px">Parcela Mensal</div>
-      <div style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1">${fmtBRL(parcela)}</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:8px">${prazo} parcelas · Tabela Price</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px">${_fpMode==='sac'?'1ª Parcela':'Parcela Mensal'}</div>
+      ${parcelaInfo}
+      <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:8px">${prazo} parcelas · ${labelSistema}</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center">
