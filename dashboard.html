@@ -5681,6 +5681,7 @@ async function renderAdmin(){
 
   const fmtBRL = v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
   const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const mesAtual = hoje.getMonth(), anoAtual = hoje.getFullYear();
 
   // KPIs
   const total     = ASSINATURAS.length;
@@ -5742,12 +5743,23 @@ function renderAdmTabela(){
       <td style="font-size:12px;color:var(--t3)">${diaStr}</td>
       <td style="font-size:12px;color:var(--t3)">${escHTML(a.inicio||'—')}</td>
       <td><span class="pmt-badge ${s.cls}">${s.lbl}</span></td>
-      <td style="text-align:center;white-space:nowrap">
-        <button class="btn-add" style="padding:5px 12px;font-size:11px;margin-right:6px" onclick="openAdmModal('${escHTML(String(a.id))}')">Editar</button>
+      <td style="text-align:center;white-space:nowrap;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center">
+        ${a.status!=='pago'?`<button onclick="confirmarPagamentoAdmin('${escHTML(String(a.id))}')" style="padding:5px 10px;font-size:11px;font-weight:700;background:#22c55e;color:#fff;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:4px" title="Confirmar pagamento">✅ Pago</button>`:''}
+        <button class="btn-add" style="padding:5px 10px;font-size:11px" onclick="openAdmModal('${escHTML(String(a.id))}')">Editar</button>
         <button class="btn-del" onclick="confirmDeleteAss('${escHTML(String(a.id))}','${escHTML(a.nome)}')">Apagar</button>
       </td>
     </tr>`;
   }).join('');
+}
+
+async function confirmarPagamentoAdmin(id){
+  const hoje = new Date().toISOString().slice(0,10);
+  const {error} = await _sb.from('assinaturas')
+    .update({status:'pago', ultimo_pagamento: hoje})
+    .eq('id', id);
+  if(error){ showToast('Erro ao confirmar: '+error.message,'error'); return; }
+  showToast('✅ Pagamento confirmado!','success');
+  await renderAdmin();
 }
 
 function filtrarAdminTabela(){
@@ -5877,6 +5889,14 @@ function renderAdminGeral(){
   const atrasados=ASSINATURAS.filter(a=>a.status==='atrasado'||a.status==='pendente');
   const bloqueados=ASSINATURAS.filter(a=>a.bloqueado);
   const receita  =emDia.reduce((s,a)=>s+(Number(a.valor)||0),0);
+  // Receita confirmada = clientes com ultimo_pagamento no mês atual
+  const hoje=new Date();
+  const mesAtual=hoje.getMonth(), anoAtual=hoje.getFullYear();
+  const receitaConfirmada=ASSINATURAS.filter(a=>{
+    if(!a.ultimo_pagamento) return false;
+    const d=new Date(a.ultimo_pagamento);
+    return d.getMonth()===mesAtual && d.getFullYear()===anoAtual;
+  }).reduce((s,a)=>s+(Number(a.valor)||0),0);
   // KPIs principais
   document.getElementById('adm-total').textContent     =ASSINATURAS.length;
   document.getElementById('adm-em-dia').textContent    =emDia.length;
@@ -5888,7 +5908,7 @@ function renderAdminGeral(){
   const avEl=document.getElementById('adm-avisos-ativos');
   if(avEl) avEl.textContent=AVISOS.filter(a=>a.ativo).length;
   const rtEl=document.getElementById('adm-receita-total');
-  if(rtEl) rtEl.textContent=fmtBRL(receita);
+  if(rtEl) rtEl.textContent=fmtBRL(receitaConfirmada);
   // Alertas
   const alertWrap=document.getElementById('adm-alert-wrap');
   if(alertWrap){
