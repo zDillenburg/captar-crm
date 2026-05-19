@@ -1,4 +1,4 @@
-const CACHE = 'captar-crm-v1';
+const CACHE = 'captar-crm-v8';
 const STATIC = [
   '/dashboard.html',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap',
@@ -19,6 +19,23 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   if (e.request.url.includes('supabase.co')) return; // never cache API calls
+
+  // dashboard.html e index.html: network-first — sempre busca o mais recente
+  const isHTML = e.request.url.endsWith('.html') || e.request.url.endsWith('/');
+  if (isHTML) {
+    e.respondWith(
+      fetch(e.request).then(res => {
+        if (res && res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => caches.match(e.request)) // fallback para cache se offline
+    );
+    return;
+  }
+
+  // Demais assets (fontes, libs): cache-first
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
       if (res && res.status === 200 && res.type === 'basic') {
