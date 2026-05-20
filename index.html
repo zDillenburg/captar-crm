@@ -1084,25 +1084,29 @@
     /* ── STATS BAR ── */
     .stats-bar {
       background: var(--gray-dark);
-      padding: 56px max(5%, calc((100% - 1440px) / 2));
+      padding: 52px max(5%, calc((100% - 1440px) / 2));
       position: relative;
       overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .stats-bar::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 70% 150% at 50% 50%, rgba(133,2,119,0.12) 0%, transparent 70%);
+      background: radial-gradient(ellipse 80% 200% at 50% 50%, rgba(133,2,119,0.10) 0%, transparent 65%);
       pointer-events: none;
     }
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       position: relative;
+      max-width: 960px;
+      margin: 0 auto;
     }
     .stat-item {
       text-align: center;
-      padding: 16px 24px;
+      padding: 20px 24px;
       position: relative;
     }
     .stat-item:not(:last-child)::after {
@@ -1110,30 +1114,45 @@
       position: absolute;
       right: 0; top: 15%; bottom: 15%;
       width: 1px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.07);
     }
     .stat-number {
-      font-size: clamp(36px, 5vw, 60px);
-      font-weight: 800;
-      letter-spacing: -.04em;
+      font-size: clamp(38px, 5vw, 64px);
+      font-weight: 900;
+      letter-spacing: -.05em;
       color: var(--purple-light);
       line-height: 1;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       display: block;
     }
     .stat-label {
-      font-size: 13px;
-      color: rgba(255,253,234,0.5);
-      font-weight: 400;
+      font-size: 11px;
+      color: rgba(255,253,234,0.4);
+      font-weight: 600;
       line-height: 1.4;
+      letter-spacing: .08em;
+      text-transform: uppercase;
     }
     @media (max-width: 768px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0;
+      }
       .stat-item:nth-child(2)::after { display: none; }
+      .stat-item:nth-child(3)::after { display: none; }
+      .stat-item:nth-child(1),
+      .stat-item:nth-child(2) {
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        padding-bottom: 28px;
+      }
+      .stat-item:nth-child(3),
+      .stat-item:nth-child(4) {
+        padding-top: 28px;
+      }
     }
-    @media (max-width: 400px) {
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .stats-bar { padding: 48px 20px; }
+    @media (max-width: 480px) {
+      .stats-bar { padding: 40px 24px; }
+      .stat-number { font-size: 40px; }
     }
 
     /* ── DASHBOARD MOCKUP ── */
@@ -1537,43 +1556,21 @@
   <!-- STATS BAR -->
   <section class="stats-bar" id="stats-bar">
     <div class="stats-grid">
-      <div class="stat-item">
+      <div class="stat-item anim-up" style="--d:0ms">
         <span class="stat-number" data-target="7" data-suffix=" dias">0</span>
         <span class="stat-label">Para você ter resultados</span>
       </div>
-      <div class="stat-item">
+      <div class="stat-item anim-up" style="--d:100ms">
         <span class="stat-number" data-target="100" data-suffix="%">0</span>
         <span class="stat-label">Digital e automatizado</span>
       </div>
-      <div class="stat-item">
-        <span class="stat-number" data-target="2" data-suffix=" planos">0</span>
-        <span class="stat-label">Para qualquer tamanho</span>
+      <div class="stat-item anim-up" style="--d:200ms">
+        <span class="stat-number" data-target="2">0</span>
+        <span class="stat-label">Planos disponíveis</span>
       </div>
-      <div class="stat-item">
+      <div class="stat-item anim-up" style="--d:300ms">
         <span class="stat-number" data-target="24" data-suffix="h">0</span>
         <span class="stat-label">Suporte disponível</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- STATS BAR -->
-  <section id="stats-bar" style="background:var(--gray-dark);padding:48px max(5%,calc((100% - 1440px)/2));border-top:1px solid rgba(255,255,255,.05)">
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;max-width:900px;margin:0 auto" class="stats-grid">
-      <div class="stat-item anim-up" style="--d:0ms;text-align:center;padding:0 32px;border-right:1px solid rgba(255,255,255,.08)">
-        <div class="stat-num" data-target="7" style="font-size:clamp(36px,5vw,56px);font-weight:900;color:var(--purple-light);letter-spacing:-.03em;line-height:1">0</div>
-        <div style="font-size:12px;color:rgba(255,253,234,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:6px;font-weight:600">dias para resultado</div>
-      </div>
-      <div class="stat-item anim-up" style="--d:100ms;text-align:center;padding:0 32px;border-right:1px solid rgba(255,255,255,.08)">
-        <div class="stat-num" data-target="100" data-suffix="%" style="font-size:clamp(36px,5vw,56px);font-weight:900;color:var(--purple-light);letter-spacing:-.03em;line-height:1">0</div>
-        <div style="font-size:12px;color:rgba(255,253,234,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:6px;font-weight:600">digital e automatizado</div>
-      </div>
-      <div class="stat-item anim-up" style="--d:200ms;text-align:center;padding:0 32px;border-right:1px solid rgba(255,255,255,.08)">
-        <div class="stat-num" data-target="2" style="font-size:clamp(36px,5vw,56px);font-weight:900;color:var(--purple-light);letter-spacing:-.03em;line-height:1">0</div>
-        <div style="font-size:12px;color:rgba(255,253,234,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:6px;font-weight:600">planos disponíveis</div>
-      </div>
-      <div class="stat-item anim-up" style="--d:300ms;text-align:center;padding:0 32px">
-        <div style="font-size:clamp(36px,5vw,56px);font-weight:900;color:var(--purple-light);letter-spacing:-.03em;line-height:1">24h</div>
-        <div style="font-size:12px;color:rgba(255,253,234,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:6px;font-weight:600">suporte disponível</div>
       </div>
     </div>
   </section>
