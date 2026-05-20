@@ -8,8 +8,8 @@
 <meta property="og:title" content="Grupo Captar"/>
 <meta property="og:description" content="Soluções completas para o mercado imobiliário em todo o Brasil. A plataforma que está revolucionando o setor imobiliário nacional."/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://www.grupocaptar.com.br"/>
-<meta property="og:image" content="https://www.grupocaptar.com.br/background1.webp"/>
+<meta property="og:url" content="https://grupocaptar.com.br"/>
+<meta property="og:image" content="https://grupocaptar.com.br/background1.webp"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="Grupo Captar"/>
 <meta name="twitter:description" content="Soluções completas para o mercado imobiliário em todo o Brasil. A plataforma que está revolucionando o setor imobiliário nacional."/>
@@ -23,9 +23,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js" defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -922,11 +922,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
     </div>
     <div class="form-group">
       <label class="form-label">E-mail</label>
-      <input class="form-input" type="email" id="login-email" placeholder="corretor@email.com"/>
+      <input class="form-input" type="email" id="login-email" placeholder="corretor@email.com" autocomplete="email"/>
     </div>
     <div class="form-group">
       <label class="form-label">Senha</label>
-      <input class="form-input" type="password" id="login-pass" placeholder="••••••••" oninput="onPasswordInput(this.value)"/>
+      <input class="form-input" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" oninput="onPasswordInput(this.value)"/>
       <div class="pwd-strength" id="pwd-strength">
         <div class="pwd-strength-bar">
           <span id="ps1"></span><span id="ps2"></span><span id="ps3"></span><span id="ps4"></span><span id="ps5"></span>
