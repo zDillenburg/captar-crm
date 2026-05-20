@@ -1124,6 +1124,7 @@
       line-height: 1;
       margin-bottom: 10px;
       display: block;
+      white-space: nowrap;
     }
     .stat-label {
       font-size: 11px;
@@ -1138,8 +1139,11 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 0;
       }
+      /* item 2 é o último da linha 1 — sem divider à direita */
       .stat-item:nth-child(2)::after { display: none; }
-      .stat-item:nth-child(3)::after { display: none; }
+      /* item 4 é o último da linha 2 — sem divider à direita (já é :last-child, mas garantimos) */
+      .stat-item:nth-child(4)::after { display: none; }
+      /* Separador horizontal entre linha 1 e linha 2 */
       .stat-item:nth-child(1),
       .stat-item:nth-child(2) {
         border-bottom: 1px solid rgba(255,255,255,0.07);
@@ -1151,8 +1155,8 @@
       }
     }
     @media (max-width: 480px) {
-      .stats-bar { padding: 40px 24px; }
-      .stat-number { font-size: 40px; }
+      .stats-bar { padding: 40px 20px; }
+      .stat-number { font-size: clamp(28px, 9vw, 40px); }
     }
 
     /* ── DASHBOARD MOCKUP ── */
@@ -2318,8 +2322,10 @@
       }
       /* Empurra botão de back-to-top para cima da barra */
       #back-to-top { bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
-      /* Empurra FAB WhatsApp para cima também */
-      .whatsapp-fab { bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+      /* Oculta o FAB de WhatsApp no mobile — CTA bar já tem o botão */
+      .whatsapp-fab { display: none !important; }
+      /* Garante que o footer não fique escondido sob a barra */
+      footer { padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important; }
     }
 
     .whatsapp-fab {
