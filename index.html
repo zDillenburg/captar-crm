@@ -1557,20 +1557,20 @@
   <section class="stats-bar" id="stats-bar">
     <div class="stats-grid">
       <div class="stat-item anim-up" style="--d:0ms">
-        <span class="stat-number" data-target="7" data-suffix=" dias">0</span>
-        <span class="stat-label">Para você ter resultados</span>
+        <span class="stat-number" data-prefix="+" data-target="300">0</span>
+        <span class="stat-label">Corretores ativos</span>
       </div>
       <div class="stat-item anim-up" style="--d:100ms">
         <span class="stat-number" data-target="100" data-suffix="%">0</span>
         <span class="stat-label">Digital e automatizado</span>
       </div>
       <div class="stat-item anim-up" style="--d:200ms">
-        <span class="stat-number" data-target="2">0</span>
-        <span class="stat-label">Planos disponíveis</span>
+        <span class="stat-number" data-prefix="R$&nbsp;" data-target="500" data-suffix="M">0</span>
+        <span class="stat-label">Em negócios fechados</span>
       </div>
       <div class="stat-item anim-up" style="--d:300ms">
-        <span class="stat-number" data-target="24" data-suffix="h">0</span>
-        <span class="stat-label">Suporte disponível</span>
+        <span class="stat-number" data-target="27">0</span>
+        <span class="stat-label">Estados atendidos</span>
       </div>
     </div>
   </section>
@@ -2168,13 +2168,14 @@
             const el = e.target;
             const target = parseInt(el.dataset.target, 10);
             const suffix = el.dataset.suffix || '';
+            const prefix = el.dataset.prefix || '';
             const duration = 1200;
             const start = performance.now();
             function update(now){
               const elapsed = now - start;
               const progress = Math.min(elapsed / duration, 1);
               const ease = 1 - Math.pow(1 - progress, 3);
-              el.textContent = Math.round(ease * target) + suffix;
+              el.innerHTML = prefix + Math.round(ease * target) + suffix;
               if(progress < 1) requestAnimationFrame(update);
             }
             requestAnimationFrame(update);
@@ -2236,6 +2237,18 @@
     }
   </script>
 
+  <!-- Mobile CTA Bar (mobile only) -->
+  <div class="mobile-cta-bar" aria-label="Ações rápidas">
+    <a href="dashboard.html" class="mobile-cta-btn mobile-cta-enter">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Entrar no Painel
+    </a>
+    <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Grupo%20Captar." target="_blank" rel="noopener noreferrer" class="mobile-cta-btn mobile-cta-whatsapp">
+      <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm7.27 20.13c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>
+      WhatsApp
+    </a>
+  </div>
+
   <!-- Back to top button -->
   <button id="back-to-top" aria-label="Voltar ao topo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
@@ -2264,6 +2277,51 @@
   </a>
 
   <style>
+    /* ── MOBILE CTA BAR ── */
+    .mobile-cta-bar { display: none; }
+    @media (max-width: 768px) {
+      .mobile-cta-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        z-index: 98;
+        background: rgba(23,20,16,0.97);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding: 10px 16px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        gap: 10px;
+      }
+      .mobile-cta-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 13px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        letter-spacing: .02em;
+        transition: opacity .15s, transform .15s;
+      }
+      .mobile-cta-btn:active { opacity: .85; transform: scale(.97); }
+      .mobile-cta-enter {
+        background: var(--purple);
+        color: #fff;
+      }
+      .mobile-cta-whatsapp {
+        background: #25D366;
+        color: #fff;
+      }
+      /* Empurra botão de back-to-top para cima da barra */
+      #back-to-top { bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+      /* Empurra FAB WhatsApp para cima também */
+      .whatsapp-fab { bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+    }
+
     .whatsapp-fab {
       position: fixed;
       bottom: 28px;

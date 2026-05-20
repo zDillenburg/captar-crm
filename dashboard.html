@@ -1087,6 +1087,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 
       <!-- ══════ DASHBOARD PAGE ══════ -->
       <div class="page active" id="page-dashboard">
+        <!-- Overdue Alert Banner -->
+        <div id="overdue-banner" style="display:none;margin-bottom:20px;padding:13px 18px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:8px;cursor:pointer;align-items:center;gap:14px;transition:background .2s" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1])" onmouseenter="this.style.background='rgba(245,158,11,.14)'" onmouseleave="this.style.background='rgba(245,158,11,.08)'">
+          <span style="font-size:20px;flex-shrink:0">⚠️</span>
+          <div style="flex:1;min-width:0">
+            <div id="overdue-banner-text" style="font-size:13px;font-weight:700;color:#f59e0b"></div>
+            <div style="font-size:11px;color:var(--t3);margin-top:2px">Clique para ver no CRM e retomar o contato</div>
+          </div>
+          <svg width="16" height="16" fill="none" stroke="#f59e0b" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
         <!-- KPI Cards -->
         <div class="kpi-grid">
           <div class="kpi-card">
@@ -8147,6 +8156,17 @@ function updateLeadsSemResposta(){
   const card=document.getElementById('kpi-sem-resposta-card');
   if(card){
     card.style.borderColor=semResposta.length>0?'rgba(245,158,11,.4)':'rgba(255,255,255,.07)';
+  }
+  // Overdue banner
+  const banner=document.getElementById('overdue-banner');
+  const bannerText=document.getElementById('overdue-banner-text');
+  if(banner&&bannerText){
+    if(semResposta.length>0){
+      bannerText.textContent=`${semResposta.length} lead${semResposta.length>1?'s':''} sem resposta há mais de 3 dias`;
+      banner.style.display='flex';
+    } else {
+      banner.style.display='none';
+    }
   }
 }
 
