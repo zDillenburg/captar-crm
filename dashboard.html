@@ -303,6 +303,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
 .modal-overlay.open{opacity:1;visibility:visible}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:32px;width:100%;max-width:480px;transform:translateY(16px);transition:transform .25s;max-height:90vh;overflow-y:auto}
+/* modal-box é alias de .modal para modais mais simples */
+.modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:480px;transform:translateY(16px);transition:transform .25s;max-height:90vh;overflow-y:auto}
+.modal-overlay.open .modal-box{transform:translateY(0)}
+/* Campos dentro de modal-box */
+.modal-body{display:flex;flex-direction:column;gap:14px}
+.modal-label{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.modal-input{width:100%;padding:11px 14px;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--t1);font-family:inherit;outline:none;transition:border-color .2s}
+.modal-input:focus{border-color:var(--p)}
+.modal-input::placeholder{color:var(--t3)}
 .modal-overlay.open .modal{transform:translateY(0)}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
 .modal-title{font-size:17px;font-weight:700;color:var(--t1)}
@@ -317,7 +326,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .btn-submit:hover{background:var(--pl)}
 
 /* ══════════════════════ TOASTS ══════════════════════ */
-.toast-container{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;gap:10px}
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:600;display:flex;flex-direction:column;gap:10px}
 .toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:12px 18px;font-size:13px;color:var(--t1);box-shadow:0 8px 24px rgba(0,0,0,.5);animation:slideUp .25s ease;display:flex;align-items:center;gap:10px}
 .toast.success{border-left:3px solid var(--green)}
 .toast.error{border-left:3px solid var(--red)}
@@ -1238,7 +1247,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <button class="chip" onclick="setLeadFilter('site',this)">Site</button>
             <button class="chip" onclick="setLeadFilter('indicacao',this)">Indicação</button>
           </div>
-          <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos por transação" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--bdr);background:var(--s2);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
+          <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos por transação" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
             📋 Checklist
           </button>
           <button class="btn-add" onclick="openModal()">
@@ -1274,7 +1283,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <button class="chip im-status-chip" onclick="setImStatusFilter('negociação',this)">Negociação</button>
             <button class="chip im-status-chip" onclick="setImStatusFilter('vendido',this)">Vendido</button>
           </div>
-          <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--bdr);background:var(--s2);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
+          <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
             📋 Docs
           </button>
           <button class="btn-add" onclick="document.getElementById('modal-imovel-add').classList.add('open')">
@@ -3580,6 +3589,8 @@ const pageMeta={
   ferramentas:{title:'Ferramentas',sub:'Exportar dados, calculadoras e utilidades'},
   contratos:{title:'Contratos',sub:'Gerar contratos e documentos imobiliários prontos'},
   financiamento:{title:'Calculadora de Financiamento',sub:'Simule parcelas, juros e total pago — Tabela Price'},
+  corretores:{title:'Corretores',sub:'Equipe de corretores cadastrados'},
+  loteamentos:{title:'Loteamentos',sub:'Empreendimentos e gestão de lotes'},
 };
 
 function navigate(page, btn){
@@ -4186,7 +4197,7 @@ function showToast(msg,type='success'){
   const c=document.getElementById('toast-container');
   const t=document.createElement('div');
   t.className=`toast ${type}`;
-  t.innerHTML=`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">${type==='success'?'<polyline points="20,6 9,17 4,12"/>':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}</svg>${msg}`;
+  t.innerHTML=`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">${type==='success'?'<polyline points="20,6 9,17 4,12"/>':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}</svg>${escHTML(msg)}`;
   c.appendChild(t);
   setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(8px)';t.style.transition='all .3s';setTimeout(()=>t.remove(),300);},3000);
 }
@@ -5793,11 +5804,9 @@ function copyPixKey(){
 function isAdmin(){
   if(!_currentUser)return false;
   // app_metadata só pode ser escrito pelo service role (seguro)
+  // user_metadata pode ser alterado pelo próprio usuário — NÃO usar para autorização
   const appMeta=_currentUser.app_metadata||{};
-  if(appMeta.role==='admin') return true;
-  // fallback: user_metadata para compatibilidade com configurações antigas
-  const userMeta=_currentUser.user_metadata||{};
-  return userMeta.role==='admin'||userMeta.is_admin===true;
+  return appMeta.role==='admin';
 }
 
 // Array local com todas as assinaturas (admin vê tudo via RLS)
@@ -6662,7 +6671,7 @@ function setChecklistTipo(tipo,btn){
 
 function renderChecklistItems(){
   const items=CHECKLISTS[_ckTipo]||[];
-  const saved=JSON.parse(localStorage.getItem(`ck_${_ckId}_${_ckTipo}`)||'{}');
+  let saved;try{saved=JSON.parse(localStorage.getItem(`ck_${_ckId}_${_ckTipo}`)||'{}');}catch(e){saved={};}
   const done=items.filter((_,i)=>saved[i]).length;
   document.getElementById('ck-progress-label').textContent=`${done} de ${items.length} concluídos`;
   document.getElementById('ck-prog-fill').style.width=items.length>0?Math.round(done/items.length*100)+'%':'0%';
@@ -6677,7 +6686,7 @@ function renderChecklistItems(){
 
 function toggleCkItem(idx,checked){
   const key=`ck_${_ckId}_${_ckTipo}`;
-  const saved=JSON.parse(localStorage.getItem(key)||'{}');
+  let saved;try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};}
   if(checked)saved[idx]=true;else delete saved[idx];
   localStorage.setItem(key,JSON.stringify(saved));
   renderChecklistItems();
@@ -6766,7 +6775,7 @@ function setVistoriaMode(mode){
 
 function renderVistoriaItems(){
   const key=`vistoria_${_vistoriaLocId}_${_vistoriaMode}`;
-  const saved=JSON.parse(localStorage.getItem(key)||'{}');
+  let saved;try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};}
   document.getElementById('vis-items').innerHTML=VISTORIA_ITENS.map((item,i)=>{
     const est=saved[i]?.estado||'';
     const obs=saved[i]?.obs||'';
@@ -6782,7 +6791,7 @@ function renderVistoriaItems(){
 
 function setVistoriaEstado(idx,estado,clsIdx){
   const key=`vistoria_${_vistoriaLocId}_${_vistoriaMode}`;
-  const saved=JSON.parse(localStorage.getItem(key)||'{}');
+  let saved;try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};}
   if(!saved[idx])saved[idx]={};
   saved[idx].estado=estado;
   localStorage.setItem(key,JSON.stringify(saved));
@@ -6793,7 +6802,7 @@ function setVistoriaEstado(idx,estado,clsIdx){
 
 function saveVistoriaObs(idx,obs){
   const key=`vistoria_${_vistoriaLocId}_${_vistoriaMode}`;
-  const saved=JSON.parse(localStorage.getItem(key)||'{}');
+  let saved;try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};}
   if(!saved[idx])saved[idx]={};
   saved[idx].obs=obs;
   localStorage.setItem(key,JSON.stringify(saved));
@@ -7311,7 +7320,7 @@ function calcFinanciamento(){
       <span class="calc-result-lbl">Total de juros</span>
       <span class="calc-result-val" style="color:#f87171">${fmtBR(totalJuros)}</span>
     </div>
-    <div class="calc-nota">💡 Taxa ${taxaMes}% a.m. = ${(((1+taxaMes/100)**12)-1*100).toFixed(2)}% a.a. · Renda mínima sugerida: ${fmtBR(parcela/0.3)} (regra dos 30%)</div>`;
+    <div class="calc-nota">💡 Taxa ${taxaMes}% a.m. = ${(((1+taxaMes/100)**12-1)*100).toFixed(2)}% a.a. · Renda mínima sugerida: ${fmtBR(parcela/0.3)} (regra dos 30%)</div>`;
 }
 
 document.getElementById('modal-calc').addEventListener('click',e=>{if(e.target===document.getElementById('modal-calc'))document.getElementById('modal-calc').classList.remove('open');});
