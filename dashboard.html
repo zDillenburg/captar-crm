@@ -36,6 +36,20 @@
   --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;
   --sw:260px;--th:64px;--r:8px;--r2:12px;
 }
+/* ── LIGHT MODE ── */
+body.light-mode{
+  --bg:#f0f0f0;--bg2:#ffffff;--bg3:#f5f5f5;--bg4:#e8e8e8;
+  --t1:#111111;--t2:#333333;--t3:#666666;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+}
+body.light-mode .sidebar{background:#ffffff;border-right-color:rgba(0,0,0,0.1)}
+body.light-mode .topbar{background:#ffffff;border-bottom-color:rgba(0,0,0,0.1)}
+body.light-mode .topbar-btn{background:#f0f0f0;border-color:rgba(0,0,0,0.1);color:#333}
+body.light-mode .kpi-card,body.light-mode .chart-card,body.light-mode .section-card,body.light-mode .kanban-column{background:#ffffff;border-color:rgba(0,0,0,0.1)}
+body.light-mode .nav-item{color:#555}
+body.light-mode .nav-item:hover{background:#f0f0f0;color:#111}
+body.light-mode .nav-item.active{background:rgba(133,2,119,.1);color:var(--p)}
+
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
@@ -120,7 +134,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── KPI GRID ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-bottom:24px}
 .kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:22px 22px 18px;transition:border-color .2s,box-shadow .2s;overflow:hidden;position:relative;min-width:0}
 .kpi-card:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,.3)}
 .kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
@@ -530,6 +544,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .fin-balance-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,#850277,#22c55e);transition:width 1.2s ease}
 
 /* ══════════════════════ RESPONSIVE ══════════════════════ */
+@media(max-width:1400px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+}
 @media(max-width:1200px){
   .kpi-grid{grid-template-columns:repeat(2,1fr)}
   .charts-grid{grid-template-columns:1fr}
@@ -1040,6 +1057,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         <div class="topbar-page-sub" id="page-sub">Visão geral</div>
       </div>
       <div class="topbar-actions">
+        <button class="topbar-btn no-print" id="theme-toggle-btn" title="Alternar tema" onclick="toggleTheme()" style="font-size:16px;line-height:1">🌙</button>
         <div class="topbar-btn no-print" title="Notificações" onclick="toggleNotif(event)" id="notif-btn">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
           <span class="notif-dot" id="notif-dot"></span>
@@ -1055,9 +1073,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <button class="notif-footer-btn" onclick="closeNotif()">Ver todas as notificações →</button>
           </div>
         </div>
-        <div class="topbar-btn no-print" title="Busca global (Ctrl+K)" onclick="openSearch()" style="display:flex;align-items:center;gap:6px;width:auto;padding:0 10px;min-width:36px">
+        <div class="topbar-btn no-print" title="Busca global (⌘K)" onclick="openSearch()" style="display:flex;align-items:center;gap:6px;width:auto;padding:0 10px;min-width:36px">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <span style="font-size:11px;color:var(--t3);display:none" class="search-shortcut-hint">Ctrl+K</span>
+          <span style="font-size:10px;color:var(--t3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:1px 5px;letter-spacing:.02em;font-weight:600">⌘K</span>
         </div>
         <div class="topbar-avatar" title="Perfil">MR</div>
       </div>
@@ -1112,6 +1130,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <div class="kpi-value" id="kpi-imoveis">0</div>
             <div class="kpi-label">Imóveis Ativos</div>
             <div class="kpi-sparkline" id="spark-imoveis"></div>
+          </div>
+          <div class="kpi-card" id="kpi-sem-resposta-card" style="cursor:pointer;border-color:rgba(245,158,11,.25)" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1])">
+            <div class="kpi-top">
+              <div class="kpi-icon" style="background:rgba(245,158,11,.12)">
+                <svg fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <span class="kpi-trend down" style="font-size:10px">+3 dias</span>
+            </div>
+            <div class="kpi-value" id="kpi-sem-resposta" style="color:#f59e0b">0</div>
+            <div class="kpi-label">Leads sem resposta</div>
           </div>
         </div>
 
@@ -6152,6 +6180,7 @@ function renderAvisos(){
           <span style="font-size:14px;font-weight:700;color:var(--t1)">${escHTML(a.titulo)}</span>
           <span class="aviso-tipo ${t.cls}">${t.lbl}</span>
           ${a.ativo?'<span style="font-size:10px;color:#4ade80;font-weight:700;letter-spacing:.05em">● ATIVO</span>':'<span style="font-size:10px;color:var(--t3);font-weight:700">○ Inativo</span>'}
+          <span style="font-size:10px;color:var(--t3);margin-left:4px">👁 ${a.leituras||0} leitura${(a.leituras||0)===1?'':'s'}</span>
         </div>
         <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px">${escHTML(a.mensagem||'')}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -8064,6 +8093,296 @@ function imprimirContrato(){
   <body>${texto.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}<script>window.onload=()=>window.print()<\/script></body></html>`);
   w.document.close();
 }
+
+// ─────────────────────────────────────────
+// DARK / LIGHT MODE TOGGLE
+// ─────────────────────────────────────────
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light-mode');
+  localStorage.setItem('captar_theme', isLight ? 'light' : 'dark');
+  const btn=document.getElementById('theme-toggle-btn');
+  if(btn) btn.textContent=isLight?'☀️':'🌙';
+}
+function initTheme(){
+  const saved=localStorage.getItem('captar_theme');
+  if(saved==='light'){
+    document.body.classList.add('light-mode');
+    const btn=document.getElementById('theme-toggle-btn');
+    if(btn) btn.textContent='☀️';
+  }
+}
+// Apply theme immediately to avoid flash
+initTheme();
+
+// ─────────────────────────────────────────
+// CMD+K / CTRL+K GLOBAL SEARCH SHORTCUT
+// ─────────────────────────────────────────
+document.addEventListener('keydown',function(e){
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){
+    e.preventDefault();
+    openSearch();
+  }
+  if(e.key==='Escape'){
+    closeSearch(null);
+  }
+});
+
+// ─────────────────────────────────────────
+// KPI: LEADS SEM RESPOSTA (+3 DIAS)
+// ─────────────────────────────────────────
+function updateLeadsSemResposta(){
+  if(!window.LEADS_DATA) return;
+  const now=Date.now();
+  const tres=3*24*60*60*1000;
+  const semResposta=LEADS_DATA.filter(l=>{
+    if(l.coluna==='fechado'||l.coluna==='perdido') return false;
+    const updated=l.updated_at||l.created_at;
+    if(!updated) return false;
+    return (now - new Date(updated).getTime()) > tres;
+  });
+  const el=document.getElementById('kpi-sem-resposta');
+  if(el) el.textContent=semResposta.length;
+  const card=document.getElementById('kpi-sem-resposta-card');
+  if(card){
+    card.style.borderColor=semResposta.length>0?'rgba(245,158,11,.4)':'rgba(255,255,255,.07)';
+  }
+}
+
+// ─────────────────────────────────────────
+// LEAD HISTORY (in-memory)
+// ─────────────────────────────────────────
+const LEAD_HISTORY={};
+function registrarEventoLead(id,texto,icone){
+  if(!id) return;
+  const sid=String(id);
+  if(!LEAD_HISTORY[sid]) LEAD_HISTORY[sid]=[];
+  LEAD_HISTORY[sid].unshift({
+    icone: icone||'📝',
+    texto: texto,
+    data: new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})
+  });
+}
+function renderHistoricoLead(id){
+  const sid=String(id);
+  const hist=LEAD_HISTORY[sid]||[];
+  if(!hist.length) return '<div style="font-size:12px;color:var(--t3);padding:8px 0">Nenhuma atividade registrada.</div>';
+  return hist.map(h=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+    <span style="font-size:16px;flex-shrink:0">${escHTML(h.icone)}</span>
+    <div>
+      <div style="font-size:13px;color:var(--t1)">${escHTML(h.texto)}</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:2px">${escHTML(h.data)}</div>
+    </div>
+  </div>`).join('');
+}
+
+// Patch openLeadDetail to append history tab
+const _origOpenLeadDetail=typeof openLeadDetail==='function'?openLeadDetail:null;
+function openLeadDetailWithHistory(id){
+  if(_origOpenLeadDetail) _origOpenLeadDetail(id);
+  // Inject history section at the bottom of slide-over body
+  setTimeout(()=>{
+    const body=document.getElementById('lead-detail-body');
+    if(!body) return;
+    const existing=document.getElementById('lead-history-section-'+id);
+    if(existing) return;
+    const div=document.createElement('div');
+    div.className='so-section';
+    div.id='lead-history-section-'+id;
+    div.innerHTML=`<div class="so-section-title">⚡ Histórico de Atividades</div><div id="lead-history-list-${escHTML(String(id))}">${renderHistoricoLead(id)}</div>`;
+    body.appendChild(div);
+  },50);
+}
+
+// Override openLeadDetail globally after DOM ready
+document.addEventListener('DOMContentLoaded',function(){
+  if(typeof openLeadDetail==='function'){
+    window._origOpenLeadDetail=openLeadDetail;
+    window.openLeadDetail=openLeadDetailWithHistory;
+  }
+});
+
+// ─────────────────────────────────────────
+// ONBOARDING GUIADO
+// ─────────────────────────────────────────
+const ONBOARDING_STEPS=[
+  {title:'Bem-vindo ao Grupo Captar CRM! 👋',desc:'Este é o seu painel de gestão imobiliária completo. Aqui você gerencia leads, imóveis, contratos, financeiro e muito mais — tudo em um só lugar.'},
+  {title:'Cadastre seus imóveis primeiro 🏠',desc:'Acesse o menu <strong>Imóveis</strong> na barra lateral para cadastrar seu portfólio. Quanto mais completo, melhor o match com seus leads.',nav:'imoveis'},
+  {title:'Adicione seus leads no CRM 👥',desc:'No menu <strong>CRM</strong> você gerencia seu funil de vendas com drag-and-drop. Organize seus contatos por etapa e acompanhe cada negociação.',nav:'crm'},
+  {title:'Acompanhe pelo Dashboard 📊',desc:'O <strong>Dashboard</strong> mostra seus principais KPIs em tempo real: total de leads, conversões, receita mensal e imóveis ativos.',nav:'dashboard'},
+  {title:'Pronto! Explore à vontade 🚀',desc:'Você está pronto para usar o Grupo Captar CRM. Qualquer dúvida, fale com nossa equipe pelo WhatsApp. Boas vendas!'}
+];
+let _onboardingStep=0;
+
+function showOnboarding(){
+  const overlay=document.getElementById('onboarding-overlay');
+  if(!overlay) return;
+  _onboardingStep=0;
+  renderOnboardingStep();
+  overlay.classList.add('open');
+}
+function closeOnboarding(){
+  const overlay=document.getElementById('onboarding-overlay');
+  if(overlay) overlay.classList.remove('open');
+  localStorage.setItem('captar_onboarding_done','1');
+}
+function renderOnboardingStep(){
+  const step=ONBOARDING_STEPS[_onboardingStep];
+  const total=ONBOARDING_STEPS.length;
+  document.getElementById('onboarding-title').textContent=step.title;
+  document.getElementById('onboarding-desc').innerHTML=step.desc;
+  const dots=document.getElementById('onboarding-dots');
+  if(dots){
+    dots.innerHTML=ONBOARDING_STEPS.map((_,i)=>`<div style="width:8px;height:8px;border-radius:50%;background:${i===_onboardingStep?'var(--p)':'var(--bg4)'};transition:background .2s"></div>`).join('');
+  }
+  const nextBtn=document.getElementById('onboarding-next');
+  if(nextBtn) nextBtn.textContent=_onboardingStep===total-1?'Concluir':'Próximo →';
+  document.getElementById('onboarding-step-indicator').textContent=(_onboardingStep+1)+' / '+total;
+}
+function onboardingNext(){
+  if(_onboardingStep<ONBOARDING_STEPS.length-1){
+    _onboardingStep++;
+    renderOnboardingStep();
+  } else {
+    closeOnboarding();
+  }
+}
+function checkOnboarding(){
+  if(!localStorage.getItem('captar_onboarding_done')){
+    setTimeout(showOnboarding,1500);
+  }
+}
+
+// ─────────────────────────────────────────
+// SUPABASE REALTIME NOTIFICATIONS
+// ─────────────────────────────────────────
+function initRealtimeNotifications(){
+  if(!window._sb) return;
+  try{
+    _sb.channel('avisos-realtime')
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'avisos'},payload=>{
+        showToast('📢 Novo aviso: '+(payload.new.titulo||''),'info',6000);
+        if(typeof loadAvisos==='function') loadAvisos().then(()=>{if(typeof renderAvisos==='function')renderAvisos();});
+      })
+      .subscribe();
+  }catch(e){}
+  try{
+    const uid=_sb.auth.getUser&&_sb.auth.getUser().then&&null;
+    _sb.auth.getSession().then(({data})=>{
+      const userId=data?.session?.user?.id;
+      if(!userId) return;
+      _sb.channel('assinaturas-status-'+userId)
+        .on('postgres_changes',{event:'UPDATE',schema:'public',table:'assinaturas',filter:'user_id=eq.'+userId},payload=>{
+          showToast('ℹ️ Sua assinatura foi atualizada: '+( payload.new.status||''),'info',6000);
+        })
+        .subscribe();
+    }).catch(()=>{});
+  }catch(e){}
+}
+
+// ─────────────────────────────────────────
+// AVISO READ CONFIRMATION
+// ─────────────────────────────────────────
+function marcarAvisoLido(id){
+  if(!id) return;
+  const key='captar_aviso_lido_'+id;
+  if(localStorage.getItem(key)) return;
+  localStorage.setItem(key,'1');
+  // Increment leituras on supabase (fire-and-forget)
+  if(window._sb){
+    _sb.rpc('increment_aviso_leituras',{aviso_id:id}).catch(()=>{
+      // RPC may not exist; fallback: update field directly
+      _sb.from('avisos').select('leituras').eq('id',id).single().then(({data})=>{
+        if(data!==null){
+          const newCount=(data.leituras||0)+1;
+          _sb.from('avisos').update({leituras:newCount}).eq('id',id).then(()=>{}).catch(()=>{});
+        }
+      }).catch(()=>{});
+    });
+  }
+}
+
+// Patch checkUserAvisos to mark avisos as read when shown
+const _origCheckUserAvisos=typeof checkUserAvisos==='function'?checkUserAvisos:null;
+async function checkUserAvisosPatched(){
+  try{
+    const {data}=await _sb.from('avisos').select('*').eq('ativo',true).order('created_at',{ascending:false}).limit(3);
+    if(!data||!data.length) return;
+    const tipoMap={info:'ℹ️',warn:'⚠️',danger:'🔴',success:'✅'};
+    data.forEach((a,i)=>{
+      setTimeout(()=>{
+        showToast(`${tipoMap[a.tipo]||'📢'} ${a.titulo}: ${a.mensagem}`,'success');
+        marcarAvisoLido(a.id);
+      },i*1800);
+    });
+  }catch(e){}
+}
+
+// ─────────────────────────────────────────
+// INIT EXTRAS (called after login)
+// ─────────────────────────────────────────
+function initExtras(){
+  // Override checkUserAvisos
+  window.checkUserAvisos=checkUserAvisosPatched;
+  // Override openLeadDetail to include history
+  if(typeof openLeadDetail==='function'){
+    window._origOpenLeadDetail=openLeadDetail;
+    window.openLeadDetail=openLeadDetailWithHistory;
+  }
+  // Update leads sem resposta KPI (call after data loads)
+  setTimeout(updateLeadsSemResposta,2000);
+  // Start realtime
+  initRealtimeNotifications();
+  // Onboarding
+  checkOnboarding();
+  // Theme
+  initTheme();
+}
+// Hook into post-login flow
+const _origOnAuthStateChange=null;
+document.addEventListener('DOMContentLoaded',function(){
+  // Wait for app to become visible (login done)
+  const appEl=document.getElementById('app');
+  if(appEl){
+    const observer=new MutationObserver(()=>{
+      if(appEl.classList.contains('visible')){
+        observer.disconnect();
+        setTimeout(initExtras,800);
+      }
+    });
+    observer.observe(appEl,{attributes:true,attributeFilter:['class']});
+  }
+});
 </script>
+
+<!-- ONBOARDING OVERLAY -->
+<style>
+.onboarding-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.onboarding-overlay.open{opacity:1;visibility:visible}
+.onboarding-card{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:40px 40px 32px;max-width:480px;width:calc(100% - 40px);box-shadow:0 32px 80px rgba(0,0,0,.6);position:relative}
+.onboarding-card h2{font-size:20px;font-weight:800;color:var(--t1);margin-bottom:14px;letter-spacing:-.02em}
+.onboarding-card p{font-size:14px;color:var(--t2);line-height:1.75;margin-bottom:28px}
+.onboarding-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.onboarding-dots{display:flex;gap:6px;align-items:center}
+.onboarding-btn-next{padding:10px 24px;background:var(--p);color:#fff;font-size:13px;font-weight:600;border:none;border-radius:var(--r);cursor:pointer;transition:background .2s}
+.onboarding-btn-next:hover{background:var(--pl)}
+.onboarding-btn-skip{background:none;border:none;font-size:12px;color:var(--t3);cursor:pointer;padding:4px 8px;border-radius:4px}
+.onboarding-btn-skip:hover{color:var(--t2)}
+.onboarding-step-badge{position:absolute;top:16px;right:16px;font-size:11px;color:var(--t3);background:var(--bg4);padding:3px 9px;border-radius:20px}
+</style>
+<div class="onboarding-overlay" id="onboarding-overlay">
+  <div class="onboarding-card">
+    <span class="onboarding-step-badge" id="onboarding-step-indicator">1 / 5</span>
+    <h2 id="onboarding-title">Bem-vindo ao Grupo Captar CRM! 👋</h2>
+    <p id="onboarding-desc">Este é o seu painel de gestão imobiliária completo.</p>
+    <div class="onboarding-actions">
+      <div class="onboarding-dots" id="onboarding-dots"></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="onboarding-btn-skip" onclick="closeOnboarding()">Pular</button>
+        <button class="onboarding-btn-next" id="onboarding-next" onclick="onboardingNext()">Próximo →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

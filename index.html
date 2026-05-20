@@ -1080,6 +1080,397 @@
       opacity: 1;
       transform: translate(0, 0);
     }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--gray-dark);
+      padding: 56px max(5%, calc((100% - 1440px) / 2));
+      position: relative;
+      overflow: hidden;
+    }
+    .stats-bar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 150% at 50% 50%, rgba(133,2,119,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      position: relative;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 16px 24px;
+      position: relative;
+    }
+    .stat-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 15%; bottom: 15%;
+      width: 1px;
+      background: rgba(255,255,255,0.08);
+    }
+    .stat-number {
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 800;
+      letter-spacing: -.04em;
+      color: var(--purple-light);
+      line-height: 1;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: rgba(255,253,234,0.5);
+      font-weight: 400;
+      line-height: 1.4;
+    }
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2)::after { display: none; }
+    }
+    @media (max-width: 400px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stats-bar { padding: 48px 20px; }
+    }
+
+    /* ── DASHBOARD MOCKUP ── */
+    .dashboard-mockup-wrap {
+      max-width: 900px;
+      margin: 0 auto 64px;
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+    }
+    .dashboard-mockup-wrap.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .browser-chrome {
+      background: #1c1916;
+      border-radius: 12px 12px 0 0;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-bottom: none;
+    }
+    .browser-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .browser-bar {
+      flex: 1;
+      height: 20px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      margin: 0 12px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+    }
+    .browser-bar-text {
+      font-size: 10px;
+      color: rgba(255,255,255,0.3);
+      font-family: monospace;
+    }
+    .browser-body {
+      background: #0f0d0b;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      display: flex;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(133,2,119,0.15);
+      min-height: 280px;
+    }
+    .mock-sidebar {
+      width: 180px;
+      background: #161310;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 10px;
+      flex-shrink: 0;
+    }
+    .mock-sidebar-logo {
+      width: 80px; height: 8px;
+      background: rgba(133,2,119,0.5);
+      border-radius: 4px;
+      margin: 4px 6px 20px;
+    }
+    .mock-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 2px;
+    }
+    .mock-nav-item.active {
+      background: rgba(133,2,119,0.18);
+    }
+    .mock-nav-dot {
+      width: 14px; height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .mock-nav-label {
+      height: 7px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.12);
+      flex: 1;
+    }
+    .mock-nav-item.active .mock-nav-label {
+      background: rgba(163,3,154,0.5);
+    }
+    .mock-content {
+      flex: 1;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .mock-topbar {
+      height: 14px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .mock-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .mock-kpi {
+      background: #161310;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 12px 10px;
+    }
+    .mock-kpi-val {
+      height: 18px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .mock-kpi-lbl {
+      height: 7px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      width: 70%;
+    }
+    .mock-chart-area {
+      background: #161310;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 100px;
+    }
+    .mock-bar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      opacity: 0.7;
+    }
+    @media (max-width: 600px) {
+      .mock-sidebar { width: 40px; }
+      .mock-nav-label { display: none; }
+      .mock-kpi-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── FAQ ── */
+    .faq-section {
+      padding: 96px max(5%, calc((100% - 1440px) / 2));
+      background: var(--white);
+    }
+    .faq-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .faq-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--purple);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .faq-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      color: var(--black);
+      line-height: 1.1;
+    }
+    .faq-list {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .faq-item:first-child {
+      border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+    }
+    .faq-question-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--black);
+      line-height: 1.4;
+    }
+    .faq-arrow {
+      flex-shrink: 0;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: rgba(133,2,119,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .3s cubic-bezier(.16,1,.3,1), background .2s;
+    }
+    .faq-arrow svg {
+      transition: transform .3s cubic-bezier(.16,1,.3,1);
+    }
+    .faq-item.open .faq-arrow {
+      background: var(--purple);
+    }
+    .faq-item.open .faq-arrow svg {
+      transform: rotate(180deg);
+    }
+    .faq-item.open .faq-arrow path {
+      stroke: #fff;
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s cubic-bezier(.16,1,.3,1);
+    }
+    .faq-answer-inner {
+      padding: 0 0 22px;
+      font-size: 15px;
+      font-weight: 300;
+      color: #4a4540;
+      line-height: 1.75;
+    }
+    @media (max-width: 480px) {
+      .faq-section { padding: 72px 24px; }
+      .faq-question-text { font-size: 14px; }
+    }
+
+    /* ── BACK TO TOP ── */
+    #back-to-top {
+      position: fixed;
+      bottom: 96px;
+      right: 28px;
+      z-index: 998;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--purple);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(133,2,119,0.4);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .3s, transform .3s, background .2s;
+      pointer-events: none;
+    }
+    #back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    #back-to-top:hover {
+      background: var(--purple-light);
+    }
+    #back-to-top svg {
+      color: #fff;
+    }
+
+    /* ── LGPD BANNER ── */
+    #lgpd-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 997;
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 16px max(5%, calc((100% - 1440px) / 2));
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      transform: translateY(100%);
+      transition: transform .4s cubic-bezier(.16,1,.3,1);
+    }
+    #lgpd-banner.visible {
+      transform: translateY(0);
+    }
+    .lgpd-text {
+      flex: 1;
+      min-width: 200px;
+      font-size: 13px;
+      color: rgba(255,253,234,0.65);
+      line-height: 1.5;
+    }
+    .lgpd-text a {
+      color: var(--purple-light);
+      text-decoration: underline;
+    }
+    .lgpd-actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .lgpd-btn-accept {
+      padding: 9px 20px;
+      background: var(--purple);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .lgpd-btn-accept:hover { background: var(--purple-light); }
+    .lgpd-btn-reject {
+      padding: 9px 20px;
+      background: transparent;
+      color: rgba(255,253,234,0.55);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .lgpd-btn-reject:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+    @media (max-width: 480px) {
+      #lgpd-banner { padding: 16px 20px; flex-direction: column; align-items: flex-start; }
+      .lgpd-actions { width: 100%; }
+      .lgpd-btn-accept, .lgpd-btn-reject { flex: 1; text-align: center; }
+    }
   </style>
 </head>
 <body>
@@ -1141,6 +1532,28 @@
         <polyline points="6 9 12 15 18 9"/>
       </svg>
     </button>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="stats-bar" id="stats-bar">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number" data-target="7" data-suffix=" dias">0</span>
+        <span class="stat-label">Para você ter resultados</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="100" data-suffix="%">0</span>
+        <span class="stat-label">Digital e automatizado</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="2" data-suffix=" planos">0</span>
+        <span class="stat-label">Para qualquer tamanho</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="24" data-suffix="h">0</span>
+        <span class="stat-label">Suporte disponível</span>
+      </div>
+    </div>
   </section>
 
   <!-- SOBRE -->
@@ -1332,6 +1745,78 @@
         </p>
       </div>
 
+      <!-- Dashboard mockup -->
+      <div class="dashboard-mockup-wrap" id="dashboard-mockup">
+        <div class="browser-chrome">
+          <div class="browser-dot" style="background:#ff5f57"></div>
+          <div class="browser-dot" style="background:#febc2e"></div>
+          <div class="browser-dot" style="background:#28c840"></div>
+          <div class="browser-bar">
+            <span class="browser-bar-text">grupocaptar.com.br/dashboard</span>
+          </div>
+        </div>
+        <div class="browser-body">
+          <div class="mock-sidebar">
+            <div class="mock-sidebar-logo"></div>
+            <div class="mock-nav-item active">
+              <div class="mock-nav-dot" style="background:rgba(163,3,154,0.5);"></div>
+              <div class="mock-nav-label"></div>
+            </div>
+            <div class="mock-nav-item">
+              <div class="mock-nav-dot" style="background:rgba(255,255,255,0.08);"></div>
+              <div class="mock-nav-label"></div>
+            </div>
+            <div class="mock-nav-item">
+              <div class="mock-nav-dot" style="background:rgba(255,255,255,0.08);"></div>
+              <div class="mock-nav-label"></div>
+            </div>
+            <div class="mock-nav-item">
+              <div class="mock-nav-dot" style="background:rgba(255,255,255,0.08);"></div>
+              <div class="mock-nav-label"></div>
+            </div>
+            <div class="mock-nav-item">
+              <div class="mock-nav-dot" style="background:rgba(255,255,255,0.08);"></div>
+              <div class="mock-nav-label"></div>
+            </div>
+          </div>
+          <div class="mock-content">
+            <div class="mock-topbar"></div>
+            <div class="mock-kpi-row">
+              <div class="mock-kpi">
+                <div class="mock-kpi-val" style="background:rgba(163,3,154,0.4);"></div>
+                <div class="mock-kpi-lbl"></div>
+              </div>
+              <div class="mock-kpi">
+                <div class="mock-kpi-val" style="background:rgba(34,197,94,0.35);"></div>
+                <div class="mock-kpi-lbl"></div>
+              </div>
+              <div class="mock-kpi">
+                <div class="mock-kpi-val" style="background:rgba(245,158,11,0.35);"></div>
+                <div class="mock-kpi-lbl"></div>
+              </div>
+              <div class="mock-kpi">
+                <div class="mock-kpi-val" style="background:rgba(59,130,246,0.35);"></div>
+                <div class="mock-kpi-lbl"></div>
+              </div>
+            </div>
+            <div class="mock-chart-area">
+              <div class="mock-bar" style="height:40%;background:#850277;"></div>
+              <div class="mock-bar" style="height:65%;background:#850277;"></div>
+              <div class="mock-bar" style="height:50%;background:#850277;"></div>
+              <div class="mock-bar" style="height:80%;background:#a3039a;"></div>
+              <div class="mock-bar" style="height:55%;background:#850277;"></div>
+              <div class="mock-bar" style="height:90%;background:#a3039a;"></div>
+              <div class="mock-bar" style="height:70%;background:#850277;"></div>
+              <div class="mock-bar" style="height:60%;background:#850277;"></div>
+              <div class="mock-bar" style="height:85%;background:#a3039a;"></div>
+              <div class="mock-bar" style="height:45%;background:#850277;"></div>
+              <div class="mock-bar" style="height:75%;background:#850277;"></div>
+              <div class="mock-bar" style="height:95%;background:#a3039a;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Feature grid -->
       <div class="feat-grid">
 
@@ -1432,6 +1917,89 @@
           Acessar minha Área do Cliente
         </a>
         <p style="margin-top:14px;font-size:12px;color:rgba(255,253,234,.3)">Exclusivo para corretores e imobiliárias parceiras do Grupo Captar</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" id="faq">
+    <div class="faq-header anim-up">
+      <span class="faq-eyebrow">Dúvidas</span>
+      <h2 class="faq-title">Perguntas Frequentes</h2>
+    </div>
+    <div class="faq-list" id="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-question-text">Como funciona o Grupo Captar?</span>
+          <div class="faq-arrow">
+            <svg width="12" height="12" fill="none" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Somos uma assessoria imobiliária que cuida de toda sua presença digital: conteúdo diário, tráfego pago, site exclusivo e um painel de gestão completo.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-question-text">Preciso ter experiência com tecnologia?</span>
+          <div class="faq-arrow">
+            <svg width="12" height="12" fill="none" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Não. Nossa plataforma foi criada para corretores, com interface simples e suporte diário da nossa equipe.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-question-text">Quanto tempo leva para ver resultados?</span>
+          <div class="faq-arrow">
+            <svg width="12" height="12" fill="none" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Em média 7 dias após o início você já tem conteúdo publicado e o painel ativo.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-question-text">O painel de gestão está incluso nos dois planos?</span>
+          <div class="faq-arrow">
+            <svg width="12" height="12" fill="none" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Sim. Ambos os planos incluem acesso completo ao CRM, financeiro, contratos e todas as funcionalidades.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-question-text">Posso cancelar quando quiser?</span>
+          <div class="faq-arrow">
+            <svg width="12" height="12" fill="none" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Sim, sem multa ou fidelidade. Trabalhamos com contratos mensais renováveis.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span class="faq-question-text">Como funciona o suporte?</span>
+          <div class="faq-arrow">
+            <svg width="12" height="12" fill="none" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Nossa equipe responde pelo WhatsApp em horário comercial todos os dias úteis.</div>
+        </div>
       </div>
 
     </div>
@@ -1571,7 +2139,97 @@
         }
       });
     });
+
+    // ── Stats countUp animation ──
+    (function(){
+      const statNums = document.querySelectorAll('.stat-number[data-target]');
+      const statsObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if(e.isIntersecting){
+            const el = e.target;
+            const target = parseInt(el.dataset.target, 10);
+            const suffix = el.dataset.suffix || '';
+            const duration = 1200;
+            const start = performance.now();
+            function update(now){
+              const elapsed = now - start;
+              const progress = Math.min(elapsed / duration, 1);
+              const ease = 1 - Math.pow(1 - progress, 3);
+              el.textContent = Math.round(ease * target) + suffix;
+              if(progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+            statsObs.unobserve(el);
+          }
+        });
+      }, { threshold: 0.3 });
+      statNums.forEach(el => statsObs.observe(el));
+    })();
+
+    // ── Dashboard mockup entrance animation ──
+    (function(){
+      const mockup = document.getElementById('dashboard-mockup');
+      if(mockup){
+        const mockObs = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if(e.isIntersecting){ e.target.classList.add('in'); mockObs.unobserve(e.target); }
+          });
+        }, { threshold: 0.15 });
+        mockObs.observe(mockup);
+      }
+    })();
+
+    // ── FAQ accordion ──
+    function toggleFaq(btn){
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const wasOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.faq-item.open').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+      if(!wasOpen){
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    }
+
+    // ── Back to top ──
+    (function(){
+      const btn = document.getElementById('back-to-top');
+      window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+      }, { passive: true });
+    })();
+
+    // ── LGPD banner ──
+    (function(){
+      const banner = document.getElementById('lgpd-banner');
+      if(!localStorage.getItem('captar_lgpd')){
+        setTimeout(() => banner.classList.add('visible'), 1200);
+      }
+    })();
+    function lgpdRespond(accepted){
+      localStorage.setItem('captar_lgpd', accepted ? 'accepted' : 'rejected');
+      const banner = document.getElementById('lgpd-banner');
+      banner.classList.remove('visible');
+    }
   </script>
+
+  <!-- Back to top button -->
+  <button id="back-to-top" aria-label="Voltar ao topo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <!-- LGPD / Cookies banner -->
+  <div id="lgpd-banner" role="alert">
+    <p class="lgpd-text">Usamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa política de privacidade.</p>
+    <div class="lgpd-actions">
+      <button class="lgpd-btn-accept" onclick="lgpdRespond(true)">Aceitar</button>
+      <button class="lgpd-btn-reject" onclick="lgpdRespond(false)">Recusar</button>
+    </div>
+  </div>
 
   <!-- WhatsApp floating button -->
   <a
