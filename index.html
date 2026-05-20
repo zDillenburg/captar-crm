@@ -1494,12 +1494,8 @@
       .lgpd-actions { width: 100%; }
       .lgpd-btn-accept, .lgpd-btn-reject { flex: 1; text-align: center; }
     }
-    /* No mobile, o banner LGPD senta acima da CTA bar para não cobri-la */
-    @media (max-width: 768px) {
-      #lgpd-banner {
-        bottom: calc(66px + env(safe-area-inset-bottom, 0px));
-      }
-    }
+    /* No mobile, o banner LGPD fica em bottom:0 e sobrepõe a CTA bar (z-index 997 > 98) */
+    /* Não alterar bottom aqui — mudança de bottom quebra o translateY(100%) de saída */
   </style>
 </head>
 <body>
