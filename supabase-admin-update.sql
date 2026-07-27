@@ -23,12 +23,13 @@ create table if not exists avisos (
 -- RLS: admin pode fazer tudo, usuários leem apenas avisos ativos
 alter table avisos enable row level security;
 
+-- IMPORTANTE: usar SOMENTE app_metadata (não é editável pelo próprio usuário).
+-- user_metadata é gravável via supabase.auth.updateUser() pelo próprio cliente,
+-- então incluí-lo aqui permitiria qualquer usuário se auto-promover a admin.
 create policy "avisos_admin_all"
   on avisos for all
-  using  ((auth.jwt()->'user_metadata'->>'role') = 'admin'
-       or (auth.jwt()->'app_metadata'->>'role')  = 'admin')
-  with check ((auth.jwt()->'user_metadata'->>'role') = 'admin'
-           or (auth.jwt()->'app_metadata'->>'role')  = 'admin');
+  using  ((auth.jwt()->'app_metadata'->>'role') = 'admin')
+  with check ((auth.jwt()->'app_metadata'->>'role') = 'admin');
 
 create policy "avisos_users_read"
   on avisos for select

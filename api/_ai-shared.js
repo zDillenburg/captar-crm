@@ -39,7 +39,8 @@ async function verifyUserAndUsage(req, kind, dailyLimit) {
 
     if (!rpcResp.ok) {
       if (bodyText.includes('blocked_user')) return { error: 403, reason: 'blocked' };
-      return { error: 500, reason: 'usage_check_failed', detail: bodyText.slice(0, 300) };
+      console.error('usage_check_failed', rpcResp.status, bodyText.slice(0, 1000));
+      return { error: 500, reason: 'usage_check_failed' };
     }
 
     const rows = JSON.parse(bodyText);

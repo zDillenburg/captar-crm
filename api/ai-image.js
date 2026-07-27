@@ -3,6 +3,15 @@ const { verifyUserAndUsage } = require('./_ai-shared');
 const IMAGE_DAILY_LIMIT = parseInt(process.env.AI_IMAGE_DAILY_LIMIT || '10', 10);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-3-pro-image';
+const MAX_PROMPT_LEN = 2000;
+const MAX_IMAGE_BASE64_LEN = 10 * 1024 * 1024; // ~7.5MB de imagem antes do base64
+const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+function isValidImagePart(img) {
+  return img
+    && typeof img.mimeType === 'string' && ALLOWED_MIME_TYPES.has(img.mimeType)
+    && typeof img.data === 'string' && img.data.length > 0 && img.data.length <= MAX_IMAGE_BASE64_LEN;
+}
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') { res.status(405).json({ error: 'method_not_allowed' }); return; }
@@ -19,12 +28,12 @@ module.exports = async (req, res) => {
   const inputImage = body.inputImage; // opcional: {mimeType, data(base64 sem prefixo)} — foto do imóvel
   const logoImage = body.logoImage;   // opcional: {mimeType, data(base64 sem prefixo)} — logo da imobiliária
 
-  if (!prompt) { res.status(400).json({ error: 'invalid_prompt' }); return; }
-  if (inputImage && (typeof inputImage.mimeType !== 'string' || typeof inputImage.data !== 'string')) {
+  if (!prompt || prompt.length > MAX_PROMPT_LEN) { res.status(400).json({ error: 'invalid_prompt' }); return; }
+  if (inputImage && !isValidImagePart(inputImage)) {
     res.status(400).json({ error: 'invalid_input_image' });
     return;
   }
-  if (logoImage && (typeof logoImage.mimeType !== 'string' || typeof logoImage.data !== 'string')) {
+  if (logoImage && !isValidImagePart(logoImage)) {
     res.status(400).json({ error: 'invalid_logo_image' });
     return;
   }
@@ -57,8 +66,9 @@ module.exports = async (req, res) => {
     const raw = await geminiResp.text();
 
     if (!geminiResp.ok) {
+      console.error('gemini_error(image)', geminiResp.status, raw.slice(0, 1000));
       const status = geminiResp.status === 429 ? 503 : 502;
-      res.status(status).json({ error: 'gemini_error', detail: raw.slice(0, 500) });
+      res.status(status).json({ error: 'gemini_error' });
       return;
     }
 
