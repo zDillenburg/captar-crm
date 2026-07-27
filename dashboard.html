@@ -5869,17 +5869,17 @@ function runSearch(q){
   // Visitas
   VISITAS.filter(v=>(v.cliente||'').toLowerCase().includes(ql)||(v.imovel||'').toLowerCase().includes(ql)).slice(0,2).forEach(v=>results.push({type:'Visita',icon:'📍',label:v.cliente||'—',sub:(v.imovel||'—')+' · '+(v.data||''),page:'visitas',action:()=>navigate('visitas',document.querySelectorAll('.nav-item')[4])}));
 
-  if(!results.length){el.innerHTML='<div class="gs-empty">Nenhum resultado para "<strong>'+q+'</strong>"</div>';return;}
+  if(!results.length){el.innerHTML='<div class="gs-empty">Nenhum resultado para "<strong>'+escHTML(q)+'</strong>"</div>';return;}
   el.innerHTML=results.map((r,i)=>`
     <div class="gs-item" onclick="selectSearchResult(${i})" data-idx="${i}">
       <div class="gs-item-icon" style="${r.icon.startsWith('#')?'background:'+r.icon:'background:var(--bg4)'}">
-        ${r.icon.startsWith('#')?`<span style="font-size:11px;font-weight:700;color:#fff">${r.label.split(' ').map(w=>w[0]).join('').slice(0,2)}</span>`:r.icon}
+        ${r.icon.startsWith('#')?`<span style="font-size:11px;font-weight:700;color:#fff">${escHTML(r.label.split(' ').map(w=>w[0]).join('').slice(0,2))}</span>`:r.icon}
       </div>
       <div class="gs-item-main">
-        <div class="gs-item-title">${r.label}</div>
-        <div class="gs-item-sub">${r.sub}</div>
+        <div class="gs-item-title">${escHTML(r.label)}</div>
+        <div class="gs-item-sub">${escHTML(r.sub)}</div>
       </div>
-      <span class="gs-item-type">${r.type}</span>
+      <span class="gs-item-type">${escHTML(r.type)}</span>
     </div>`).join('');
   // store results for enter key
   el._results=results;
@@ -6203,7 +6203,7 @@ function renderAdmTabela(){
           ${a.status!=='pago'?`<button onclick="confirmarPagamentoAdmin('${escHTML(String(a.id))}')" style="padding:5px 10px;font-size:11px;font-weight:700;background:#22c55e;color:#fff;border:none;border-radius:6px;cursor:pointer">✅ Pago</button>`:''}
           ${a.status==='pago'?`<button onclick="marcarPendenteAdmin('${escHTML(String(a.id))}')" style="padding:5px 10px;font-size:11px;font-weight:700;background:#f59e0b;color:#fff;border:none;border-radius:6px;cursor:pointer">⏳ Pendente</button>`:''}
           <button class="btn-add" style="padding:5px 10px;font-size:11px" onclick="openAdmModal('${escHTML(String(a.id))}')">Editar</button>
-          <button class="btn-del" onclick="confirmDeleteAss('${escHTML(String(a.id))}','${escHTML(a.nome)}')">Apagar</button>
+          <button class="btn-del" onclick="confirmDeleteAss('${escHTML(String(a.id))}')">Apagar</button>
         </div>
       </td>
     </tr>`;
@@ -6304,7 +6304,9 @@ async function saveAssinatura(){
 }
 
 // ── Apagar assinatura ────────────────────
-function confirmDeleteAss(id, nome){
+function confirmDeleteAss(id){
+  const rec = ASSINATURAS.find(a=>String(a.id)===String(id));
+  const nome = rec ? rec.nome : '';
   document.getElementById('del-title').textContent = 'Apagar assinatura de '+nome+'?';
   document.getElementById('del-confirm-btn').onclick = ()=>deleteAssinatura(id, nome);
   document.getElementById('confirm-delete').classList.add('open');
@@ -6448,13 +6450,15 @@ function renderUserTabela(){
       <td style="text-align:center">
         <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
           <button class="btn-add" style="padding:5px 10px;font-size:11px" onclick="switchAdminTab('assinaturas',document.querySelectorAll('.admin-tab-btn')[2]);openAdmModal('${escHTML(String(a.id))}')">✏️ Editar</button>
-          <button class="${blocked?'btn-add':'btn-del'}" style="padding:5px 10px;font-size:11px${blocked?';background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)':''}" onclick="toggleBlockUser('${escHTML(String(a.id))}','${escHTML(a.nome)}',${blocked})">${blocked?'🔓 Desbloquear':'🔒 Bloquear'}</button>
+          <button class="${blocked?'btn-add':'btn-del'}" style="padding:5px 10px;font-size:11px${blocked?';background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)':''}" onclick="toggleBlockUser('${escHTML(String(a.id))}',${blocked})">${blocked?'🔓 Desbloquear':'🔒 Bloquear'}</button>
         </div>
       </td>
     </tr>`;
   }).join('');
 }
-async function toggleBlockUser(id,nome,currently_blocked){
+async function toggleBlockUser(id,currently_blocked){
+  const rec = ASSINATURAS.find(a=>String(a.id)===String(id));
+  const nome = rec ? rec.nome : '';
   const novo=!currently_blocked;
   const {error}=await _sb.from('assinaturas').update({bloqueado:novo}).eq('id',id);
   if(error){showToast('Erro: '+error.message,'error');return;}

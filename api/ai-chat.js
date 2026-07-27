@@ -3,6 +3,7 @@ const { verifyUserAndUsage } = require('./_ai-shared');
 const CHAT_DAILY_LIMIT = parseInt(process.env.AI_CHAT_DAILY_LIMIT || '50', 10);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-3.6-flash';
+const MAX_MESSAGE_LEN = 4000;
 
 const SYSTEM_PROMPT = `Você é a Captar IA, o assistente de inteligência artificial exclusivo e proprietário do Grupo Captar.
 
@@ -51,7 +52,7 @@ module.exports = async (req, res) => {
   const body = req.body || {};
   const messages = Array.isArray(body.messages) ? body.messages : [];
   const contents = messages
-    .filter(m => m && typeof m.content === 'string' && m.content.trim())
+    .filter(m => m && typeof m.content === 'string' && m.content.trim() && m.content.length <= MAX_MESSAGE_LEN)
     .slice(-30) // limita histórico enviado por turno, evita custo/latência crescendo sem fim
     .map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
 
@@ -73,8 +74,9 @@ module.exports = async (req, res) => {
     const raw = await geminiResp.text();
 
     if (!geminiResp.ok) {
+      console.error('gemini_error(chat)', geminiResp.status, raw.slice(0, 1000));
       const status = geminiResp.status === 429 ? 503 : 502;
-      res.status(status).json({ error: 'gemini_error', detail: raw.slice(0, 500) });
+      res.status(status).json({ error: 'gemini_error' });
       return;
     }
 
