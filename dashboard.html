@@ -877,6 +877,13 @@ body.light-mode .ai-suggestion-chip:hover,body.light-mode .captar-ia-expand:hove
 .ai-img-result-card img{width:100%;border-radius:8px;display:block}
 .ai-img-thread-log{display:flex;flex-direction:column;gap:14px;max-height:520px;overflow-y:auto;padding:4px 2px;margin-bottom:14px}
 .ai-img-thread-result{max-width:320px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px}
+@keyframes aiOrbPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.12);opacity:.8}}
+.ai-orb-pulse{animation:aiOrbPulse 1.4s ease-in-out infinite}
+@keyframes aiSkeletonShimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.ai-img-skeleton{width:220px;height:220px;border-radius:14px;border-bottom-left-radius:4px;background:var(--bg3);border:1px solid var(--border);position:relative;overflow:hidden}
+.ai-img-skeleton-shimmer{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+.ai-img-skeleton-shimmer::after{content:'';position:absolute;inset:0;background:inherit;animation:aiSkeletonShimmer 1.5s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.ai-orb-pulse,.ai-img-skeleton-shimmer::after{animation:none}}
 .ai-img-thread-result img{width:100%;border-radius:8px;display:block}
 .ai-img-thread-actions{display:flex;gap:6px}
 .ai-img-thread-actions a,.ai-img-thread-actions button{flex:1;text-align:center;text-decoration:none;font-size:12px;padding:7px 10px}
@@ -8836,18 +8843,23 @@ function formatAiMarkdown(text){
   const withBold=safe.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   const lines=withBold.split('\n');
   let html='';
-  let inList=false;
+  let listTag=null; // 'ul' | 'ol' | null — a IA às vezes usa listas numeradas mesmo
+  // sendo instruída a só usar "-", então trata os dois formatos com segurança.
   for(const line of lines){
-    const m=line.match(/^[-•]\s+(.*)/);
-    if(m){
-      if(!inList){html+='<ul class="ai-msg-list">';inList=true;}
-      html+=`<li>${m[1]}</li>`;
+    const bullet=line.match(/^[-•]\s+(.*)/);
+    const numbered=line.match(/^\d+[.)]\s+(.*)/);
+    const tag=bullet?'ul':numbered?'ol':null;
+    const content=bullet?bullet[1]:numbered?numbered[1]:null;
+    if(tag){
+      if(listTag&&listTag!==tag){html+=`</${listTag}>`;listTag=null;}
+      if(!listTag){html+=`<${tag} class="ai-msg-list">`;listTag=tag;}
+      html+=`<li>${content}</li>`;
     }else{
-      if(inList){html+='</ul>';inList=false;}
+      if(listTag){html+=`</${listTag}>`;listTag=null;}
       html+=line?`${line}<br>`:'<br>';
     }
   }
-  if(inList)html+='</ul>';
+  if(listTag)html+=`</${listTag}>`;
   return html;
 }
 
@@ -9111,6 +9123,9 @@ function renderAiImageThread(){
       if(m.role==='user'){
         return `<div class="ai-msg-row ai-msg-row-user"><div class="ai-msg ai-msg-user">${escHTML(m.text)}</div></div>`;
       }
+      if(m._loading){
+        return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm ai-orb-pulse">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-img-skeleton"><div class="ai-img-skeleton-shimmer"></div></div></div>`;
+      }
       if(m.image){
         return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-img-thread-result">
           <img src="${m.imageDataUrl}" alt="Imagem gerada"/>
@@ -9176,6 +9191,7 @@ async function generateAiImage(){
   }
 
   _aiImageThread.push({role:'user',text:prompt});
+  _aiImageThread.push({role:'assistant',_loading:true});
   renderAiImageThread();
   promptEl.value='';
   btn.disabled=true;
@@ -9193,6 +9209,7 @@ async function generateAiImage(){
     });
     clearTimeout(timeoutId);
     const data=await resp.json();
+    if(_aiImageThread[_aiImageThread.length-1]?._loading)_aiImageThread.pop();
 
     if(!resp.ok){
       const msg=aiErrorMessage(resp.status,data);
@@ -9217,6 +9234,7 @@ async function generateAiImage(){
     persistAiMessage('user',prompt,'imagem');
   }catch(e){
     clearTimeout(timeoutId);
+    if(_aiImageThread[_aiImageThread.length-1]?._loading)_aiImageThread.pop();
     const msg=e.name==='AbortError'?'A geração demorou demais. Tente novamente.':'Erro de conexão com a IA.';
     _aiImageThread.push({role:'assistant',text:msg,_error:true});
     renderAiImageThread();
