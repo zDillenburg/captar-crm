@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>Tutorial — Captar CRM · Grupo Captar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════
+   BASE
+══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --p: #850277;
+  --pl: #a3039a;
+  --pd: #5a0153;
+  --gold: #f59e0b;
+  --green: #22c55e;
+  --blue: #3b82f6;
+  --t1: #1a1a2e;
+  --t2: #374151;
+  --t3: #6b7280;
+  --bg: #ffffff;
+  --bg2: #f9fafb;
+  --bg3: #f3f4f6;
+  --border: #e5e7eb;
+}
+html { font-size: 10pt; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: var(--t1);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════
+   PRINT / PAGE SETUP
+══════════════════════════════════════ */
+@page {
+  size: A4;
+  margin: 0;
+}
+@media print {
+  html { font-size: 9pt; }
+  .page-break { page-break-before: always; }
+  .no-break { page-break-inside: avoid; }
+  a { text-decoration: none; color: inherit; }
+  .print-btn { display: none !important; }
+}
+
+/* ══════════════════════════════════════
+   PRINT BUTTON (browser only)
+══════════════════════════════════════ */
+.print-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999;
+  background: var(--p);
+  color: #fff;
+  border: none;
+  border-radius: 40px;
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(133,2,119,.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: transform .15s, box-shadow .15s;
+}
+.print-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(133,2,119,.5); }
+.print-btn svg { width: 18px; height: 18px; }
+
+/* ══════════════════════════════════════
+   PAGE WRAPPER
+══════════════════════════════════════ */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+@media screen {
+  .page {
+    margin: 24px auto;
+    box-shadow: 0 4px 32px rgba(0,0,0,.12);
+  }
+}
+
+/* ══════════════════════════════════════
+   COVER PAGE
+══════════════════════════════════════ */
+.cover {
+  background: linear-gradient(160deg, #0f0005 0%, #1a0018 40%, #2a0124 70%, #0a0008 100%);
+  min-height: 297mm;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.cover-orb1 {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(133,2,119,.35) 0%, transparent 70%);
+  top: -80px;
+  right: -60px;
+}
+.cover-orb2 {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(163,3,154,.2) 0%, transparent 70%);
+  bottom: 60px;
+  left: -80px;
+}
+.cover-orb3 {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,158,11,.08) 0%, transparent 70%);
+  top: 50%;
+  left: 40%;
+}
+.cover-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(133,2,119,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(133,2,119,.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.cover-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 52px 52px 44px;
+}
+.cover-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(133,2,119,.25);
+  border: 1px solid rgba(133,2,119,.4);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 9pt;
+  font-weight: 700;
+  color: #c453bb;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  width: fit-content;
+  margin-bottom: 40px;
+}
+.cover-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c453bb;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.cover-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 56px;
+}
+.cover-logo-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--p), var(--pl));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cover-logo-text {
+  font-size: 16pt;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.02em;
+}
+.cover-logo-sub {
+  font-size: 9pt;
+  color: rgba(255,255,255,.45);
+  font-weight: 400;
+  margin-top: 1px;
+}
+
+.cover-eyebrow {
+  font-size: 9pt;
+  font-weight: 700;
+  color: rgba(133,2,119,.9);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.cover-headline {
+  font-size: 34pt;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.cover-headline span {
+  background: linear-gradient(90deg, #c453bb, #850277, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cover-sub {
+  font-size: 13pt;
+  font-weight: 400;
+  color: rgba(255,255,255,.55);
+  line-height: 1.6;
+  max-width: 420px;
+  margin-bottom: 48px;
+}
+
+.cover-stats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: auto;
+}
+.cover-stat {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 20px 24px;
+  flex: 1;
+  text-align: center;
+}
+.cover-stat-val {
+  font-size: 22pt;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -.03em;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+.cover-stat-val.purple { color: #c453bb; }
+.cover-stat-val.gold { color: #f59e0b; }
+.cover-stat-val.green { color: #4ade80; }
+.cover-stat-lbl {
+  font-size: 8pt;
+  color: rgba(255,255,255,.4);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.cover-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(133,2,119,.5), rgba(245,158,11,.3), transparent);
+  margin: 40px 0 32px;
+}
+.cover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cover-footer-left {
+  font-size: 9pt;
+  color: rgba(255,255,255,.35);
+}
+.cover-footer-right {
+  font-size: 9pt;
+  font-weight: 600;
+  color: rgba(255,255,255,.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cover-tag {
+  background: rgba(245,158,11,.15);
+  border: 1px solid rgba(245,158,11,.3);
+  color: #f59e0b;
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════
+   CONTENT PAGES
+══════════════════════════════════════ */
+.content-page {
+  background: #fff;
+  min-height: 297mm;
+  display: flex;
+  flex-direction: column;
+}
+.page-header {
+  background: linear-gradient(135deg, #f9f0f8 0%, #fff 100%);
+  border-bottom: 2px solid #f3e8f3;
+  padding: 24px 44px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.page-header-brand {
+  font-size: 9pt;
+  font-weight: 800;
+  color: var(--p);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.page-header-section {
+  font-size: 8pt;
+  color: var(--t3);
+  font-weight: 500;
+}
+.page-header-num {
+  font-size: 9pt;
+  font-weight: 700;
+  color: var(--t3);
+}
+
+.content-body {
+  flex: 1;
+  padding: 36px 44px 32px;
+}
+
+/* ── Section title ── */
+.section-eyebrow {
+  font-size: 8pt;
+  font-weight: 700;
+  color: var(--p);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  background: var(--p);
+  border-radius: 1px;
+}
+.section-title {
+  font-size: 22pt;
+  font-weight: 900;
+  color: var(--t1);
+  letter-spacing: -.03em;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.section-title span {
+  color: var(--p);
+}
+.section-lead {
+  font-size: 11pt;
+  color: var(--t3);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 520px;
+}
+
+/* ── Feature cards ── */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.feature-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  page-break-inside: avoid;
+}
+.feature-card.accent {
+  background: linear-gradient(135deg, rgba(133,2,119,.06) 0%, rgba(133,2,119,.02) 100%);
+  border-color: rgba(133,2,119,.2);
+}
+.feature-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(133,2,119,.12), rgba(133,2,119,.06));
+}
+.feature-icon.green { background: linear-gradient(135deg, rgba(34,197,94,.12), rgba(34,197,94,.06)); }
+.feature-icon.blue { background: linear-gradient(135deg, rgba(59,130,246,.12), rgba(59,130,246,.06)); }
+.feature-icon.gold { background: linear-gradient(135deg, rgba(245,158,11,.12), rgba(245,158,11,.06)); }
+.feature-icon.red { background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(239,68,68,.06)); }
+.feature-body {}
+.feature-title {
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 4px;
+  letter-spacing: -.01em;
+}
+.feature-desc {
+  font-size: 9pt;
+  color: var(--t3);
+  line-height: 1.6;
+}
+
+/* ── Step list ── */
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 28px;
+}
+.step-item {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 20px;
+  position: relative;
+}
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--p), transparent);
+}
+.step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), var(--pl));
+  color: #fff;
+  font-size: 10pt;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(133,2,119,.3);
+}
+.step-content {}
+.step-title {
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 4px;
+  padding-top: 4px;
+}
+.step-desc {
+  font-size: 9pt;
+  color: var(--t3);
+  line-height: 1.6;
+}
+
+/* ── Module cards ── */
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.module-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  page-break-inside: avoid;
+}
+.module-icon {
+  font-size: 20px;
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.module-info { flex: 1; }
+.module-name {
+  font-size: 10.5pt;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 3px;
+}
+.module-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+.module-tag {
+  font-size: 7.5pt;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(133,2,119,.1);
+  color: var(--p);
+  border: 1px solid rgba(133,2,119,.2);
+}
+.module-tag.green { background: rgba(34,197,94,.1); color: #15803d; border-color: rgba(34,197,94,.2); }
+.module-tag.blue { background: rgba(59,130,246,.1); color: #1d4ed8; border-color: rgba(59,130,246,.2); }
+.module-tag.gold { background: rgba(245,158,11,.1); color: #92400e; border-color: rgba(245,158,11,.2); }
+.module-tag.red { background: rgba(239,68,68,.1); color: #991b1b; border-color: rgba(239,68,68,.2); }
+
+/* ── Tip boxes ── */
+.tip-box {
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  page-break-inside: avoid;
+}
+.tip-box.info {
+  background: rgba(59,130,246,.06);
+  border: 1px solid rgba(59,130,246,.2);
+}
+.tip-box.success {
+  background: rgba(34,197,94,.06);
+  border: 1px solid rgba(34,197,94,.2);
+}
+.tip-box.warning {
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.2);
+}
+.tip-box.purple {
+  background: rgba(133,2,119,.05);
+  border: 1px solid rgba(133,2,119,.2);
+}
+.tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.tip-text { font-size: 9pt; color: var(--t2); line-height: 1.6; }
+.tip-text strong { color: var(--t1); }
+
+/* ── Hero stat row ── */
+.stat-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.stat-box {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(133,2,119,.08) 0%, rgba(133,2,119,.03) 100%);
+  border: 1px solid rgba(133,2,119,.18);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  page-break-inside: avoid;
+}
+.stat-box .val {
+  font-size: 20pt;
+  font-weight: 900;
+  color: var(--p);
+  letter-spacing: -.03em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-box .lbl {
+  font-size: 8pt;
+  color: var(--t3);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ── Quote block ── */
+.quote-block {
+  background: linear-gradient(135deg, #0f0005, #1a0018);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin: 24px 0;
+  position: relative;
+  overflow: hidden;
+  page-break-inside: avoid;
+}
+.quote-block::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  font-size: 80pt;
+  font-weight: 900;
+  color: rgba(133,2,119,.2);
+  line-height: 1;
+  font-family: Georgia, serif;
+}
+.quote-text {
+  font-size: 13pt;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 14px;
+}
+.quote-author {
+  font-size: 9pt;
+  color: rgba(255,255,255,.45);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Keyboard shortcuts ── */
+.kbd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.kbd-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.kbd-label { font-size: 9pt; color: var(--t2); }
+kbd {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid #d1d5db;
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-size: 8pt;
+  font-family: 'Inter', monospace;
+  color: var(--t1);
+  font-weight: 600;
+}
+
+/* ── Table ── */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+  margin-bottom: 24px;
+}
+.info-table th {
+  background: linear-gradient(135deg, rgba(133,2,119,.08), rgba(133,2,119,.04));
+  color: var(--p);
+  font-weight: 700;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 2px solid rgba(133,2,119,.2);
+  font-size: 8pt;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.info-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--t2);
+  vertical-align: top;
+}
+.info-table tr:last-child td { border-bottom: none; }
+.info-table tr:hover td { background: var(--bg2); }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 7.5pt;
+  font-weight: 700;
+}
+.badge-purple { background: rgba(133,2,119,.12); color: var(--p); }
+.badge-green { background: rgba(34,197,94,.12); color: #15803d; }
+.badge-gold { background: rgba(245,158,11,.12); color: #92400e; }
+
+/* ── Page footer ── */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding: 12px 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg2);
+}
+.page-footer-brand {
+  font-size: 8pt;
+  font-weight: 700;
+  color: var(--p);
+}
+.page-footer-site {
+  font-size: 8pt;
+  color: var(--t3);
+}
+.page-footer-num {
+  font-size: 8pt;
+  color: var(--t3);
+  font-weight: 600;
+}
+
+/* ── Back cover ── */
+.back-cover {
+  background: linear-gradient(160deg, #0a0008, #1a0018, #0f0005);
+  min-height: 297mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 60px;
+  text-align: center;
+}
+.back-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(133,2,119,.25) 0%, transparent 70%);
+}
+.back-orb.a { width:400px; height:400px; top:-100px; left:-80px; }
+.back-orb.b { width:300px; height:300px; bottom:-60px; right:-60px; }
+.back-cover-content { position: relative; z-index: 2; }
+.back-title {
+  font-size: 28pt;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -.03em;
+  margin-bottom: 14px;
+  line-height: 1.1;
+}
+.back-title span { color: #c453bb; }
+.back-sub {
+  font-size: 12pt;
+  color: rgba(255,255,255,.5);
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.back-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+.back-contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 11pt;
+  color: rgba(255,255,255,.7);
+}
+.back-contact-item span { color: #c453bb; font-weight: 700; }
+.back-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--p), #f59e0b);
+  border-radius: 2px;
+  margin: 0 auto 40px;
+}
+.back-logo {
+  font-size: 18pt;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin-bottom: 8px;
+}
+.back-tagline {
+  font-size: 9pt;
+  color: rgba(255,255,255,.3);
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     PRINT BUTTON
+══════════════════════════════════════ -->
+<button class="print-btn" onclick="window.print()">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <polyline points="6,9 6,2 18,2 18,9"/>
+    <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+    <rect x="6" y="14" width="12" height="8"/>
+  </svg>
+  Gerar PDF
+</button>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 1 — CAPA
+══════════════════════════════════════ -->
+<div class="page">
+  <div class="cover">
+    <div class="cover-orb1"></div>
+    <div class="cover-orb2"></div>
+    <div class="cover-orb3"></div>
+    <div class="cover-grid"></div>
+    <div class="cover-content">
+      <!-- Logo -->
+      <div class="cover-logo-row">
+        <img src="logo.svg" alt="Grupo Captar" style="height:52px;max-width:260px;object-fit:contain"/>
+      </div>
+
+      <div class="cover-badge">🚀 Lançamento 2026</div>
+
+      <div class="cover-eyebrow">Guia Completo do Cliente</div>
+      <div class="cover-headline">O CRM que<br/><span>revolucionou</span><br/>o mercado.</div>
+      <div class="cover-sub">
+        Tudo o que você precisa para dominar o Captar CRM — a plataforma mais completa de gestão imobiliária do Brasil, desenvolvida exclusivamente para os clientes do Grupo Captar.
+      </div>
+
+      <!-- Stats -->
+      <div class="cover-stats">
+        <div class="cover-stat">
+          <div class="cover-stat-val purple">10+</div>
+          <div class="cover-stat-lbl">Módulos integrados</div>
+        </div>
+        <div class="cover-stat">
+          <div class="cover-stat-val gold">100%</div>
+          <div class="cover-stat-lbl">Online & mobile</div>
+        </div>
+        <div class="cover-stat">
+          <div class="cover-stat-val green">∞</div>
+          <div class="cover-stat-lbl">Leads, imóveis e contratos</div>
+        </div>
+        <div class="cover-stat">
+          <div class="cover-stat-val" style="color:#60a5fa">PWA</div>
+          <div class="cover-stat-lbl">Instale como app</div>
+        </div>
+      </div>
+
+      <div class="cover-divider"></div>
+
+      <div class="cover-footer">
+        <div class="cover-footer-left">Versão 2.0 · Maio 2026 · Confidencial</div>
+        <div class="cover-footer-right">
+          <span class="cover-tag">Alta Performance</span>
+          grupocaptar.com.br
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 2 — BEM-VINDO + VISÃO GERAL
+══════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="content-page">
+    <div class="page-header">
+      <img src="logo.svg" alt="Grupo Captar" style="height:20px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-header-section">Bem-vindo</div>
+      <div class="page-header-num">02</div>
+    </div>
+    <div class="content-body">
+
+      <div class="section-eyebrow">Introdução</div>
+      <h1 class="section-title">Bem-vindo ao futuro da<br/><span>gestão imobiliária.</span></h1>
+      <p class="section-lead">
+        O Captar CRM não é só um software — é a vantagem competitiva que os melhores corretores do Brasil estavam esperando. Desenvolvemos cada funcionalidade ouvindo corretores reais, resolvendo problemas reais.
+      </p>
+
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="val">3×</div>
+          <div class="lbl">mais produtividade<br/>com organização centralizada</div>
+        </div>
+        <div class="stat-box">
+          <div class="val">0h</div>
+          <div class="lbl">de instalação<br/>roda direto no navegador</div>
+        </div>
+        <div class="stat-box">
+          <div class="val">100%</div>
+          <div class="lbl">dos seus dados<br/>seguros na nuvem</div>
+        </div>
+        <div class="stat-box">
+          <div class="val">24/7</div>
+          <div class="lbl">disponível<br/>em qualquer dispositivo</div>
+        </div>
+      </div>
+
+      <div class="section-eyebrow" style="margin-bottom:12px">O que está incluído</div>
+      <div class="feature-grid">
+        <div class="feature-card accent">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-body">
+            <div class="feature-title">CRM com Funil de Vendas</div>
+            <div class="feature-desc">Gerencie leads em 4 estágios com drag-and-drop intuitivo. Nunca perca um contato.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon green">🏠</div>
+          <div class="feature-body">
+            <div class="feature-title">Portfólio de Imóveis</div>
+            <div class="feature-desc">Cadastre, organize e compartilhe seu portfólio com QR Code e proposta em PDF.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon blue">📅</div>
+          <div class="feature-body">
+            <div class="feature-title">Agenda & Calendário</div>
+            <div class="feature-desc">Visitas, reuniões e follow-ups tudo no mesmo calendário visual e sincronizado.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon gold">💰</div>
+          <div class="feature-body">
+            <div class="feature-title">Financeiro Completo</div>
+            <div class="feature-desc">Entradas, saídas, comissões e calculadora de financiamento integrada.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔑</div>
+          <div class="feature-body">
+            <div class="feature-title">Gestão de Locações</div>
+            <div class="feature-desc">Controle de contratos, alertas de vencimento, reajuste IGP-M/IPCA automático.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon red">📊</div>
+          <div class="feature-body">
+            <div class="feature-title">Relatórios & Análises</div>
+            <div class="feature-desc">Performance por corretor, funil de conversão e receita por mês em gráficos.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text"><strong>Dica:</strong> O Captar CRM funciona como um aplicativo instalável no seu celular. Veja como instalar na página 3.</div>
+      </div>
+
+    </div>
+    <div class="page-footer">
+      <img src="logo.svg" alt="Grupo Captar" style="height:15px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-footer-site">grupocaptar.com.br</div>
+      <div class="page-footer-num">02</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 3 — PRIMEIROS PASSOS
+══════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="content-page">
+    <div class="page-header">
+      <img src="logo.svg" alt="Grupo Captar" style="height:20px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-header-section">Primeiros Passos</div>
+      <div class="page-header-num">03</div>
+    </div>
+    <div class="content-body">
+
+      <div class="section-eyebrow">Configuração</div>
+      <h1 class="section-title">Do zero ao<br/><span>primeiro lead</span> em 5 minutos.</h1>
+      <p class="section-lead">Siga estes passos simples para configurar sua conta e começar a usar o Captar CRM hoje mesmo.</p>
+
+      <div class="step-list">
+        <div class="step-item no-break">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Acesse o dashboard</div>
+            <div class="step-desc">Abra o link enviado pelo Grupo Captar no seu navegador (Chrome ou Safari recomendados). Você verá a tela de login.</div>
+          </div>
+        </div>
+        <div class="step-item no-break">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Crie sua conta gratuita</div>
+            <div class="step-desc">Clique em <strong>"Criar conta"</strong>, informe nome, e-mail e senha (mín. 8 caracteres). Você receberá acesso imediato após o cadastro.</div>
+          </div>
+        </div>
+        <div class="step-item no-break">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Instale como aplicativo (PWA)</div>
+            <div class="step-desc">
+              No <strong>celular (iPhone/Android)</strong>: toque em "Compartilhar" → "Adicionar à Tela Inicial". No <strong>computador (Chrome)</strong>: clique no ícone de instalação na barra de endereço. Pronto — vira um app nativo!
+            </div>
+          </div>
+        </div>
+        <div class="step-item no-break">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Configure seu perfil</div>
+            <div class="step-desc">Vá em <strong>Configurações</strong> (ícone ⚙️ na barra lateral) e preencha nome, telefone e CRECI. Essas informações aparecerão nas propostas em PDF.</div>
+          </div>
+        </div>
+        <div class="step-item no-break">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">Cadastre seu primeiro lead</div>
+            <div class="step-desc">Vá em <strong>CRM</strong> → clique em <strong>"+ Novo Lead"</strong> → preencha nome, telefone e origem. O lead aparecerá automaticamente no funil de vendas.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <div class="tip-icon">✅</div>
+        <div class="tip-text"><strong>Boa prática:</strong> Cadastre todos os seus leads existentes antes de começar a usar — quanto mais dados, mais poderosos ficam os relatórios e o lead score automático.</div>
+      </div>
+
+      <div class="tip-box purple">
+        <div class="tip-icon">🔒</div>
+        <div class="tip-text"><strong>Segurança garantida:</strong> Seus dados são protegidos por criptografia bancária (SSL) e só você tem acesso às suas informações. Nem o Grupo Captar pode ver seus leads.</div>
+      </div>
+
+    </div>
+    <div class="page-footer">
+      <img src="logo.svg" alt="Grupo Captar" style="height:15px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-footer-site">grupocaptar.com.br</div>
+      <div class="page-footer-num">03</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 4 — MÓDULOS DO SISTEMA
+══════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="content-page">
+    <div class="page-header">
+      <img src="logo.svg" alt="Grupo Captar" style="height:20px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-header-section">Módulos do Sistema</div>
+      <div class="page-header-num">04</div>
+    </div>
+    <div class="content-body">
+
+      <div class="section-eyebrow">Guia por módulo</div>
+      <h1 class="section-title">Tudo que você pode<br/><span>fazer no Captar CRM.</span></h1>
+      <p class="section-lead">Cada módulo foi projetado para um fluxo específico do trabalho imobiliário. Conheça todos:</p>
+
+      <div class="module-list">
+
+        <div class="module-item no-break">
+          <div class="module-icon">🎯</div>
+          <div class="module-info">
+            <div class="module-name">CRM — Funil de Vendas</div>
+            <div style="font-size:9pt;color:var(--t3);line-height:1.6;margin-bottom:6px">
+              Visualize todos os leads em 4 colunas: <strong>Novo Lead → Em Contato → Negociação → Fechado</strong>. Arraste e solte os cards para mover entre estágios. Clique em qualquer lead para ver score, histórico de contato, imóveis compatíveis e templates de WhatsApp prontos.
+            </div>
+            <div class="module-actions">
+              <span class="module-tag">+ Novo lead</span>
+              <span class="module-tag blue">Filtro por origem</span>
+              <span class="module-tag green">Lead Score automático</span>
+              <span class="module-tag gold">Templates WhatsApp</span>
+              <span class="module-tag">Match com imóveis</span>
+              <span class="module-tag red">Excluir lead</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-item no-break">
+          <div class="module-icon">🏠</div>
+          <div class="module-info">
+            <div class="module-name">Imóveis — Portfólio</div>
+            <div style="font-size:9pt;color:var(--t3);line-height:1.6;margin-bottom:6px">
+              Cadastre e gerencie todo o seu portfólio. Filtre por tipo (apartamento, casa, rural, comercial) e status. Cada imóvel tem QR Code, botão de Proposta em PDF e comparativo lado a lado com outros imóveis.
+            </div>
+            <div class="module-actions">
+              <span class="module-tag">+ Adicionar imóvel</span>
+              <span class="module-tag blue">Filtros avançados</span>
+              <span class="module-tag green">QR Code</span>
+              <span class="module-tag gold">📄 Proposta PDF</span>
+              <span class="module-tag">⚖️ Comparativo</span>
+              <span class="module-tag">✏️ Editar</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-item no-break">
+          <div class="module-icon">🔑</div>
+          <div class="module-info">
+            <div class="module-name">Locação — Gestão de Contratos</div>
+            <div style="font-size:9pt;color:var(--t3);line-height:1.6;margin-bottom:6px">
+              Controle todos os contratos de aluguel com status automático (pago, pendente, atrasado, a vencer). Envie cobranças via WhatsApp, faça vistoria de entrada/saída com checklist de 16 itens e simule reajuste por IGP-M, IPCA ou INPC.
+            </div>
+            <div class="module-actions">
+              <span class="module-tag">+ Novo contrato</span>
+              <span class="module-tag gold">Alerta de vencimento</span>
+              <span class="module-tag green">Cobrança WA</span>
+              <span class="module-tag blue">Vistoria</span>
+              <span class="module-tag">📐 Reajuste</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-item no-break">
+          <div class="module-icon">📅</div>
+          <div class="module-info">
+            <div class="module-name">Visitas — Agendamento</div>
+            <div style="font-size:9pt;color:var(--t3);line-height:1.6;margin-bottom:6px">
+              Agende visitas com cliente, imóvel, data, hora e corretor responsável. Confirme ou cancele com um clique. Visitas agendadas para hoje aparecem automaticamente nas notificações.
+            </div>
+            <div class="module-actions">
+              <span class="module-tag">+ Agendar visita</span>
+              <span class="module-tag green">✓ Confirmar realizada</span>
+              <span class="module-tag red">✕ Cancelar</span>
+              <span class="module-tag blue">✏️ Editar</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-item no-break">
+          <div class="module-icon">💰</div>
+          <div class="module-info">
+            <div class="module-name">Financeiro — Controle de Caixa</div>
+            <div style="font-size:9pt;color:var(--t3);line-height:1.6;margin-bottom:6px">
+              Registre entradas e saídas, veja o saldo mensal e acompanhe suas comissões calculadas automaticamente dos leads fechados. Use a Calculadora de Financiamento (tabelas Price e SAC) para simular propostas na hora.
+            </div>
+            <div class="module-actions">
+              <span class="module-tag green">+ Nova entrada</span>
+              <span class="module-tag red">+ Nova saída</span>
+              <span class="module-tag gold">🧮 Calculadora</span>
+              <span class="module-tag">💸 Comissões automáticas</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-item no-break">
+          <div class="module-icon">🏗️</div>
+          <div class="module-info">
+            <div class="module-name">Loteamentos & Empreendimentos</div>
+            <div style="font-size:9pt;color:var(--t3);line-height:1.6;margin-bottom:6px">
+              Gerencie loteamentos, condomínios, haras e empreendimentos verticais separadamente do portfólio de imóveis. Acompanhe VGV, unidades disponíveis, status de obras e previsão de entrega.
+            </div>
+            <div class="module-actions">
+              <span class="module-tag">+ Novo empreendimento</span>
+              <span class="module-tag blue">Loteamento / Condomínio</span>
+              <span class="module-tag gold">VGV & Unidades</span>
+              <span class="module-tag green">Status de obras</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <div class="page-footer">
+      <img src="logo.svg" alt="Grupo Captar" style="height:15px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-footer-site">grupocaptar.com.br</div>
+      <div class="page-footer-num">04</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 5 — FUNCIONALIDADES AVANÇADAS
+══════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="content-page">
+    <div class="page-header">
+      <img src="logo.svg" alt="Grupo Captar" style="height:20px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-header-section">Funcionalidades Avançadas</div>
+      <div class="page-header-num">05</div>
+    </div>
+    <div class="content-body">
+
+      <div class="section-eyebrow">Diferenciais exclusivos</div>
+      <h1 class="section-title">O que nenhum outro<br/><span>CRM tem.</span></h1>
+      <p class="section-lead">Estas funcionalidades foram desenvolvidas especificamente para o mercado imobiliário brasileiro e não existem em nenhuma outra plataforma.</p>
+
+      <div class="feature-grid" style="margin-bottom:20px">
+        <div class="feature-card accent">
+          <div class="feature-icon">🏆</div>
+          <div class="feature-body">
+            <div class="feature-title">Lead Score Inteligente</div>
+            <div class="feature-desc">Cada lead recebe uma pontuação automática de 0 a 100 baseada no estágio, dias sem contato, origem e valor. Priorize os leads certos.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon blue">🤝</div>
+          <div class="feature-body">
+            <div class="feature-title">Match Lead × Imóvel</div>
+            <div class="feature-desc">O sistema cruza automaticamente o interesse do lead com seu portfólio e sugere os imóveis mais compatíveis por faixa de preço e tipo.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon gold">💬</div>
+          <div class="feature-body">
+            <div class="feature-title">Templates WhatsApp</div>
+            <div class="feature-desc">8 mensagens prontas por estágio do funil (primeiro contato, follow-up, proposta, fechamento). Um clique e o WhatsApp abre com o texto preenchido.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon green">📄</div>
+          <div class="feature-body">
+            <div class="feature-title">Proposta Profissional em PDF</div>
+            <div class="feature-desc">Gera um documento completo com foto do imóvel, especificações, simulação de financiamento e assinatura do corretor. Pronto para enviar ao cliente.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <div class="feature-body">
+            <div class="feature-title">QR Code por Imóvel</div>
+            <div class="feature-desc">Cada imóvel tem um QR Code único que leva direto à página dele no site. Use em placas, folders e posts de redes sociais.</div>
+          </div>
+        </div>
+        <div class="feature-card accent">
+          <div class="feature-icon red">🔔</div>
+          <div class="feature-body">
+            <div class="feature-title">Notificações Inteligentes</div>
+            <div class="feature-desc">Alertas automáticos para leads com mais de 5 dias sem contato, visitas agendadas para hoje e locações vencendo em 3 dias.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon gold">🎯</div>
+          <div class="feature-body">
+            <div class="feature-title">Metas Mensais</div>
+            <div class="feature-desc">Defina metas de leads, visitas, vendas e comissão. O dashboard mostra o progresso em tempo real com barra visual.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon blue">⚖️</div>
+          <div class="feature-body">
+            <div class="feature-title">Comparativo de Imóveis</div>
+            <div class="feature-desc">Selecione até 3 imóveis e compare lado a lado: preço, área, quartos, banheiros e localização. Ideal para apresentar ao cliente.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box warning">
+        <div class="tip-icon">⭐</div>
+        <div class="tip-text">
+          <strong>Dica Pro:</strong> Combine o Lead Score com os Templates de WhatsApp para um processo de vendas imbatível. Leads com score alto merecem mensagens de fechamento; leads novos pedem mensagens de apresentação.
+        </div>
+      </div>
+
+    </div>
+    <div class="page-footer">
+      <img src="logo.svg" alt="Grupo Captar" style="height:15px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-footer-site">grupocaptar.com.br</div>
+      <div class="page-footer-num">05</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 6 — ATALHOS, DICAS & FAQ
+══════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="content-page">
+    <div class="page-header">
+      <img src="logo.svg" alt="Grupo Captar" style="height:20px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-header-section">Atalhos & Dicas</div>
+      <div class="page-header-num">06</div>
+    </div>
+    <div class="content-body">
+
+      <div class="section-eyebrow">Produtividade máxima</div>
+      <h1 class="section-title">Use como um<br/><span>profissional.</span></h1>
+      <p class="section-lead">Atalhos de teclado, truques e boas práticas que os melhores usuários do Captar CRM usam todos os dias.</p>
+
+      <div class="section-eyebrow" style="margin-bottom:12px">Atalhos de teclado</div>
+      <div class="kbd-grid" style="margin-bottom:24px">
+        <div class="kbd-item">
+          <span class="kbd-label">Busca global (qualquer página)</span>
+          <kbd>Ctrl + K</kbd>
+        </div>
+        <div class="kbd-item">
+          <span class="kbd-label">Fechar modal / painel</span>
+          <kbd>Esc</kbd>
+        </div>
+        <div class="kbd-item">
+          <span class="kbd-label">Imprimir relatório</span>
+          <kbd>Ctrl + P</kbd>
+        </div>
+        <div class="kbd-item">
+          <span class="kbd-label">Navegar entre campos do form</span>
+          <kbd>Tab</kbd>
+        </div>
+      </div>
+
+      <div class="section-eyebrow" style="margin-bottom:12px">Fluxo de trabalho recomendado</div>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Momento</th>
+            <th>O que fazer no CRM</th>
+            <th>Módulo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Ao receber um lead</strong></td>
+            <td>Cadastre imediatamente em CRM → Novo Lead. Use o template "Primeiro Contato" no WhatsApp.</td>
+            <td><span class="badge badge-purple">CRM</span></td>
+          </tr>
+          <tr>
+            <td><strong>Após ligar/responder</strong></td>
+            <td>Mova o lead para "Em Contato". Registre o contato no histórico. Verifique os imóveis compatíveis.</td>
+            <td><span class="badge badge-purple">CRM</span></td>
+          </tr>
+          <tr>
+            <td><strong>Antes de uma visita</strong></td>
+            <td>Agende a visita no módulo Visitas. Gere a Proposta PDF do imóvel para entregar impresso.</td>
+            <td><span class="badge badge-green">Visitas</span></td>
+          </tr>
+          <tr>
+            <td><strong>Apresentando ao cliente</strong></td>
+            <td>Use o Comparativo de Imóveis para mostrar 3 opções lado a lado em tempo real.</td>
+            <td><span class="badge badge-green">Imóveis</span></td>
+          </tr>
+          <tr>
+            <td><strong>Em negociação</strong></td>
+            <td>Use a Calculadora de Financiamento para simular parcelas na hora. Move o lead para "Negociação".</td>
+            <td><span class="badge badge-gold">Financeiro</span></td>
+          </tr>
+          <tr>
+            <td><strong>Fechou a venda!</strong></td>
+            <td>Mova o lead para "Fechado". A comissão é calculada automaticamente no módulo Financeiro.</td>
+            <td><span class="badge badge-purple">Financeiro</span></td>
+          </tr>
+          <tr>
+            <td><strong>Todo início de mês</strong></td>
+            <td>Atualize suas metas no Dashboard. Gere relatório de performance e verifique locações vencendo.</td>
+            <td><span class="badge badge-gold">Relatórios</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tip-box info">
+        <div class="tip-icon">🔍</div>
+        <div class="tip-text">
+          <strong>Busca Global:</strong> Pressione <kbd style="background:#e5e7eb;border:1px solid #d1d5db;border-radius:4px;padding:1px 6px;font-size:8pt">Ctrl + K</kbd> em qualquer página para buscar leads, imóveis ou loteamentos instantaneamente, sem precisar navegar pelos menus.
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <div class="tip-icon">📊</div>
+        <div class="tip-text">
+          <strong>Relatório de Corretores:</strong> Se você gerencia uma equipe, vá em Relatórios → Performance por Corretor para ver o ranking completo com leads, visitas, fechamentos e comissão de cada um.
+        </div>
+      </div>
+
+    </div>
+    <div class="page-footer">
+      <img src="logo.svg" alt="Grupo Captar" style="height:15px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-footer-site">grupocaptar.com.br</div>
+      <div class="page-footer-num">06</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 7 — O MERCADO IMOBILIÁRIO MUDOU
+══════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="content-page">
+    <div class="page-header">
+      <img src="logo.svg" alt="Grupo Captar" style="height:20px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-header-section">Por Que o Captar CRM?</div>
+      <div class="page-header-num">07</div>
+    </div>
+    <div class="content-body">
+
+      <div class="section-eyebrow">Nossa visão</div>
+      <h1 class="section-title">Revolucionamos o<br/><span>mercado imobiliário.</span></h1>
+      <p class="section-lead">
+        Enquanto outras ferramentas servem qualquer setor, o Captar CRM foi construído do zero para o corretor de imóveis brasileiro. Cada detalhe foi pensado para o seu dia a dia.
+      </p>
+
+      <div class="quote-block">
+        <div class="quote-text">
+          "O corretor que organiza seus leads, acompanha cada contato e usa dados para tomar decisões vende até 3 vezes mais do que um corretor que trabalha no improviso. O Captar CRM existe para ser essa vantagem."
+        </div>
+        <div class="quote-author">— Equipe Grupo Captar, 2026</div>
+      </div>
+
+      <div class="section-eyebrow" style="margin-bottom:12px">Comparativo: antes × depois</div>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Sem o Captar CRM</th>
+            <th>Com o Captar CRM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>❌ Leads espalhados em WhatsApp, papel e planilha</td>
+            <td>✅ Todos os leads em um funil visual, sempre atualizado</td>
+          </tr>
+          <tr>
+            <td>❌ Esquecer de fazer follow-up com leads quentes</td>
+            <td>✅ Notificação automática para leads parados há 5+ dias</td>
+          </tr>
+          <tr>
+            <td>❌ Simular financiamento no papel ou na cabeça</td>
+            <td>✅ Calculadora Price/SAC integrada, resultado em segundos</td>
+          </tr>
+          <tr>
+            <td>❌ Proposta enviada por print do celular</td>
+            <td>✅ PDF profissional com simulação de financiamento e logo</td>
+          </tr>
+          <tr>
+            <td>❌ Não saber quais contratos vencem este mês</td>
+            <td>✅ Painel de locações com alertas e status automático</td>
+          </tr>
+          <tr>
+            <td>❌ Não ter noção de comissões do mês</td>
+            <td>✅ Comissões calculadas automaticamente dos fechamentos</td>
+          </tr>
+          <tr>
+            <td>❌ Apresentar imóveis mostrando foto por foto</td>
+            <td>✅ Comparativo lado a lado de 3 imóveis em tempo real</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="stat-row" style="margin-top:8px">
+        <div class="stat-box">
+          <div class="val">10</div>
+          <div class="lbl">módulos em<br/>uma só plataforma</div>
+        </div>
+        <div class="stat-box">
+          <div class="val">5.570</div>
+          <div class="lbl">cidades brasileiras<br/>no buscador integrado</div>
+        </div>
+        <div class="stat-box">
+          <div class="val">8</div>
+          <div class="lbl">templates de WhatsApp<br/>prontos para usar</div>
+        </div>
+        <div class="stat-box">
+          <div class="val">0</div>
+          <div class="lbl">planilhas, cadernos<br/>ou post-its necessários</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="page-footer">
+      <img src="logo.svg" alt="Grupo Captar" style="height:15px;object-fit:contain;filter:brightness(0) saturate(100%) invert(10%) sepia(80%) saturate(6000%) hue-rotate(288deg) brightness(75%) contrast(130%)"/>
+      <div class="page-footer-site">grupocaptar.com.br</div>
+      <div class="page-footer-num">07</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PÁGINA 8 — CONTRACAPA
+══════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="back-cover">
+    <div class="back-orb a"></div>
+    <div class="back-orb b"></div>
+    <div class="back-cover-content">
+      <div style="font-size:40px;margin-bottom:20px">🏠</div>
+      <div class="back-title">Pronto para<br/><span>vender mais?</span></div>
+      <div class="back-sub">O Captar CRM está esperando por você. Acesse agora e comece a transformar seu negócio imobiliário hoje.</div>
+
+      <div class="back-divider"></div>
+
+      <div class="back-contact">
+        <div class="back-contact-item">
+          <svg width="16" height="16" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Grupo Captar Gestão Imobiliária</span>
+        </div>
+        <div class="back-contact-item">
+          <svg width="16" height="16" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014 6.11a2 2 0 012-2.18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L10 11a16 16 0 006 6z"/></svg>
+          Suporte: <span>(54) 9 9647-3047</span>
+        </div>
+        <div class="back-contact-item">
+          <svg width="16" height="16" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>grupocaptar.com.br</span>
+        </div>
+      </div>
+
+      <img src="logo.svg" alt="Grupo Captar" style="height:44px;max-width:240px;object-fit:contain;opacity:.9;margin-bottom:10px"/>
+      <div class="back-tagline">Gestão Imobiliária · Plano Alta Performance</div>
+      <div style="margin-top:24px;font-size:8pt;color:rgba(255,255,255,.2)">
+        © 2026 Grupo Captar · Todos os direitos reservados · Documento confidencial
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

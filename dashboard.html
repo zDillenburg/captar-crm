@@ -4431,7 +4431,8 @@ async function salvarEdicaoVisita(){
     cliente,
     data:`${d}/${m}/${y}`,
     hora:document.getElementById('v-hora').value,
-    corretor:document.getElementById('v-corretor').value||''
+    corretor:document.getElementById('v-corretor').value||'',
+    obs:document.getElementById('v-obs')?.value?.trim()||''
   };
   const {error}=await _sb.from('visitas').update(update).eq('id',_editingVisitaId);
   if(error){showToast('Erro ao salvar: '+error.message,'error');return;}
@@ -4464,6 +4465,7 @@ async function addVisita(){
     hora:document.getElementById('v-hora').value,
     status:'agendada',
     corretor:document.getElementById('v-corretor').value||'',
+    obs:document.getElementById('v-obs')?.value?.trim()||'',
     emoji:'🏠',
     grad:'linear-gradient(135deg,#1e1b4b,#312e81)'
   };
@@ -6576,7 +6578,7 @@ function gerarPropostaPDF(imId){
   .assinatura-info{font-size:12px;color:#666}
   @media print{@page{margin:1cm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
-<title>Proposta — ${im.titulo}</title></head>
+<title>Proposta — ${escHTML(im.titulo)}</title></head>
 <body><div class="doc">
   <div class="header">
     <div><div class="logo">Grupo<span>Captar</span></div><div style="font-size:12px;color:#888;margin-top:4px">Gestão Imobiliária</div></div>
@@ -8290,14 +8292,13 @@ function initRealtimeNotifications(){
   if(!window._sb) return;
   try{
     _sb.channel('avisos-realtime')
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'avisos'},payload=>{
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'avisos',filter:'ativo=eq.true'},payload=>{
         showToast('📢 Novo aviso: '+(payload.new.titulo||''),'info',6000);
         if(typeof loadAvisos==='function') loadAvisos().then(()=>{if(typeof renderAvisos==='function')renderAvisos();});
       })
       .subscribe();
   }catch(e){}
   try{
-    const uid=_sb.auth.getUser&&_sb.auth.getUser().then&&null;
     _sb.auth.getSession().then(({data})=>{
       const userId=data?.session?.user?.id;
       if(!userId) return;

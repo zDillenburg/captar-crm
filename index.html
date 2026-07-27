@@ -9,6 +9,7 @@
   <meta property="og:type" content="website"/>
   <meta property="og:image" content="https://grupocaptar.com.br/background1.webp"/>
   <meta property="og:url" content="https://grupocaptar.com.br"/>
+  <link rel="canonical" href="https://grupocaptar.com.br/"/>
   <meta property="og:locale" content="pt_BR"/>
   <meta property="og:site_name" content="Grupo Captar"/>
   <meta name="twitter:card" content="summary_large_image"/>
@@ -222,21 +223,6 @@
       transform: translateY(-2px);
       box-shadow: 0 12px 32px rgba(133,2,119,0.4);
     }
-
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 16px 28px;
-      color: rgba(255,255,255,0.92);
-      font-size: 14px;
-      font-weight: 600;
-      text-decoration: none;
-      border: 1px solid rgba(255,255,255,0.45);
-      border-radius: var(--radius);
-      transition: color .2s, border-color .2s, background .2s;
-    }
-    .btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.07); }
 
     .hero-scroll {
       position: absolute;
@@ -756,23 +742,6 @@
       border-bottom: 1px solid rgba(0,0,0,0.08);
     }
 
-    .footer-brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      margin-bottom: 20px;
-    }
-    .footer-brand img { height: 42px; width: auto; }
-
-    .footer-tagline {
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--text-muted);
-      line-height: 1.6;
-      max-width: 320px;
-    }
-
     .footer-contact-title {
       font-size: 11px;
       font-weight: 600;
@@ -942,13 +911,13 @@
       .hero-arrow { bottom: 16px; }
       .hero-subtitle { font-size: 15px; margin-bottom: 36px; }
       .hero-actions { gap: 12px; flex-direction: column; width: 100%; }
-      .hero-actions .btn-primary, .hero-actions .btn-ghost {
+      .hero-actions .btn-primary {
         width: 100%;
         justify-content: center;
         padding: 15px 22px;
         font-size: 14px;
       }
-      .btn-primary, .btn-ghost { padding: 14px 22px; font-size: 13px; }
+      .btn-primary { padding: 14px 22px; font-size: 13px; }
       .manifesto { padding: 72px 24px; }
       .manifesto-open-quote { font-size: 72px; margin-bottom: 12px; }
       .manifesto-quote { font-size: 20px; }
@@ -963,7 +932,7 @@
       .hero { padding: 88px 20px 80px; }
       .hero-title { font-size: 38px; }
       .hero-subtitle { font-size: 14px; }
-      .btn-primary, .btn-ghost { padding: 13px 18px; font-size: 13px; }
+      .btn-primary { padding: 13px 18px; font-size: 13px; }
     }
 
     @media (max-width: 360px) {
@@ -2324,6 +2293,10 @@
       }
       /* Empurra botão de back-to-top para cima da barra */
       #back-to-top { bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+      /* Empurra o banner LGPD para cima da barra quando visível — NÃO mexer no
+         "bottom" do #lgpd-banner (quebra o translateY(100%) de saída, ver head).
+         Em vez disso, sobrepõe só o transform do estado .visible. */
+      #lgpd-banner.visible { transform: translateY(calc(-1 * (80px + env(safe-area-inset-bottom, 0px)))) !important; }
       /* Oculta o FAB de WhatsApp no mobile — CTA bar já tem o botão */
       .whatsapp-fab { display: none !important; }
       /* Garante que o footer não fique escondido sob a barra */

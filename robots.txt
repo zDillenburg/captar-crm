@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /dashboard.html
+Disallow: /tutorial-cliente.html
 
 Sitemap: https://grupocaptar.com.br/sitemap.xml
