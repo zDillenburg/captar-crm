@@ -832,6 +832,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .ai-img-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:16px}
 .ai-img-result-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px;display:flex;flex-direction:column;gap:8px}
 .ai-img-result-card img{width:100%;border-radius:8px;display:block}
+.ai-fab{position:fixed;bottom:28px;right:28px;z-index:200;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pl));border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 8px 24px rgba(133,2,119,.45);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s}
+.ai-fab:hover{transform:scale(1.08);box-shadow:0 12px 32px rgba(133,2,119,.55)}
+.ai-fab.hidden{display:none}
+@media(max-width:768px){.ai-fab{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:16px;width:48px;height:48px;font-size:20px}}
+.ai-dashboard-card{background:linear-gradient(120deg,rgba(133,2,119,.16),rgba(163,3,154,.06));border:1px solid rgba(133,2,119,.35);border-radius:var(--r2);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;gap:18px;cursor:pointer;transition:border-color .2s}
+.ai-dashboard-card:hover{border-color:rgba(133,2,119,.6)}
+.ai-dashboard-card-icon{font-size:32px;flex-shrink:0}
+.ai-dashboard-card-title{font-size:15px;font-weight:800;color:var(--t1);margin-bottom:4px}
+.ai-dashboard-card-desc{font-size:12px;color:var(--t2);line-height:1.5}
+.ai-dashboard-card-cta{flex-shrink:0;background:var(--p);color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;white-space:nowrap}
 
 /* ═══ METAS MENSAIS ═══ */
 .metas-section{margin-bottom:24px}
@@ -1009,7 +1019,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
         Contratos
       </button>
-      <button class="nav-item" onclick="navigate('assistente',this)">
+      <button class="nav-item" id="nav-assistente-btn" onclick="navigate('assistente',this)">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg>
         Assistente IA
       </button>
@@ -1119,6 +1129,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 
       <!-- ══════ DASHBOARD PAGE ══════ -->
       <div class="page active" id="page-dashboard">
+        <!-- Assistente IA — destaque -->
+        <div class="ai-dashboard-card" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))">
+          <div class="ai-dashboard-card-icon">✨</div>
+          <div style="flex:1;min-width:0">
+            <div class="ai-dashboard-card-title">Assistente IA</div>
+            <div class="ai-dashboard-card-desc">Converse com uma IA especialista em mercado imobiliário e gere ou edite imagens de imóveis em alta qualidade.</div>
+          </div>
+          <div class="ai-dashboard-card-cta">Conversar agora →</div>
+        </div>
         <!-- Overdue Alert Banner -->
         <div id="overdue-banner" style="display:none;margin-bottom:20px;padding:13px 18px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:8px;cursor:pointer;align-items:center;gap:14px;transition:background .2s" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1])" onmouseenter="this.style.background='rgba(245,158,11,.14)'" onmouseleave="this.style.background='rgba(245,158,11,.08)'">
           <span style="font-size:20px;flex-shrink:0">⚠️</span>
@@ -1461,6 +1480,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
                 <div class="toggle-desc">Atualizações e novas funcionalidades</div>
               </div>
               <button class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+            </div>
+          </div>
+          <div class="config-card">
+            <div class="config-card-title">Logo da Imobiliária</div>
+            <div style="font-size:12px;color:var(--t3);margin-bottom:14px">Usado pelo Assistente IA para incluir sua marca nas imagens geradas.</div>
+            <img id="config-logo-preview" style="display:none;max-width:180px;max-height:90px;object-fit:contain;border-radius:8px;margin-bottom:12px;background:#fff;padding:8px"/>
+            <div id="config-logo-empty" style="font-size:12px;color:var(--t3);margin-bottom:12px">Nenhum logo enviado ainda.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <label class="config-save" style="cursor:pointer" for="config-logo-file">📎 Enviar logo</label>
+              <input type="file" id="config-logo-file" accept="image/*" style="display:none" onchange="handleLogoFileSelect(event)"/>
+              <button type="button" class="btn-cancel" id="config-logo-remove-btn" style="display:none" onclick="removerLogo()">Remover</button>
             </div>
           </div>
         </div>
@@ -2309,6 +2339,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <button type="button" class="btn-cancel" id="ai-img-clear-btn" style="display:none" onclick="clearAiImageInput()">Remover</button>
           </div>
           <img id="ai-img-preview" style="display:none;max-width:160px;border-radius:8px;margin:10px 0;border:1px solid var(--border)"/>
+          <div id="ai-logo-toggle-row" style="display:none;align-items:center;gap:8px;margin-bottom:10px">
+            <input type="checkbox" id="ai-use-logo" style="width:16px;height:16px;cursor:pointer"/>
+            <label for="ai-use-logo" style="font-size:12px;color:var(--t2);cursor:pointer">Incluir meu logo na imagem</label>
+          </div>
           <button class="btn-add" id="ai-img-gen-btn" onclick="generateAiImage()" style="margin-top:8px">Gerar Imagem</button>
           <div class="ai-usage-note" id="ai-img-usage">Carregando limite diário…</div>
           <div style="font-size:11px;color:var(--t3);margin:6px 0 16px">⚠️ Imagens geradas não são salvas automaticamente — baixe as que quiser guardar.</div>
@@ -2322,6 +2356,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
     </div><!-- /page-content -->
   </div><!-- /main -->
 </div><!-- /app -->
+
+<button class="ai-fab" id="ai-fab-btn" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))" title="Assistente IA" aria-label="Abrir Assistente IA">✨</button>
 
 <!-- ══════ MODAL NOVO LEAD ══════ -->
 <div class="modal-overlay" id="modal">
@@ -3661,6 +3697,7 @@ function navigate(page, btn){
   if(btn) btn.classList.add('active');
   document.getElementById('page-title').textContent=pageMeta[page].title;
   document.getElementById('page-sub').textContent=pageMeta[page].sub;
+  document.getElementById('ai-fab-btn')?.classList.toggle('hidden',page==='assistente');
   initPage(page);
   // close mobile sidebar
   document.getElementById('sidebar').classList.remove('open');
@@ -3705,6 +3742,7 @@ function initPage(page){
   if(page==='relatorios') setTimeout(()=>{initPerfChart();initReceitaBar();renderFunnel();renderRelatorioCorretores();},100);
   if(page==='financeiro') setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100);
   if(page==='assistente') initAssistente();
+  if(page==='config') loadUserLogo();
 }
 
 // ─────────────────────────────────────────
@@ -8521,6 +8559,7 @@ async function initAssistente(){
   refreshAiUsageDisplay('chat');
   refreshAiUsageDisplay('imagem');
   loadAiImagensSalvas();
+  loadUserLogo();
 }
 
 async function loadAiChatHistory(){
@@ -8651,6 +8690,65 @@ function clearAiImageInput(){
   document.getElementById('ai-img-clear-btn').style.display='none';
 }
 
+// ── Logo da imobiliária (usado pelo Assistente IA) ──────
+let _userLogoUrl=null;
+
+function refreshLogoCheckboxVisibility(){
+  const row=document.getElementById('ai-logo-toggle-row');
+  if(row)row.style.display=_userLogoUrl?'flex':'none';
+  if(!_userLogoUrl){const cb=document.getElementById('ai-use-logo');if(cb)cb.checked=false;}
+}
+
+async function loadUserLogo(){
+  if(!_currentUser?.id)return;
+  const {data:signed}=await _sb.storage.from('logos').createSignedUrl(`${_currentUser.id}/logo.png`,3600);
+  const preview=document.getElementById('config-logo-preview');
+  const empty=document.getElementById('config-logo-empty');
+  const removeBtn=document.getElementById('config-logo-remove-btn');
+  _userLogoUrl=signed?.signedUrl||null;
+  if(_userLogoUrl){
+    if(preview){preview.src=_userLogoUrl;preview.style.display='block';}
+    if(empty)empty.style.display='none';
+    if(removeBtn)removeBtn.style.display='inline-block';
+  }else{
+    if(preview)preview.style.display='none';
+    if(empty)empty.style.display='block';
+    if(removeBtn)removeBtn.style.display='none';
+  }
+  refreshLogoCheckboxVisibility();
+}
+
+function handleLogoFileSelect(evt){
+  const file=evt.target.files&&evt.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('Selecione um arquivo de imagem.','error');evt.target.value='';return;}
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  resizeImageFile(file,800,0.92).then(async({mimeType,data})=>{
+    const blob=base64ToBlob(data,mimeType);
+    const path=`${_currentUser.id}/logo.png`;
+    const {error}=await _sb.storage.from('logos').upload(path,blob,{contentType:mimeType,upsert:true});
+    if(error){showToast('Erro ao enviar logo: '+error.message,'error');return;}
+    showToast('Logo enviado!','success');
+    loadUserLogo();
+  }).catch(()=>showToast('Não foi possível processar a imagem.','error'));
+}
+
+async function removerLogo(){
+  if(!_currentUser?.id)return;
+  if(!confirm('Remover o logo salvo?'))return;
+  await _sb.storage.from('logos').remove([`${_currentUser.id}/logo.png`]);
+  loadUserLogo();
+}
+
+function blobToBase64(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=reject;
+    reader.onload=()=>resolve(String(reader.result).split(',')[1]);
+    reader.readAsDataURL(blob);
+  });
+}
+
 function resizeImageFile(file,maxDim,quality){
   return new Promise((resolve,reject)=>{
     const reader=new FileReader();
@@ -8689,6 +8787,16 @@ async function generateAiImage(){
   btn.disabled=true;
   btn.textContent='Gerando…';
 
+  let logoImage=null;
+  const useLogo=document.getElementById('ai-use-logo')?.checked;
+  if(useLogo&&_userLogoUrl){
+    try{
+      const logoResp=await fetch(_userLogoUrl);
+      const logoBlob=await logoResp.blob();
+      logoImage={mimeType:logoBlob.type||'image/png',data:await blobToBase64(logoBlob)};
+    }catch(e){/* segue sem logo se não conseguir carregar */}
+  }
+
   const controller=new AbortController();
   const timeoutId=setTimeout(()=>controller.abort(),55000);
 
@@ -8696,7 +8804,7 @@ async function generateAiImage(){
     const resp=await fetch('/api/ai-image',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({prompt,inputImage:_aiSelectedImage||undefined}),
+      body:JSON.stringify({prompt,inputImage:_aiSelectedImage||undefined,logoImage:logoImage||undefined}),
       signal:controller.signal
     });
     clearTimeout(timeoutId);

@@ -16,11 +16,16 @@ module.exports = async (req, res) => {
 
   const body = req.body || {};
   const prompt = typeof body.prompt === 'string' ? body.prompt.trim() : '';
-  const inputImage = body.inputImage; // opcional: {mimeType, data(base64 sem prefixo)}
+  const inputImage = body.inputImage; // opcional: {mimeType, data(base64 sem prefixo)} — foto do imóvel
+  const logoImage = body.logoImage;   // opcional: {mimeType, data(base64 sem prefixo)} — logo da imobiliária
 
   if (!prompt) { res.status(400).json({ error: 'invalid_prompt' }); return; }
   if (inputImage && (typeof inputImage.mimeType !== 'string' || typeof inputImage.data !== 'string')) {
     res.status(400).json({ error: 'invalid_input_image' });
+    return;
+  }
+  if (logoImage && (typeof logoImage.mimeType !== 'string' || typeof logoImage.data !== 'string')) {
+    res.status(400).json({ error: 'invalid_logo_image' });
     return;
   }
 
@@ -28,7 +33,13 @@ module.exports = async (req, res) => {
   if (inputImage) {
     parts.push({ inlineData: { mimeType: inputImage.mimeType, data: inputImage.data } });
   }
-  parts.push({ text: prompt });
+  if (logoImage) {
+    parts.push({ inlineData: { mimeType: logoImage.mimeType, data: logoImage.data } });
+  }
+  const finalText = logoImage
+    ? `${prompt}\n\n(A última imagem anexada é o logo da imobiliária — inclua-o de forma discreta e profissional, por exemplo no canto inferior direito, sem cobrir elementos principais da imagem.)`
+    : prompt;
+  parts.push({ text: finalText });
 
   try {
     const geminiResp = await fetch(
