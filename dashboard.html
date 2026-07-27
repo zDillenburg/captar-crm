@@ -8501,11 +8501,13 @@ async function getAiAccessToken(){
 }
 
 function aiErrorMessage(status,data){
-  if(status===401)return'Sessão expirada — faça login novamente.';
+  const detail=data&&data.detail?` [detalhe: ${String(data.detail).slice(0,300)}]`:'';
+  if(status===401)return'Sessão expirada — faça login novamente.'+detail;
   if(status===403)return'Sua conta está suspensa. Entre em contato com o Grupo Captar.';
   if(status===429){const u=data&&data.usage;return u?`Você atingiu o limite diário (${u.limite}). Volte amanhã!`:'Você atingiu o limite diário de uso.';}
-  if(status===503)return'A IA está sobrecarregada no momento. Tente novamente em instantes.';
-  return'Erro ao falar com a IA. Tente novamente.';
+  if(status===503)return'A IA está sobrecarregada no momento (ou a chamada ao Gemini falhou). Tente novamente em instantes.'+detail;
+  if(status===500)return'Erro de configuração no servidor.'+detail;
+  return'Erro ao falar com a IA. Tente novamente.'+detail;
 }
 
 async function initAssistente(){
