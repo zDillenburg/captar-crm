@@ -867,6 +867,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .ai-img-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:16px}
 .ai-img-result-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px;display:flex;flex-direction:column;gap:8px;animation:captarIaFadeUp .4s ease-out}
 .ai-img-result-card img{width:100%;border-radius:8px;display:block}
+.ai-img-thread-log{display:flex;flex-direction:column;gap:14px;max-height:520px;overflow-y:auto;padding:4px 2px;margin-bottom:14px}
+.ai-img-thread-result{max-width:320px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.ai-img-thread-result img{width:100%;border-radius:8px;display:block}
+.ai-img-thread-actions{display:flex;gap:6px}
+.ai-img-thread-actions a,.ai-img-thread-actions button{flex:1;text-align:center;text-decoration:none;font-size:12px;padding:7px 10px}
+.ai-img-reset-link{background:none;border:none;color:#e6b3df;font-size:11px;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
 
 /* Card "Captar IA" no Dashboard — chat embutido */
 .captar-ia-card{position:relative;background:linear-gradient(160deg,rgba(133,2,119,.12),rgba(20,18,16,.35) 65%);border:1px solid rgba(163,3,154,.3);border-radius:var(--r2);padding:20px 22px;margin-bottom:20px;overflow:hidden;animation:captarIaFadeUp .5s cubic-bezier(.16,1,.3,1)}
@@ -2381,8 +2387,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         </div>
 
         <div class="ai-tab-pane" id="ai-pane-imagem">
-          <textarea class="form-input" id="ai-img-prompt" rows="3" placeholder="Ex: fachada moderna de casa de alto padrão ao pôr do sol, estilo revista de arquitetura — ou descreva o que quer mudar na foto enviada ao lado"></textarea>
-          <div class="ai-img-upload-row">
+          <div id="ai-img-thread-log" class="ai-img-thread-log"></div>
+          <div class="ai-usage-note" id="ai-img-continuing-note" style="display:none;margin-bottom:10px">↻ Continuando ajustes na última imagem gerada. <button type="button" class="ai-img-reset-link" onclick="resetAiImageThread()">Começar imagem nova</button></div>
+
+          <div class="ai-img-upload-row" id="ai-img-upload-row">
             <label class="btn-cancel" for="ai-img-file" style="cursor:pointer">📎 Anexar foto do imóvel (opcional)</label>
             <input type="file" id="ai-img-file" accept="image/*" style="display:none" onchange="handleAiImageFileSelect(event)"/>
             <span id="ai-img-file-name" style="font-size:12px;color:var(--t3)"></span>
@@ -2393,10 +2401,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <input type="checkbox" id="ai-use-logo" style="width:16px;height:16px;cursor:pointer"/>
             <label for="ai-use-logo" style="font-size:12px;color:var(--t2);cursor:pointer">Incluir meu logo na imagem</label>
           </div>
-          <button class="btn-add" id="ai-img-gen-btn" onclick="generateAiImage()" style="margin-top:8px">Gerar Imagem</button>
+          <textarea class="form-input" id="ai-img-prompt" rows="2" placeholder="Ex: fachada moderna ao pôr do sol — ou descreva o que ajustar no resultado anterior" style="margin-bottom:8px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();generateAiImage();}"></textarea>
+          <div style="display:flex;gap:8px">
+            <button class="btn-add" id="ai-img-gen-btn" onclick="generateAiImage()">Gerar Imagem</button>
+            <button class="btn-cancel" id="ai-img-reset-btn" style="display:none" onclick="resetAiImageThread()">🔄 Nova imagem</button>
+          </div>
           <div class="ai-usage-note" id="ai-img-usage">Carregando limite diário…</div>
-          <div style="font-size:11px;color:var(--t3);margin:6px 0 16px">⚠️ Imagens geradas não são salvas automaticamente — baixe as que quiser guardar.</div>
-          <div id="ai-img-results" class="ai-img-results-grid"></div>
+          <div style="font-size:11px;color:var(--t3);margin:6px 0 16px">⚠️ Imagens geradas não são salvas automaticamente — baixe ou clique em Salvar as que quiser guardar.</div>
 
           <div style="font-size:12px;font-weight:700;color:var(--t1);margin:24px 0 4px">📁 Imagens salvas</div>
           <div id="ai-img-saved-grid" class="ai-img-results-grid"></div>
@@ -8617,6 +8628,7 @@ async function ensureAiChatLoaded(){
 
 async function initAssistente(){
   await ensureAiChatLoaded();
+  renderAiImageThread();
   loadAiImagensSalvas();
   loadUserLogo();
 }
@@ -8853,16 +8865,64 @@ function resizeImageFile(file,maxDim,quality){
   });
 }
 
+// ── Conversa de imagem (geração + ajustes iterativos) ───
+let _aiImageThread=[]; // [{role:'user',text} | {role:'assistant',image,imageDataUrl,instructionText} | {role:'assistant',text,_error:true}]
+let _aiLastGeneratedImage=null; // último resultado — usado como entrada pro próximo ajuste ("arrume o telhado" etc.)
+
+function renderAiImageThread(){
+  const log=document.getElementById('ai-img-thread-log');
+  if(!log)return;
+  if(!_aiImageThread.length){
+    log.innerHTML=`<div class="ai-chat-empty">${CAPTAR_IA_SPARK_SVG.replace('white','currentColor')}<div>Descreva a imagem que você quer, ou anexe uma foto e diga o que ajustar. Depois do primeiro resultado, é só continuar pedindo ajustes — <strong>sem precisar reanexar nada</strong>.</div></div>`;
+  }else{
+    log.innerHTML=_aiImageThread.map((m,i)=>{
+      if(m.role==='user'){
+        return `<div class="ai-msg-row ai-msg-row-user"><div class="ai-msg ai-msg-user">${escHTML(m.text)}</div></div>`;
+      }
+      if(m.image){
+        return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-img-thread-result">
+          <img src="${m.imageDataUrl}" alt="Imagem gerada"/>
+          <div class="ai-img-thread-actions">
+            <a class="btn-add" href="${m.imageDataUrl}" download="captar-ia-${i}.png">Baixar</a>
+            <button class="btn-cancel" onclick="salvarAiImagemByIndex(${i},this)">💾 Salvar</button>
+          </div>
+        </div></div>`;
+      }
+      return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-msg ai-msg-error">${escHTML(m.text)}</div></div>`;
+    }).join('');
+  }
+  log.scrollTop=log.scrollHeight;
+
+  const continuing=!!_aiLastGeneratedImage;
+  const note=document.getElementById('ai-img-continuing-note');
+  const uploadRow=document.getElementById('ai-img-upload-row');
+  const resetBtn=document.getElementById('ai-img-reset-btn');
+  const genBtn=document.getElementById('ai-img-gen-btn');
+  if(note)note.style.display=continuing?'block':'none';
+  if(uploadRow)uploadRow.style.display=continuing?'none':'flex';
+  if(resetBtn)resetBtn.style.display=continuing?'inline-block':'none';
+  if(genBtn)genBtn.textContent=continuing?'Aplicar ajuste':'Gerar Imagem';
+}
+
+function resetAiImageThread(){
+  _aiImageThread=[];
+  _aiLastGeneratedImage=null;
+  clearAiImageInput();
+  document.getElementById('ai-img-prompt').value='';
+  renderAiImageThread();
+}
+
 async function generateAiImage(){
   const promptEl=document.getElementById('ai-img-prompt');
   const prompt=promptEl.value.trim();
-  if(!prompt){showToast('Descreva a imagem que você quer gerar.','error');return;}
+  if(!prompt){showToast('Descreva a imagem que você quer gerar ou o que ajustar.','error');return;}
   const btn=document.getElementById('ai-img-gen-btn');
   const token=await getAiAccessToken();
   if(!token){showToast('Sessão expirada, faça login novamente.','error');return;}
 
-  btn.disabled=true;
-  btn.textContent='Gerando…';
+  // Continuando uma conversa? usa o último resultado da IA como referência (ajuste iterativo).
+  // Senão, usa a foto anexada pelo corretor (se houver) — ou nenhuma (geração do zero).
+  const referenceImage=_aiLastGeneratedImage||_aiSelectedImage||null;
 
   let logoImage=null;
   const useLogo=document.getElementById('ai-use-logo')?.checked;
@@ -8874,6 +8934,12 @@ async function generateAiImage(){
     }catch(e){/* segue sem logo se não conseguir carregar */}
   }
 
+  _aiImageThread.push({role:'user',text:prompt});
+  renderAiImageThread();
+  promptEl.value='';
+  btn.disabled=true;
+  btn.textContent=_aiLastGeneratedImage?'Ajustando…':'Gerando…';
+
   const controller=new AbortController();
   const timeoutId=setTimeout(()=>controller.abort(),55000);
 
@@ -8881,49 +8947,43 @@ async function generateAiImage(){
     const resp=await fetch('/api/ai-image',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({prompt,inputImage:_aiSelectedImage||undefined,logoImage:logoImage||undefined}),
+      body:JSON.stringify({prompt,inputImage:referenceImage||undefined,logoImage:logoImage||undefined}),
       signal:controller.signal
     });
     clearTimeout(timeoutId);
     const data=await resp.json();
 
-    if(!resp.ok){showToast(aiErrorMessage(resp.status,data),'error');return;}
+    if(!resp.ok){
+      const msg=aiErrorMessage(resp.status,data);
+      _aiImageThread.push({role:'assistant',text:msg,_error:true});
+      renderAiImageThread();
+      showToast(msg,'error');
+      return;
+    }
     if(data.usage)setAiUsageFromResponse('imagem',data.usage);
 
     if(!data.image){
-      showToast(data.blocked?'A IA não pôde gerar essa imagem por política de segurança de conteúdo.':'A IA não retornou uma imagem. Tente novamente.','error');
+      const msg=data.blocked?'A IA não pôde gerar essa imagem por política de segurança de conteúdo.':'A IA não retornou uma imagem. Tente novamente.';
+      _aiImageThread.push({role:'assistant',text:msg,_error:true});
+      renderAiImageThread();
+      showToast(msg,'error');
       return;
     }
 
-    addAiImageResult(data.image,prompt);
+    _aiLastGeneratedImage=data.image;
+    _aiImageThread.push({role:'assistant',image:data.image,imageDataUrl:`data:${data.image.mimeType};base64,${data.image.data}`,instructionText:prompt});
+    renderAiImageThread();
     persistAiMessage('user',prompt,'imagem');
   }catch(e){
     clearTimeout(timeoutId);
-    showToast(e.name==='AbortError'?'A geração demorou demais. Tente novamente.':'Erro de conexão com a IA.','error');
+    const msg=e.name==='AbortError'?'A geração demorou demais. Tente novamente.':'Erro de conexão com a IA.';
+    _aiImageThread.push({role:'assistant',text:msg,_error:true});
+    renderAiImageThread();
+    showToast(msg,'error');
   }finally{
     btn.disabled=false;
-    btn.textContent='Gerar Imagem';
+    btn.textContent=_aiLastGeneratedImage?'Aplicar ajuste':'Gerar Imagem';
   }
-}
-
-let _aiGeneratedResults=[];
-
-function addAiImageResult(image,prompt){
-  const idx=_aiGeneratedResults.length;
-  _aiGeneratedResults.push({image,prompt});
-  const grid=document.getElementById('ai-img-results');
-  const url=`data:${image.mimeType};base64,${image.data}`;
-  const card=document.createElement('div');
-  card.className='ai-img-result-card';
-  card.innerHTML=`
-    <img src="${url}" alt="Imagem gerada"/>
-    <div style="font-size:11px;color:var(--t3)">${escHTML(prompt.slice(0,80))}${prompt.length>80?'…':''}</div>
-    <div style="display:flex;gap:6px">
-      <a class="btn-add" style="flex:1;text-align:center;text-decoration:none" href="${url}" download="captar-ia-${Date.now()}.png">Baixar</a>
-      <button class="btn-cancel" onclick="salvarAiImagemByIndex(${idx},this)">💾 Salvar</button>
-    </div>
-  `;
-  grid.prepend(card);
 }
 
 function base64ToBlob(base64,mimeType){
@@ -8934,9 +8994,9 @@ function base64ToBlob(base64,mimeType){
 }
 
 function salvarAiImagemByIndex(idx,btn){
-  const item=_aiGeneratedResults[idx];
-  if(!item)return;
-  salvarAiImagem(item.image,item.prompt,btn);
+  const item=_aiImageThread[idx];
+  if(!item||!item.image)return;
+  salvarAiImagem(item.image,item.instructionText||'',btn);
 }
 
 async function salvarAiImagem(image,prompt,btn){
