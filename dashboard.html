@@ -2401,6 +2401,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <input type="checkbox" id="ai-use-logo" style="width:16px;height:16px;cursor:pointer"/>
             <label for="ai-use-logo" style="font-size:12px;color:var(--t2);cursor:pointer">Incluir meu logo na imagem</label>
           </div>
+          <div id="ai-logo-upload-prompt" style="display:none;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+            <label class="btn-cancel" for="ai-img-logo-file" style="cursor:pointer;font-size:12px">📎 Enviar logo da imobiliária</label>
+            <input type="file" id="ai-img-logo-file" accept="image/*" style="display:none" onchange="handleLogoFileSelect(event)"/>
+            <span style="font-size:11px;color:var(--t3)">Salve uma vez e use em todas as imagens geradas</span>
+          </div>
           <textarea class="form-input" id="ai-img-prompt" rows="2" placeholder="Ex: fachada moderna ao pôr do sol — ou descreva o que ajustar no resultado anterior" style="margin-bottom:8px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();generateAiImage();}"></textarea>
           <div style="display:flex;gap:8px">
             <button class="btn-add" id="ai-img-gen-btn" onclick="generateAiImage()">Gerar Imagem</button>
@@ -8770,13 +8775,18 @@ let _userLogoUrl=null;
 
 function refreshLogoCheckboxVisibility(){
   const row=document.getElementById('ai-logo-toggle-row');
+  const uploadPrompt=document.getElementById('ai-logo-upload-prompt');
   if(row)row.style.display=_userLogoUrl?'flex':'none';
+  if(uploadPrompt)uploadPrompt.style.display=_userLogoUrl?'none':'flex';
   if(!_userLogoUrl){const cb=document.getElementById('ai-use-logo');if(cb)cb.checked=false;}
 }
 
 async function loadUserLogo(){
   if(!_currentUser?.id)return;
-  const {data:signed}=await _sb.storage.from('logos').createSignedUrl(`${_currentUser.id}/logo.jpg`,3600);
+  const {data:signed,error}=await _sb.storage.from('logos').createSignedUrl(`${_currentUser.id}/logo.jpg`,3600);
+  if(error&&error.message&&!/not found/i.test(error.message)){
+    console.error('loadUserLogo:',error);
+  }
   const preview=document.getElementById('config-logo-preview');
   const empty=document.getElementById('config-logo-empty');
   const removeBtn=document.getElementById('config-logo-remove-btn');
@@ -8798,7 +8808,7 @@ async function handleLogoFileSelect(evt){
   if(!file)return;
   if(!file.type.startsWith('image/')){showToast('Selecione um arquivo de imagem.','error');evt.target.value='';return;}
   if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
-  const label=document.querySelector('label[for="config-logo-file"]');
+  const label=document.querySelector(`label[for="${evt.target.id}"]`);
   const originalLabel=label?label.textContent:'';
   if(label){label.textContent='Enviando…';label.style.pointerEvents='none';label.style.opacity='.6';}
   try{
