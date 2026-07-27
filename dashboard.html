@@ -2313,6 +2313,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
           <div class="ai-usage-note" id="ai-img-usage">Carregando limite diário…</div>
           <div style="font-size:11px;color:var(--t3);margin:6px 0 16px">⚠️ Imagens geradas não são salvas automaticamente — baixe as que quiser guardar.</div>
           <div id="ai-img-results" class="ai-img-results-grid"></div>
+
+          <div style="font-size:12px;font-weight:700;color:var(--t1);margin:24px 0 4px">📁 Imagens salvas</div>
+          <div id="ai-img-saved-grid" class="ai-img-results-grid"></div>
         </div>
       </div><!-- /page-assistente -->
 
@@ -8517,6 +8520,7 @@ async function initAssistente(){
   renderAiChatLog();
   refreshAiUsageDisplay('chat');
   refreshAiUsageDisplay('imagem');
+  loadAiImagensSalvas();
 }
 
 async function loadAiChatHistory(){
@@ -8717,7 +8721,11 @@ async function generateAiImage(){
   }
 }
 
+let _aiGeneratedResults=[];
+
 function addAiImageResult(image,prompt){
+  const idx=_aiGeneratedResults.length;
+  _aiGeneratedResults.push({image,prompt});
   const grid=document.getElementById('ai-img-results');
   const url=`data:${image.mimeType};base64,${image.data}`;
   const card=document.createElement('div');
@@ -8725,9 +8733,81 @@ function addAiImageResult(image,prompt){
   card.innerHTML=`
     <img src="${url}" alt="Imagem gerada"/>
     <div style="font-size:11px;color:var(--t3)">${escHTML(prompt.slice(0,80))}${prompt.length>80?'…':''}</div>
-    <a class="btn-add" style="text-align:center;text-decoration:none" href="${url}" download="captar-ia-${Date.now()}.png">Baixar</a>
+    <div style="display:flex;gap:6px">
+      <a class="btn-add" style="flex:1;text-align:center;text-decoration:none" href="${url}" download="captar-ia-${Date.now()}.png">Baixar</a>
+      <button class="btn-cancel" onclick="salvarAiImagemByIndex(${idx},this)">💾 Salvar</button>
+    </div>
   `;
   grid.prepend(card);
+}
+
+function base64ToBlob(base64,mimeType){
+  const byteChars=atob(base64);
+  const byteNumbers=new Array(byteChars.length);
+  for(let i=0;i<byteChars.length;i++)byteNumbers[i]=byteChars.charCodeAt(i);
+  return new Blob([new Uint8Array(byteNumbers)],{type:mimeType});
+}
+
+function salvarAiImagemByIndex(idx,btn){
+  const item=_aiGeneratedResults[idx];
+  if(!item)return;
+  salvarAiImagem(item.image,item.prompt,btn);
+}
+
+async function salvarAiImagem(image,prompt,btn){
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  if(btn){btn.disabled=true;btn.textContent='Salvando…';}
+  try{
+    const mimeType=image.mimeType||'image/png';
+    const ext=mimeType.split('/')[1]||'png';
+    const path=`${_currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    const blob=base64ToBlob(image.data,mimeType);
+
+    const {error:upErr}=await _sb.storage.from('ai-imagens').upload(path,blob,{contentType:mimeType});
+    if(upErr){showToast('Erro ao salvar imagem: '+upErr.message,'error');if(btn){btn.disabled=false;btn.textContent='💾 Salvar';}return;}
+
+    const {error:insErr}=await _sb.from('ai_imagens_salvas').insert([{user_id:_currentUser.id,storage_path:path,prompt}]);
+    if(insErr){showToast('Erro ao salvar imagem: '+insErr.message,'error');if(btn){btn.disabled=false;btn.textContent='💾 Salvar';}return;}
+
+    showToast('Imagem salva!','success');
+    if(btn){btn.textContent='✅ Salva';}
+    loadAiImagensSalvas();
+  }catch(e){
+    showToast('Erro ao salvar imagem.','error');
+    if(btn){btn.disabled=false;btn.textContent='💾 Salvar';}
+  }
+}
+
+async function loadAiImagensSalvas(){
+  const grid=document.getElementById('ai-img-saved-grid');
+  if(!grid||!_currentUser?.id)return;
+  const {data,error}=await _sb.from('ai_imagens_salvas').select('*').order('created_at',{ascending:false}).limit(30);
+  if(error){console.warn('loadAiImagensSalvas:',error.message);return;}
+  if(!data||!data.length){
+    grid.innerHTML='<div style="font-size:12px;color:var(--t3)">Nenhuma imagem salva ainda.</div>';
+    return;
+  }
+  const withUrls=await Promise.all(data.map(async row=>{
+    const {data:signed}=await _sb.storage.from('ai-imagens').createSignedUrl(row.storage_path,3600);
+    return {...row,url:signed?.signedUrl||''};
+  }));
+  grid.innerHTML=withUrls.filter(r=>r.url).map(r=>`
+    <div class="ai-img-result-card">
+      <img src="${escHTML(r.url)}" alt="Imagem salva"/>
+      <div style="font-size:11px;color:var(--t3)">${escHTML((r.prompt||'').slice(0,80))}${(r.prompt||'').length>80?'…':''}</div>
+      <div style="display:flex;gap:6px">
+        <a class="btn-add" style="flex:1;text-align:center;text-decoration:none" href="${escHTML(r.url)}" download>Baixar</a>
+        <button class="btn-cancel" onclick="excluirAiImagemSalva(${r.id},'${escHTML(r.storage_path)}')">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function excluirAiImagemSalva(id,path){
+  if(!confirm('Excluir esta imagem salva?'))return;
+  await _sb.storage.from('ai-imagens').remove([path]);
+  await _sb.from('ai_imagens_salvas').delete().eq('id',id);
+  loadAiImagensSalvas();
 }
 </script>
 
