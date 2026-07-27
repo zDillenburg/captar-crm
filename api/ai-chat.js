@@ -2,7 +2,7 @@ const { verifyUserAndUsage } = require('./_ai-shared');
 
 const CHAT_DAILY_LIMIT = parseInt(process.env.AI_CHAT_DAILY_LIMIT || '50', 10);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-3.6-flash';
 
 const SYSTEM_PROMPT = 'Você é o Assistente IA do Captar CRM, especialista no mercado imobiliário ' +
   'brasileiro. Ajude corretores de imóveis e imobiliárias com: dúvidas sobre o mercado ' +

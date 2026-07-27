@@ -2,7 +2,7 @@ const { verifyUserAndUsage } = require('./_ai-shared');
 
 const IMAGE_DAILY_LIMIT = parseInt(process.env.AI_IMAGE_DAILY_LIMIT || '10', 10);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = 'gemini-2.5-flash-image';
+const GEMINI_MODEL = 'gemini-3-pro-image';
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') { res.status(405).json({ error: 'method_not_allowed' }); return; }
