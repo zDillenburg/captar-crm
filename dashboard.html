@@ -4527,13 +4527,13 @@ function renderLocacao(){populateImovelSelects();
           <button class="icon-btn" title="Editar contrato" onclick="editarContrato('${escHTML(String(l.id))}')">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
-          <button class="icon-btn" title="Vistoria do imóvel" onclick="abrirVistoria('${escHTML(String(l.id))}','${escHTML(l.inquilino||'')}')">
+          <button class="icon-btn" title="Vistoria do imóvel" onclick="abrirVistoria('${escHTML(String(l.id))}')">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
           </button>
           <button class="icon-btn" title="Simular reajuste" onclick="abrirReajuste('${escHTML(String(l.id))}',${Number(l.valor)||0})">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           </button>
-          <button class="icon-btn" title="Excluir locação" style="color:#ef4444" onclick="excluirLocacao('${escHTML(String(l.id))}','${escHTML(l.inquilino)}')">
+          <button class="icon-btn" title="Excluir locação" style="color:#ef4444" onclick="excluirLocacao('${escHTML(String(l.id))}')">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>
           </button>
         </div>
@@ -4587,7 +4587,7 @@ function renderVisitas(filter){
         <button class="icon-btn" title="Editar" onclick="editarVisita('${escHTML(String(v.id))}')">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
-        <button class="icon-btn" title="Excluir visita" style="color:#ef4444" onclick="excluirVisita('${escHTML(String(v.id))}','${escHTML(v.cliente)}')">
+        <button class="icon-btn" title="Excluir visita" style="color:#ef4444" onclick="excluirVisita('${escHTML(String(v.id))}')">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>
         </button>
       </div>
@@ -4976,7 +4976,7 @@ function renderFinTables(){
       <td><span class="fin-cat-badge">${escHTML(t.cat)}</span></td>
       <td style="color:var(--t3)">${escHTML(t.data)}</td>
       <td class="fin-val-pos">R$ ${(Number(t.val)||0).toLocaleString('pt-BR')}</td>
-      <td><button class="icon-btn" title="Excluir" style="color:#ef4444" onclick="excluirTransacao('${escHTML(String(t.id))}','entrada','${escHTML(t.desc)}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg></button></td>
+      <td><button class="icon-btn" title="Excluir" style="color:#ef4444" onclick="excluirTransacao('${escHTML(String(t.id))}','entrada')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg></button></td>
     </tr>`).join('')
     : `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Nenhuma entrada neste mês. <button class="link-btn" onclick="addTransacao('entrada')">+ Adicionar</button></td></tr>`;
 
@@ -4993,7 +4993,7 @@ function renderFinTables(){
       <td><span class="fin-cat-badge">${escHTML(t.cat)}</span></td>
       <td style="color:var(--t3)">${escHTML(t.data)}</td>
       <td class="fin-val-neg">R$ ${(Number(t.val)||0).toLocaleString('pt-BR')}</td>
-      <td><button class="icon-btn" title="Excluir" style="color:#ef4444" onclick="excluirTransacao('${escHTML(String(t.id))}','saida','${escHTML(t.desc)}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg></button></td>
+      <td><button class="icon-btn" title="Excluir" style="color:#ef4444" onclick="excluirTransacao('${escHTML(String(t.id))}','saida')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg></button></td>
     </tr>`).join('')
     : `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Nenhuma saída neste mês. <button class="link-btn" style="color:#f87171" onclick="addTransacao('saida')">+ Adicionar</button></td></tr>`;
 
@@ -5240,7 +5240,7 @@ function openLeadDetail(id){
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       E-mail
     </a>
-    <button class="so-action" style="color:#ef4444;border-color:rgba(239,68,68,.25)" onclick="excluirLead('${escHTML(String(l.id))}','${escHTML(l.nome)}')">
+    <button class="so-action" style="color:#ef4444;border-color:rgba(239,68,68,.25)" onclick="excluirLead('${escHTML(String(l.id))}')">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>
       Excluir
     </button>`;
@@ -5302,7 +5302,7 @@ function openImovelDetail(idx){
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         Editar
       </button>
-      <button class="btn-cancel" onclick="excluirImovel('${escHTML(String(im.id))}','${escHTML(im.titulo)}');document.getElementById('modal-imovel-detail').classList.remove('open')" style="display:inline-flex;align-items:center;gap:6px;color:#ef4444;border-color:rgba(239,68,68,.25)">
+      <button class="btn-cancel" onclick="excluirImovel('${escHTML(String(im.id))}');document.getElementById('modal-imovel-detail').classList.remove('open')" style="display:inline-flex;align-items:center;gap:6px;color:#ef4444;border-color:rgba(239,68,68,.25)">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>
         Excluir
       </button>
@@ -5425,7 +5425,9 @@ function editarImovel(id){
   document.getElementById('modal-imovel-add').classList.add('open');
 }
 
-async function excluirImovel(id, titulo){
+async function excluirImovel(id){
+  const rec=[...IMOVEIS,...IMOVEIS_EXTRA].find(x=>String(x.id)===String(id));
+  const titulo=rec?rec.titulo:'';
   if(!confirm(`Excluir o imóvel "${titulo}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('imoveis').delete().eq('id',id);
   if(error){showToast('Erro ao excluir imóvel: '+error.message,'error');return;}
@@ -5441,7 +5443,9 @@ async function excluirImovel(id, titulo){
 // ─────────────────────────────────────────
 // LEAD DELETE
 // ─────────────────────────────────────────
-async function excluirLead(id, nome){
+async function excluirLead(id){
+  const rec=LEADS_DATA.find(l=>String(l.id)===String(id));
+  const nome=rec?rec.nome:'';
   if(!confirm(`Excluir o lead "${nome}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('leads').delete().eq('id',id);
   if(error){showToast('Erro ao excluir lead: '+error.message,'error');return;}
@@ -5460,7 +5464,9 @@ async function excluirLead(id, nome){
 // ─────────────────────────────────────────
 // LOCAÇÃO DELETE
 // ─────────────────────────────────────────
-async function excluirLocacao(id, inquilino){
+async function excluirLocacao(id){
+  const rec=LOCACOES.find(l=>String(l.id)===String(id));
+  const inquilino=rec?rec.inquilino:'';
   if(!confirm(`Excluir a locação de "${inquilino}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('locacoes').delete().eq('id',id);
   if(error){showToast('Erro ao excluir locação: '+error.message,'error');return;}
@@ -5474,7 +5480,9 @@ async function excluirLocacao(id, inquilino){
 // ─────────────────────────────────────────
 // VISITA DELETE
 // ─────────────────────────────────────────
-async function excluirVisita(id, cliente){
+async function excluirVisita(id){
+  const rec=VISITAS.find(v=>String(v.id)===String(id));
+  const cliente=rec?rec.cliente:'';
   if(!confirm(`Excluir a visita de "${cliente}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('visitas').delete().eq('id',id);
   if(error){showToast('Erro ao excluir visita: '+error.message,'error');return;}
@@ -5494,7 +5502,10 @@ async function excluirVisita(id, cliente){
 // ─────────────────────────────────────────
 // TRANSAÇÃO DELETE
 // ─────────────────────────────────────────
-async function excluirTransacao(id, tipo, desc){
+async function excluirTransacao(id, tipo){
+  const arr0=tipo==='entrada'?TRANSACOES.entradas:TRANSACOES.saidas;
+  const rec=arr0.find(t=>String(t.id)===String(id));
+  const desc=rec?rec.desc:'';
   if(!confirm(`Excluir "${desc}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('transacoes').delete().eq('id',id);
   if(error){showToast('Erro ao excluir transação: '+error.message,'error');return;}
@@ -7091,11 +7102,12 @@ const VISTORIA_STATE_CLS=['ok','bom','reg','ruim'];
 let _vistoriaMode='entrada';
 let _vistoriaLocId='';
 
-function abrirVistoria(locId,inquilino){
+function abrirVistoria(locId){
+  const rec=LOCACOES.find(l=>String(l.id)===String(locId));
   _vistoriaLocId=locId;
   _vistoriaMode='entrada';
   document.getElementById('vis-loc-id').value=locId;
-  document.getElementById('vis-inquilino').textContent=inquilino||'—';
+  document.getElementById('vis-inquilino').textContent=(rec&&rec.inquilino)||'—';
   document.getElementById('vis-btn-entrada').classList.add('active');
   document.getElementById('vis-btn-saida').classList.remove('active');
   renderVistoriaItems();
@@ -7575,7 +7587,7 @@ function abrirWaTemplates(leadId){
     <div class="wa-tpl-item">
       <div class="wa-tpl-stage">${escHTML(tpl.titulo)}</div>
       <div class="wa-tpl-preview">${escHTML(tpl.texto(l.nome||'',l.tipo||'',l.valor||''))}</div>
-      <button class="wa-tpl-send-btn" onclick="enviarWaTemplate('${waPhone}',${i},'${escHTML(String(l.coluna))}','${escHTML(String(l.nome||''))}','${escHTML(String(l.tipo||''))}','${escHTML(String(l.valor||''))}')">
+      <button class="wa-tpl-send-btn" onclick="enviarWaTemplate('${escHTML(String(leadId))}',${i})">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413z"/></svg>
         Enviar via WhatsApp
       </button>
@@ -7583,11 +7595,14 @@ function abrirWaTemplates(leadId){
   document.getElementById('modal-wa-tpl').classList.add('open');
 }
 
-function enviarWaTemplate(phone,idx,coluna,nome,tipo,valor){
-  const templates=WA_TEMPLATES[coluna]||WA_TEMPLATES.novo;
+function enviarWaTemplate(leadId,idx){
+  const l=LEADS_DATA.find(x=>String(x.id)===String(leadId));
+  if(!l)return;
+  const phone='55'+(l.tel||'').replace(/\D/g,'');
+  const templates=WA_TEMPLATES[l.coluna]||WA_TEMPLATES.novo;
   const tpl=templates[idx];
   if(!tpl)return;
-  const msg=encodeURIComponent(tpl.texto(nome,tipo,valor));
+  const msg=encodeURIComponent(tpl.texto(l.nome||'',l.tipo||'',l.valor||''));
   window.open(`https://wa.me/${phone}?text=${msg}`,'_blank');
   document.getElementById('modal-wa-tpl').classList.remove('open');
 }
@@ -9299,21 +9314,24 @@ async function loadAiImagensSalvas(){
     const {data:signed}=await _sb.storage.from('ai-imagens').createSignedUrl(row.storage_path,3600);
     return {...row,url:signed?.signedUrl||''};
   }));
+  _aiImagensSalvasCache=withUrls;
   grid.innerHTML=withUrls.filter(r=>r.url).map(r=>`
     <div class="ai-img-result-card">
       <img src="${escHTML(r.url)}" alt="Imagem salva"/>
       <div style="font-size:11px;color:var(--t3)">${escHTML((r.prompt||'').slice(0,80))}${(r.prompt||'').length>80?'…':''}</div>
       <div style="display:flex;gap:6px">
         <a class="btn-add" style="flex:1;text-align:center;text-decoration:none" href="${escHTML(r.url)}" download>Baixar</a>
-        <button class="btn-cancel" onclick="excluirAiImagemSalva(${r.id},'${escHTML(r.storage_path)}')">Excluir</button>
+        <button class="btn-cancel" onclick="excluirAiImagemSalva(${r.id})">Excluir</button>
       </div>
     </div>
   `).join('');
 }
+let _aiImagensSalvasCache=[];
 
-async function excluirAiImagemSalva(id,path){
+async function excluirAiImagemSalva(id){
   if(!confirm('Excluir esta imagem salva?'))return;
-  await _sb.storage.from('ai-imagens').remove([path]);
+  const rec=_aiImagensSalvasCache.find(r=>String(r.id)===String(id));
+  if(rec) await _sb.storage.from('ai-imagens').remove([rec.storage_path]);
   await _sb.from('ai_imagens_salvas').delete().eq('id',id);
   loadAiImagensSalvas();
 }
