@@ -5061,7 +5061,9 @@ async function addImovel(){
     emoji:emojis[tipo]||'🏠',
     grad:grads[tipo]||defaultGrad,
     corretor:document.getElementById('im-corretor')?.value||'',
-    url_site:(document.getElementById('im-url-site')?.value||'').trim()
+    url_site:(document.getElementById('im-url-site')?.value||'').trim(),
+    tipo,
+    features
   };
   if(_editingImovelId){
     // UPDATE mode
@@ -5103,6 +5105,9 @@ function editarImovel(id){
   setVal('im-preco',(im.preco||'').replace(/[^\d]/g,''));
   setVal('im-corretor',im.corretor);
   setVal('im-url-site',im.url_site);
+  setVal('im-features',im.features);
+  const tipoSel=document.getElementById('im-tipo');
+  if(tipoSel&&im.tipo)tipoSel.value=im.tipo;
   // Parse endereco back — best-effort
   const parts=(im.endereco||'').split(' — ');
   setVal('im-endereco',parts[0]||'');

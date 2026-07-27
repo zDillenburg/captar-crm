@@ -1,6 +1,7 @@
 # Não subir para o repositório público
 supabase-setup.sql
 supabase-security-fixes.sql
+supabase-fixes-imoveis.sql
 .claude/
 .DS_Store
 *.env
