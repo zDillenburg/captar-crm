@@ -4065,7 +4065,7 @@ async function dropCard(e,colKey){
     lead.coluna=colKey;
     // Persiste no Supabase
     _sb.from('leads').update({coluna:colKey}).eq('id',id).then(({error})=>{
-      if(error)showToast('Erro ao mover lead','error');
+      if(error)showToast('Erro ao mover lead: '+error.message,'error');
     });
   }
   document.getElementById('kcards-'+colKey).appendChild(leadsDrag);
@@ -5124,7 +5124,7 @@ function editarImovel(id){
 async function excluirImovel(id, titulo){
   if(!confirm(`Excluir o imóvel "${titulo}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('imoveis').delete().eq('id',id);
-  if(error){showToast('Erro ao excluir imóvel','error');return;}
+  if(error){showToast('Erro ao excluir imóvel: '+error.message,'error');return;}
   [IMOVEIS, IMOVEIS_EXTRA].forEach(arr=>{
     const i=arr.findIndex(x=>String(x.id)===String(id));
     if(i>-1)arr.splice(i,1);
@@ -5140,7 +5140,7 @@ async function excluirImovel(id, titulo){
 async function excluirLead(id, nome){
   if(!confirm(`Excluir o lead "${nome}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('leads').delete().eq('id',id);
-  if(error){showToast('Erro ao excluir lead','error');return;}
+  if(error){showToast('Erro ao excluir lead: '+error.message,'error');return;}
   const li=LEADS_DATA.findIndex(l=>String(l.id)===String(id));
   if(li>-1)LEADS_DATA.splice(li,1);
   document.getElementById('lead-detail-overlay').classList.remove('open');
@@ -5159,7 +5159,7 @@ async function excluirLead(id, nome){
 async function excluirLocacao(id, inquilino){
   if(!confirm(`Excluir a locação de "${inquilino}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('locacoes').delete().eq('id',id);
-  if(error){showToast('Erro ao excluir locação','error');return;}
+  if(error){showToast('Erro ao excluir locação: '+error.message,'error');return;}
   const li=LOCACOES.findIndex(l=>String(l.id)===String(id));
   if(li>-1)LOCACOES.splice(li,1);
   inited['locacao']=false;
@@ -5173,7 +5173,7 @@ async function excluirLocacao(id, inquilino){
 async function excluirVisita(id, cliente){
   if(!confirm(`Excluir a visita de "${cliente}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('visitas').delete().eq('id',id);
-  if(error){showToast('Erro ao excluir visita','error');return;}
+  if(error){showToast('Erro ao excluir visita: '+error.message,'error');return;}
   const vi=VISITAS.findIndex(v=>String(v.id)===String(id));
   if(vi>-1)VISITAS.splice(vi,1);
   renderVisitas();
@@ -5186,7 +5186,7 @@ async function excluirVisita(id, cliente){
 async function excluirTransacao(id, tipo, desc){
   if(!confirm(`Excluir "${desc}"? Esta ação não pode ser desfeita.`))return;
   const {error}=await _sb.from('transacoes').delete().eq('id',id);
-  if(error){showToast('Erro ao excluir transação','error');return;}
+  if(error){showToast('Erro ao excluir transação: '+error.message,'error');return;}
   const arr=tipo==='entrada'?TRANSACOES.entradas:TRANSACOES.saidas;
   const ti=arr.findIndex(t=>String(t.id)===String(id));
   if(ti>-1)arr.splice(ti,1);
