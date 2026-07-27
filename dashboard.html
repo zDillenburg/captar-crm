@@ -814,34 +814,69 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .contact-type-btn{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--t2);cursor:pointer;transition:all .18s}
 .contact-type-btn:hover,.contact-type-btn.sel{background:rgba(133,2,119,.15);border-color:var(--p);color:#c453bb}
 
-/* ═══ ASSISTENTE IA ═══ */
+/* ═══ CAPTAR IA — identidade visual ═══ */
+@keyframes captarIaPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(163,3,154,.45),0 4px 20px rgba(133,2,119,.35);}
+  50%{box-shadow:0 0 0 9px rgba(163,3,154,0),0 4px 28px rgba(133,2,119,.5);}
+}
+@keyframes captarIaFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes captarIaMsgIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes captarIaDot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes captarIaOrbSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.captar-ia-orb{position:relative;width:38px;height:38px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 32% 28%,#e879d4 0%,var(--pl) 45%,var(--p) 78%,#23041f 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(133,2,119,.4)}
+.captar-ia-orb svg{width:17px;height:17px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.captar-ia-orb-sm{width:26px;height:26px}
+.captar-ia-orb-sm svg{width:12px;height:12px}
+.captar-ia-badge{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.05em;color:#e6b3df;background:rgba(133,2,119,.2);border:1px solid rgba(163,3,154,.4);padding:3px 9px 3px 7px;border-radius:20px;text-transform:uppercase}
+.captar-ia-badge svg{width:9px;height:9px}
+
+.ai-fab{position:fixed;bottom:28px;right:28px;z-index:200;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;padding:0;background:radial-gradient(circle at 32% 28%,#e879d4 0%,var(--pl) 45%,var(--p) 78%,#23041f 100%);display:flex;align-items:center;justify-content:center;animation:captarIaPulse 3.2s ease-in-out infinite;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.ai-fab svg{width:26px;height:26px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))}
+.ai-fab:hover{transform:scale(1.1) rotate(-4deg)}
+.ai-fab:active{transform:scale(.94)}
+.ai-fab.hidden{display:none}
+@media(max-width:768px){.ai-fab{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:16px;width:52px;height:52px}.ai-fab svg{width:22px;height:22px}}
+@media(prefers-reduced-motion:reduce){.ai-fab{animation:none}}
+
 .ai-tab-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:var(--bg2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
 .ai-tab-btn.active{background:var(--p);color:#fff;border-color:var(--p)}
 .ai-tab-pane{display:none}.ai-tab-pane.active{display:block}
-.ai-chat-log{display:flex;flex-direction:column;gap:10px;max-height:440px;overflow-y:auto;padding:4px 2px;margin-bottom:12px}
-.ai-chat-empty{text-align:center;color:var(--t3);font-size:13px;padding:32px 20px}
+
+.ai-chat-log{display:flex;flex-direction:column;gap:12px;max-height:440px;overflow-y:auto;padding:4px 2px;margin-bottom:12px}
+.ai-chat-empty{display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--t3);font-size:13px;padding:36px 20px;gap:14px;animation:captarIaFadeUp .5s ease-out}
+.ai-chat-empty svg{width:30px;height:30px;color:var(--pl)}
+.ai-chat-empty strong{color:var(--t1)}
+.ai-msg-row{display:flex;align-items:flex-end;gap:8px;max-width:100%;animation:captarIaMsgIn .32s cubic-bezier(.16,1,.3,1)}
+.ai-msg-row-user{justify-content:flex-end}
 .ai-msg{max-width:78%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
-.ai-msg-user{align-self:flex-end;background:var(--p);color:#fff;border-bottom-right-radius:4px}
-.ai-msg-assistant{align-self:flex-start;background:var(--bg3);color:var(--t1);border:1px solid var(--border);border-bottom-left-radius:4px}
-.ai-msg-error{align-self:flex-start;background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
-.ai-chat-typing{font-size:12px;color:var(--t3);padding:4px 0 10px;font-style:italic}
+.ai-msg-user{background:linear-gradient(135deg,var(--pl),var(--p));color:#fff;border-bottom-right-radius:4px}
+.ai-msg-assistant{background:var(--bg3);color:var(--t1);border:1px solid var(--border);border-bottom-left-radius:4px}
+.ai-msg-error{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.ai-chat-typing{display:flex;align-items:center;gap:8px;padding:4px 0 10px}
+.typing-dots{display:inline-flex;gap:3px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:9px 12px}
+.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--t3);animation:captarIaDot 1.2s ease-in-out infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@media(prefers-reduced-motion:reduce){.ai-msg-row,.ai-chat-empty{animation:none}.typing-dots span{animation:none;opacity:.7}}
+
 .ai-chat-inputbar{display:flex;gap:8px;align-items:flex-end}
 .ai-chat-inputbar textarea{resize:vertical;flex:1}
 .ai-usage-note{font-size:11px;color:var(--t3);margin-top:8px}
 .ai-img-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
 .ai-img-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:16px}
-.ai-img-result-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px;display:flex;flex-direction:column;gap:8px}
+.ai-img-result-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px;display:flex;flex-direction:column;gap:8px;animation:captarIaFadeUp .4s ease-out}
 .ai-img-result-card img{width:100%;border-radius:8px;display:block}
-.ai-fab{position:fixed;bottom:28px;right:28px;z-index:200;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pl));border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 8px 24px rgba(133,2,119,.45);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s}
-.ai-fab:hover{transform:scale(1.08);box-shadow:0 12px 32px rgba(133,2,119,.55)}
-.ai-fab.hidden{display:none}
-@media(max-width:768px){.ai-fab{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:16px;width:48px;height:48px;font-size:20px}}
-.ai-dashboard-card{background:linear-gradient(120deg,rgba(133,2,119,.16),rgba(163,3,154,.06));border:1px solid rgba(133,2,119,.35);border-radius:var(--r2);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;gap:18px;cursor:pointer;transition:border-color .2s}
-.ai-dashboard-card:hover{border-color:rgba(133,2,119,.6)}
-.ai-dashboard-card-icon{font-size:32px;flex-shrink:0}
-.ai-dashboard-card-title{font-size:15px;font-weight:800;color:var(--t1);margin-bottom:4px}
-.ai-dashboard-card-desc{font-size:12px;color:var(--t2);line-height:1.5}
-.ai-dashboard-card-cta{flex-shrink:0;background:var(--p);color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;white-space:nowrap}
+
+/* Card "Captar IA" no Dashboard — chat embutido */
+.captar-ia-card{position:relative;background:linear-gradient(160deg,rgba(133,2,119,.12),rgba(20,18,16,.35) 65%);border:1px solid rgba(163,3,154,.3);border-radius:var(--r2);padding:20px 22px;margin-bottom:20px;overflow:hidden;animation:captarIaFadeUp .5s cubic-bezier(.16,1,.3,1)}
+.captar-ia-card::before{content:'';position:absolute;top:-70%;right:-15%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(163,3,154,.2),transparent 70%);pointer-events:none}
+.captar-ia-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative;z-index:1}
+.captar-ia-title{font-size:15px;font-weight:800;color:var(--t1)}
+.captar-ia-subtitle{font-size:11px;color:var(--t3);margin-top:1px}
+.captar-ia-expand{margin-left:auto;background:none;border:1px solid var(--border);color:var(--t2);font-size:11px;font-weight:600;padding:6px 12px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.captar-ia-expand:hover{border-color:var(--p);color:#e6b3df}
+.ai-chat-log-mini{max-height:230px;position:relative;z-index:1}
 
 /* ═══ METAS MENSAIS ═══ */
 .metas-section{margin-bottom:24px}
@@ -1020,8 +1055,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         Contratos
       </button>
       <button class="nav-item" id="nav-assistente-btn" onclick="navigate('assistente',this)">
-        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg>
-        Assistente IA
+        <svg fill="currentColor" stroke="none" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>
+        Captar IA
       </button>
       <div class="nav-section-label">Operacional</div>
       <button class="nav-item" onclick="navigate('visitas',this)">
@@ -1129,14 +1164,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 
       <!-- ══════ DASHBOARD PAGE ══════ -->
       <div class="page active" id="page-dashboard">
-        <!-- Assistente IA — destaque -->
-        <div class="ai-dashboard-card" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))">
-          <div class="ai-dashboard-card-icon">✨</div>
-          <div style="flex:1;min-width:0">
-            <div class="ai-dashboard-card-title">Assistente IA</div>
-            <div class="ai-dashboard-card-desc">Converse com uma IA especialista em mercado imobiliário e gere ou edite imagens de imóveis em alta qualidade.</div>
+        <!-- Captar IA — chat embutido -->
+        <div class="captar-ia-card">
+          <div class="captar-ia-header">
+            <div class="captar-ia-orb"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <div>
+              <div class="captar-ia-title">Captar IA</div>
+              <div class="captar-ia-subtitle">Assistente exclusivo do Grupo Captar</div>
+            </div>
+            <button class="captar-ia-expand" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))">Abrir completo →</button>
           </div>
-          <div class="ai-dashboard-card-cta">Conversar agora →</div>
+          <div class="ai-chat-log ai-chat-log-mini" id="ai-chat-log-mini"></div>
+          <div class="ai-chat-typing" id="ai-chat-typing-mini" style="display:none">
+            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <span class="typing-dots"><span></span><span></span><span></span></span>
+          </div>
+          <div class="ai-chat-inputbar">
+            <textarea class="form-input" id="ai-chat-input-mini" rows="1" placeholder="Pergunte algo pra Captar IA…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat('mini');}"></textarea>
+            <button class="btn-add" id="ai-chat-send-btn-mini" onclick="sendAiChat('mini')">Enviar</button>
+          </div>
         </div>
         <!-- Overdue Alert Banner -->
         <div id="overdue-banner" style="display:none;margin-bottom:20px;padding:13px 18px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:8px;cursor:pointer;align-items:center;gap:14px;transition:background .2s" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1])" onmouseenter="this.style.background='rgba(245,158,11,.14)'" onmouseleave="this.style.background='rgba(245,158,11,.08)'">
@@ -1484,7 +1530,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
           </div>
           <div class="config-card">
             <div class="config-card-title">Logo da Imobiliária</div>
-            <div style="font-size:12px;color:var(--t3);margin-bottom:14px">Usado pelo Assistente IA para incluir sua marca nas imagens geradas.</div>
+            <div style="font-size:12px;color:var(--t3);margin-bottom:14px">Usado pela Captar IA para incluir sua marca nas imagens geradas.</div>
             <img id="config-logo-preview" style="display:none;max-width:180px;max-height:90px;object-fit:contain;border-radius:8px;margin-bottom:12px;background:#fff;padding:8px"/>
             <div id="config-logo-empty" style="font-size:12px;color:var(--t3);margin-bottom:12px">Nenhum logo enviado ainda.</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -2319,13 +2365,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         </div>
 
         <div class="ai-tab-pane active" id="ai-pane-chat">
+          <div class="captar-ia-badge" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg> Captar IA · Grupo Captar</div>
           <div class="ai-chat-log" id="ai-chat-log">
-            <div class="ai-chat-empty">Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia. 👋</div>
+            <div class="ai-chat-empty">Carregando conversa…</div>
           </div>
-          <div class="ai-chat-typing" id="ai-chat-typing" style="display:none">IA está digitando…</div>
+          <div class="ai-chat-typing" id="ai-chat-typing" style="display:none">
+            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <span class="typing-dots"><span></span><span></span><span></span></span>
+          </div>
           <div class="ai-chat-inputbar">
-            <textarea class="form-input" id="ai-chat-input" rows="2" placeholder="Ex: escreva uma descrição para um apartamento de 2 quartos no centro…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat();}"></textarea>
-            <button class="btn-add" id="ai-chat-send-btn" onclick="sendAiChat()">Enviar</button>
+            <textarea class="form-input" id="ai-chat-input" rows="2" placeholder="Ex: escreva uma descrição para um apartamento de 2 quartos no centro…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat('full');}"></textarea>
+            <button class="btn-add" id="ai-chat-send-btn" onclick="sendAiChat('full')">Enviar</button>
           </div>
           <div class="ai-usage-note" id="ai-chat-usage">Carregando limite diário…</div>
         </div>
@@ -2357,7 +2407,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
   </div><!-- /main -->
 </div><!-- /app -->
 
-<button class="ai-fab" id="ai-fab-btn" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))" title="Assistente IA" aria-label="Abrir Assistente IA">✨</button>
+<button class="ai-fab" id="ai-fab-btn" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))" title="Captar IA — assistente exclusivo do Grupo Captar" aria-label="Abrir Captar IA">
+  <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg>
+</button>
 
 <!-- ══════ MODAL NOVO LEAD ══════ -->
 <div class="modal-overlay" id="modal">
@@ -3687,7 +3739,7 @@ const pageMeta={
   financiamento:{title:'Calculadora de Financiamento',sub:'Simule parcelas, juros e total pago — Tabela Price'},
   corretores:{title:'Corretores',sub:'Equipe de corretores cadastrados'},
   loteamentos:{title:'Loteamentos',sub:'Empreendimentos e gestão de lotes'},
-  assistente:{title:'Assistente IA',sub:'Converse e gere/edite imagens com IA especializada no mercado imobiliário'},
+  assistente:{title:'Captar IA',sub:'Assistente exclusivo do Grupo Captar — converse e gere/edite imagens em alta qualidade'},
 };
 
 function navigate(page, btn){
@@ -3728,6 +3780,7 @@ function initPage(page){
     renderSparklines();
     renderMetas();
     setTimeout(()=>{initLeadsChart();initSourcesChart();},100);
+    ensureAiChatLoaded();
   }
   if(page==='crm') renderKanban();
   if(page==='imoveis') renderImoveis();
@@ -8551,13 +8604,19 @@ function aiErrorMessage(status,data){
   return'Erro ao falar com a IA. Tente novamente.'+detail;
 }
 
-async function initAssistente(){
+const CAPTAR_IA_SPARK_SVG='<svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg>';
+
+async function ensureAiChatLoaded(){
   if(_aiChatLoaded)return;
   _aiChatLoaded=true;
   await loadAiChatHistory();
   renderAiChatLog();
   refreshAiUsageDisplay('chat');
   refreshAiUsageDisplay('imagem');
+}
+
+async function initAssistente(){
+  await ensureAiChatLoaded();
   loadAiImagensSalvas();
   loadUserLogo();
 }
@@ -8570,17 +8629,19 @@ async function loadAiChatHistory(){
 }
 
 function renderAiChatLog(){
-  const log=document.getElementById('ai-chat-log');
-  if(!log)return;
+  const logs=document.querySelectorAll('.ai-chat-log');
+  if(!logs.length)return;
+  let html;
   if(!AI_CHAT_MESSAGES.length){
-    log.innerHTML='<div class="ai-chat-empty">Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia. 👋</div>';
-    return;
+    html=`<div class="ai-chat-empty">${CAPTAR_IA_SPARK_SVG.replace('white','currentColor')}<div>Sou a <strong>Captar IA</strong>, o assistente exclusivo do Grupo Captar. Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia. 👋</div></div>`;
+  }else{
+    html=AI_CHAT_MESSAGES.map(m=>{
+      const cls=m._error?'ai-msg-error':(m.role==='user'?'ai-msg-user':'ai-msg-assistant');
+      const avatar=m.role==='assistant'?`<div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div>`:'';
+      return `<div class="ai-msg-row ${m.role==='user'?'ai-msg-row-user':''}">${avatar}<div class="ai-msg ${cls}">${escHTML(m.content)}</div></div>`;
+    }).join('');
   }
-  log.innerHTML=AI_CHAT_MESSAGES.map(m=>{
-    const cls=m._error?'ai-msg-error':(m.role==='user'?'ai-msg-user':'ai-msg-assistant');
-    return `<div class="ai-msg ${cls}">${escHTML(m.content)}</div>`;
-  }).join('');
-  log.scrollTop=log.scrollHeight;
+  logs.forEach(log=>{log.innerHTML=html;log.scrollTop=log.scrollHeight;});
 }
 
 async function refreshAiUsageDisplay(kind){
@@ -8606,12 +8667,14 @@ async function persistAiMessage(role,conteudo,tipo){
   await _sb.from('ai_mensagens').insert([{user_id:_currentUser.id,role,conteudo,tipo}]);
 }
 
-async function sendAiChat(){
-  const input=document.getElementById('ai-chat-input');
+async function sendAiChat(scope){
+  scope=scope||'full';
+  const suffix=scope==='mini'?'-mini':'';
+  const input=document.getElementById('ai-chat-input'+suffix);
   const text=input.value.trim();
   if(!text)return;
-  const sendBtn=document.getElementById('ai-chat-send-btn');
-  const typingEl=document.getElementById('ai-chat-typing');
+  const sendBtn=document.getElementById('ai-chat-send-btn'+suffix);
+  const typingEl=document.getElementById('ai-chat-typing'+suffix);
 
   const token=await getAiAccessToken();
   if(!token){showToast('Sessão expirada, faça login novamente.','error');return;}
@@ -8620,7 +8683,7 @@ async function sendAiChat(){
   renderAiChatLog();
   input.value='';
   sendBtn.disabled=true;
-  typingEl.style.display='block';
+  typingEl.style.display='flex';
   persistAiMessage('user',text,'chat');
 
   const controller=new AbortController();
@@ -8690,7 +8753,7 @@ function clearAiImageInput(){
   document.getElementById('ai-img-clear-btn').style.display='none';
 }
 
-// ── Logo da imobiliária (usado pelo Assistente IA) ──────
+// ── Logo da imobiliária (usado pela Captar IA) ──────────
 let _userLogoUrl=null;
 
 function refreshLogoCheckboxVisibility(){
@@ -8701,7 +8764,7 @@ function refreshLogoCheckboxVisibility(){
 
 async function loadUserLogo(){
   if(!_currentUser?.id)return;
-  const {data:signed}=await _sb.storage.from('logos').createSignedUrl(`${_currentUser.id}/logo.png`,3600);
+  const {data:signed}=await _sb.storage.from('logos').createSignedUrl(`${_currentUser.id}/logo.jpg`,3600);
   const preview=document.getElementById('config-logo-preview');
   const empty=document.getElementById('config-logo-empty');
   const removeBtn=document.getElementById('config-logo-remove-btn');
@@ -8718,25 +8781,39 @@ async function loadUserLogo(){
   refreshLogoCheckboxVisibility();
 }
 
-function handleLogoFileSelect(evt){
+async function handleLogoFileSelect(evt){
   const file=evt.target.files&&evt.target.files[0];
   if(!file)return;
   if(!file.type.startsWith('image/')){showToast('Selecione um arquivo de imagem.','error');evt.target.value='';return;}
   if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
-  resizeImageFile(file,800,0.92).then(async({mimeType,data})=>{
+  const label=document.querySelector('label[for="config-logo-file"]');
+  const originalLabel=label?label.textContent:'';
+  if(label){label.textContent='Enviando…';label.style.pointerEvents='none';label.style.opacity='.6';}
+  try{
+    const {mimeType,data}=await resizeImageFile(file,800,0.92);
     const blob=base64ToBlob(data,mimeType);
-    const path=`${_currentUser.id}/logo.png`;
+    const path=`${_currentUser.id}/logo.jpg`;
     const {error}=await _sb.storage.from('logos').upload(path,blob,{contentType:mimeType,upsert:true});
-    if(error){showToast('Erro ao enviar logo: '+error.message,'error');return;}
+    if(error){
+      console.error('Erro ao enviar logo (Storage):',error);
+      showToast('Erro ao enviar logo: '+error.message,'error');
+      return;
+    }
     showToast('Logo enviado!','success');
-    loadUserLogo();
-  }).catch(()=>showToast('Não foi possível processar a imagem.','error'));
+    await loadUserLogo();
+  }catch(e){
+    console.error('Erro ao processar/enviar logo:',e);
+    showToast('Não foi possível enviar o logo: '+(e&&e.message?e.message:'erro desconhecido'),'error');
+  }finally{
+    if(label){label.textContent=originalLabel;label.style.pointerEvents='';label.style.opacity='';}
+    evt.target.value='';
+  }
 }
 
 async function removerLogo(){
   if(!_currentUser?.id)return;
   if(!confirm('Remover o logo salvo?'))return;
-  await _sb.storage.from('logos').remove([`${_currentUser.id}/logo.png`]);
+  await _sb.storage.from('logos').remove([`${_currentUser.id}/logo.jpg`]);
   loadUserLogo();
 }
 
