@@ -3539,8 +3539,8 @@ async function loadTransacoes(){
   TRANSACOES.entradas=[];
   TRANSACOES.saidas=[];
   if(data){
-    TRANSACOES.entradas=data.filter(d=>d.tipo==='entrada').map(d=>({desc:d.descricao,val:Number(d.valor),data:d.data,cat:d.categoria}));
-    TRANSACOES.saidas=data.filter(d=>d.tipo==='saida').map(d=>({desc:d.descricao,val:Number(d.valor),data:d.data,cat:d.categoria}));
+    TRANSACOES.entradas=data.filter(d=>d.tipo==='entrada').map(d=>({id:d.id,desc:d.descricao,val:Number(d.valor),data:d.data,cat:d.categoria}));
+    TRANSACOES.saidas=data.filter(d=>d.tipo==='saida').map(d=>({id:d.id,desc:d.descricao,val:Number(d.valor),data:d.data,cat:d.categoria}));
   }
 }
 async function loadTarefas(){
@@ -3553,7 +3553,7 @@ async function loadCalEvents(){
   const {data,error}=await _sb.from('cal_events').select('*');
   if(error){showToast('Erro ao carregar agenda: '+error.message,'error');return;}
   CAL_EVENTS.length=0;
-  if(data) CAL_EVENTS.push(...data.map(d=>({date:d.date,title:d.title,time:d.time,type:d.type,color:d.color||'#3b82f6'})));
+  if(data) CAL_EVENTS.push(...data.map(d=>({id:d.id,date:d.date,title:d.title,time:d.time,type:d.type,color:d.color||'#3b82f6'})));
 }
 
 // Auto-login via Supabase session
@@ -4475,8 +4475,8 @@ async function addVisita(){
   VISITAS.unshift(newV);
   // Salva evento no calendário
   const evPayload={user_id:_currentUser?.id,date:dataVal,title:`Visita — ${cliente}`,time:newV.hora,type:'visita',color:'#3b82f6'};
-  _sb.from('cal_events').insert([evPayload]);
-  CAL_EVENTS.push({date:dataVal,title:`Visita — ${cliente}`,time:newV.hora,type:'visita',color:'#3b82f6'});
+  const {data:savedEv}=await _sb.from('cal_events').insert([evPayload]).select().single();
+  CAL_EVENTS.push({id:savedEv?.id,date:dataVal,title:evPayload.title,time:newV.hora,type:'visita',color:'#3b82f6'});
   inited['calendario']=false;
   renderVisitas();
   closeVisitaModal();
@@ -7482,9 +7482,9 @@ async function addTransacao(tipo){
   const today=new Date();
   const dataStr=`${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}`;
   const payload={user_id:_currentUser?.id,tipo,descricao:desc,valor:val,categoria:cat,data:dataStr};
-  const {error}=await _sb.from('transacoes').insert([payload]);
+  const {data:saved,error}=await _sb.from('transacoes').insert([payload]).select().single();
   if(error){showToast('Erro ao salvar: '+error.message,'error');return;}
-  const mapped={desc,val,data:dataStr,cat};
+  const mapped={id:saved?.id,desc,val,data:dataStr,cat};
   if(tipo==='entrada') TRANSACOES.entradas.unshift(mapped);
   else TRANSACOES.saidas.unshift(mapped);
   inited['financeiro']=false;
