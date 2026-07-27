@@ -814,6 +814,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .contact-type-btn{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--t2);cursor:pointer;transition:all .18s}
 .contact-type-btn:hover,.contact-type-btn.sel{background:rgba(133,2,119,.15);border-color:var(--p);color:#c453bb}
 
+/* ═══ ASSISTENTE IA ═══ */
+.ai-tab-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:var(--bg2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.ai-tab-btn.active{background:var(--p);color:#fff;border-color:var(--p)}
+.ai-tab-pane{display:none}.ai-tab-pane.active{display:block}
+.ai-chat-log{display:flex;flex-direction:column;gap:10px;max-height:440px;overflow-y:auto;padding:4px 2px;margin-bottom:12px}
+.ai-chat-empty{text-align:center;color:var(--t3);font-size:13px;padding:32px 20px}
+.ai-msg{max-width:78%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.ai-msg-user{align-self:flex-end;background:var(--p);color:#fff;border-bottom-right-radius:4px}
+.ai-msg-assistant{align-self:flex-start;background:var(--bg3);color:var(--t1);border:1px solid var(--border);border-bottom-left-radius:4px}
+.ai-msg-error{align-self:flex-start;background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.ai-chat-typing{font-size:12px;color:var(--t3);padding:4px 0 10px;font-style:italic}
+.ai-chat-inputbar{display:flex;gap:8px;align-items:flex-end}
+.ai-chat-inputbar textarea{resize:vertical;flex:1}
+.ai-usage-note{font-size:11px;color:var(--t3);margin-top:8px}
+.ai-img-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.ai-img-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:16px}
+.ai-img-result-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px;display:flex;flex-direction:column;gap:8px}
+.ai-img-result-card img{width:100%;border-radius:8px;display:block}
+
 /* ═══ METAS MENSAIS ═══ */
 .metas-section{margin-bottom:24px}
 .metas-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -989,6 +1008,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
       <button class="nav-item" onclick="navigate('contratos',this)">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
         Contratos
+      </button>
+      <button class="nav-item" onclick="navigate('assistente',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg>
+        Assistente IA
       </button>
       <div class="nav-section-label">Operacional</div>
       <button class="nav-item" onclick="navigate('visitas',this)">
@@ -2258,6 +2281,40 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         </div>
 
       </div><!-- /page-financiamento -->
+
+      <div class="page" id="page-assistente">
+        <div class="ferr-tabs-nav">
+          <button class="ai-tab-btn active" onclick="switchAiTab('chat',this)">💬 Chat</button>
+          <button class="ai-tab-btn" onclick="switchAiTab('imagem',this)">🖼️ Gerar / Editar Imagem</button>
+        </div>
+
+        <div class="ai-tab-pane active" id="ai-pane-chat">
+          <div class="ai-chat-log" id="ai-chat-log">
+            <div class="ai-chat-empty">Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia. 👋</div>
+          </div>
+          <div class="ai-chat-typing" id="ai-chat-typing" style="display:none">IA está digitando…</div>
+          <div class="ai-chat-inputbar">
+            <textarea class="form-input" id="ai-chat-input" rows="2" placeholder="Ex: escreva uma descrição para um apartamento de 2 quartos no centro…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat();}"></textarea>
+            <button class="btn-add" id="ai-chat-send-btn" onclick="sendAiChat()">Enviar</button>
+          </div>
+          <div class="ai-usage-note" id="ai-chat-usage">Carregando limite diário…</div>
+        </div>
+
+        <div class="ai-tab-pane" id="ai-pane-imagem">
+          <textarea class="form-input" id="ai-img-prompt" rows="3" placeholder="Ex: fachada moderna de casa de alto padrão ao pôr do sol, estilo revista de arquitetura — ou descreva o que quer mudar na foto enviada ao lado"></textarea>
+          <div class="ai-img-upload-row">
+            <label class="btn-cancel" for="ai-img-file" style="cursor:pointer">📎 Anexar foto do imóvel (opcional)</label>
+            <input type="file" id="ai-img-file" accept="image/*" style="display:none" onchange="handleAiImageFileSelect(event)"/>
+            <span id="ai-img-file-name" style="font-size:12px;color:var(--t3)"></span>
+            <button type="button" class="btn-cancel" id="ai-img-clear-btn" style="display:none" onclick="clearAiImageInput()">Remover</button>
+          </div>
+          <img id="ai-img-preview" style="display:none;max-width:160px;border-radius:8px;margin:10px 0;border:1px solid var(--border)"/>
+          <button class="btn-add" id="ai-img-gen-btn" onclick="generateAiImage()" style="margin-top:8px">Gerar Imagem</button>
+          <div class="ai-usage-note" id="ai-img-usage">Carregando limite diário…</div>
+          <div style="font-size:11px;color:var(--t3);margin:6px 0 16px">⚠️ Imagens geradas não são salvas automaticamente — baixe as que quiser guardar.</div>
+          <div id="ai-img-results" class="ai-img-results-grid"></div>
+        </div>
+      </div><!-- /page-assistente -->
 
     </div><!-- /page-content -->
   </div><!-- /main -->
@@ -3591,6 +3648,7 @@ const pageMeta={
   financiamento:{title:'Calculadora de Financiamento',sub:'Simule parcelas, juros e total pago — Tabela Price'},
   corretores:{title:'Corretores',sub:'Equipe de corretores cadastrados'},
   loteamentos:{title:'Loteamentos',sub:'Empreendimentos e gestão de lotes'},
+  assistente:{title:'Assistente IA',sub:'Converse e gere/edite imagens com IA especializada no mercado imobiliário'},
 };
 
 function navigate(page, btn){
@@ -3643,6 +3701,7 @@ function initPage(page){
   if(page==='financiamento') calcFP();
   if(page==='relatorios') setTimeout(()=>{initPerfChart();initReceitaBar();renderFunnel();renderRelatorioCorretores();},100);
   if(page==='financeiro') setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100);
+  if(page==='assistente') initAssistente();
 }
 
 // ─────────────────────────────────────────
@@ -8420,6 +8479,255 @@ document.addEventListener('DOMContentLoaded',function(){
     </div>
   </div>
 </div>
+
+<script>
+// ─────────────────────────────────────────
+// ASSISTENTE IA — Chat + Geração/Edição de Imagem (Gemini)
+// ─────────────────────────────────────────
+let AI_CHAT_MESSAGES=[];
+let _aiChatLoaded=false;
+let _aiSelectedImage=null; // {mimeType,data} — base64 sem prefixo data:
+
+function switchAiTab(tab,btn){
+  document.querySelectorAll('.ai-tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ai-tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ai-pane-'+tab).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+
+async function getAiAccessToken(){
+  const {data:{session}}=await _sb.auth.getSession();
+  return session?.access_token||null;
+}
+
+function aiErrorMessage(status,data){
+  if(status===401)return'Sessão expirada — faça login novamente.';
+  if(status===403)return'Sua conta está suspensa. Entre em contato com o Grupo Captar.';
+  if(status===429){const u=data&&data.usage;return u?`Você atingiu o limite diário (${u.limite}). Volte amanhã!`:'Você atingiu o limite diário de uso.';}
+  if(status===503)return'A IA está sobrecarregada no momento. Tente novamente em instantes.';
+  return'Erro ao falar com a IA. Tente novamente.';
+}
+
+async function initAssistente(){
+  if(_aiChatLoaded)return;
+  _aiChatLoaded=true;
+  await loadAiChatHistory();
+  renderAiChatLog();
+  refreshAiUsageDisplay('chat');
+  refreshAiUsageDisplay('imagem');
+}
+
+async function loadAiChatHistory(){
+  if(!_currentUser?.id)return;
+  const {data,error}=await _sb.from('ai_mensagens').select('*').eq('tipo','chat').order('created_at',{ascending:true}).limit(100);
+  if(error){console.warn('loadAiChatHistory:',error.message);return;}
+  AI_CHAT_MESSAGES=(data||[]).map(m=>({role:m.role,content:m.conteudo}));
+}
+
+function renderAiChatLog(){
+  const log=document.getElementById('ai-chat-log');
+  if(!log)return;
+  if(!AI_CHAT_MESSAGES.length){
+    log.innerHTML='<div class="ai-chat-empty">Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia. 👋</div>';
+    return;
+  }
+  log.innerHTML=AI_CHAT_MESSAGES.map(m=>{
+    const cls=m._error?'ai-msg-error':(m.role==='user'?'ai-msg-user':'ai-msg-assistant');
+    return `<div class="ai-msg ${cls}">${escHTML(m.content)}</div>`;
+  }).join('');
+  log.scrollTop=log.scrollHeight;
+}
+
+async function refreshAiUsageDisplay(kind){
+  const elId=kind==='chat'?'ai-chat-usage':'ai-img-usage';
+  const el=document.getElementById(elId);
+  if(!el||!_currentUser?.id)return;
+  const hoje=new Date().toISOString().slice(0,10);
+  const {data}=await _sb.from('ai_uso_diario').select('chat_count,imagem_count').eq('user_id',_currentUser.id).eq('dia',hoje).maybeSingle();
+  const used=data?(kind==='chat'?data.chat_count:data.imagem_count):0;
+  el.textContent=`${used||0} ${kind==='chat'?'mensagens':'imagens'} hoje`;
+}
+
+function setAiUsageFromResponse(kind,usage){
+  if(!usage)return;
+  const elId=kind==='chat'?'ai-chat-usage':'ai-img-usage';
+  const el=document.getElementById(elId);
+  if(!el)return;
+  el.textContent=`${usage.used}/${usage.limite} ${kind==='chat'?'mensagens':'imagens'} hoje`;
+}
+
+async function persistAiMessage(role,conteudo,tipo){
+  if(!_currentUser?.id)return;
+  await _sb.from('ai_mensagens').insert([{user_id:_currentUser.id,role,conteudo,tipo}]);
+}
+
+async function sendAiChat(){
+  const input=document.getElementById('ai-chat-input');
+  const text=input.value.trim();
+  if(!text)return;
+  const sendBtn=document.getElementById('ai-chat-send-btn');
+  const typingEl=document.getElementById('ai-chat-typing');
+
+  const token=await getAiAccessToken();
+  if(!token){showToast('Sessão expirada, faça login novamente.','error');return;}
+
+  AI_CHAT_MESSAGES.push({role:'user',content:text});
+  renderAiChatLog();
+  input.value='';
+  sendBtn.disabled=true;
+  typingEl.style.display='block';
+  persistAiMessage('user',text,'chat');
+
+  const controller=new AbortController();
+  const timeoutId=setTimeout(()=>controller.abort(),28000);
+
+  try{
+    const resp=await fetch('/api/ai-chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({messages:AI_CHAT_MESSAGES}),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    const data=await resp.json();
+
+    if(!resp.ok){
+      const msg=aiErrorMessage(resp.status,data);
+      AI_CHAT_MESSAGES.push({role:'assistant',content:msg,_error:true});
+      renderAiChatLog();
+      showToast(msg,'error');
+      return;
+    }
+
+    if(data.usage)setAiUsageFromResponse('chat',data.usage);
+
+    if(!data.reply){
+      const msg=data.blocked?'A IA não pôde responder por política de segurança de conteúdo. Tente reformular.':'A IA não retornou uma resposta. Tente novamente.';
+      AI_CHAT_MESSAGES.push({role:'assistant',content:msg});
+      renderAiChatLog();
+      return;
+    }
+
+    AI_CHAT_MESSAGES.push({role:'assistant',content:data.reply});
+    renderAiChatLog();
+    persistAiMessage('assistant',data.reply,'chat');
+  }catch(e){
+    clearTimeout(timeoutId);
+    const msg=e.name==='AbortError'?'A IA demorou demais para responder. Tente novamente.':'Erro de conexão com a IA. Tente novamente.';
+    AI_CHAT_MESSAGES.push({role:'assistant',content:msg,_error:true});
+    renderAiChatLog();
+    showToast(msg,'error');
+  }finally{
+    sendBtn.disabled=false;
+    typingEl.style.display='none';
+  }
+}
+
+function handleAiImageFileSelect(evt){
+  const file=evt.target.files&&evt.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('Selecione um arquivo de imagem.','error');evt.target.value='';return;}
+  resizeImageFile(file,1600,0.85).then(({mimeType,data,dataUrl})=>{
+    _aiSelectedImage={mimeType,data};
+    const preview=document.getElementById('ai-img-preview');
+    preview.src=dataUrl;
+    preview.style.display='block';
+    document.getElementById('ai-img-file-name').textContent=file.name;
+    document.getElementById('ai-img-clear-btn').style.display='inline-block';
+  }).catch(()=>{showToast('Não foi possível processar a imagem.','error');});
+}
+
+function clearAiImageInput(){
+  _aiSelectedImage=null;
+  document.getElementById('ai-img-file').value='';
+  document.getElementById('ai-img-preview').style.display='none';
+  document.getElementById('ai-img-file-name').textContent='';
+  document.getElementById('ai-img-clear-btn').style.display='none';
+}
+
+function resizeImageFile(file,maxDim,quality){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=reject;
+    reader.onload=()=>{
+      const img=new Image();
+      img.onerror=reject;
+      img.onload=()=>{
+        let {width,height}=img;
+        if(width>maxDim||height>maxDim){
+          const scale=maxDim/Math.max(width,height);
+          width=Math.round(width*scale);
+          height=Math.round(height*scale);
+        }
+        const canvas=document.createElement('canvas');
+        canvas.width=width;canvas.height=height;
+        canvas.getContext('2d').drawImage(img,0,0,width,height);
+        const dataUrl=canvas.toDataURL('image/jpeg',quality);
+        const data=dataUrl.split(',')[1];
+        resolve({mimeType:'image/jpeg',data,dataUrl});
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function generateAiImage(){
+  const promptEl=document.getElementById('ai-img-prompt');
+  const prompt=promptEl.value.trim();
+  if(!prompt){showToast('Descreva a imagem que você quer gerar.','error');return;}
+  const btn=document.getElementById('ai-img-gen-btn');
+  const token=await getAiAccessToken();
+  if(!token){showToast('Sessão expirada, faça login novamente.','error');return;}
+
+  btn.disabled=true;
+  btn.textContent='Gerando…';
+
+  const controller=new AbortController();
+  const timeoutId=setTimeout(()=>controller.abort(),55000);
+
+  try{
+    const resp=await fetch('/api/ai-image',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({prompt,inputImage:_aiSelectedImage||undefined}),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    const data=await resp.json();
+
+    if(!resp.ok){showToast(aiErrorMessage(resp.status,data),'error');return;}
+    if(data.usage)setAiUsageFromResponse('imagem',data.usage);
+
+    if(!data.image){
+      showToast(data.blocked?'A IA não pôde gerar essa imagem por política de segurança de conteúdo.':'A IA não retornou uma imagem. Tente novamente.','error');
+      return;
+    }
+
+    addAiImageResult(data.image,prompt);
+    persistAiMessage('user',prompt,'imagem');
+  }catch(e){
+    clearTimeout(timeoutId);
+    showToast(e.name==='AbortError'?'A geração demorou demais. Tente novamente.':'Erro de conexão com a IA.','error');
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Gerar Imagem';
+  }
+}
+
+function addAiImageResult(image,prompt){
+  const grid=document.getElementById('ai-img-results');
+  const url=`data:${image.mimeType};base64,${image.data}`;
+  const card=document.createElement('div');
+  card.className='ai-img-result-card';
+  card.innerHTML=`
+    <img src="${url}" alt="Imagem gerada"/>
+    <div style="font-size:11px;color:var(--t3)">${escHTML(prompt.slice(0,80))}${prompt.length>80?'…':''}</div>
+    <a class="btn-add" style="text-align:center;text-decoration:none" href="${url}" download="captar-ia-${Date.now()}.png">Baixar</a>
+  `;
+  grid.prepend(card);
+}
+</script>
 
 </body>
 </html>
