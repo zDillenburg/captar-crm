@@ -1,0 +1,7 @@
+{
+  "name": "grupo-captar-crm",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  }
+}

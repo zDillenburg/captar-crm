@@ -2,6 +2,7 @@
 supabase-setup.sql
 supabase-security-fixes.sql
 supabase-fixes-imoveis.sql
+supabase-ai-assistant.sql
 .claude/
 .DS_Store
 *.env

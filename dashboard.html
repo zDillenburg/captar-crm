@@ -814,6 +814,76 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .contact-type-btn{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--t2);cursor:pointer;transition:all .18s}
 .contact-type-btn:hover,.contact-type-btn.sel{background:rgba(133,2,119,.15);border-color:var(--p);color:#c453bb}
 
+/* ═══ CAPTAR IA — identidade visual ═══ */
+@keyframes captarIaPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(163,3,154,.45),0 4px 20px rgba(133,2,119,.35);}
+  50%{box-shadow:0 0 0 9px rgba(163,3,154,0),0 4px 28px rgba(133,2,119,.5);}
+}
+@keyframes captarIaFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes captarIaMsgIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes captarIaDot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes captarIaOrbSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.captar-ia-orb{position:relative;width:38px;height:38px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 32% 28%,#e879d4 0%,var(--pl) 45%,var(--p) 78%,#23041f 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(133,2,119,.4)}
+.captar-ia-orb svg{width:17px;height:17px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.captar-ia-orb-sm{width:26px;height:26px}
+.captar-ia-orb-sm svg{width:12px;height:12px}
+.captar-ia-badge{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.05em;color:#e6b3df;background:rgba(133,2,119,.2);border:1px solid rgba(163,3,154,.4);padding:3px 9px 3px 7px;border-radius:20px;text-transform:uppercase}
+.captar-ia-badge svg{width:9px;height:9px}
+
+.ai-fab{position:fixed;bottom:28px;right:28px;z-index:200;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;padding:0;background:radial-gradient(circle at 32% 28%,#e879d4 0%,var(--pl) 45%,var(--p) 78%,#23041f 100%);display:flex;align-items:center;justify-content:center;animation:captarIaPulse 3.2s ease-in-out infinite;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.ai-fab svg{width:26px;height:26px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))}
+.ai-fab:hover{transform:scale(1.1) rotate(-4deg)}
+.ai-fab:active{transform:scale(.94)}
+.ai-fab.hidden{display:none}
+@media(max-width:768px){.ai-fab{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:16px;width:52px;height:52px}.ai-fab svg{width:22px;height:22px}}
+@media(prefers-reduced-motion:reduce){.ai-fab{animation:none}}
+
+.ai-tab-btn{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:var(--bg2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.ai-tab-btn.active{background:var(--p);color:#fff;border-color:var(--p)}
+.ai-tab-pane{display:none}.ai-tab-pane.active{display:block}
+
+.ai-chat-log{display:flex;flex-direction:column;gap:12px;max-height:440px;overflow-y:auto;padding:4px 2px;margin-bottom:12px}
+.ai-chat-empty{display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--t3);font-size:13px;padding:36px 20px;gap:14px;animation:captarIaFadeUp .5s ease-out}
+.ai-chat-empty svg{width:30px;height:30px;color:var(--pl)}
+.ai-chat-empty strong{color:var(--t1)}
+.ai-msg-row{display:flex;align-items:flex-end;gap:8px;max-width:100%;animation:captarIaMsgIn .32s cubic-bezier(.16,1,.3,1)}
+.ai-msg-row-user{justify-content:flex-end}
+.ai-msg{max-width:78%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.ai-msg-user{background:linear-gradient(135deg,var(--pl),var(--p));color:#fff;border-bottom-right-radius:4px}
+.ai-msg-assistant{background:var(--bg3);color:var(--t1);border:1px solid var(--border);border-bottom-left-radius:4px}
+.ai-msg-error{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.ai-chat-typing{display:flex;align-items:center;gap:8px;padding:4px 0 10px}
+.typing-dots{display:inline-flex;gap:3px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:9px 12px}
+.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--t3);animation:captarIaDot 1.2s ease-in-out infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@media(prefers-reduced-motion:reduce){.ai-msg-row,.ai-chat-empty{animation:none}.typing-dots span{animation:none;opacity:.7}}
+
+.ai-chat-inputbar{display:flex;gap:8px;align-items:flex-end}
+.ai-chat-inputbar textarea{resize:vertical;flex:1}
+.ai-usage-note{font-size:11px;color:var(--t3);margin-top:8px}
+.ai-img-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.ai-img-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:16px}
+.ai-img-result-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px;display:flex;flex-direction:column;gap:8px;animation:captarIaFadeUp .4s ease-out}
+.ai-img-result-card img{width:100%;border-radius:8px;display:block}
+.ai-img-thread-log{display:flex;flex-direction:column;gap:14px;max-height:520px;overflow-y:auto;padding:4px 2px;margin-bottom:14px}
+.ai-img-thread-result{max-width:320px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.ai-img-thread-result img{width:100%;border-radius:8px;display:block}
+.ai-img-thread-actions{display:flex;gap:6px}
+.ai-img-thread-actions a,.ai-img-thread-actions button{flex:1;text-align:center;text-decoration:none;font-size:12px;padding:7px 10px}
+.ai-img-reset-link{background:none;border:none;color:#e6b3df;font-size:11px;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
+
+/* Card "Captar IA" no Dashboard — chat embutido */
+.captar-ia-card{position:relative;background:linear-gradient(160deg,rgba(133,2,119,.12),rgba(20,18,16,.35) 65%);border:1px solid rgba(163,3,154,.3);border-radius:var(--r2);padding:20px 22px;margin-bottom:20px;overflow:hidden;animation:captarIaFadeUp .5s cubic-bezier(.16,1,.3,1)}
+.captar-ia-card::before{content:'';position:absolute;top:-70%;right:-15%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(163,3,154,.2),transparent 70%);pointer-events:none}
+.captar-ia-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative;z-index:1}
+.captar-ia-title{font-size:15px;font-weight:800;color:var(--t1)}
+.captar-ia-subtitle{font-size:11px;color:var(--t3);margin-top:1px}
+.captar-ia-expand{margin-left:auto;background:none;border:1px solid var(--border);color:var(--t2);font-size:11px;font-weight:600;padding:6px 12px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.captar-ia-expand:hover{border-color:var(--p);color:#e6b3df}
+.ai-chat-log-mini{max-height:230px;position:relative;z-index:1}
+
 /* ═══ METAS MENSAIS ═══ */
 .metas-section{margin-bottom:24px}
 .metas-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -990,6 +1060,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
         Contratos
       </button>
+      <button class="nav-item" id="nav-assistente-btn" onclick="navigate('assistente',this)">
+        <svg fill="currentColor" stroke="none" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>
+        Captar IA
+      </button>
       <div class="nav-section-label">Operacional</div>
       <button class="nav-item" onclick="navigate('visitas',this)">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
@@ -1096,6 +1170,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 
       <!-- ══════ DASHBOARD PAGE ══════ -->
       <div class="page active" id="page-dashboard">
+        <!-- Captar IA — chat embutido -->
+        <div class="captar-ia-card">
+          <div class="captar-ia-header">
+            <div class="captar-ia-orb"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <div>
+              <div class="captar-ia-title">Captar IA</div>
+              <div class="captar-ia-subtitle">Assistente exclusivo do Grupo Captar</div>
+            </div>
+            <button class="captar-ia-expand" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))">Abrir completo →</button>
+          </div>
+          <div class="ai-chat-log ai-chat-log-mini" id="ai-chat-log-mini"></div>
+          <div class="ai-chat-typing" id="ai-chat-typing-mini" style="display:none">
+            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <span class="typing-dots"><span></span><span></span><span></span></span>
+          </div>
+          <div class="ai-chat-inputbar">
+            <textarea class="form-input" id="ai-chat-input-mini" rows="1" placeholder="Pergunte algo pra Captar IA…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat('mini');}"></textarea>
+            <button class="btn-add" id="ai-chat-send-btn-mini" onclick="sendAiChat('mini')">Enviar</button>
+          </div>
+        </div>
         <!-- Overdue Alert Banner -->
         <div id="overdue-banner" style="display:none;margin-bottom:20px;padding:13px 18px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:8px;cursor:pointer;align-items:center;gap:14px;transition:background .2s" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1])" onmouseenter="this.style.background='rgba(245,158,11,.14)'" onmouseleave="this.style.background='rgba(245,158,11,.08)'">
           <span style="font-size:20px;flex-shrink:0">⚠️</span>
@@ -1438,6 +1532,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
                 <div class="toggle-desc">Atualizações e novas funcionalidades</div>
               </div>
               <button class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+            </div>
+          </div>
+          <div class="config-card">
+            <div class="config-card-title">Logo da Imobiliária</div>
+            <div style="font-size:12px;color:var(--t3);margin-bottom:14px">Usado pela Captar IA para incluir sua marca nas imagens geradas.</div>
+            <img id="config-logo-preview" style="display:none;max-width:180px;max-height:90px;object-fit:contain;border-radius:8px;margin-bottom:12px;background:#fff;padding:8px"/>
+            <div id="config-logo-empty" style="font-size:12px;color:var(--t3);margin-bottom:12px">Nenhum logo enviado ainda.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <label class="config-save" style="cursor:pointer" for="config-logo-file">📎 Enviar logo</label>
+              <input type="file" id="config-logo-file" accept="image/*" style="display:none" onchange="handleLogoFileSelect(event)"/>
+              <button type="button" class="btn-cancel" id="config-logo-remove-btn" style="display:none" onclick="removerLogo()">Remover</button>
             </div>
           </div>
         </div>
@@ -2259,9 +2364,68 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 
       </div><!-- /page-financiamento -->
 
+      <div class="page" id="page-assistente">
+        <div class="ferr-tabs-nav">
+          <button class="ai-tab-btn active" onclick="switchAiTab('chat',this)">💬 Chat</button>
+          <button class="ai-tab-btn" onclick="switchAiTab('imagem',this)">🖼️ Gerar / Editar Imagem</button>
+        </div>
+
+        <div class="ai-tab-pane active" id="ai-pane-chat">
+          <div class="captar-ia-badge" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg> Captar IA · Grupo Captar</div>
+          <div class="ai-chat-log" id="ai-chat-log">
+            <div class="ai-chat-empty">Carregando conversa…</div>
+          </div>
+          <div class="ai-chat-typing" id="ai-chat-typing" style="display:none">
+            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <span class="typing-dots"><span></span><span></span><span></span></span>
+          </div>
+          <div class="ai-chat-inputbar">
+            <textarea class="form-input" id="ai-chat-input" rows="2" placeholder="Ex: escreva uma descrição para um apartamento de 2 quartos no centro…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat('full');}"></textarea>
+            <button class="btn-add" id="ai-chat-send-btn" onclick="sendAiChat('full')">Enviar</button>
+          </div>
+          <div class="ai-usage-note" id="ai-chat-usage">Carregando limite diário…</div>
+        </div>
+
+        <div class="ai-tab-pane" id="ai-pane-imagem">
+          <div id="ai-img-thread-log" class="ai-img-thread-log"></div>
+          <div class="ai-usage-note" id="ai-img-continuing-note" style="display:none;margin-bottom:10px">↻ Continuando ajustes na última imagem gerada. <button type="button" class="ai-img-reset-link" onclick="resetAiImageThread()">Começar imagem nova</button></div>
+
+          <div class="ai-img-upload-row" id="ai-img-upload-row">
+            <label class="btn-cancel" for="ai-img-file" style="cursor:pointer">📎 Anexar foto do imóvel (opcional)</label>
+            <input type="file" id="ai-img-file" accept="image/*" style="display:none" onchange="handleAiImageFileSelect(event)"/>
+            <span id="ai-img-file-name" style="font-size:12px;color:var(--t3)"></span>
+            <button type="button" class="btn-cancel" id="ai-img-clear-btn" style="display:none" onclick="clearAiImageInput()">Remover</button>
+          </div>
+          <img id="ai-img-preview" style="display:none;max-width:160px;border-radius:8px;margin:10px 0;border:1px solid var(--border)"/>
+          <div id="ai-logo-toggle-row" style="display:none;align-items:center;gap:8px;margin-bottom:10px">
+            <input type="checkbox" id="ai-use-logo" style="width:16px;height:16px;cursor:pointer"/>
+            <label for="ai-use-logo" style="font-size:12px;color:var(--t2);cursor:pointer">Incluir meu logo na imagem</label>
+          </div>
+          <div id="ai-logo-upload-prompt" style="display:none;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+            <label class="btn-cancel" for="ai-img-logo-file" style="cursor:pointer;font-size:12px">📎 Enviar logo da imobiliária</label>
+            <input type="file" id="ai-img-logo-file" accept="image/*" style="display:none" onchange="handleLogoFileSelect(event)"/>
+            <span style="font-size:11px;color:var(--t3)">Salve uma vez e use em todas as imagens geradas</span>
+          </div>
+          <textarea class="form-input" id="ai-img-prompt" rows="2" placeholder="Ex: fachada moderna ao pôr do sol — ou descreva o que ajustar no resultado anterior" style="margin-bottom:8px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();generateAiImage();}"></textarea>
+          <div style="display:flex;gap:8px">
+            <button class="btn-add" id="ai-img-gen-btn" onclick="generateAiImage()">Gerar Imagem</button>
+            <button class="btn-cancel" id="ai-img-reset-btn" style="display:none" onclick="resetAiImageThread()">🔄 Nova imagem</button>
+          </div>
+          <div class="ai-usage-note" id="ai-img-usage">Carregando limite diário…</div>
+          <div style="font-size:11px;color:var(--t3);margin:6px 0 16px">⚠️ Imagens geradas não são salvas automaticamente — baixe ou clique em Salvar as que quiser guardar.</div>
+
+          <div style="font-size:12px;font-weight:700;color:var(--t1);margin:24px 0 4px">📁 Imagens salvas</div>
+          <div id="ai-img-saved-grid" class="ai-img-results-grid"></div>
+        </div>
+      </div><!-- /page-assistente -->
+
     </div><!-- /page-content -->
   </div><!-- /main -->
 </div><!-- /app -->
+
+<button class="ai-fab" id="ai-fab-btn" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))" title="Captar IA — assistente exclusivo do Grupo Captar" aria-label="Abrir Captar IA">
+  <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg>
+</button>
 
 <!-- ══════ MODAL NOVO LEAD ══════ -->
 <div class="modal-overlay" id="modal">
@@ -3591,6 +3755,7 @@ const pageMeta={
   financiamento:{title:'Calculadora de Financiamento',sub:'Simule parcelas, juros e total pago — Tabela Price'},
   corretores:{title:'Corretores',sub:'Equipe de corretores cadastrados'},
   loteamentos:{title:'Loteamentos',sub:'Empreendimentos e gestão de lotes'},
+  assistente:{title:'Captar IA',sub:'Assistente exclusivo do Grupo Captar — converse e gere/edite imagens em alta qualidade'},
 };
 
 function navigate(page, btn){
@@ -3600,6 +3765,7 @@ function navigate(page, btn){
   if(btn) btn.classList.add('active');
   document.getElementById('page-title').textContent=pageMeta[page].title;
   document.getElementById('page-sub').textContent=pageMeta[page].sub;
+  document.getElementById('ai-fab-btn')?.classList.toggle('hidden',page==='assistente');
   initPage(page);
   // close mobile sidebar
   document.getElementById('sidebar').classList.remove('open');
@@ -3630,6 +3796,7 @@ function initPage(page){
     renderSparklines();
     renderMetas();
     setTimeout(()=>{initLeadsChart();initSourcesChart();},100);
+    ensureAiChatLoaded();
   }
   if(page==='crm') renderKanban();
   if(page==='imoveis') renderImoveis();
@@ -3643,6 +3810,8 @@ function initPage(page){
   if(page==='financiamento') calcFP();
   if(page==='relatorios') setTimeout(()=>{initPerfChart();initReceitaBar();renderFunnel();renderRelatorioCorretores();},100);
   if(page==='financeiro') setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100);
+  if(page==='assistente') initAssistente();
+  if(page==='config') loadUserLogo();
 }
 
 // ─────────────────────────────────────────
@@ -8420,6 +8589,482 @@ document.addEventListener('DOMContentLoaded',function(){
     </div>
   </div>
 </div>
+
+<script>
+// ─────────────────────────────────────────
+// ASSISTENTE IA — Chat + Geração/Edição de Imagem (Gemini)
+// ─────────────────────────────────────────
+let AI_CHAT_MESSAGES=[];
+let _aiChatLoaded=false;
+let _aiSelectedImage=null; // {mimeType,data} — base64 sem prefixo data:
+
+function switchAiTab(tab,btn){
+  document.querySelectorAll('.ai-tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ai-tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ai-pane-'+tab).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+
+async function getAiAccessToken(){
+  const {data:{session}}=await _sb.auth.getSession();
+  return session?.access_token||null;
+}
+
+function aiErrorMessage(status,data){
+  const detail=data&&data.detail?` [detalhe: ${String(data.detail).slice(0,300)}]`:'';
+  if(status===401)return'Sessão expirada — faça login novamente.'+detail;
+  if(status===403)return'Sua conta está suspensa. Entre em contato com o Grupo Captar.';
+  if(status===429){const u=data&&data.usage;return u?`Você atingiu o limite diário (${u.limite}). Volte amanhã!`:'Você atingiu o limite diário de uso.';}
+  if(status===503)return'A IA está sobrecarregada no momento (ou a chamada ao Gemini falhou). Tente novamente em instantes.'+detail;
+  if(status===500)return'Erro de configuração no servidor.'+detail;
+  return'Erro ao falar com a IA. Tente novamente.'+detail;
+}
+
+const CAPTAR_IA_SPARK_SVG='<svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg>';
+
+async function ensureAiChatLoaded(){
+  if(_aiChatLoaded)return;
+  _aiChatLoaded=true;
+  await loadAiChatHistory();
+  renderAiChatLog();
+  refreshAiUsageDisplay('chat');
+  refreshAiUsageDisplay('imagem');
+}
+
+async function initAssistente(){
+  await ensureAiChatLoaded();
+  renderAiImageThread();
+  loadAiImagensSalvas();
+  loadUserLogo();
+}
+
+async function loadAiChatHistory(){
+  if(!_currentUser?.id)return;
+  const {data,error}=await _sb.from('ai_mensagens').select('*').eq('tipo','chat').order('created_at',{ascending:true}).limit(100);
+  if(error){console.warn('loadAiChatHistory:',error.message);return;}
+  AI_CHAT_MESSAGES=(data||[]).map(m=>({role:m.role,content:m.conteudo}));
+}
+
+function renderAiChatLog(){
+  const logs=document.querySelectorAll('.ai-chat-log');
+  if(!logs.length)return;
+  let html;
+  if(!AI_CHAT_MESSAGES.length){
+    html=`<div class="ai-chat-empty">${CAPTAR_IA_SPARK_SVG.replace('white','currentColor')}<div>Sou a <strong>Captar IA</strong>, o assistente exclusivo do Grupo Captar. Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia. 👋</div></div>`;
+  }else{
+    html=AI_CHAT_MESSAGES.map(m=>{
+      const cls=m._error?'ai-msg-error':(m.role==='user'?'ai-msg-user':'ai-msg-assistant');
+      const avatar=m.role==='assistant'?`<div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div>`:'';
+      return `<div class="ai-msg-row ${m.role==='user'?'ai-msg-row-user':''}">${avatar}<div class="ai-msg ${cls}">${escHTML(m.content)}</div></div>`;
+    }).join('');
+  }
+  logs.forEach(log=>{log.innerHTML=html;log.scrollTop=log.scrollHeight;});
+}
+
+async function refreshAiUsageDisplay(kind){
+  const elId=kind==='chat'?'ai-chat-usage':'ai-img-usage';
+  const el=document.getElementById(elId);
+  if(!el||!_currentUser?.id)return;
+  const hoje=new Date().toISOString().slice(0,10);
+  const {data}=await _sb.from('ai_uso_diario').select('chat_count,imagem_count').eq('user_id',_currentUser.id).eq('dia',hoje).maybeSingle();
+  const used=data?(kind==='chat'?data.chat_count:data.imagem_count):0;
+  el.textContent=`${used||0} ${kind==='chat'?'mensagens':'imagens'} hoje`;
+}
+
+function setAiUsageFromResponse(kind,usage){
+  if(!usage)return;
+  const elId=kind==='chat'?'ai-chat-usage':'ai-img-usage';
+  const el=document.getElementById(elId);
+  if(!el)return;
+  el.textContent=`${usage.used}/${usage.limite} ${kind==='chat'?'mensagens':'imagens'} hoje`;
+}
+
+async function persistAiMessage(role,conteudo,tipo){
+  if(!_currentUser?.id)return;
+  await _sb.from('ai_mensagens').insert([{user_id:_currentUser.id,role,conteudo,tipo}]);
+}
+
+async function sendAiChat(scope){
+  scope=scope||'full';
+  const suffix=scope==='mini'?'-mini':'';
+  const input=document.getElementById('ai-chat-input'+suffix);
+  const text=input.value.trim();
+  if(!text)return;
+  const sendBtn=document.getElementById('ai-chat-send-btn'+suffix);
+  const typingEl=document.getElementById('ai-chat-typing'+suffix);
+
+  const token=await getAiAccessToken();
+  if(!token){showToast('Sessão expirada, faça login novamente.','error');return;}
+
+  AI_CHAT_MESSAGES.push({role:'user',content:text});
+  renderAiChatLog();
+  input.value='';
+  sendBtn.disabled=true;
+  typingEl.style.display='flex';
+  persistAiMessage('user',text,'chat');
+
+  const controller=new AbortController();
+  const timeoutId=setTimeout(()=>controller.abort(),28000);
+
+  try{
+    const resp=await fetch('/api/ai-chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({messages:AI_CHAT_MESSAGES}),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    const data=await resp.json();
+
+    if(!resp.ok){
+      const msg=aiErrorMessage(resp.status,data);
+      AI_CHAT_MESSAGES.push({role:'assistant',content:msg,_error:true});
+      renderAiChatLog();
+      showToast(msg,'error');
+      return;
+    }
+
+    if(data.usage)setAiUsageFromResponse('chat',data.usage);
+
+    if(!data.reply){
+      const msg=data.blocked?'A IA não pôde responder por política de segurança de conteúdo. Tente reformular.':'A IA não retornou uma resposta. Tente novamente.';
+      AI_CHAT_MESSAGES.push({role:'assistant',content:msg});
+      renderAiChatLog();
+      return;
+    }
+
+    AI_CHAT_MESSAGES.push({role:'assistant',content:data.reply});
+    renderAiChatLog();
+    persistAiMessage('assistant',data.reply,'chat');
+  }catch(e){
+    clearTimeout(timeoutId);
+    const msg=e.name==='AbortError'?'A IA demorou demais para responder. Tente novamente.':'Erro de conexão com a IA. Tente novamente.';
+    AI_CHAT_MESSAGES.push({role:'assistant',content:msg,_error:true});
+    renderAiChatLog();
+    showToast(msg,'error');
+  }finally{
+    sendBtn.disabled=false;
+    typingEl.style.display='none';
+  }
+}
+
+function handleAiImageFileSelect(evt){
+  const file=evt.target.files&&evt.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('Selecione um arquivo de imagem.','error');evt.target.value='';return;}
+  resizeImageFile(file,1600,0.85).then(({mimeType,data,dataUrl})=>{
+    _aiSelectedImage={mimeType,data};
+    const preview=document.getElementById('ai-img-preview');
+    preview.src=dataUrl;
+    preview.style.display='block';
+    document.getElementById('ai-img-file-name').textContent=file.name;
+    document.getElementById('ai-img-clear-btn').style.display='inline-block';
+  }).catch(()=>{showToast('Não foi possível processar a imagem.','error');});
+}
+
+function clearAiImageInput(){
+  _aiSelectedImage=null;
+  document.getElementById('ai-img-file').value='';
+  document.getElementById('ai-img-preview').style.display='none';
+  document.getElementById('ai-img-file-name').textContent='';
+  document.getElementById('ai-img-clear-btn').style.display='none';
+}
+
+// ── Logo da imobiliária (usado pela Captar IA) ──────────
+let _userLogoUrl=null;
+
+function refreshLogoCheckboxVisibility(){
+  const row=document.getElementById('ai-logo-toggle-row');
+  const uploadPrompt=document.getElementById('ai-logo-upload-prompt');
+  if(row)row.style.display=_userLogoUrl?'flex':'none';
+  if(uploadPrompt)uploadPrompt.style.display=_userLogoUrl?'none':'flex';
+  if(!_userLogoUrl){const cb=document.getElementById('ai-use-logo');if(cb)cb.checked=false;}
+}
+
+async function loadUserLogo(){
+  if(!_currentUser?.id)return;
+  const {data:signed,error}=await _sb.storage.from('logos').createSignedUrl(`${_currentUser.id}/logo.jpg`,3600);
+  if(error&&error.message&&!/not found/i.test(error.message)){
+    console.error('loadUserLogo:',error);
+  }
+  const preview=document.getElementById('config-logo-preview');
+  const empty=document.getElementById('config-logo-empty');
+  const removeBtn=document.getElementById('config-logo-remove-btn');
+  _userLogoUrl=signed?.signedUrl||null;
+  if(_userLogoUrl){
+    if(preview){preview.src=_userLogoUrl;preview.style.display='block';}
+    if(empty)empty.style.display='none';
+    if(removeBtn)removeBtn.style.display='inline-block';
+  }else{
+    if(preview)preview.style.display='none';
+    if(empty)empty.style.display='block';
+    if(removeBtn)removeBtn.style.display='none';
+  }
+  refreshLogoCheckboxVisibility();
+}
+
+async function handleLogoFileSelect(evt){
+  const file=evt.target.files&&evt.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('Selecione um arquivo de imagem.','error');evt.target.value='';return;}
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  const label=document.querySelector(`label[for="${evt.target.id}"]`);
+  const originalLabel=label?label.textContent:'';
+  if(label){label.textContent='Enviando…';label.style.pointerEvents='none';label.style.opacity='.6';}
+  try{
+    const {mimeType,data}=await resizeImageFile(file,800,0.92);
+    const blob=base64ToBlob(data,mimeType);
+    const path=`${_currentUser.id}/logo.jpg`;
+    const {error}=await _sb.storage.from('logos').upload(path,blob,{contentType:mimeType,upsert:true});
+    if(error){
+      console.error('Erro ao enviar logo (Storage):',error);
+      showToast('Erro ao enviar logo: '+error.message,'error');
+      return;
+    }
+    showToast('Logo enviado!','success');
+    await loadUserLogo();
+  }catch(e){
+    console.error('Erro ao processar/enviar logo:',e);
+    showToast('Não foi possível enviar o logo: '+(e&&e.message?e.message:'erro desconhecido'),'error');
+  }finally{
+    if(label){label.textContent=originalLabel;label.style.pointerEvents='';label.style.opacity='';}
+    evt.target.value='';
+  }
+}
+
+async function removerLogo(){
+  if(!_currentUser?.id)return;
+  if(!confirm('Remover o logo salvo?'))return;
+  await _sb.storage.from('logos').remove([`${_currentUser.id}/logo.jpg`]);
+  loadUserLogo();
+}
+
+function blobToBase64(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=reject;
+    reader.onload=()=>resolve(String(reader.result).split(',')[1]);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function resizeImageFile(file,maxDim,quality){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=reject;
+    reader.onload=()=>{
+      const img=new Image();
+      img.onerror=reject;
+      img.onload=()=>{
+        let {width,height}=img;
+        if(width>maxDim||height>maxDim){
+          const scale=maxDim/Math.max(width,height);
+          width=Math.round(width*scale);
+          height=Math.round(height*scale);
+        }
+        const canvas=document.createElement('canvas');
+        canvas.width=width;canvas.height=height;
+        canvas.getContext('2d').drawImage(img,0,0,width,height);
+        const dataUrl=canvas.toDataURL('image/jpeg',quality);
+        const data=dataUrl.split(',')[1];
+        resolve({mimeType:'image/jpeg',data,dataUrl});
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Conversa de imagem (geração + ajustes iterativos) ───
+let _aiImageThread=[]; // [{role:'user',text} | {role:'assistant',image,imageDataUrl,instructionText} | {role:'assistant',text,_error:true}]
+let _aiLastGeneratedImage=null; // último resultado — usado como entrada pro próximo ajuste ("arrume o telhado" etc.)
+
+function renderAiImageThread(){
+  const log=document.getElementById('ai-img-thread-log');
+  if(!log)return;
+  if(!_aiImageThread.length){
+    log.innerHTML=`<div class="ai-chat-empty">${CAPTAR_IA_SPARK_SVG.replace('white','currentColor')}<div>Descreva a imagem que você quer, ou anexe uma foto e diga o que ajustar. Depois do primeiro resultado, é só continuar pedindo ajustes — <strong>sem precisar reanexar nada</strong>.</div></div>`;
+  }else{
+    log.innerHTML=_aiImageThread.map((m,i)=>{
+      if(m.role==='user'){
+        return `<div class="ai-msg-row ai-msg-row-user"><div class="ai-msg ai-msg-user">${escHTML(m.text)}</div></div>`;
+      }
+      if(m.image){
+        return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-img-thread-result">
+          <img src="${m.imageDataUrl}" alt="Imagem gerada"/>
+          <div class="ai-img-thread-actions">
+            <a class="btn-add" href="${m.imageDataUrl}" download="captar-ia-${i}.png">Baixar</a>
+            <button class="btn-cancel" onclick="salvarAiImagemByIndex(${i},this)">💾 Salvar</button>
+          </div>
+        </div></div>`;
+      }
+      return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-msg ai-msg-error">${escHTML(m.text)}</div></div>`;
+    }).join('');
+  }
+  log.scrollTop=log.scrollHeight;
+
+  const continuing=!!_aiLastGeneratedImage;
+  const note=document.getElementById('ai-img-continuing-note');
+  const uploadRow=document.getElementById('ai-img-upload-row');
+  const resetBtn=document.getElementById('ai-img-reset-btn');
+  const genBtn=document.getElementById('ai-img-gen-btn');
+  if(note)note.style.display=continuing?'block':'none';
+  if(uploadRow)uploadRow.style.display=continuing?'none':'flex';
+  if(resetBtn)resetBtn.style.display=continuing?'inline-block':'none';
+  if(genBtn)genBtn.textContent=continuing?'Aplicar ajuste':'Gerar Imagem';
+}
+
+function resetAiImageThread(){
+  _aiImageThread=[];
+  _aiLastGeneratedImage=null;
+  clearAiImageInput();
+  document.getElementById('ai-img-prompt').value='';
+  renderAiImageThread();
+}
+
+async function generateAiImage(){
+  const promptEl=document.getElementById('ai-img-prompt');
+  const prompt=promptEl.value.trim();
+  if(!prompt){showToast('Descreva a imagem que você quer gerar ou o que ajustar.','error');return;}
+  const btn=document.getElementById('ai-img-gen-btn');
+  const token=await getAiAccessToken();
+  if(!token){showToast('Sessão expirada, faça login novamente.','error');return;}
+
+  // Continuando uma conversa? usa o último resultado da IA como referência (ajuste iterativo).
+  // Senão, usa a foto anexada pelo corretor (se houver) — ou nenhuma (geração do zero).
+  const referenceImage=_aiLastGeneratedImage||_aiSelectedImage||null;
+
+  let logoImage=null;
+  const useLogo=document.getElementById('ai-use-logo')?.checked;
+  if(useLogo&&_userLogoUrl){
+    try{
+      const logoResp=await fetch(_userLogoUrl);
+      const logoBlob=await logoResp.blob();
+      logoImage={mimeType:logoBlob.type||'image/png',data:await blobToBase64(logoBlob)};
+    }catch(e){/* segue sem logo se não conseguir carregar */}
+  }
+
+  _aiImageThread.push({role:'user',text:prompt});
+  renderAiImageThread();
+  promptEl.value='';
+  btn.disabled=true;
+  btn.textContent=_aiLastGeneratedImage?'Ajustando…':'Gerando…';
+
+  const controller=new AbortController();
+  const timeoutId=setTimeout(()=>controller.abort(),55000);
+
+  try{
+    const resp=await fetch('/api/ai-image',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({prompt,inputImage:referenceImage||undefined,logoImage:logoImage||undefined}),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    const data=await resp.json();
+
+    if(!resp.ok){
+      const msg=aiErrorMessage(resp.status,data);
+      _aiImageThread.push({role:'assistant',text:msg,_error:true});
+      renderAiImageThread();
+      showToast(msg,'error');
+      return;
+    }
+    if(data.usage)setAiUsageFromResponse('imagem',data.usage);
+
+    if(!data.image){
+      const msg=data.blocked?'A IA não pôde gerar essa imagem por política de segurança de conteúdo.':'A IA não retornou uma imagem. Tente novamente.';
+      _aiImageThread.push({role:'assistant',text:msg,_error:true});
+      renderAiImageThread();
+      showToast(msg,'error');
+      return;
+    }
+
+    _aiLastGeneratedImage=data.image;
+    _aiImageThread.push({role:'assistant',image:data.image,imageDataUrl:`data:${data.image.mimeType};base64,${data.image.data}`,instructionText:prompt});
+    renderAiImageThread();
+    persistAiMessage('user',prompt,'imagem');
+  }catch(e){
+    clearTimeout(timeoutId);
+    const msg=e.name==='AbortError'?'A geração demorou demais. Tente novamente.':'Erro de conexão com a IA.';
+    _aiImageThread.push({role:'assistant',text:msg,_error:true});
+    renderAiImageThread();
+    showToast(msg,'error');
+  }finally{
+    btn.disabled=false;
+    btn.textContent=_aiLastGeneratedImage?'Aplicar ajuste':'Gerar Imagem';
+  }
+}
+
+function base64ToBlob(base64,mimeType){
+  const byteChars=atob(base64);
+  const byteNumbers=new Array(byteChars.length);
+  for(let i=0;i<byteChars.length;i++)byteNumbers[i]=byteChars.charCodeAt(i);
+  return new Blob([new Uint8Array(byteNumbers)],{type:mimeType});
+}
+
+function salvarAiImagemByIndex(idx,btn){
+  const item=_aiImageThread[idx];
+  if(!item||!item.image)return;
+  salvarAiImagem(item.image,item.instructionText||'',btn);
+}
+
+async function salvarAiImagem(image,prompt,btn){
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  if(btn){btn.disabled=true;btn.textContent='Salvando…';}
+  try{
+    const mimeType=image.mimeType||'image/png';
+    const ext=mimeType.split('/')[1]||'png';
+    const path=`${_currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    const blob=base64ToBlob(image.data,mimeType);
+
+    const {error:upErr}=await _sb.storage.from('ai-imagens').upload(path,blob,{contentType:mimeType});
+    if(upErr){showToast('Erro ao salvar imagem: '+upErr.message,'error');if(btn){btn.disabled=false;btn.textContent='💾 Salvar';}return;}
+
+    const {error:insErr}=await _sb.from('ai_imagens_salvas').insert([{user_id:_currentUser.id,storage_path:path,prompt}]);
+    if(insErr){showToast('Erro ao salvar imagem: '+insErr.message,'error');if(btn){btn.disabled=false;btn.textContent='💾 Salvar';}return;}
+
+    showToast('Imagem salva!','success');
+    if(btn){btn.textContent='✅ Salva';}
+    loadAiImagensSalvas();
+  }catch(e){
+    showToast('Erro ao salvar imagem.','error');
+    if(btn){btn.disabled=false;btn.textContent='💾 Salvar';}
+  }
+}
+
+async function loadAiImagensSalvas(){
+  const grid=document.getElementById('ai-img-saved-grid');
+  if(!grid||!_currentUser?.id)return;
+  const {data,error}=await _sb.from('ai_imagens_salvas').select('*').order('created_at',{ascending:false}).limit(30);
+  if(error){console.warn('loadAiImagensSalvas:',error.message);return;}
+  if(!data||!data.length){
+    grid.innerHTML='<div style="font-size:12px;color:var(--t3)">Nenhuma imagem salva ainda.</div>';
+    return;
+  }
+  const withUrls=await Promise.all(data.map(async row=>{
+    const {data:signed}=await _sb.storage.from('ai-imagens').createSignedUrl(row.storage_path,3600);
+    return {...row,url:signed?.signedUrl||''};
+  }));
+  grid.innerHTML=withUrls.filter(r=>r.url).map(r=>`
+    <div class="ai-img-result-card">
+      <img src="${escHTML(r.url)}" alt="Imagem salva"/>
+      <div style="font-size:11px;color:var(--t3)">${escHTML((r.prompt||'').slice(0,80))}${(r.prompt||'').length>80?'…':''}</div>
+      <div style="display:flex;gap:6px">
+        <a class="btn-add" style="flex:1;text-align:center;text-decoration:none" href="${escHTML(r.url)}" download>Baixar</a>
+        <button class="btn-cancel" onclick="excluirAiImagemSalva(${r.id},'${escHTML(r.storage_path)}')">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function excluirAiImagemSalva(id,path){
+  if(!confirm('Excluir esta imagem salva?'))return;
+  await _sb.storage.from('ai-imagens').remove([path]);
+  await _sb.from('ai_imagens_salvas').delete().eq('id',id);
+  loadAiImagensSalvas();
+}
+</script>
 
 </body>
 </html>
