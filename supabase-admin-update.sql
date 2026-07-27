@@ -26,11 +26,13 @@ alter table avisos enable row level security;
 -- IMPORTANTE: usar SOMENTE app_metadata (não é editável pelo próprio usuário).
 -- user_metadata é gravável via supabase.auth.updateUser() pelo próprio cliente,
 -- então incluí-lo aqui permitiria qualquer usuário se auto-promover a admin.
+drop policy if exists "avisos_admin_all" on avisos;
 create policy "avisos_admin_all"
   on avisos for all
   using  ((auth.jwt()->'app_metadata'->>'role') = 'admin')
   with check ((auth.jwt()->'app_metadata'->>'role') = 'admin');
 
+drop policy if exists "avisos_users_read" on avisos;
 create policy "avisos_users_read"
   on avisos for select
   using (ativo = true);
