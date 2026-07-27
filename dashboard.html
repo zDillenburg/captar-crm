@@ -1206,7 +1206,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
               <div class="kpi-icon" style="background:rgba(133,2,119,.15)">
                 <svg fill="none" stroke="#a3039a" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
               </div>
-              <span class="kpi-trend up">↑ 14%</span>
+              <span class="kpi-trend up" id="kpi-trend-leads">–</span>
             </div>
             <div class="kpi-value" id="kpi-leads">0</div>
             <div class="kpi-label">Total de Leads</div>
@@ -1217,7 +1217,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
               <div class="kpi-icon" style="background:rgba(34,197,94,.1)">
                 <svg fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
               </div>
-              <span class="kpi-trend up">↑ 8%</span>
+              <span class="kpi-trend up" id="kpi-trend-conv">–</span>
             </div>
             <div class="kpi-value" id="kpi-conv">0</div>
             <div class="kpi-label">Conversões no Mês</div>
@@ -1228,7 +1228,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
               <div class="kpi-icon" style="background:rgba(245,158,11,.1)">
                 <svg fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
               </div>
-              <span class="kpi-trend up">↑ 22%</span>
+              <span class="kpi-trend up" id="kpi-trend-receita">–</span>
             </div>
             <div class="kpi-value" id="kpi-receita">R$ 0</div>
             <div class="kpi-label">Receita Mensal</div>
@@ -1239,7 +1239,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
               <div class="kpi-icon" style="background:rgba(59,130,246,.1)">
                 <svg fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
               </div>
-              <span class="kpi-trend up">↑ 5%</span>
+              <span class="kpi-trend up" id="kpi-trend-imoveis">–</span>
             </div>
             <div class="kpi-value" id="kpi-imoveis">0</div>
             <div class="kpi-label">Imóveis Ativos</div>
@@ -1262,7 +1262,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
           <div class="metas-section-hdr">
             <div class="metas-section-title">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Metas de Maio
+              Metas de <span id="metas-mes-label">–</span>
             </div>
             <button class="link-btn" onclick="renderMetas(true)" style="font-size:11px">Editar metas</button>
           </div>
@@ -1430,7 +1430,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <div class="chart-header">
               <div>
                 <div class="chart-title">Funil de Conversão</div>
-                <div class="chart-sub">Maio 2026</div>
+                <div class="chart-sub">Todos os leads</div>
               </div>
             </div>
             <div class="funnel-wrap" id="funnel"></div>
@@ -1440,7 +1440,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
           <div class="chart-header">
             <div>
               <div class="chart-title">Receita por Mês</div>
-              <div class="chart-sub">Jan – Jul 2026</div>
+              <div class="chart-sub" id="rel-receita-bar-range">últimos meses</div>
             </div>
           </div>
           <div class="chart-canvas-wrap" style="height:200px"><canvas id="chart-receita-bar"></canvas></div>
@@ -1730,16 +1730,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
           <div class="fin-kpi">
             <div class="fin-kpi-bar" style="background:#22c55e"></div>
             <span class="fin-kpi-emoji">💰</span>
-            <div class="fin-kpi-val" style="color:#4ade80">R$ 44.600</div>
-            <div class="fin-kpi-lbl">Receita em Maio</div>
-            <span class="fin-kpi-sub" style="background:rgba(34,197,94,.1);color:#4ade80">↑ 22% vs Abril</span>
+            <div class="fin-kpi-val" style="color:#4ade80">R$ 0</div>
+            <div class="fin-kpi-lbl" id="fin-kpi-lbl-receita">Receita no mês</div>
+            <span class="fin-kpi-sub" id="fin-kpi-sub-receita" style="background:rgba(34,197,94,.1);color:#4ade80">–</span>
           </div>
           <div class="fin-kpi">
             <div class="fin-kpi-bar" style="background:#ef4444"></div>
             <span class="fin-kpi-emoji">📤</span>
-            <div class="fin-kpi-val" style="color:#f87171">R$ 4.826</div>
-            <div class="fin-kpi-lbl">Despesas em Maio</div>
-            <span class="fin-kpi-sub" style="background:rgba(34,197,94,.1);color:#4ade80">↓ 8% vs Abril</span>
+            <div class="fin-kpi-val" style="color:#f87171">R$ 0</div>
+            <div class="fin-kpi-lbl" id="fin-kpi-lbl-despesa">Despesas no mês</div>
+            <span class="fin-kpi-sub" id="fin-kpi-sub-despesa" style="background:rgba(239,68,68,.1);color:#f87171">–</span>
           </div>
           <div class="fin-kpi">
             <div class="fin-kpi-bar" style="background:var(--p)"></div>
@@ -1755,7 +1755,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
           <div class="chart-header">
             <div>
               <div class="chart-title">Receita vs Despesas</div>
-              <div class="chart-sub">Janeiro a Maio 2026</div>
+              <div class="chart-sub" id="fin-chart-sub-range">últimos meses</div>
             </div>
             <div class="chart-actions">
               <button class="chip active">Mensal</button>
@@ -1783,7 +1783,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <div class="fin-table-title" style="color:#4ade80;display:flex;align-items:center;justify-content:space-between">
               <div style="display:flex;align-items:center;gap:8px">
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
-                Entradas — Maio 2026
+                Entradas — <span id="fin-tabela-mes-entradas">este mês</span>
               </div>
               <button class="link-btn" onclick="addTransacao('entrada')" style="font-size:11px">+ Adicionar</button>
             </div>
@@ -1800,7 +1800,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <div class="fin-table-title" style="color:#f87171;display:flex;align-items:center;justify-content:space-between">
               <div style="display:flex;align-items:center;gap:8px">
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
-                Saídas — Maio 2026
+                Saídas — <span id="fin-tabela-mes-saidas">este mês</span>
               </div>
               <button class="link-btn" onclick="addTransacao('saida')" style="font-size:11px;color:#f87171">+ Adicionar</button>
             </div>
@@ -1905,7 +1905,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
         <div class="pag-table-card">
           <div class="pag-table-header">
             <div class="pag-table-title">Histórico de Pagamentos</div>
-            <span style="font-size:12px;color:var(--t3)">Últimos 6 meses</span>
+            <span style="font-size:12px;color:var(--t3)">Mês corrente</span>
           </div>
           <div style="overflow-x:auto">
             <table class="pag-table">
@@ -3420,6 +3420,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 // ─────────────────────────────────────────
 // SEGURANÇA — XSS protection
 // ─────────────────────────────────────────
+// new Date('YYYY-MM-DD') parseia como UTC meia-noite, que em fusos negativos
+// (Brasil) vira o dia anterior no horário local — usar isto pra qualquer
+// data-only string (aniversário, datas de input type=date etc.)
+function parseLocalDate(dateStr){
+  if(!dateStr)return null;
+  const [y,m,d]=String(dateStr).split('-').map(Number);
+  if(!y||!m||!d)return null;
+  return new Date(y,m-1,d);
+}
+
 function escHTML(s){
   if(s==null)return'';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -3630,7 +3640,7 @@ async function showApp(){
     loadCidadesBR(),
     loadLeads(),loadImoveis(),loadLocacoes(),
     loadVisitas(),loadTransacoes(),loadTarefas(),loadCalEvents(),
-    loadLoteamentos()
+    loadLoteamentos(),loadMetasMensais()
   ]);
   checkAdminAccess();
   // Update nav badges from real data
@@ -3703,8 +3713,8 @@ async function loadTransacoes(){
   TRANSACOES.entradas=[];
   TRANSACOES.saidas=[];
   if(data){
-    TRANSACOES.entradas=data.filter(d=>d.tipo==='entrada').map(d=>({id:d.id,desc:d.descricao,val:Number(d.valor),data:d.data,cat:d.categoria}));
-    TRANSACOES.saidas=data.filter(d=>d.tipo==='saida').map(d=>({id:d.id,desc:d.descricao,val:Number(d.valor),data:d.data,cat:d.categoria}));
+    TRANSACOES.entradas=data.filter(d=>d.tipo==='entrada').map(d=>({id:d.id,desc:d.descricao,val:Number(d.valor),data:d.data,cat:d.categoria,created_at:d.created_at}));
+    TRANSACOES.saidas=data.filter(d=>d.tipo==='saida').map(d=>({id:d.id,desc:d.descricao,val:Number(d.valor),data:d.data,cat:d.categoria,created_at:d.created_at}));
   }
 }
 async function loadTarefas(){
@@ -3717,7 +3727,7 @@ async function loadCalEvents(){
   const {data,error}=await _sb.from('cal_events').select('*');
   if(error){showToast('Erro ao carregar agenda: '+error.message,'error');return;}
   CAL_EVENTS.length=0;
-  if(data) CAL_EVENTS.push(...data.map(d=>({id:d.id,date:d.date,title:d.title,time:d.time,type:d.type,color:d.color||'#3b82f6'})));
+  if(data) CAL_EVENTS.push(...data.map(d=>({id:d.id,date:d.date,title:d.title,time:d.time,type:d.type,color:d.color||'#3b82f6',visita_id:d.visita_id||null})));
 }
 
 // Auto-login via Supabase session
@@ -3835,30 +3845,82 @@ function sparkSVG(data,color){
   </svg>`;
 }
 
+// Agrupa itens por mês (com base em created_at) dos últimos `monthsBack`
+// meses até o atual (incluído). Retorna um array de valores reais, do mês
+// mais antigo pro mais recente — usado pra sparklines, tendências e gráficos.
+function monthlyBucket(items,dateField,monthsBack,valueFn){
+  const now=new Date();
+  const out=[];
+  for(let i=monthsBack;i>=0;i--){
+    const target=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const ty=target.getFullYear(),tm=target.getMonth();
+    const inRange=items.filter(it=>{
+      const raw=it[dateField];
+      if(!raw)return false;
+      const d=new Date(raw);
+      return d.getFullYear()===ty&&d.getMonth()===tm;
+    });
+    out.push(valueFn?valueFn(inRange):inRange.length);
+  }
+  return out;
+}
+
+function pctTrendFrom(series){
+  const curr=series[series.length-1]||0, prev=series[series.length-2]||0;
+  if(prev===0) return curr===0?null:{novo:true};
+  const pct=Math.round(((curr-prev)/prev)*100);
+  return {pct:Math.abs(pct),dir:pct>=0?'up':'down'};
+}
+
+function renderTrendBadge(elId,trend){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  if(!trend){el.className='kpi-trend';el.textContent='—';return;}
+  if(trend.novo){el.className='kpi-trend up';el.textContent='Novo';return;}
+  el.className='kpi-trend '+trend.dir;
+  el.textContent=(trend.dir==='up'?'↑ ':'↓ ')+trend.pct+'%';
+}
+
 function renderSparklines(){
-  // Sparklines com valor real no último ponto
-  const nLeads  = LEADS_DATA.length;
-  const nConv   = LEADS_DATA.filter(l=>l.coluna==='fechado').length;
-  const receita = TRANSACOES.entradas.reduce((s,t)=>s+(t.val||0),0);
-  const nIm     = IMOVEIS.filter(im=>im.status==='Ativo'||im.status==='ativo').length;
-  // Gera série crescente fictícia terminando no valor real (só visual)
-  function fakeSerie(end,steps=7){ const r=[]; for(let i=0;i<steps;i++) r.push(Math.max(0,Math.round(end*(0.6+0.4*(i/(steps-1)))))); return r; }
-  document.getElementById('spark-leads').innerHTML   = sparkSVG(fakeSerie(Math.max(nLeads,1)),'#a3039a');
-  document.getElementById('spark-conv').innerHTML    = sparkSVG(fakeSerie(Math.max(nConv,1)),'#22c55e');
-  document.getElementById('spark-receita').innerHTML = sparkSVG(fakeSerie(Math.max(receita,1)),'#f59e0b');
-  document.getElementById('spark-imoveis').innerHTML = sparkSVG(fakeSerie(Math.max(nIm,1)),'#3b82f6');
+  // Séries reais (7 últimos meses, agrupados por created_at) — o ponto
+  // final é o mês atual, igual ao valor mostrado no card.
+  const leadsSerie=monthlyBucket(LEADS_DATA,'created_at',6);
+  const convSerie=monthlyBucket(LEADS_DATA.filter(l=>l.coluna==='fechado'),'created_at',6);
+  const receitaSerie=monthlyBucket(TRANSACOES.entradas,'created_at',6,arr=>arr.reduce((s,t)=>s+(t.val||0),0));
+  const imoveisSerie=monthlyBucket(IMOVEIS,'created_at',6);
+  // Series com todos os meses zerados (sem dado histórico) não rendem uma
+  // linha útil — nesse caso mostra só um ponto estável no valor atual.
+  const safe=(serie,curr)=>serie.some(v=>v>0)?serie:[curr,curr];
+  document.getElementById('spark-leads').innerHTML   = sparkSVG(safe(leadsSerie,LEADS_DATA.length),'#a3039a');
+  document.getElementById('spark-conv').innerHTML    = sparkSVG(safe(convSerie,convSerie[convSerie.length-1]),'#22c55e');
+  document.getElementById('spark-receita').innerHTML = sparkSVG(safe(receitaSerie,receitaSerie[receitaSerie.length-1]),'#f59e0b');
+  document.getElementById('spark-imoveis').innerHTML = sparkSVG(safe(imoveisSerie,IMOVEIS.length),'#3b82f6');
+
+  renderTrendBadge('kpi-trend-leads',pctTrendFrom(leadsSerie));
+  renderTrendBadge('kpi-trend-conv',pctTrendFrom(convSerie));
+  renderTrendBadge('kpi-trend-receita',pctTrendFrom(receitaSerie));
+  renderTrendBadge('kpi-trend-imoveis',pctTrendFrom(imoveisSerie));
 }
 
 // ─────────────────────────────────────────
 // COUNTER ANIMATION
 // ─────────────────────────────────────────
 function animateCounters(){
-  // Calcula valores reais dos arrays carregados do Supabase
-  const receita = TRANSACOES.entradas.reduce((s,t)=>s+(t.val||0),0);
+  // Calcula valores reais dos arrays carregados do Supabase.
+  // "Conversoes no Mes" e "Receita Mensal" - os rotulos dizem "no mes", entao
+  // o valor tem que ser so do mes corrente (antes somava tudo desde sempre).
+  const now=new Date();
+  const isThisMonth=dateVal=>{
+    if(!dateVal)return false;
+    const d=new Date(dateVal);
+    return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
+  };
+  const convMes = LEADS_DATA.filter(l=>l.coluna==='fechado'&&isThisMonth(l.created_at)).length;
+  const receitaMes = TRANSACOES.entradas.filter(t=>isThisMonth(t.created_at)).reduce((s,t)=>s+(t.val||0),0);
   const kpis = [
     { id:'kpi-leads',   val: LEADS_DATA.length,                                        prefix:'',       suffix:'' },
-    { id:'kpi-conv',    val: LEADS_DATA.filter(l=>l.coluna==='fechado').length,         prefix:'',       suffix:'' },
-    { id:'kpi-receita', val: receita,                                                   prefix:'R$ ',suffix:'' },
+    { id:'kpi-conv',    val: convMes,                                                   prefix:'',       suffix:'' },
+    { id:'kpi-receita', val: receitaMes,                                                prefix:'R$ ',suffix:'' },
     { id:'kpi-imoveis', val: IMOVEIS.filter(im=>['Ativo','ativo'].includes(im.status)).length, prefix:'', suffix:'' },
   ];
   kpis.forEach(({id,val,prefix,suffix})=>{
@@ -4003,13 +4065,23 @@ function initPerfChart(){
   if(el2) el2.textContent=taxaConv;
   if(el3) el3.textContent=ticketMedio;
 
+  const mAbrevPerf=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const perfLabels=[];
+  const nowPerf=new Date();
+  for(let i=6;i>=0;i--){
+    const d=new Date(nowPerf.getFullYear(),nowPerf.getMonth()-i,1);
+    perfLabels.push(mAbrevPerf[d.getMonth()]);
+  }
+  const leadsSeriePerf=monthlyBucket(LEADS_DATA,'created_at',6);
+  const fechadosSeriePerf=monthlyBucket(LEADS_DATA.filter(l=>l.coluna==='fechado'),'created_at',6);
+
   mkChart('chart-perf',{
     type:'bar',
     data:{
-      labels:['Jan','Fev','Mar','Abr','Mai','Jun','Hoje'],
+      labels:perfLabels,
       datasets:[
-        {label:'Leads',data:[0,0,0,0,0,0,totalLeads],backgroundColor:'rgba(133,2,119,0.65)',borderRadius:5,borderRadiusTopLeft:5,borderRadiusTopRight:5},
-        {label:'Fechamentos',data:[0,0,0,0,0,0,fechados],backgroundColor:'rgba(34,197,94,0.65)',borderRadius:5}
+        {label:'Leads',data:leadsSeriePerf,backgroundColor:'rgba(133,2,119,0.65)',borderRadius:5,borderRadiusTopLeft:5,borderRadiusTopRight:5},
+        {label:'Fechamentos',data:fechadosSeriePerf,backgroundColor:'rgba(34,197,94,0.65)',borderRadius:5}
       ]
     },
     options:{
@@ -4046,6 +4118,13 @@ function initReceitaBar(){
     }).reduce((s,t)=>s+(t.val||0),0));
   }
   const hasData=rData.some(v=>v>0);
+  const rangeEl=document.getElementById('rel-receita-bar-range');
+  if(rangeEl){
+    const firstD=new Date(now.getFullYear(),now.getMonth()-6,1);
+    rangeEl.textContent=firstD.getFullYear()===now.getFullYear()
+      ? `${mAbrev[firstD.getMonth()]} – ${mAbrev[now.getMonth()]} ${now.getFullYear()}`
+      : `${mAbrev[firstD.getMonth()]} ${firstD.getFullYear()} – ${mAbrev[now.getMonth()]} ${now.getFullYear()}`;
+  }
   mkChart('chart-receita-bar',{
     type:'bar',
     data:{
@@ -4642,10 +4721,12 @@ async function addVisita(){
   if(error){showToast('Erro ao salvar visita: '+error.message,'error');return;}
   const newV=saved||{...payload,id:Date.now()};
   VISITAS.unshift(newV);
-  // Salva evento no calendário
-  const evPayload={user_id:_currentUser?.id,date:dataVal,title:`Visita — ${cliente}`,time:newV.hora,type:'visita',color:'#3b82f6'};
+  // Salva evento no calendário, vinculado a esta visita (visita_id com ON
+  // DELETE CASCADE) — assim excluir a visita remove o evento junto, sem
+  // deixar fantasma no calendário.
+  const evPayload={user_id:_currentUser?.id,date:dataVal,title:`Visita — ${cliente}`,time:newV.hora,type:'visita',color:'#3b82f6',visita_id:newV.id};
   const {data:savedEv}=await _sb.from('cal_events').insert([evPayload]).select().single();
-  CAL_EVENTS.push({id:savedEv?.id,date:dataVal,title:evPayload.title,time:newV.hora,type:'visita',color:'#3b82f6'});
+  CAL_EVENTS.push({id:savedEv?.id,date:dataVal,title:evPayload.title,time:newV.hora,type:'visita',color:'#3b82f6',visita_id:newV.id});
   inited['calendario']=false;
   renderVisitas();
   closeVisitaModal();
@@ -4658,7 +4739,8 @@ async function addVisita(){
 // ─────────────────────────────────────────
 // CALENDÁRIO
 // ─────────────────────────────────────────
-let calYear=2026,calMonth=4,calSelectedDate=null;
+const _calToday=new Date();
+let calYear=_calToday.getFullYear(),calMonth=_calToday.getMonth(),calSelectedDate=null;
 
 const CAL_MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const CAL_DOWS=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
@@ -4744,10 +4826,11 @@ function showCalEvents(dateStr){
 }
 
 function renderUpcoming(){
-  const today=new Date();
+  const now=new Date();
+  const todayStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   const upcoming=CAL_EVENTS
-    .filter(e=>{const d=new Date(e.date);return d>=today;})
-    .sort((a,b)=>new Date(a.date)-new Date(b.date))
+    .filter(e=>e.date>=todayStr)
+    .sort((a,b)=>a.date.localeCompare(b.date))
     .slice(0,5);
   const el=document.getElementById('cal-upcoming-list');
   if(!el)return;
@@ -4802,6 +4885,13 @@ function initFinChart(){
   }
   const chartReceita=finReceita;
   const chartDespesas=finDespesas;
+  const finRangeEl=document.getElementById('fin-chart-sub-range');
+  if(finRangeEl){
+    const firstDFin=new Date(now.getFullYear(),now.getMonth()-4,1);
+    finRangeEl.textContent=firstDFin.getFullYear()===now.getFullYear()
+      ? `${mAbrev[firstDFin.getMonth()]} a ${mAbrev[now.getMonth()]} ${now.getFullYear()}`
+      : `${mAbrev[firstDFin.getMonth()]} ${firstDFin.getFullYear()} a ${mAbrev[now.getMonth()]} ${now.getFullYear()}`;
+  }
   const chartLabels=finLabels;
 
   mkChart('chart-fin',{
@@ -4838,9 +4928,28 @@ function initFinChart(){
 }
 
 function renderFinTables(){
+  // A tabela mostra só o mês corrente, pra bater com o card "Receita/Despesas
+  // em {mês}" logo acima (antes a tabela listava tudo desde sempre, sob um
+  // cabeçalho que dizia um mês específico — os dois nunca batiam).
+  const hojeFin=new Date();
+  const isThisMonthTbl=t=>{
+    if(!t.created_at)return false;
+    const d=new Date(t.created_at);
+    return d.getFullYear()===hojeFin.getFullYear()&&d.getMonth()===hojeFin.getMonth();
+  };
+  const MES_NOMES_TBL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const mesLbl=MES_NOMES_TBL[hojeFin.getMonth()]+' '+hojeFin.getFullYear();
+  const lblEnt=document.getElementById('fin-tabela-mes-entradas');
+  if(lblEnt)lblEnt.textContent=mesLbl;
+  const lblSai=document.getElementById('fin-tabela-mes-saidas');
+  if(lblSai)lblSai.textContent=mesLbl;
+
+  const entradasMes=TRANSACOES.entradas.filter(isThisMonthTbl);
+  const saidasMes=TRANSACOES.saidas.filter(isThisMonthTbl);
+
   const tbody=document.getElementById('fin-entradas-tbody');
-  tbody.innerHTML=TRANSACOES.entradas.length
-    ? TRANSACOES.entradas.map(t=>`
+  tbody.innerHTML=entradasMes.length
+    ? entradasMes.map(t=>`
     <tr>
       <td>${escHTML(t.desc)}</td>
       <td><span class="fin-cat-badge">${escHTML(t.cat)}</span></td>
@@ -4848,16 +4957,16 @@ function renderFinTables(){
       <td class="fin-val-pos">R$ ${(Number(t.val)||0).toLocaleString('pt-BR')}</td>
       <td><button class="icon-btn" title="Excluir" style="color:#ef4444" onclick="excluirTransacao('${escHTML(String(t.id))}','entrada','${escHTML(t.desc)}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg></button></td>
     </tr>`).join('')
-    : `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Nenhuma entrada registrada. <button class="link-btn" onclick="addTransacao('entrada')">+ Adicionar</button></td></tr>`;
+    : `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Nenhuma entrada neste mês. <button class="link-btn" onclick="addTransacao('entrada')">+ Adicionar</button></td></tr>`;
 
   // Update entradas total dynamically
-  const totalEnt=TRANSACOES.entradas.reduce((s,t)=>s+(t.val||0),0);
+  const totalEnt=entradasMes.reduce((s,t)=>s+(t.val||0),0);
   const entTotalEl=document.querySelector('#fin-entradas-tbody').closest('.fin-table-card').querySelector('.fin-total-val');
   if(entTotalEl) entTotalEl.textContent='R$ '+totalEnt.toLocaleString('pt-BR',{minimumFractionDigits:0});
 
   const tbody2=document.getElementById('fin-saidas-tbody');
-  tbody2.innerHTML=TRANSACOES.saidas.length
-    ? TRANSACOES.saidas.map(t=>`
+  tbody2.innerHTML=saidasMes.length
+    ? saidasMes.map(t=>`
     <tr>
       <td>${escHTML(t.desc)}</td>
       <td><span class="fin-cat-badge">${escHTML(t.cat)}</span></td>
@@ -4865,10 +4974,10 @@ function renderFinTables(){
       <td class="fin-val-neg">R$ ${(Number(t.val)||0).toLocaleString('pt-BR')}</td>
       <td><button class="icon-btn" title="Excluir" style="color:#ef4444" onclick="excluirTransacao('${escHTML(String(t.id))}','saida','${escHTML(t.desc)}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg></button></td>
     </tr>`).join('')
-    : `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Nenhuma saída registrada. <button class="link-btn" style="color:#f87171" onclick="addTransacao('saida')">+ Adicionar</button></td></tr>`;
+    : `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Nenhuma saída neste mês. <button class="link-btn" style="color:#f87171" onclick="addTransacao('saida')">+ Adicionar</button></td></tr>`;
 
   // Update saidas total dynamically
-  const totalSai=TRANSACOES.saidas.reduce((s,t)=>s+(t.val||0),0);
+  const totalSai=saidasMes.reduce((s,t)=>s+(t.val||0),0);
   const saiTotalEl=document.querySelector('#fin-saidas-tbody').closest('.fin-table-card').querySelector('.fin-total-val');
   if(saiTotalEl) saiTotalEl.textContent='R$ '+totalSai.toLocaleString('pt-BR',{minimumFractionDigits:0});
 }
@@ -5350,6 +5459,13 @@ async function excluirVisita(id, cliente){
   if(error){showToast('Erro ao excluir visita: '+error.message,'error');return;}
   const vi=VISITAS.findIndex(v=>String(v.id)===String(id));
   if(vi>-1)VISITAS.splice(vi,1);
+  // O evento de calendário vinculado é removido no banco via ON DELETE CASCADE
+  // (visita_id) — aqui só espelha isso no array local pra sumir da tela sem
+  // precisar recarregar a página.
+  for(let i=CAL_EVENTS.length-1;i>=0;i--){
+    if(String(CAL_EVENTS[i].visita_id)===String(id)) CAL_EVENTS.splice(i,1);
+  }
+  inited['calendario']=false;
   renderVisitas();
   showToast(`Visita de "${cliente}" excluída`,'success');
 }
@@ -5860,23 +5976,20 @@ async function renderPagamentos(){
   // QR inline (Pix de valor fixo do plano)
   makeQR('pix-qr-inline', buildPixPayload(p.valor), 160);
 
-  // Histórico — gerado dos últimos 6 meses com base nos dados da assinatura
+  // Histórico — o sistema hoje só guarda o status ATUAL e a última data de
+  // pagamento (assinaturas.status/ultimo_pagamento), não um livro-razão por
+  // mês. Mostrar aqui só o que é real: o mês corrente. Meses anteriores não
+  // têm registro — nunca inventar "Pago" pra eles.
   const tbody = document.getElementById('pag-hist-tbody');
   const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
                  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const hist = [];
-  for(let i=0;i<6;i++){
-    const d = new Date(hoje.getFullYear(), hoje.getMonth()-i, 1);
-    const isPago = i>0 || p.status==='pago';
-    const pagoEm = i===0 ? (p.ultPag||'—') : (p.ultPag||'—');
-    hist.push({
-      mes: meses[d.getMonth()]+' '+d.getFullYear(),
-      plano: p.nome,
-      valor: p.valor,
-      pagoEm: i===0&&p.ultPag ? p.ultPag : (isPago?`${String(p.diaVenc).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`:'—'),
-      status: i>0?'pago': p.status
-    });
-  }
+  const hist = [{
+    mes: meses[hoje.getMonth()]+' '+hoje.getFullYear(),
+    plano: p.nome,
+    valor: p.valor,
+    pagoEm: p.status==='pago' ? (p.ultPag||'—') : '—',
+    status: p.status
+  }];
   const hStatusMap = {pago:{cls:'pmt-pago',lbl:'Pago'},pendente:{cls:'pmt-pendente',lbl:'Pendente'},atrasado:{cls:'pmt-atrasado',lbl:'Atrasado'}};
   tbody.innerHTML = hist.map(h=>{
     const hs = hStatusMap[h.status]||{cls:'pmt-pendente',lbl:h.status};
@@ -5887,7 +6000,7 @@ async function renderPagamentos(){
       <td style="color:var(--t3)">${escHTML(h.pagoEm||'—')}</td>
       <td><span class="pmt-badge ${hs.cls}">${hs.lbl}</span></td>
     </tr>`;
-  }).join('');
+  }).join('')+`<tr><td colspan="5" style="color:var(--t3);font-size:11px;text-align:center;padding:14px 8px">Histórico de meses anteriores ainda não é registrado pelo sistema.</td></tr>`;
 }
 
 // ── Pix helpers ──────────────────────────
@@ -6535,11 +6648,33 @@ async function addCalEvent(){
 // ─────────────────────────────────────────
 function renderFinKpis(){
   const fmtBRL=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:0});
-  const totalR=TRANSACOES.entradas.reduce((s,t)=>s+(t.val||0),0);
-  const totalD=TRANSACOES.saidas.reduce((s,t)=>s+(t.val||0),0);
+  const MES_NOMES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const hoje=new Date();
+  const isThisMonthFin=dv=>{if(!dv)return false;const d=new Date(dv);return d.getFullYear()===hoje.getFullYear()&&d.getMonth()===hoje.getMonth();};
+  // "Receita/Despesas no mês" precisa ser só do mês corrente (o rótulo já
+  // dizia isso, mas o cálculo somava tudo desde sempre — mesmo bug das
+  // outras KPIs "mensais").
+  const totalR=TRANSACOES.entradas.filter(t=>isThisMonthFin(t.created_at)).reduce((s,t)=>s+(t.val||0),0);
+  const totalD=TRANSACOES.saidas.filter(t=>isThisMonthFin(t.created_at)).reduce((s,t)=>s+(t.val||0),0);
   const saldo=totalR-totalD;
   const pct=totalR>0?((totalD/totalR)*100).toFixed(1):0;
   const margem=totalR>0?(((totalR-totalD)/totalR)*100).toFixed(1):0;
+  const lblR=document.getElementById('fin-kpi-lbl-receita');
+  if(lblR)lblR.textContent='Receita em '+MES_NOMES[hoje.getMonth()];
+  const lblD=document.getElementById('fin-kpi-lbl-despesa');
+  if(lblD)lblD.textContent='Despesas em '+MES_NOMES[hoje.getMonth()];
+  const receitaSerieFin=monthlyBucket(TRANSACOES.entradas,'created_at',1,arr=>arr.reduce((s,t)=>s+(t.val||0),0));
+  const despesaSerieFin=monthlyBucket(TRANSACOES.saidas,'created_at',1,arr=>arr.reduce((s,t)=>s+(t.val||0),0));
+  const mesAnterior=MES_NOMES[new Date(hoje.getFullYear(),hoje.getMonth()-1,1).getMonth()];
+  const fmtTrendSub=(elId,trend)=>{
+    const el=document.getElementById(elId);
+    if(!el)return;
+    if(!trend){el.textContent='Sem dado em '+mesAnterior;return;}
+    if(trend.novo){el.textContent='Novo';return;}
+    el.textContent=(trend.dir==='up'?'↑ ':'↓ ')+trend.pct+'% vs '+mesAnterior;
+  };
+  fmtTrendSub('fin-kpi-sub-receita',pctTrendFrom(receitaSerieFin));
+  fmtTrendSub('fin-kpi-sub-despesa',pctTrendFrom(despesaSerieFin));
   // Update KPI values in the financeiro page
   const kpiVals=document.querySelectorAll('#page-financeiro .fin-kpi-val');
   if(kpiVals[0])kpiVals[0].textContent=fmtBRL(totalR);
@@ -7077,6 +7212,8 @@ function openLoteamentoModal(id){
   ['lot-preco-min','lot-preco-max','lot-vgv'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
   document.getElementById('lot-tipo').value='loteamento';
   document.getElementById('lot-status').value='lancamento';
+  const lotEstadoEl=document.getElementById('lot-estado');
+  if(lotEstadoEl)lotEstadoEl.value='RS';
   document.getElementById('lot-modal-title').textContent='Novo Empreendimento';
   document.getElementById('lot-submit-btn').textContent='Salvar Empreendimento';
   // Populate corretor dropdown
@@ -7507,25 +7644,51 @@ document.getElementById('modal-contato-log').addEventListener('click',e=>{if(e.t
 // METAS MENSAIS
 // ═══════════════════════════════════════════════════════
 const METAS_DEFAULT={leads:20,visitas:10,vendas:2,comissao:50000};
+let _metasCache=null;
+
+// Metas ficam por usuário + mês no Supabase (antes só localStorage — não
+// sincronizava entre dispositivos nem aparecia pra outros usuários/admin).
+async function loadMetasMensais(){
+  if(!_currentUser?.id){_metasCache=null;return;}
+  const hoje=new Date();
+  const mesStr=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-01`;
+  const {data,error}=await _sb.from('metas_mensais').select('*').eq('user_id',_currentUser.id).eq('mes',mesStr).maybeSingle();
+  if(error){console.warn('loadMetasMensais:',error.message);_metasCache=null;return;}
+  _metasCache=data;
+}
 
 function getMetas(){
-  try{return {...METAS_DEFAULT,...JSON.parse(localStorage.getItem('metas_mensais')||'{}')};}
-  catch{return METAS_DEFAULT;}
+  if(!_metasCache)return {...METAS_DEFAULT};
+  return {
+    leads:    _metasCache.leads    ?? METAS_DEFAULT.leads,
+    visitas:  _metasCache.visitas  ?? METAS_DEFAULT.visitas,
+    vendas:   _metasCache.vendas   ?? METAS_DEFAULT.vendas,
+    comissao: _metasCache.comissao ?? METAS_DEFAULT.comissao,
+  };
 }
 
 function renderMetas(editMode=false){
   const grid=document.getElementById('metas-grid');
   if(!grid)return;
+  const mesLabelEl=document.getElementById('metas-mes-label');
+  if(mesLabelEl)mesLabelEl.textContent=_mesAtual.split(' ')[0];
   const metas=getMetas();
-  const fechados=LEADS_DATA.filter(l=>l.coluna==='fechado').length;
-  const comTotal=LEADS_DATA.filter(l=>l.coluna==='fechado').reduce((s,l)=>{
+  // "Metas Mensais" — todo "atual" precisa ser só do mês corrente, senão a
+  // meta mensal fica "batida" pra sempre assim que o total histórico passa
+  // do alvo (o que acontecia antes: somava tudo desde sempre).
+  const hoje=new Date();
+  const isThisMonthMeta=dv=>{if(!dv)return false;const d=new Date(dv);return d.getFullYear()===hoje.getFullYear()&&d.getMonth()===hoje.getMonth();};
+  const leadsMes=LEADS_DATA.filter(l=>isThisMonthMeta(l.created_at)).length;
+  const visitasMes=VISITAS.filter(v=>v.status==='realizada'&&isThisMonthMeta(v.created_at)).length;
+  const fechadosMes=LEADS_DATA.filter(l=>l.coluna==='fechado'&&isThisMonthMeta(l.created_at)).length;
+  const comTotal=LEADS_DATA.filter(l=>l.coluna==='fechado'&&isThisMonthMeta(l.created_at)).reduce((s,l)=>{
     const v=parseInt((l.valor||'').replace(/\D/g,''))||0;
     return s+v*0.06;
   },0);
   const configs=[
-    {key:'leads',label:'Leads no mês',atual:LEADS_DATA.length,cor:'#a3039a',prefix:'',suffix:''},
-    {key:'visitas',label:'Visitas realizadas',atual:VISITAS.filter(v=>v.status==='realizada').length,cor:'#3b82f6',prefix:'',suffix:''},
-    {key:'vendas',label:'Negócios fechados',atual:fechados,cor:'#22c55e',prefix:'',suffix:''},
+    {key:'leads',label:'Leads no mês',atual:leadsMes,cor:'#a3039a',prefix:'',suffix:''},
+    {key:'visitas',label:'Visitas realizadas',atual:visitasMes,cor:'#3b82f6',prefix:'',suffix:''},
+    {key:'vendas',label:'Negócios fechados',atual:fechadosMes,cor:'#22c55e',prefix:'',suffix:''},
     {key:'comissao',label:'Comissão (R$)',atual:Math.round(comTotal),cor:'#f59e0b',prefix:'R$ ',suffix:''}
   ];
   grid.innerHTML=configs.map(c=>{
@@ -7547,12 +7710,18 @@ function renderMetas(editMode=false){
   }).join('');
 }
 
-function editarMeta(key,label,atual){
+async function editarMeta(key,label,atual){
   const novo=prompt(`Meta para "${label}" este mês:`,atual);
   if(novo===null||isNaN(parseInt(novo)))return;
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
   const metas=getMetas();
   metas[key]=parseInt(novo);
-  localStorage.setItem('metas_mensais',JSON.stringify(metas));
+  const hoje=new Date();
+  const mesStr=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-01`;
+  const payload={user_id:_currentUser.id,mes:mesStr,...metas};
+  const {data,error}=await _sb.from('metas_mensais').upsert([payload],{onConflict:'user_id,mes'}).select().single();
+  if(error){showToast('Erro ao salvar meta: '+error.message,'error');return;}
+  _metasCache=data;
   renderMetas();
   showToast('Meta atualizada!','success');
 }
@@ -7702,7 +7871,7 @@ function exportCSV(tipo){
     filename='locacoes-captar.csv';
   } else if(tipo==='visitas'){
     headers=['Lead','Imóvel','Data','Hora','Status','Corretor','Obs'];
-    rows=VISITAS.map(v=>[esc(v.lead_nome||v.lead),esc(v.imovel),esc(v.data),esc(v.hora),esc(v.status),esc(v.corretor||''),esc(v.obs||'')]);
+    rows=VISITAS.map(v=>[esc(v.cliente),esc(v.imovel),esc(v.data),esc(v.hora),esc(v.status),esc(v.corretor||''),esc(v.obs||'')]);
     filename='visitas-captar.csv';
   } else if(tipo==='financeiro'){
     headers=['Tipo','Descrição','Categoria','Data','Valor (R$)'];
@@ -7948,7 +8117,7 @@ function renderAniversarios(){
   if(!el) return;
   const hoje=new Date();hoje.setHours(0,0,0,0);
   const leads=LEADS_DATA.filter(l=>l.data_nasc).map(l=>{
-    const nasc=new Date(l.data_nasc);
+    const nasc=parseLocalDate(l.data_nasc);
     const aniv=new Date(hoje.getFullYear(),nasc.getMonth(),nasc.getDate());
     if(aniv<hoje) aniv.setFullYear(hoje.getFullYear()+1);
     const dias=Math.round((aniv-hoje)/(1000*60*60*24));
@@ -7962,7 +8131,7 @@ function renderAniversarios(){
     const tel=(l.tel||'').replace(/\D/g,'');
     return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
       <div class="mini-avatar" style="background:${l.cor||'#850277'}">${initials(l.nome)}</div>
-      <div style="flex:1"><div style="font-weight:600;font-size:13px">${escHTML(l.nome)}</div><div style="font-size:11px;color:var(--t3)">${new Date(l.data_nasc).toLocaleDateString('pt-BR',{day:'2-digit',month:'long'})}</div></div>
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${escHTML(l.nome)}</div><div style="font-size:11px;color:var(--t3)">${parseLocalDate(l.data_nasc).toLocaleDateString('pt-BR',{day:'2-digit',month:'long'})}</div></div>
       <div style="font-size:12px;font-weight:700;color:${cor}">${tag}</div>
       ${tel?`<a href="https://wa.me/55${tel}?text=${encodeURIComponent('Olá '+l.nome+'! Feliz aniversário! 🎉')}" target="_blank" class="btn-add" style="padding:5px 10px;font-size:11px;gap:5px">
         <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -7977,7 +8146,7 @@ function checkLembretes(){
   const hoje=new Date();hoje.setHours(0,0,0,0);
   const aniversarios=LEADS_DATA.filter(l=>{
     if(!l.data_nasc) return false;
-    const nasc=new Date(l.data_nasc);
+    const nasc=parseLocalDate(l.data_nasc);
     return nasc.getDate()===hoje.getDate()&&nasc.getMonth()===hoje.getMonth();
   });
   aniversarios.forEach(l=>showToast(`🎂 Hoje é aniversário de ${l.nome}!`,'success'));
