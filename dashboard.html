@@ -122,7 +122,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .topbar-hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--t2)}
 .topbar-breadcrumb{flex:1;min-width:0}
 .topbar-page-title{font-size:15px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topbar-page-sub{font-size:12px;color:var(--t3);margin-top:1px}
+.topbar-page-sub{font-size:12px;color:var(--t3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}
 .topbar-btn{width:36px;height:36px;border-radius:var(--r);background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);transition:background .15s,color .15s;position:relative}
 .topbar-btn:hover{background:var(--bg4);color:var(--t1)}
@@ -829,6 +829,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .captar-ia-orb-sm{width:26px;height:26px}
 .captar-ia-orb-sm svg{width:12px;height:12px}
 .captar-ia-badge{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.05em;color:#e6b3df;background:rgba(133,2,119,.2);border:1px solid rgba(163,3,154,.4);padding:3px 9px 3px 7px;border-radius:20px;text-transform:uppercase}
+body.light-mode .captar-ia-badge{color:#850277;background:rgba(133,2,119,.1)}
+body.light-mode .ai-suggestion-chip:hover,body.light-mode .captar-ia-expand:hover,body.light-mode .ai-img-reset-link{color:#850277}
 .captar-ia-badge svg{width:9px;height:9px}
 
 .ai-fab{position:fixed;bottom:28px;right:28px;z-index:200;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;padding:0;background:radial-gradient(circle at 32% 28%,#e879d4 0%,var(--pl) 45%,var(--p) 78%,#23041f 100%);display:flex;align-items:center;justify-content:center;animation:captarIaPulse 3.2s ease-in-out infinite;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
@@ -846,6 +848,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .ai-chat-log{display:flex;flex-direction:column;gap:12px;max-height:440px;overflow-y:auto;padding:4px 2px;margin-bottom:12px}
 .ai-chat-empty{display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--t3);font-size:13px;padding:36px 20px;gap:14px;animation:captarIaFadeUp .5s ease-out}
 .ai-chat-empty svg{width:30px;height:30px;color:var(--pl)}
+.ai-suggestion-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px;max-width:440px}
+.ai-suggestion-chip{background:var(--bg3);border:1px solid var(--border);color:var(--t2);font-size:11.5px;font-weight:600;padding:8px 14px;border-radius:20px;cursor:pointer;transition:all .2s}
+.ai-suggestion-chip:hover{border-color:var(--p);color:#e6b3df;background:rgba(133,2,119,.1)}
+.ai-msg-list{margin:4px 0 4px 18px;padding:0}
+.ai-msg-list li{margin-bottom:2px}
 .ai-chat-empty strong{color:var(--t1)}
 .ai-msg-row{display:flex;align-items:flex-end;gap:8px;max-width:100%;animation:captarIaMsgIn .32s cubic-bezier(.16,1,.3,1)}
 .ai-msg-row-user{justify-content:flex-end}
@@ -861,6 +868,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 @media(prefers-reduced-motion:reduce){.ai-msg-row,.ai-chat-empty{animation:none}.typing-dots span{animation:none;opacity:.7}}
 
 .ai-chat-inputbar{display:flex;gap:8px;align-items:flex-end}
+.ai-chat-inputbar .btn-add{margin-left:0;flex-shrink:0;width:auto}
 .ai-chat-inputbar textarea{resize:vertical;flex:1}
 .ai-usage-note{font-size:11px;color:var(--t3);margin-top:8px}
 .ai-img-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
@@ -869,6 +877,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .ai-img-result-card img{width:100%;border-radius:8px;display:block}
 .ai-img-thread-log{display:flex;flex-direction:column;gap:14px;max-height:520px;overflow-y:auto;padding:4px 2px;margin-bottom:14px}
 .ai-img-thread-result{max-width:320px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px}
+@keyframes aiOrbPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.12);opacity:.8}}
+.ai-orb-pulse{animation:aiOrbPulse 1.4s ease-in-out infinite}
+@keyframes aiSkeletonShimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.ai-img-skeleton{width:220px;height:220px;border-radius:14px;border-bottom-left-radius:4px;background:var(--bg3);border:1px solid var(--border);position:relative;overflow:hidden}
+.ai-img-skeleton-shimmer{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+.ai-img-skeleton-shimmer::after{content:'';position:absolute;inset:0;background:inherit;animation:aiSkeletonShimmer 1.5s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.ai-orb-pulse,.ai-img-skeleton-shimmer::after{animation:none}}
 .ai-img-thread-result img{width:100%;border-radius:8px;display:block}
 .ai-img-thread-actions{display:flex;gap:6px}
 .ai-img-thread-actions a,.ai-img-thread-actions button{flex:1;text-align:center;text-decoration:none;font-size:12px;padding:7px 10px}
@@ -876,6 +891,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 
 /* Card "Captar IA" no Dashboard — chat embutido */
 .captar-ia-card{position:relative;background:linear-gradient(160deg,rgba(133,2,119,.12),rgba(20,18,16,.35) 65%);border:1px solid rgba(163,3,154,.3);border-radius:var(--r2);padding:20px 22px;margin-bottom:20px;overflow:hidden;animation:captarIaFadeUp .5s cubic-bezier(.16,1,.3,1)}
+body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119,.08),rgba(255,255,255,.5) 65%);border-color:rgba(163,3,154,.25)}
 .captar-ia-card::before{content:'';position:absolute;top:-70%;right:-15%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(163,3,154,.2),transparent 70%);pointer-events:none}
 .captar-ia-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative;z-index:1}
 .captar-ia-title{font-size:15px;font-weight:800;color:var(--t1)}
@@ -2405,6 +2421,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
             <label class="btn-cancel" for="ai-img-logo-file" style="cursor:pointer;font-size:12px">📎 Enviar logo da imobiliária</label>
             <input type="file" id="ai-img-logo-file" accept="image/*" style="display:none" onchange="handleLogoFileSelect(event)"/>
             <span style="font-size:11px;color:var(--t3)">Salve uma vez e use em todas as imagens geradas</span>
+          </div>
+          <div class="ai-suggestion-chips" id="ai-img-presets-row" style="justify-content:flex-start;margin:0 0 10px">
+            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Fachada moderna de casa de alto padrão, luz do pôr do sol, estilo revista de arquitetura')">🏠 Fachada moderna</button>
+            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Interior clean e minimalista, sala de estar iluminada, tons neutros, estilo revista de decoração')">🛋️ Interior clean</button>
+            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Banner de anúncio imobiliário, elegante, com espaço para texto, cores da marca em tons de roxo')">🖼️ Banner de anúncio</button>
           </div>
           <textarea class="form-input" id="ai-img-prompt" rows="2" placeholder="Ex: fachada moderna ao pôr do sol — ou descreva o que ajustar no resultado anterior" style="margin-bottom:8px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();generateAiImage();}"></textarea>
           <div style="display:flex;gap:8px">
@@ -8814,17 +8835,53 @@ async function loadAiChatHistory(){
   AI_CHAT_MESSAGES=(data||[]).map(m=>({role:m.role,content:m.conteudo}));
 }
 
+// Formatação leve das respostas da IA (negrito, listas). Sempre escapa
+// primeiro (escHTML) — o texto da IA é conteúdo não-confiável igual
+// qualquer input de usuário, só depois disso é que vira HTML estrutural.
+function formatAiMarkdown(text){
+  const safe=escHTML(text);
+  const withBold=safe.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const lines=withBold.split('\n');
+  let html='';
+  let listTag=null; // 'ul' | 'ol' | null — a IA às vezes usa listas numeradas mesmo
+  // sendo instruída a só usar "-", então trata os dois formatos com segurança.
+  for(const line of lines){
+    const bullet=line.match(/^[-•]\s+(.*)/);
+    const numbered=line.match(/^\d+[.)]\s+(.*)/);
+    const tag=bullet?'ul':numbered?'ol':null;
+    const content=bullet?bullet[1]:numbered?numbered[1]:null;
+    if(tag){
+      if(listTag&&listTag!==tag){html+=`</${listTag}>`;listTag=null;}
+      if(!listTag){html+=`<${tag} class="ai-msg-list">`;listTag=tag;}
+      html+=`<li>${content}</li>`;
+    }else{
+      if(listTag){html+=`</${listTag}>`;listTag=null;}
+      html+=line?`${line}<br>`:'<br>';
+    }
+  }
+  if(listTag)html+=`</${listTag}>`;
+  return html;
+}
+
 function renderAiChatLog(){
   const logs=document.querySelectorAll('.ai-chat-log');
   if(!logs.length)return;
   let html;
   if(!AI_CHAT_MESSAGES.length){
-    html=`<div class="ai-chat-empty">${CAPTAR_IA_SPARK_SVG.replace('white','currentColor')}<div>Sou a <strong>Captar IA</strong>, o assistente exclusivo do Grupo Captar. Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia. 👋</div></div>`;
+    const sugestoes=[
+      'Escreva uma descrição atrativa para um imóvel',
+      'Como funciona o financiamento imobiliário?',
+      'Me dê dicas de negociação com um cliente indeciso',
+      'Como atrair mais leads qualificados?'
+    ];
+    const chipsHtml=sugestoes.map(s=>`<button type="button" class="ai-suggestion-chip" onclick="usarSugestaoChat(this,${JSON.stringify(s)})">${escHTML(s)}</button>`).join('');
+    html=`<div class="ai-chat-empty">${CAPTAR_IA_SPARK_SVG.replace('white','currentColor')}<div>Sou a <strong>Captar IA</strong>, o assistente exclusivo do Grupo Captar. Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia. 👋</div><div class="ai-suggestion-chips">${chipsHtml}</div></div>`;
   }else{
     html=AI_CHAT_MESSAGES.map(m=>{
       const cls=m._error?'ai-msg-error':(m.role==='user'?'ai-msg-user':'ai-msg-assistant');
       const avatar=m.role==='assistant'?`<div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div>`:'';
-      return `<div class="ai-msg-row ${m.role==='user'?'ai-msg-row-user':''}">${avatar}<div class="ai-msg ${cls}">${escHTML(m.content)}</div></div>`;
+      const body=(m.role==='assistant'&&!m._error)?formatAiMarkdown(m.content):escHTML(m.content);
+      return `<div class="ai-msg-row ${m.role==='user'?'ai-msg-row-user':''}">${avatar}<div class="ai-msg ${cls}">${body}</div></div>`;
     }).join('');
   }
   logs.forEach(log=>{log.innerHTML=html;log.scrollTop=log.scrollHeight;});
@@ -8851,6 +8908,14 @@ function setAiUsageFromResponse(kind,usage){
 async function persistAiMessage(role,conteudo,tipo){
   if(!_currentUser?.id)return;
   await _sb.from('ai_mensagens').insert([{user_id:_currentUser.id,role,conteudo,tipo}]);
+}
+
+function usarSugestaoChat(chipEl,texto){
+  const container=chipEl.closest('.captar-ia-card, #ai-pane-chat');
+  const input=container?container.querySelector('textarea[id^="ai-chat-input"]'):document.getElementById('ai-chat-input');
+  if(!input)return;
+  input.value=texto;
+  input.focus();
 }
 
 async function sendAiChat(scope){
@@ -9058,6 +9123,9 @@ function renderAiImageThread(){
       if(m.role==='user'){
         return `<div class="ai-msg-row ai-msg-row-user"><div class="ai-msg ai-msg-user">${escHTML(m.text)}</div></div>`;
       }
+      if(m._loading){
+        return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm ai-orb-pulse">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-img-skeleton"><div class="ai-img-skeleton-shimmer"></div></div></div>`;
+      }
       if(m.image){
         return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-img-thread-result">
           <img src="${m.imageDataUrl}" alt="Imagem gerada"/>
@@ -9075,12 +9143,21 @@ function renderAiImageThread(){
   const continuing=!!_aiLastGeneratedImage;
   const note=document.getElementById('ai-img-continuing-note');
   const uploadRow=document.getElementById('ai-img-upload-row');
+  const presetsRow=document.getElementById('ai-img-presets-row');
   const resetBtn=document.getElementById('ai-img-reset-btn');
   const genBtn=document.getElementById('ai-img-gen-btn');
   if(note)note.style.display=continuing?'block':'none';
   if(uploadRow)uploadRow.style.display=continuing?'none':'flex';
+  if(presetsRow)presetsRow.style.display=continuing?'none':'flex';
   if(resetBtn)resetBtn.style.display=continuing?'inline-block':'none';
   if(genBtn)genBtn.textContent=continuing?'Aplicar ajuste':'Gerar Imagem';
+}
+
+function usarPresetImagem(chipEl,texto){
+  const promptEl=document.getElementById('ai-img-prompt');
+  if(!promptEl)return;
+  promptEl.value=texto;
+  promptEl.focus();
 }
 
 function resetAiImageThread(){
@@ -9114,6 +9191,7 @@ async function generateAiImage(){
   }
 
   _aiImageThread.push({role:'user',text:prompt});
+  _aiImageThread.push({role:'assistant',_loading:true});
   renderAiImageThread();
   promptEl.value='';
   btn.disabled=true;
@@ -9131,6 +9209,7 @@ async function generateAiImage(){
     });
     clearTimeout(timeoutId);
     const data=await resp.json();
+    if(_aiImageThread[_aiImageThread.length-1]?._loading)_aiImageThread.pop();
 
     if(!resp.ok){
       const msg=aiErrorMessage(resp.status,data);
@@ -9155,6 +9234,7 @@ async function generateAiImage(){
     persistAiMessage('user',prompt,'imagem');
   }catch(e){
     clearTimeout(timeoutId);
+    if(_aiImageThread[_aiImageThread.length-1]?._loading)_aiImageThread.pop();
     const msg=e.name==='AbortError'?'A geração demorou demais. Tente novamente.':'Erro de conexão com a IA.';
     _aiImageThread.push({role:'assistant',text:msg,_error:true});
     renderAiImageThread();
