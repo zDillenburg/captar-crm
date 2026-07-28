@@ -7,6 +7,8 @@ supabase-dashboard-fixes.sql
 supabase-landing-chat.sql
 supabase-ai-leads.sql
 supabase-features-carte-blanche.sql
+supabase-fix-rpc-anon-exec.sql
+supabase-imovel-publico-stats.sql
 .claude/
 .DS_Store
 *.env
