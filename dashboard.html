@@ -230,8 +230,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .card-age{font-size:10px;color:var(--t3)}
 .card-interest{font-size:12px;color:var(--t2);margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .card-value{font-size:13px;font-weight:700;color:var(--pl);margin-bottom:10px}
-.card-footer{display:flex;align-items:center;gap:8px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .card-source{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--t3);padding:2px 8px;background:var(--bg4);border-radius:20px}
+.card-wa-btn{width:22px;height:22px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.card-wa-btn:hover{background:rgba(37,211,102,.15)}
 .kanban-add-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;margin:8px 12px 12px;border:1px dashed var(--border);border-radius:var(--r);font-size:12px;color:var(--t3);cursor:pointer;transition:border-color .15s,color .15s;background:none;width:calc(100% - 24px)}
 .kanban-add-btn:hover{border-color:var(--pl);color:var(--pl)}
 
@@ -1002,6 +1004,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
 /* ═══ FOLLOW-UP ALERT NOTIF ═══ */
 .notif-followup{border-left:3px solid #f59e0b}
+.notif-ia-quente{border-left:3px solid #ef4444}
 
 /* ═══ FERRAMENTAS ═══ */
 .ferr-tabs-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
@@ -4467,6 +4470,9 @@ function cardHTML(l){
         <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
         ${escHTML(l.origem||'—')}
       </span>
+      ${l.tel?`<button class="card-wa-btn" title="Chamar no WhatsApp" style="color:#25d366" onclick="event.stopPropagation();window.open('https://wa.me/55${escHTML((l.tel||'').replace(/\D/g,''))}?text=${encodeURIComponent('Olá, '+(l.nome||'')+'! Aqui é da Grupo Captar, sobre seu interesse em '+(l.tipo||'imóvel')+'.')}','_blank')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413z"/></svg>
+      </button>`:''}
     </div>
   </div>`;
 }
@@ -4490,6 +4496,7 @@ async function priorizarLeadsComIA(){
     _leadPriorityMap={};
     data.results.forEach(r=>{_leadPriorityMap[r.id]=r;});
     renderKanban();
+    renderNotifications();
     showToast(`${data.results.length} leads priorizados pela Captar IA!`,'success');
   }catch(e){
     showToast('Erro de conexão ao priorizar leads.','error');
@@ -5209,6 +5216,31 @@ function gerarAlertsFollowup(){
       });
     }
   });
+  // Leads marcados "Quente" pela Captar IA que já estão esfriando (>=2 dias
+  // sem contato) — limiar bem menor que o followup genérico de 5 dias,
+  // porque a IA já sinalizou que esse lead é prioritário.
+  if(Object.keys(_leadPriorityMap).length>0){
+    const quentesEsfriando=LEADS_DATA.filter(l=>{
+      if(l.coluna==='fechado'||l.coluna==='perdido')return false;
+      const p=_leadPriorityMap[l.id];
+      return p&&p.label==='Quente'&&(l.dias||0)>=2;
+    });
+    quentesEsfriando.forEach(l=>{
+      const existe=NOTIFICATIONS.some(n=>n._leadId===l.id&&n._type==='ia-quente');
+      if(!existe){
+        NOTIFICATIONS.unshift({
+          id:Date.now()+Math.random(),
+          emoji:'🔥',
+          msg:`Captar IA: <strong>${escHTML(l.nome)}</strong> é um lead quente e já está ${l.dias}d sem contato — fala com ele agora.`,
+          time:'Agora',
+          page:'crm',
+          read:false,
+          _leadId:l.id,
+          _type:'ia-quente'
+        });
+      }
+    });
+  }
   // Visitas agendadas para hoje
   const hoje=new Date();
   const hStr=`${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`;
@@ -5258,9 +5290,10 @@ function renderNotifications(){
     list.innerHTML=`<div style="padding:32px 20px;text-align:center;color:var(--t3);font-size:13px">✅ Tudo em dia! Nenhuma notificação.</div>`;
     return;
   }
+  const notifBg={followup:'rgba(245,158,11,.12)','ia-quente':'rgba(239,68,68,.12)'};
   list.innerHTML=NOTIFICATIONS.map(n=>`
-    <div class="notif-item ${n.read?'':'unread'}${n._type==='followup'?' notif-followup':''}" onclick="clickNotif(${JSON.stringify(n.id)})">
-      <div class="notif-icon" style="background:${n.read?'var(--bg4)':n._type==='followup'?'rgba(245,158,11,.12)':'rgba(133,2,119,.12)'}">
+    <div class="notif-item ${n.read?'':'unread'}${n._type?' notif-'+n._type:''}" onclick="clickNotif(${JSON.stringify(n.id)})">
+      <div class="notif-icon" style="background:${n.read?'var(--bg4)':(notifBg[n._type]||'rgba(133,2,119,.12)')}">
         ${n.emoji}
       </div>
       <div class="notif-body">
@@ -5499,7 +5532,11 @@ function openImovelDetail(idx){
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         ${im.publico?'Compartilhado ✓':'Compartilhar'}
       </button>
-    </div>`;
+    </div>
+    ${im.publico?`<div style="display:flex;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--t3)">
+      <span>👁️ ${Number(im.visualizacoes||0).toLocaleString('pt-BR')} visualizaç${Number(im.visualizacoes||0)===1?'ão':'ões'} no link público</span>
+      <span>💬 ${Number(im.cliques_whatsapp||0).toLocaleString('pt-BR')} clique${Number(im.cliques_whatsapp||0)===1?'':'s'} no WhatsApp</span>
+    </div>`:''}`;
   document.getElementById('modal-imovel-detail').classList.add('open');
 }
 
