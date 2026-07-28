@@ -1333,6 +1333,12 @@
       .ia-mockup-wrap .browser-body { flex-direction: column; }
       .ia-mock-pane-chat { border-right: none; border-bottom: 1px solid rgba(255,255,255,.08); }
     }
+    /* Grade de recursos da Captar IA tem 6 cards — força 3 colunas (2 linhas
+       cheias) em vez do auto-fit genérico do .feat-grid, que aqui deixava a
+       segunda linha com só 2 cards e um vão vazio grande à direita. */
+    #captar-ia .feat-grid { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 900px) { #captar-ia .feat-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { #captar-ia .feat-grid { grid-template-columns: 1fr; } }
 
     /* ── FAQ ── */
     .faq-section {
