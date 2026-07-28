@@ -871,7 +871,26 @@ body.light-mode .ai-suggestion-chip:hover,body.light-mode .captar-ia-expand:hove
 .ai-chat-inputbar .btn-add{margin-left:0;flex-shrink:0;width:auto}
 .ai-chat-inputbar textarea{resize:vertical;flex:1}
 .ai-usage-note{font-size:11px;color:var(--t3);margin-top:8px}
-.ai-img-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.ai-img-controls-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;margin-bottom:14px}
+.ai-img-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ai-img-attach-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:20px;color:var(--t2);font-size:12.5px;font-weight:600;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.ai-img-attach-btn:hover{border-color:var(--p);color:var(--t1);background:rgba(133,2,119,.1)}
+.ai-img-attach-btn svg{width:14px;height:14px;flex-shrink:0;opacity:.75}
+.ai-img-attach-hint{color:var(--t3);font-weight:500}
+.ai-img-preview-row{display:flex;align-items:center;gap:10px;margin-top:12px}
+.ai-img-preview-row img{width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.ai-img-divider{height:1px;background:var(--border);margin:14px 0}
+.ai-logo-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ai-logo-check{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:12.5px;color:var(--t2);font-weight:600;user-select:none}
+.ai-logo-check input[type=checkbox]{width:17px;height:17px;accent-color:var(--p);cursor:pointer}
+.ai-logo-thumb-wrap{display:flex;align-items:center;gap:10px}
+.ai-logo-thumb{width:30px;height:30px;object-fit:contain;border-radius:7px;border:1px solid var(--border);background:var(--bg4);padding:3px}
+.ai-logo-link-btn{background:none;border:none;color:var(--t3);font-size:11.5px;font-weight:700;cursor:pointer;padding:0;transition:color .2s}
+.ai-logo-link-btn:hover{color:var(--p)}
+body.light-mode .ai-logo-link-btn:hover{color:var(--p)}
+.ai-logo-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ai-logo-upload-hint{font-size:11px;color:var(--t3)}
+.ai-img-presets-label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:700}
 .ai-img-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:16px}
 .ai-img-result-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px;display:flex;flex-direction:column;gap:8px;animation:captarIaFadeUp .4s ease-out}
 .ai-img-result-card img{width:100%;border-radius:8px;display:block}
@@ -2406,23 +2425,44 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <div id="ai-img-thread-log" class="ai-img-thread-log"></div>
           <div class="ai-usage-note" id="ai-img-continuing-note" style="display:none;margin-bottom:10px">↻ Continuando ajustes na última imagem gerada. <button type="button" class="ai-img-reset-link" onclick="resetAiImageThread()">Começar imagem nova</button></div>
 
-          <div class="ai-img-upload-row" id="ai-img-upload-row">
-            <label class="btn-cancel" for="ai-img-file" style="cursor:pointer">📎 Anexar foto do imóvel (opcional)</label>
-            <input type="file" id="ai-img-file" accept="image/*" style="display:none" onchange="handleAiImageFileSelect(event)"/>
-            <span id="ai-img-file-name" style="font-size:12px;color:var(--t3)"></span>
-            <button type="button" class="btn-cancel" id="ai-img-clear-btn" style="display:none" onclick="clearAiImageInput()">Remover</button>
-          </div>
-          <img id="ai-img-preview" style="display:none;max-width:160px;border-radius:8px;margin:10px 0;border:1px solid var(--border)"/>
-          <div id="ai-logo-toggle-row" style="display:none;align-items:center;gap:8px;margin-bottom:10px">
-            <input type="checkbox" id="ai-use-logo" style="width:16px;height:16px;cursor:pointer"/>
-            <label for="ai-use-logo" style="font-size:12px;color:var(--t2);cursor:pointer">Incluir meu logo na imagem</label>
-          </div>
-          <div id="ai-logo-upload-prompt" style="display:none;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-            <label class="btn-cancel" for="ai-img-logo-file" style="cursor:pointer;font-size:12px">📎 Enviar logo da imobiliária</label>
+          <div class="ai-img-controls-card">
+            <div class="ai-img-upload-row" id="ai-img-upload-row">
+              <label class="ai-img-attach-btn" for="ai-img-file">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+                Anexar foto do imóvel <span class="ai-img-attach-hint">(opcional)</span>
+              </label>
+              <input type="file" id="ai-img-file" accept="image/*" style="display:none" onchange="handleAiImageFileSelect(event)"/>
+              <span id="ai-img-file-name" style="font-size:12px;color:var(--t3)"></span>
+              <button type="button" class="btn-cancel" id="ai-img-clear-btn" style="display:none" onclick="clearAiImageInput()">Remover</button>
+            </div>
+            <div class="ai-img-preview-row" id="ai-img-preview-row" style="display:none">
+              <img id="ai-img-preview"/>
+            </div>
+
+            <div class="ai-img-divider" id="ai-logo-divider" style="display:none"></div>
+            <div id="ai-logo-toggle-row" class="ai-logo-row" style="display:none">
+              <label class="ai-logo-check" for="ai-use-logo">
+                <input type="checkbox" id="ai-use-logo"/>
+                <span>Incluir meu logo na imagem</span>
+              </label>
+              <div class="ai-logo-thumb-wrap">
+                <img id="ai-logo-thumb" class="ai-logo-thumb" alt="Seu logo"/>
+                <button type="button" class="ai-logo-link-btn" onclick="document.getElementById('ai-img-logo-file').click()">Trocar</button>
+                <button type="button" class="ai-logo-link-btn" onclick="removerLogo()">Remover</button>
+              </div>
+            </div>
+            <div id="ai-logo-upload-prompt" class="ai-logo-upload-row" style="display:none">
+              <label class="ai-img-attach-btn" for="ai-img-logo-file">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+                Enviar logo da imobiliária
+              </label>
+              <span class="ai-logo-upload-hint">Salve uma vez e use em todas as imagens geradas</span>
+            </div>
             <input type="file" id="ai-img-logo-file" accept="image/*" style="display:none" onchange="handleLogoFileSelect(event)"/>
-            <span style="font-size:11px;color:var(--t3)">Salve uma vez e use em todas as imagens geradas</span>
           </div>
-          <div class="ai-suggestion-chips" id="ai-img-presets-row" style="justify-content:flex-start;margin:0 0 10px">
+
+          <div class="ai-img-presets-label">Sugestões rápidas</div>
+          <div class="ai-suggestion-chips" id="ai-img-presets-row" style="justify-content:flex-start;margin:0 0 14px">
             <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Fachada moderna de casa de alto padrão, luz do pôr do sol, estilo revista de arquitetura')">🏠 Fachada moderna</button>
             <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Interior clean e minimalista, sala de estar iluminada, tons neutros, estilo revista de decoração')">🛋️ Interior clean</button>
             <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Banner de anúncio imobiliário, elegante, com espaço para texto, cores da marca em tons de roxo')">🖼️ Banner de anúncio</button>
@@ -9009,7 +9049,7 @@ function handleAiImageFileSelect(evt){
     _aiSelectedImage={mimeType,data};
     const preview=document.getElementById('ai-img-preview');
     preview.src=dataUrl;
-    preview.style.display='block';
+    document.getElementById('ai-img-preview-row').style.display='flex';
     document.getElementById('ai-img-file-name').textContent=file.name;
     document.getElementById('ai-img-clear-btn').style.display='inline-block';
   }).catch(()=>{showToast('Não foi possível processar a imagem.','error');});
@@ -9018,7 +9058,7 @@ function handleAiImageFileSelect(evt){
 function clearAiImageInput(){
   _aiSelectedImage=null;
   document.getElementById('ai-img-file').value='';
-  document.getElementById('ai-img-preview').style.display='none';
+  document.getElementById('ai-img-preview-row').style.display='none';
   document.getElementById('ai-img-file-name').textContent='';
   document.getElementById('ai-img-clear-btn').style.display='none';
 }
@@ -9029,8 +9069,12 @@ let _userLogoUrl=null;
 function refreshLogoCheckboxVisibility(){
   const row=document.getElementById('ai-logo-toggle-row');
   const uploadPrompt=document.getElementById('ai-logo-upload-prompt');
+  const divider=document.getElementById('ai-logo-divider');
+  const thumb=document.getElementById('ai-logo-thumb');
   if(row)row.style.display=_userLogoUrl?'flex':'none';
   if(uploadPrompt)uploadPrompt.style.display=_userLogoUrl?'none':'flex';
+  if(divider)divider.style.display=_userLogoUrl?'block':'none';
+  if(thumb)thumb.src=_userLogoUrl||'';
   if(!_userLogoUrl){const cb=document.getElementById('ai-use-logo');if(cb)cb.checked=false;}
 }
 
