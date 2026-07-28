@@ -585,6 +585,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
   .relat-charts{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:640px){
+  /* Topbar tinha padding/gap de desktop intactos aqui — sobrava pouquíssimo
+     espaço pro título da página ao lado do cluster de ícones, truncando
+     até títulos curtos tipo "Dashboard" pra "Da…". */
+  .topbar{padding:0 14px;gap:8px}
+  .topbar-actions{gap:6px}
   .kpi-grid{grid-template-columns:1fr 1fr}
   .imoveis-grid{grid-template-columns:1fr}
   .kanban-board{grid-template-columns:1fr}
@@ -6844,8 +6849,23 @@ async function saveProfileConfig(btn){
 // PWA — Service Worker
 // ═══════════════════════════════════════════════════════
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  window.addEventListener('load',async()=>{
+    try{
+      // Quem já visitou o dashboard antes tem um SW registrado com escopo no
+      // domínio inteiro (versão antiga deste código, sem `scope`) — sem essa
+      // limpeza, esse registro antigo continuaria de pé pra sempre e
+      // continuaria controlando a landing page pública mesmo depois do fix.
+      const regs=await navigator.serviceWorker.getRegistrations();
+      for(const reg of regs){
+        if(reg.active&&reg.active.scriptURL.endsWith('/sw.js')&&!reg.scope.endsWith('/dashboard.html')){
+          await reg.unregister();
+        }
+      }
+    }catch(e){}
+    // Escopo travado em /dashboard.html — sem isso, o registro (sem `scope`)
+    // cai no domínio inteiro por padrão, e esse SW passa a governar também
+    // a landing page pública (index.html), que não tem nada a ver com ele.
+    navigator.serviceWorker.register('sw.js',{scope:'/dashboard.html'}).catch(()=>{});
   });
 }
 
@@ -7500,8 +7520,8 @@ function renderLoteamentos(){
         </div>`:''}
         <!-- Info grid -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-          ${l.preco_min&&l.preco_max?`<div style="background:var(--bg3);border-radius:var(--r);padding:8px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:2px">Faixa de preço</div><div style="font-size:12px;font-weight:700;color:#c453bb">R$ ${escHTML(l.preco_min)} – ${escHTML(l.preco_max)}</div></div>`:''}
-          ${l.vgv?`<div style="background:var(--bg3);border-radius:var(--r);padding:8px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:2px">VGV</div><div style="font-size:12px;font-weight:700;color:#fbbf24">R$ ${escHTML(l.vgv)}</div></div>`:''}
+          ${l.preco_min&&l.preco_max?`<div style="background:var(--bg3);border-radius:var(--r);padding:8px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:2px">Faixa de preço</div><div style="font-size:12px;font-weight:700;color:#c453bb">${escHTML(l.preco_min)} – ${escHTML(l.preco_max)}</div></div>`:''}
+          ${l.vgv?`<div style="background:var(--bg3);border-radius:var(--r);padding:8px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:2px">VGV</div><div style="font-size:12px;font-weight:700;color:#fbbf24">${escHTML(l.vgv)}</div></div>`:''}
           ${l.area_total?`<div style="background:var(--bg3);border-radius:var(--r);padding:8px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:2px">Área total</div><div style="font-size:12px;font-weight:600;color:var(--t1)">${escHTML(l.area_total)}</div></div>`:''}
           ${l.previsao_entrega?`<div style="background:var(--bg3);border-radius:var(--r);padding:8px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:2px">Entrega</div><div style="font-size:12px;font-weight:600;color:var(--t1)">${escHTML(l.previsao_entrega)}</div></div>`:''}
         </div>
