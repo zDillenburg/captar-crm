@@ -224,6 +224,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .lead-card:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(0,0,0,.3);transform:translateY(-1px)}
 .lead-card.dragging{opacity:.5;cursor:grabbing}
 .lead-card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.lead-priority-badge{display:block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:help}
 .card-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
 .card-name{font-size:13px;font-weight:600;color:var(--t1);flex:1}
 .card-age{font-size:10px;color:var(--t3)}
@@ -1407,6 +1408,12 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos por transação" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
             📋 Checklist
           </button>
+          <button class="btn-secondary" onclick="abrirImportCSV('leads')" title="Importar leads de uma planilha CSV" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
+            📥 Importar CSV
+          </button>
+          <button class="btn-secondary" id="btn-priorizar-ia" onclick="priorizarLeadsComIA()" title="A Captar IA analisa seus leads e sugere por quem começar" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid rgba(163,3,154,.35);background:rgba(133,2,119,.1);color:#e6b3df;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+            ✨ Priorizar com IA
+          </button>
           <button class="btn-add" onclick="openModal()">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Novo Lead
@@ -1442,6 +1449,9 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
           <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
             📋 Docs
+          </button>
+          <button class="btn-secondary" onclick="abrirImportCSV('imoveis')" title="Importar imóveis de uma planilha CSV" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
+            📥 Importar CSV
           </button>
           <button class="btn-add" onclick="document.getElementById('modal-imovel-add').classList.add('open')">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -2750,6 +2760,48 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
   </div>
 </div>
 
+<!-- ══════ MODAL IMPORTAR CSV ══════ -->
+<div class="modal-overlay" id="modal-import-csv">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <span class="modal-title" id="import-csv-title">📥 Importar CSV</span>
+      <button class="modal-close" onclick="fecharImportCSV()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <input type="hidden" id="import-csv-tipo"/>
+
+    <div id="import-csv-step-upload">
+      <p style="font-size:12.5px;color:var(--t2);line-height:1.6;margin-bottom:14px" id="import-csv-instructions"></p>
+      <button type="button" class="link-btn" style="font-size:12px;margin-bottom:16px" onclick="baixarModeloCSV()">⬇️ Baixar modelo CSV</button>
+      <label class="btn-cancel" for="import-csv-file" style="display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;padding:16px;border:1px dashed var(--border);border-radius:var(--r)">
+        📎 Escolher arquivo .csv
+      </label>
+      <input type="file" id="import-csv-file" accept=".csv,text/csv" style="display:none" onchange="handleCsvFileSelect(event)"/>
+      <div id="import-csv-error" style="color:#ef4444;font-size:12px;margin-top:10px;display:none"></div>
+    </div>
+
+    <div id="import-csv-step-preview" style="display:none">
+      <p style="font-size:12.5px;color:var(--t2);margin-bottom:10px"><strong id="import-csv-count">0</strong> registros encontrados. Prévia das 5 primeiras linhas:</p>
+      <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px">
+        <table style="width:100%;border-collapse:collapse;font-size:11px" id="import-csv-preview-table"></table>
+      </div>
+      <div id="import-csv-warnings" style="font-size:11.5px;color:#f59e0b;margin-bottom:10px"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn-cancel" onclick="cancelarPreviewCSV()">Cancelar</button>
+        <button class="btn-add" id="import-csv-confirm-btn" onclick="confirmarImportCSV()">Importar</button>
+      </div>
+    </div>
+
+    <div id="import-csv-step-result" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:32px;margin-bottom:12px" id="import-csv-result-icon">✅</div>
+      <p style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px" id="import-csv-result-title"></p>
+      <p style="font-size:12.5px;color:var(--t3)" id="import-csv-result-sub"></p>
+      <button class="btn-add" style="margin:16px auto 0" onclick="fecharImportCSV()">Concluir</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════ MODAL REAJUSTE ALUGUEL ══════ -->
 <div class="modal-overlay" id="modal-reajuste">
   <div class="modal" style="max-width:420px">
@@ -3554,6 +3606,7 @@ let _currentUser = null;
 // DATA
 // ─────────────────────────────────────────
 const LEADS_DATA = [];
+let _leadPriorityMap = {}; // {id: {score, label, motivo}} — preenchido por priorizarLeadsComIA()
 
 const IMOVEIS = [];
 
@@ -4357,8 +4410,12 @@ let leadsDrag=null;
 
 function renderKanban(){
   const board=document.getElementById('kanban-board');
+  const hasPriority=Object.keys(_leadPriorityMap).length>0;
   board.innerHTML=COLUMNS.map(col=>{
     const cards=LEADS_DATA.filter(l=>l.coluna===col.key);
+    if(hasPriority){
+      cards.sort((a,b)=>(_leadPriorityMap[b.id]?.score??-1)-(_leadPriorityMap[a.id]?.score??-1));
+    }
     const emptyMsg=`<div style="text-align:center;padding:20px 12px;color:var(--t3);font-size:12px">Nenhum lead aqui</div>`;
     return`<div class="kanban-column" data-col="${col.key}">
       <div class="kanban-header">
@@ -4378,8 +4435,23 @@ function renderKanban(){
   board.querySelectorAll('.lead-card').forEach(addDrag);
 }
 
+const PRIORITY_STYLE={
+  Quente:{bg:'rgba(239,68,68,.14)',color:'#f87171',border:'rgba(239,68,68,.35)',icon:'🔥'},
+  Morno:{bg:'rgba(245,158,11,.14)',color:'#fbbf24',border:'rgba(245,158,11,.35)',icon:'🌤️'},
+  Frio:{bg:'rgba(59,130,246,.14)',color:'#60a5fa',border:'rgba(59,130,246,.35)',icon:'❄️'}
+};
+
+function priorityBadgeHTML(leadId){
+  const p=_leadPriorityMap[leadId];
+  if(!p)return'';
+  const st=PRIORITY_STYLE[p.label]||PRIORITY_STYLE.Morno;
+  const motivo=escHTML(p.motivo||'');
+  return`<div class="lead-priority-badge" title="${motivo}" style="background:${st.bg};color:${st.color};border:1px solid ${st.border}">${st.icon} ${escHTML(p.label)}${motivo?' · '+motivo:''}</div>`;
+}
+
 function cardHTML(l){
   return`<div class="lead-card" draggable="true" data-id="${escHTML(String(l.id))}">
+    ${priorityBadgeHTML(l.id)}
     <div class="lead-card-top">
       <div class="card-avatar" style="background:${escHTML(l.cor||'#850277')}">${initials(l.nome)}</div>
       <span class="card-name">${escHTML(l.nome||'—')}</span>
@@ -4397,6 +4469,33 @@ function cardHTML(l){
       </span>
     </div>
   </div>`;
+}
+
+async function priorizarLeadsComIA(){
+  const btn=document.getElementById('btn-priorizar-ia');
+  const ativos=LEADS_DATA.filter(l=>l.coluna!=='fechado'&&l.coluna!=='perdido');
+  if(!ativos.length){showToast('Nenhum lead ativo para priorizar.','error');return;}
+  if(btn){btn.disabled=true;btn.style.opacity='.6';btn.textContent='✨ Analisando...';}
+  try{
+    const token=await getAiAccessToken();
+    if(!token){showToast('Sessão expirada, faça login novamente.','error');return;}
+    const resp=await fetch('/api/ai-leads-priority',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},
+      body:JSON.stringify({leads:ativos.map(l=>({id:l.id,nome:l.nome,tipo:l.tipo,valor:l.valor,coluna:l.coluna,dias:l.dias,obs:l.obs}))})
+    });
+    const data=await resp.json().catch(()=>({}));
+    if(!resp.ok){showToast(aiErrorMessage(resp.status,data),'error');return;}
+    if(!data.results||!data.results.length){showToast('A IA não retornou resultado. Tente novamente.','error');return;}
+    _leadPriorityMap={};
+    data.results.forEach(r=>{_leadPriorityMap[r.id]=r;});
+    renderKanban();
+    showToast(`${data.results.length} leads priorizados pela Captar IA!`,'success');
+  }catch(e){
+    showToast('Erro de conexão ao priorizar leads.','error');
+  }finally{
+    if(btn){btn.disabled=false;btn.style.opacity='';btn.innerHTML='✨ Priorizar com IA';}
+  }
 }
 
 function addDrag(card){
@@ -5396,8 +5495,41 @@ function openImovelDetail(idx){
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51z"/></svg>
         WhatsApp
       </a>
+      <button class="btn-cancel" id="btn-share-imovel" onclick="toggleImovelPublico('${escHTML(String(im.id))}')" style="display:inline-flex;align-items:center;gap:6px${im.publico?';color:#22c55e;border-color:rgba(34,197,94,.3)':''}">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        ${im.publico?'Compartilhado ✓':'Compartilhar'}
+      </button>
     </div>`;
   document.getElementById('modal-imovel-detail').classList.add('open');
+}
+
+async function toggleImovelPublico(id){
+  const im=IMOVEIS.find(i=>String(i.id)===String(id));
+  if(!im)return;
+  const novo=!im.publico;
+  const {error}=await _sb.from('imoveis').update({publico:novo}).eq('id',id);
+  if(error){showToast('Erro ao atualizar compartilhamento: '+error.message,'error');return;}
+  [IMOVEIS,IMOVEIS_EXTRA].forEach(arr=>{
+    const rec=arr.find(i=>String(i.id)===String(id));
+    if(rec)rec.publico=novo;
+  });
+  const btn=document.getElementById('btn-share-imovel');
+  if(btn){
+    btn.innerHTML=`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> ${novo?'Compartilhado ✓':'Compartilhar'}`;
+    btn.style.color=novo?'#22c55e':'';
+    btn.style.borderColor=novo?'rgba(34,197,94,.3)':'';
+  }
+  if(novo){
+    const url=`${location.origin}/imovel-publico.html?id=${encodeURIComponent(id)}`;
+    try{
+      await navigator.clipboard.writeText(url);
+      showToast('Link público copiado! Já pode compartilhar com o cliente.','success');
+    }catch(e){
+      showToast('Compartilhamento ativado. Link: '+url,'success');
+    }
+  }else{
+    showToast('Imóvel não está mais público.','success');
+  }
 }
 
 async function addImovel(){
@@ -8046,6 +8178,256 @@ function downloadFile(content,mime,filename){
   const a=document.createElement('a');
   a.href=url;a.download=filename;a.click();
   URL.revokeObjectURL(url);
+}
+
+// ─────────────────────────────────────────
+// IMPORTAÇÃO DE CSV (LEADS / IMÓVEIS)
+// ─────────────────────────────────────────
+const CSV_IMPORT_MAX_ROWS=500;
+const CSV_SCHEMAS={
+  leads:{
+    label:'Leads',
+    required:['nome'],
+    fields:[
+      {key:'nome',headers:['nome','cliente','lead']},
+      {key:'tel',headers:['telefone','tel','celular','whatsapp']},
+      {key:'email',headers:['email','e-mail']},
+      {key:'tipo',headers:['tipo','interesse']},
+      {key:'valor',headers:['valor','faixa de valor','orcamento','orçamento']},
+      {key:'origem',headers:['origem','fonte']},
+      {key:'obs',headers:['observacoes','observações','obs']}
+    ],
+    template:['nome','telefone','email','tipo','valor','origem','observacoes'],
+    templateExample:['João Silva','54999998888','joao@email.com','Apartamento 2 quartos','R$ 300.000','Instagram','Procurando na região central']
+  },
+  imoveis:{
+    label:'Imóveis',
+    required:['titulo'],
+    fields:[
+      {key:'titulo',headers:['titulo','título','nome']},
+      {key:'tipo',headers:['tipo']},
+      {key:'preco',headers:['preco','preço','valor']},
+      {key:'endereco',headers:['endereco','endereço']},
+      {key:'cidade',headers:['cidade']},
+      {key:'estado',headers:['estado','uf']},
+      {key:'quartos',headers:['quartos','dormitorios','dormitórios']},
+      {key:'banheiros',headers:['banheiros']},
+      {key:'area',headers:['area','área','metragem']},
+      {key:'status',headers:['status','situacao','situação']},
+      {key:'features',headers:['features','caracteristicas','características','diferenciais']}
+    ],
+    template:['titulo','tipo','preco','endereco','cidade','estado','quartos','banheiros','area','status','features'],
+    templateExample:['Casa 3 quartos com piscina','Casa','650000','Rua das Flores, 123','Porto Alegre','RS','3','2','180m²','Ativo','Piscina, churrasqueira, garagem para 2 carros']
+  }
+};
+
+let _csvImportRows=[]; // linhas já validadas/mapeadas, prontas pro insert
+
+function _csvNormalizeHeader(s){
+  return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+
+// Parser de CSV robusto: lida com campos entre aspas (podendo conter vírgula,
+// ponto-e-vírgula ou quebra de linha) e aspas escapadas ("" dentro de um
+// campo). Delimitador é detectado automaticamente (`;` é o padrão do Excel
+// BR e o que exportCSV() já usa; `,` também é aceito).
+function parseCSV(text,delimiter){
+  const rows=[];
+  let row=[],field='',inQuotes=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQuotes){
+      if(c==='"'){
+        if(text[i+1]==='"'){field+='"';i++;}else{inQuotes=false;}
+      }else field+=c;
+    }else{
+      if(c==='"')inQuotes=true;
+      else if(c===delimiter){row.push(field);field='';}
+      else if(c==='\r')continue;
+      else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}
+      else field+=c;
+    }
+  }
+  if(field.length||row.length){row.push(field);rows.push(row);}
+  return rows.filter(r=>!(r.length===1&&r[0].trim()===''));
+}
+
+function abrirImportCSV(tipo){
+  const schema=CSV_SCHEMAS[tipo];
+  if(!schema)return;
+  document.getElementById('import-csv-tipo').value=tipo;
+  document.getElementById('import-csv-title').textContent=`📥 Importar ${schema.label} (CSV)`;
+  document.getElementById('import-csv-instructions').textContent=
+    `Envie um arquivo .csv com uma coluna "${schema.fields.find(f=>schema.required.includes(f.key)).headers[0]}" (obrigatória) e, opcionalmente: ${schema.fields.filter(f=>!schema.required.includes(f.key)).map(f=>f.headers[0]).join(', ')}.`;
+  cancelarPreviewCSV();
+  document.getElementById('import-csv-file').value='';
+  document.getElementById('import-csv-error').style.display='none';
+  document.getElementById('modal-import-csv').classList.add('open');
+}
+
+function fecharImportCSV(){
+  document.getElementById('modal-import-csv').classList.remove('open');
+  _csvImportRows=[];
+}
+
+function cancelarPreviewCSV(){
+  document.getElementById('import-csv-step-upload').style.display='block';
+  document.getElementById('import-csv-step-preview').style.display='none';
+  document.getElementById('import-csv-step-result').style.display='none';
+}
+
+function baixarModeloCSV(){
+  const tipo=document.getElementById('import-csv-tipo').value;
+  const schema=CSV_SCHEMAS[tipo];
+  if(!schema)return;
+  const esc=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  const csv=[schema.template.map(esc).join(';'),schema.templateExample.map(esc).join(';')].join('\n');
+  downloadFile('﻿'+csv,'text/csv;charset=utf-8;',`modelo-${tipo}-captar.csv`);
+}
+
+function handleCsvFileSelect(evt){
+  const file=evt.target.files&&evt.target.files[0];
+  const errEl=document.getElementById('import-csv-error');
+  errEl.style.display='none';
+  if(!file)return;
+  const tipo=document.getElementById('import-csv-tipo').value;
+  const schema=CSV_SCHEMAS[tipo];
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const text=String(reader.result||'').replace(/^﻿/,'');
+      const firstLine=text.split(/\r?\n/,1)[0]||'';
+      const delimiter=(firstLine.split(';').length>=firstLine.split(',').length)?';':',';
+      const rows=parseCSV(text,delimiter);
+      if(rows.length<2){errEl.textContent='O arquivo precisa ter um cabeçalho e pelo menos uma linha de dados.';errEl.style.display='block';return;}
+
+      const headerRow=rows[0].map(_csvNormalizeHeader);
+      const colIndex={};
+      schema.fields.forEach(f=>{
+        const idx=headerRow.findIndex(h=>f.headers.some(alt=>_csvNormalizeHeader(alt)===h));
+        if(idx>-1)colIndex[f.key]=idx;
+      });
+      const missingRequired=schema.required.filter(k=>colIndex[k]===undefined);
+      if(missingRequired.length){
+        errEl.textContent=`Coluna obrigatória não encontrada no CSV: ${missingRequired.join(', ')}. Confira o modelo.`;
+        errEl.style.display='block';
+        return;
+      }
+
+      const dataRows=rows.slice(1,1+CSV_IMPORT_MAX_ROWS);
+      const mapped=[];
+      const invalid=[];
+      dataRows.forEach((r,i)=>{
+        const obj={};
+        schema.fields.forEach(f=>{
+          if(colIndex[f.key]!==undefined)obj[f.key]=(r[colIndex[f.key]]||'').trim();
+        });
+        const missing=schema.required.filter(k=>!obj[k]);
+        if(missing.length){invalid.push(i+2);return;} // +2 = linha real no arquivo (1-index + cabeçalho)
+        mapped.push(obj);
+      });
+
+      _csvImportRows=mapped;
+      const warnEl=document.getElementById('import-csv-warnings');
+      if(rows.length-1>CSV_IMPORT_MAX_ROWS){
+        warnEl.textContent=`Arquivo tem mais de ${CSV_IMPORT_MAX_ROWS} linhas — só as primeiras ${CSV_IMPORT_MAX_ROWS} serão importadas.`;
+      }else if(invalid.length){
+        warnEl.textContent=`${invalid.length} linha(s) ignorada(s) por falta de campo obrigatório: linha(s) ${invalid.slice(0,10).join(', ')}${invalid.length>10?'…':''}.`;
+      }else{
+        warnEl.textContent='';
+      }
+
+      document.getElementById('import-csv-count').textContent=String(mapped.length);
+      const previewCols=schema.fields.filter(f=>colIndex[f.key]!==undefined);
+      const table=document.getElementById('import-csv-preview-table');
+      table.innerHTML=`<tr>${previewCols.map(f=>`<th style="text-align:left;padding:6px 8px;background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap">${escHTML(f.headers[0])}</th>`).join('')}</tr>`+
+        mapped.slice(0,5).map(row=>`<tr>${previewCols.map(f=>`<td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--t2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHTML(row[f.key]||'')}</td>`).join('')}</tr>`).join('');
+
+      document.getElementById('import-csv-step-upload').style.display='none';
+      document.getElementById('import-csv-step-preview').style.display='block';
+      document.getElementById('import-csv-confirm-btn').disabled=!mapped.length;
+    }catch(e){
+      errEl.textContent='Não foi possível ler esse arquivo. Confira se é um CSV válido.';
+      errEl.style.display='block';
+    }
+  };
+  reader.onerror=()=>{errEl.textContent='Erro ao ler o arquivo.';errEl.style.display='block';};
+  reader.readAsText(file,'UTF-8');
+}
+
+async function confirmarImportCSV(){
+  const tipo=document.getElementById('import-csv-tipo').value;
+  const btn=document.getElementById('import-csv-confirm-btn');
+  if(!_csvImportRows.length)return;
+  btn.disabled=true;btn.textContent='Importando…';
+  try{
+    if(tipo==='leads'){
+      const payload=_csvImportRows.map(r=>({
+        user_id:_currentUser?.id,
+        nome:r.nome,
+        tel:r.tel||'—',
+        email:r.email||'—',
+        tipo:r.tipo||'—',
+        valor:r.valor||'A definir',
+        origem:r.origem||'Outro',
+        obs:r.obs||'',
+        coluna:'novo',dias:0,
+        cor:'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0')
+      }));
+      const {data,error}=await _sb.from('leads').insert(payload).select();
+      if(error)throw error;
+      LEADS_DATA.unshift(...(data||[]));
+      inited['crm']=false;
+      if(document.getElementById('page-crm')?.classList.contains('active'))renderKanban();
+      mostrarResultadoImportCSV(true,`${(data||payload).length} leads importados!`,'Já aparecem no seu funil, na coluna "Novo".');
+    }else if(tipo==='imoveis'){
+      const emojis={'Apartamento':'🏢','Casa':'🏡','Casa em Condomínio':'🏘️','Cobertura':'🌇','Studio / Kitnet':'🏬','Sobrado':'🏠','Terreno Urbano':'📐','Chácara':'🌿','Sítio':'🌾','Fazenda':'🐄','Área Rural':'🌳','Terreno Rural':'🗺️','Sala Comercial':'🏢','Loja / Ponto Comercial':'🏪','Galpão Industrial':'🏭','Prédio Comercial':'🏛️'};
+      const grads={'Apartamento':'linear-gradient(135deg,#1e1b4b,#312e81)','Casa':'linear-gradient(135deg,#14532d,#166534)','Casa em Condomínio':'linear-gradient(135deg,#14532d,#166534)','Cobertura':'linear-gradient(135deg,#431407,#7c2d12)','Chácara':'linear-gradient(135deg,#1a3a1a,#2d5a27)','Sítio':'linear-gradient(135deg,#2d4a1a,#4a7a2a)','Fazenda':'linear-gradient(135deg,#3a2a10,#6a4a20)','Área Rural':'linear-gradient(135deg,#1a3a1a,#3a5a1a)','Terreno Rural':'linear-gradient(135deg,#2a3a1a,#4a6a2a)','Galpão Industrial':'linear-gradient(135deg,#1c1917,#292524)','Prédio Comercial':'linear-gradient(135deg,#1e3a5f,#1e40af)'};
+      const defaultGrad='linear-gradient(135deg,#1e3a5f,#1e40af)';
+      const statusMap={'Ativo':'status-novo','Captado':'status-negociacao','Negociação':'status-contato','Vendido':'status-fechado'};
+      const payload=_csvImportRows.map(r=>{
+        const precoNum=(r.preco||'0').replace(/[^\d]/g,'');
+        const status=r.status||'Ativo';
+        return{
+          user_id:_currentUser?.id,
+          titulo:r.titulo,
+          tipo:r.tipo||'',
+          endereco:[r.endereco,r.cidade,r.estado].filter(Boolean).join(' — ')||'Localização a definir',
+          preco:'R$ '+(precoNum||'0').replace(/\B(?=(\d{3})+(?!\d))/g,'.'),
+          quartos:parseInt(r.quartos)||0,
+          banheiros:parseInt(r.banheiros)||1,
+          area:r.area||'—',
+          status,
+          statusClass:statusMap[status]||'status-novo',
+          emoji:emojis[r.tipo]||'🏠',
+          grad:grads[r.tipo]||defaultGrad,
+          features:r.features||''
+        };
+      });
+      const {data,error}=await _sb.from('imoveis').insert(payload).select();
+      if(error)throw error;
+      IMOVEIS.push(...(data||[]));
+      IMOVEIS_EXTRA.push(...(data||[]));
+      inited['imoveis']=false;
+      if(document.getElementById('page-imoveis')?.classList.contains('active'))renderImoveis();
+      mostrarResultadoImportCSV(true,`${(data||payload).length} imóveis importados!`,'Já aparecem no seu portfólio.');
+    }
+  }catch(e){
+    mostrarResultadoImportCSV(false,'Não foi possível importar.',e&&e.message?e.message:'Erro desconhecido. Tente novamente.');
+  }finally{
+    btn.disabled=false;btn.textContent='Importar';
+  }
+}
+
+function mostrarResultadoImportCSV(ok,title,sub){
+  document.getElementById('import-csv-step-upload').style.display='none';
+  document.getElementById('import-csv-step-preview').style.display='none';
+  document.getElementById('import-csv-step-result').style.display='block';
+  document.getElementById('import-csv-result-icon').textContent=ok?'✅':'❌';
+  document.getElementById('import-csv-result-title').textContent=title;
+  document.getElementById('import-csv-result-sub').textContent=sub;
+  _csvImportRows=[];
+  if(ok)showToast(title,'success');
 }
 
 // ── Calculadora Financiamento (Ferramentas) ─────────
