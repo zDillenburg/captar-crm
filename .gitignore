@@ -4,6 +4,7 @@ supabase-security-fixes.sql
 supabase-fixes-imoveis.sql
 supabase-ai-assistant.sql
 supabase-dashboard-fixes.sql
+supabase-landing-chat.sql
 .claude/
 .DS_Store
 *.env

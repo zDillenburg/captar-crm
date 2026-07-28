@@ -1436,7 +1436,7 @@
     /* ── BACK TO TOP ── */
     #back-to-top {
       position: fixed;
-      bottom: 96px;
+      bottom: 164px;
       right: 28px;
       z-index: 998;
       width: 44px;
@@ -2465,6 +2465,61 @@
     </svg>
   </a>
 
+  <!-- Captar IA — chat de vendas da landing page -->
+  <button class="landing-ia-fab" id="landing-ia-fab" onclick="toggleLandingIaChat()" aria-label="Falar com a Captar IA" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg>
+  </button>
+
+  <div class="landing-ia-panel" id="landing-ia-panel" role="dialog" aria-label="Chat da Captar IA" aria-hidden="true">
+    <div class="landing-ia-header">
+      <div class="landing-ia-header-info">
+        <div class="landing-ia-orb"><svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg></div>
+        <div>
+          <div class="landing-ia-title">Captar IA</div>
+          <div class="landing-ia-subtitle">Tire suas dúvidas</div>
+        </div>
+      </div>
+      <button class="landing-ia-close" onclick="toggleLandingIaChat(false)" aria-label="Fechar chat">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="landing-ia-log" id="landing-ia-log">
+      <div class="landing-ia-empty" id="landing-ia-empty">
+        <div class="landing-ia-orb landing-ia-orb-lg"><svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg></div>
+        <p>Olá! Sou a Captar IA. Posso te ajudar a entender nossos planos, como funciona a Captar IA e como começar.</p>
+        <div class="landing-ia-chips">
+          <button type="button" onclick="landingIaSendPreset(this,'Quais planos vocês têm?')">Quais planos vocês têm?</button>
+          <button type="button" onclick="landingIaSendPreset(this,'Como funciona a Captar IA?')">Como funciona a Captar IA?</button>
+          <button type="button" onclick="landingIaSendPreset(this,'Quanto custa?')">Quanto custa?</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="landing-ia-typing" id="landing-ia-typing" style="display:none">
+      <div class="landing-ia-orb landing-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg></div>
+      <span class="landing-ia-typing-dots"><span></span><span></span><span></span></span>
+    </div>
+
+    <a
+      href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Estava%20conversando%20com%20a%20Captar%20IA%20no%20site%20e%20quero%20saber%20mais."
+      target="_blank"
+      rel="noopener noreferrer"
+      class="landing-ia-whatsapp-cta"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 0 1-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 0 1 2.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>
+      Falar agora no WhatsApp
+    </a>
+
+    <div class="landing-ia-inputbar">
+      <textarea id="landing-ia-input" rows="1" placeholder="Digite sua pergunta…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();landingIaSend();}"></textarea>
+      <button type="button" id="landing-ia-send-btn" onclick="landingIaSend()" aria-label="Enviar">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="landing-ia-usage" id="landing-ia-usage"></div>
+  </div>
+
   <style>
     /* ── MOBILE CTA BAR ── */
     .mobile-cta-bar { display: none; }
@@ -2505,8 +2560,8 @@
         background: #25D366;
         color: #fff;
       }
-      /* Empurra botão de back-to-top para cima da barra */
-      #back-to-top { bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+      /* Empurra botão de back-to-top para cima da barra e do FAB da Captar IA */
+      #back-to-top { bottom: calc(148px + env(safe-area-inset-bottom, 0px)) !important; }
       /* Empurra o banner LGPD para cima da barra quando visível — NÃO mexer no
          "bottom" do #lgpd-banner (quebra o translateY(100%) de saída, ver head).
          Em vez disso, sobrepõe só o transform do estado .visible. */
@@ -2538,7 +2593,304 @@
       transform: scale(1.1);
       box-shadow: 0 6px 24px rgba(0,0,0,0.36);
     }
+
+    /* ── CAPTAR IA — chat de vendas da landing page ── */
+    .landing-ia-fab {
+      position: fixed;
+      bottom: 96px;
+      right: 28px;
+      z-index: 1000;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 32% 28%, #e879d4 0%, var(--purple-light) 45%, var(--purple) 78%, #23041f 100%);
+      box-shadow: 0 4px 16px rgba(133,2,119,.35);
+      transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+    }
+    .landing-ia-fab:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(133,2,119,.45); }
+    .landing-ia-fab svg { width: 26px; height: 26px; filter: drop-shadow(0 1px 3px rgba(0,0,0,.35)); }
+    .landing-ia-fab.open svg { transform: rotate(90deg); }
+    .landing-ia-fab svg { transition: transform .25s; }
+
+    .landing-ia-panel {
+      position: fixed;
+      bottom: 96px;
+      right: 28px;
+      z-index: 1000;
+      width: min(360px, calc(100vw - 40px));
+      max-height: min(560px, calc(100vh - 140px));
+      background: var(--black);
+      border: 1px solid rgba(163,3,154,.3);
+      border-radius: 18px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5), 0 0 0 1px rgba(163,3,154,.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(16px) scale(.97);
+      pointer-events: none;
+      transition: opacity .25s cubic-bezier(.16,1,.3,1), transform .25s cubic-bezier(.16,1,.3,1);
+      transform-origin: bottom right;
+    }
+    .landing-ia-panel.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .landing-ia-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(133,2,119,.18), rgba(20,18,16,.4));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      flex-shrink: 0;
+    }
+    .landing-ia-header-info { display: flex; align-items: center; gap: 10px; }
+    .landing-ia-orb {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      background: radial-gradient(circle at 32% 28%, #e879d4 0%, var(--purple-light) 45%, var(--purple) 78%, #23041f 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 10px rgba(133,2,119,.35);
+    }
+    .landing-ia-orb svg { width: 16px; height: 16px; }
+    .landing-ia-orb-sm { width: 24px; height: 24px; }
+    .landing-ia-orb-sm svg { width: 11px; height: 11px; }
+    .landing-ia-orb-lg { width: 48px; height: 48px; }
+    .landing-ia-orb-lg svg { width: 22px; height: 22px; }
+    .landing-ia-title { font-size: 14px; font-weight: 800; color: var(--white); }
+    .landing-ia-subtitle { font-size: 11px; color: rgba(255,253,234,.5); }
+    .landing-ia-close {
+      background: none; border: none; cursor: pointer; padding: 6px;
+      color: rgba(255,253,234,.5); border-radius: 8px; transition: color .2s, background .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .landing-ia-close:hover { color: var(--white); background: rgba(255,255,255,.08); }
+
+    .landing-ia-log {
+      flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+      min-height: 160px;
+    }
+    .landing-ia-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 8px 4px; }
+    .landing-ia-empty p { font-size: 12.5px; color: rgba(255,253,234,.6); line-height: 1.6; }
+    .landing-ia-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .landing-ia-chips button {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: rgba(255,253,234,.75);
+      font-size: 11px; font-weight: 600; padding: 7px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+    }
+    .landing-ia-chips button:hover { border-color: var(--purple-light); color: #e879d4; background: rgba(133,2,119,.12); }
+    .landing-ia-chips button:disabled { opacity: .5; cursor: not-allowed; }
+
+    .landing-ia-msg-row { display: flex; align-items: flex-end; gap: 7px; max-width: 100%; }
+    .landing-ia-msg-row-user { justify-content: flex-end; }
+    .landing-ia-msg {
+      max-width: 82%; padding: 9px 13px; border-radius: 13px; font-size: 12.5px; line-height: 1.55;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .landing-ia-msg-user {
+      background: linear-gradient(135deg, var(--purple-light), var(--purple)); color: #fff; border-bottom-right-radius: 4px;
+    }
+    .landing-ia-msg-ai {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); color: rgba(255,253,234,.85);
+      border-bottom-left-radius: 4px;
+    }
+    .landing-ia-msg-error {
+      background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.3); color: #f87171; border-bottom-left-radius: 4px;
+    }
+
+    .landing-ia-typing { display: flex; align-items: center; gap: 8px; padding: 0 16px 10px; flex-shrink: 0; }
+    .landing-ia-typing-dots { display: inline-flex; gap: 3px; align-items: center; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 8px 11px; }
+    .landing-ia-typing-dots span { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,253,234,.5); animation: landingIaDot 1.2s ease-in-out infinite; }
+    .landing-ia-typing-dots span:nth-child(2) { animation-delay: .15s; }
+    .landing-ia-typing-dots span:nth-child(3) { animation-delay: .3s; }
+    @keyframes landingIaDot { 0%, 80%, 100% { transform: scale(.6); opacity: .4; } 40% { transform: scale(1); opacity: 1; } }
+
+    .landing-ia-whatsapp-cta {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin: 0 16px 12px; padding: 10px; border-radius: 10px;
+      background: #25d366; color: #fff; font-size: 12.5px; font-weight: 700; text-decoration: none;
+      flex-shrink: 0; transition: filter .2s;
+    }
+    .landing-ia-whatsapp-cta:hover { filter: brightness(1.08); }
+
+    .landing-ia-inputbar { display: flex; gap: 8px; align-items: flex-end; padding: 0 16px 12px; flex-shrink: 0; }
+    .landing-ia-inputbar textarea {
+      flex: 1; resize: none; max-height: 80px; padding: 10px 12px; border-radius: 10px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: var(--white);
+      font-family: inherit; font-size: 12.5px; outline: none; transition: border-color .2s;
+    }
+    .landing-ia-inputbar textarea:focus { border-color: var(--purple-light); }
+    .landing-ia-inputbar textarea::placeholder { color: rgba(255,253,234,.35); }
+    .landing-ia-inputbar button {
+      flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer;
+      background: var(--purple); color: #fff; display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s;
+    }
+    .landing-ia-inputbar button:hover { background: var(--purple-light); }
+    .landing-ia-inputbar button:disabled { opacity: .5; cursor: not-allowed; }
+    .landing-ia-usage { font-size: 10px; color: rgba(255,253,234,.3); text-align: center; padding: 0 16px 10px; flex-shrink: 0; }
+
+    @media (max-width: 480px) {
+      .landing-ia-panel {
+        width: calc(100vw - 24px);
+        right: 12px;
+        bottom: 96px;
+        max-height: min(70vh, calc(100vh - 120px));
+      }
+    }
+    @media (max-width: 768px) {
+      .landing-ia-fab { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); right: 16px; width: 52px; height: 52px; }
+      .landing-ia-fab svg { width: 22px; height: 22px; }
+      .landing-ia-panel { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); right: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .landing-ia-fab, .landing-ia-panel, .landing-ia-fab svg { transition: none; }
+      .landing-ia-typing-dots span { animation: none; opacity: .7; }
+    }
   </style>
+
+  <script>
+    // ── Captar IA — chat de vendas da landing page ──────────────
+    (function(){
+      let messages = [];
+      let sending = false;
+      let opened = false;
+
+      function escHtml(s){
+        if(s == null) return '';
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      }
+
+      function formatMsg(text){
+        const safe = escHtml(text);
+        const withBold = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        const lines = withBold.split('\n');
+        let html = '';
+        let inList = false;
+        for(const line of lines){
+          const bullet = line.match(/^[-•]\s+(.*)/);
+          if(bullet){
+            if(!inList){ html += '<ul style="margin:4px 0 4px 16px;padding:0">'; inList = true; }
+            html += `<li>${bullet[1]}</li>`;
+          } else {
+            if(inList){ html += '</ul>'; inList = false; }
+            html += line ? `${line}<br>` : '<br>';
+          }
+        }
+        if(inList) html += '</ul>';
+        return html;
+      }
+
+      function scrollLogToBottom(){
+        const log = document.getElementById('landing-ia-log');
+        if(log) log.scrollTop = log.scrollHeight;
+      }
+
+      function renderLog(){
+        const log = document.getElementById('landing-ia-log');
+        if(!log) return;
+        if(!messages.length){
+          // mantém o estado vazio (chips) intacto — não sobrescreve
+          return;
+        }
+        const empty = document.getElementById('landing-ia-empty');
+        if(empty) empty.remove();
+        log.innerHTML = messages.map(m => {
+          const cls = m.role === 'user' ? 'landing-ia-msg-user' : (m.error ? 'landing-ia-msg-error' : 'landing-ia-msg-ai');
+          const body = (m.role === 'assistant' && !m.error) ? formatMsg(m.content) : escHtml(m.content);
+          return `<div class="landing-ia-msg-row ${m.role === 'user' ? 'landing-ia-msg-row-user' : ''}">
+            ${m.role === 'assistant' ? '<div class="landing-ia-orb landing-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg></div>' : ''}
+            <div class="landing-ia-msg ${cls}">${body}</div>
+          </div>`;
+        }).join('');
+        scrollLogToBottom();
+      }
+
+      function setSending(state){
+        sending = state;
+        const btn = document.getElementById('landing-ia-send-btn');
+        const input = document.getElementById('landing-ia-input');
+        const typing = document.getElementById('landing-ia-typing');
+        if(btn) btn.disabled = state;
+        if(input) input.disabled = state;
+        if(typing) typing.style.display = state ? 'flex' : 'none';
+        if(state) scrollLogToBottom();
+      }
+
+      function setUsageNote(text){
+        const el = document.getElementById('landing-ia-usage');
+        if(el) el.textContent = text || '';
+      }
+
+      async function send(presetText){
+        if(sending) return;
+        const input = document.getElementById('landing-ia-input');
+        const text = (presetText != null ? presetText : (input ? input.value : '')).trim();
+        if(!text) return;
+
+        messages.push({ role: 'user', content: text });
+        if(input) input.value = '';
+        renderLog();
+        setSending(true);
+
+        try {
+          const resp = await fetch('/api/landing-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: messages.map(m => ({ role: m.role, content: m.content })) })
+          });
+          const data = await resp.json().catch(() => ({}));
+
+          if(resp.status === 429){
+            messages.push({ role: 'assistant', error: true, content: 'Você atingiu o limite de mensagens por hoje. Fala com a gente direto no WhatsApp — é mais rápido! 👇' });
+          } else if(!resp.ok || !data.reply){
+            messages.push({ role: 'assistant', error: true, content: 'Não consegui responder agora. Tenta de novo em instantes, ou fala com a gente no WhatsApp abaixo. 👇' });
+          } else {
+            messages.push({ role: 'assistant', content: data.reply });
+            if(data.usage && typeof data.usage.used === 'number'){
+              setUsageNote(`${data.usage.used}/${data.usage.limite} mensagens hoje`);
+            }
+          }
+        } catch(e) {
+          messages.push({ role: 'assistant', error: true, content: 'Erro de conexão. Tenta de novo, ou fala com a gente no WhatsApp abaixo. 👇' });
+        } finally {
+          setSending(false);
+          renderLog();
+        }
+      }
+
+      function sendPreset(chipEl, text){
+        if(sending) return;
+        if(chipEl && chipEl.parentElement){
+          Array.from(chipEl.parentElement.children).forEach(c => c.disabled = true);
+        }
+        send(text);
+      }
+
+      function toggle(force){
+        const fab = document.getElementById('landing-ia-fab');
+        const panel = document.getElementById('landing-ia-panel');
+        if(!fab || !panel) return;
+        opened = typeof force === 'boolean' ? force : !opened;
+        fab.classList.toggle('open', opened);
+        panel.classList.toggle('open', opened);
+        fab.setAttribute('aria-expanded', String(opened));
+        panel.setAttribute('aria-hidden', String(!opened));
+        if(opened){
+          const input = document.getElementById('landing-ia-input');
+          setTimeout(() => { if(input) input.focus(); }, 260);
+        }
+      }
+
+      window.toggleLandingIaChat = toggle;
+      window.landingIaSend = () => send();
+      window.landingIaSendPreset = sendPreset;
+    })();
+  </script>
 
 </body>
 </html>
