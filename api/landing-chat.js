@@ -35,8 +35,19 @@ Use no máximo **negrito** e listas simples com "-" quando ajudar — nunca tít
 Português do Brasil, animado, consultivo e confiante — como um vendedor experiente e simpático, nunca robótico.`;
 
 function getClientIp(req) {
+  // Vercel's edge SEMPRE anexa o IP real da conexão como o ÚLTIMO valor de
+  // x-forwarded-for — qualquer coisa antes disso foi declarada pelo próprio
+  // chamador e não é confiável. Pegar o primeiro valor (como estava antes)
+  // deixava o limite diário totalmente burlável: bastava mandar um
+  // X-Forwarded-For falso e diferente em cada request pra sempre cair num
+  // hash de IP novo, sem nunca bater o limite.
   const fwd = req.headers['x-forwarded-for'];
-  if (fwd) return String(fwd).split(',')[0].trim();
+  if (fwd) {
+    const parts = String(fwd).split(',').map(s => s.trim()).filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
+  }
+  const realIp = req.headers['x-real-ip'];
+  if (realIp) return String(realIp).trim();
   return (req.socket && req.socket.remoteAddress) || 'unknown';
 }
 
