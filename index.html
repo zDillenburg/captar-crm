@@ -2517,7 +2517,6 @@
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-    <div class="landing-ia-usage" id="landing-ia-usage"></div>
   </div>
 
   <style>
@@ -2732,7 +2731,6 @@
     }
     .landing-ia-inputbar button:hover { background: var(--purple-light); }
     .landing-ia-inputbar button:disabled { opacity: .5; cursor: not-allowed; }
-    .landing-ia-usage { font-size: 10px; color: rgba(255,253,234,.3); text-align: center; padding: 0 16px 10px; flex-shrink: 0; }
 
     @media (max-width: 480px) {
       .landing-ia-panel {
@@ -2821,11 +2819,6 @@
         if(state) scrollLogToBottom();
       }
 
-      function setUsageNote(text){
-        const el = document.getElementById('landing-ia-usage');
-        if(el) el.textContent = text || '';
-      }
-
       async function send(presetText){
         if(sending) return;
         const input = document.getElementById('landing-ia-input');
@@ -2851,9 +2844,6 @@
             messages.push({ role: 'assistant', error: true, content: 'Não consegui responder agora. Tenta de novo em instantes, ou fala com a gente no WhatsApp abaixo. 👇' });
           } else {
             messages.push({ role: 'assistant', content: data.reply });
-            if(data.usage && typeof data.usage.used === 'number'){
-              setUsageNote(`${data.usage.used}/${data.usage.limite} mensagens hoje`);
-            }
           }
         } catch(e) {
           messages.push({ role: 'assistant', error: true, content: 'Erro de conexão. Tenta de novo, ou fala com a gente no WhatsApp abaixo. 👇' });
