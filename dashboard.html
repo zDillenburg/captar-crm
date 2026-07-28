@@ -815,10 +815,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .contact-type-btn:hover,.contact-type-btn.sel{background:rgba(133,2,119,.15);border-color:var(--p);color:#c453bb}
 
 /* ═══ CAPTAR IA — identidade visual ═══ */
-@keyframes captarIaPulse{
-  0%,100%{box-shadow:0 4px 16px rgba(133,2,119,.35),0 0 0 0 rgba(163,3,154,.4);}
-  50%{box-shadow:0 4px 16px rgba(133,2,119,.35),0 0 0 9px rgba(163,3,154,0);}
-}
 @keyframes captarIaFabIn{from{opacity:0;transform:scale(.4) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes captarIaFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes captarIaMsgIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -834,11 +830,15 @@ body.light-mode .captar-ia-badge{color:#850277;background:rgba(133,2,119,.1)}
 body.light-mode .ai-suggestion-chip:hover,body.light-mode .captar-ia-expand:hover,body.light-mode .ai-img-reset-link{color:#850277}
 .captar-ia-badge svg{width:9px;height:9px}
 
-.ai-fab{position:fixed;bottom:28px;right:28px;z-index:200;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;padding:0;background:radial-gradient(circle at 32% 28%,#e879d4 0%,var(--pl) 45%,var(--p) 78%,#23041f 100%);display:flex;align-items:center;justify-content:center;animation:captarIaFabIn .5s cubic-bezier(.34,1.56,.64,1),captarIaPulse 3.2s ease-in-out .5s infinite;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.ai-fab{position:fixed;bottom:28px;right:28px;z-index:200;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;padding:0;background:radial-gradient(circle at 32% 28%,#e879d4 0%,var(--pl) 45%,var(--p) 78%,#23041f 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(133,2,119,.28);animation:captarIaFabIn .5s cubic-bezier(.34,1.56,.64,1);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
 .ai-fab svg{width:26px;height:26px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))}
-.ai-fab:hover{transform:scale(1.1) rotate(-4deg)}
+.ai-fab:hover{transform:scale(1.1) rotate(-4deg);box-shadow:0 4px 14px rgba(133,2,119,.35)}
 .ai-fab:active{transform:scale(.94)}
 .ai-fab.hidden{display:none}
+/* A tela de login e o FAB são irmãos fora de #app (ver comentário abaixo) —
+   sem login ter passado .hidden, esconde o FAB por completo: não faz
+   sentido oferecer atalho pra IA antes do usuário estar autenticado. */
+#login:not(.hidden) ~ .ai-fab{display:none}
 @media(max-width:768px){.ai-fab{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:16px;width:52px;height:52px}.ai-fab svg{width:22px;height:22px}}
 @media(prefers-reduced-motion:reduce){.ai-fab{animation:none}}
 
