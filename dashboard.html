@@ -1096,7 +1096,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         Contratos
       </button>
       <button class="nav-item" id="nav-assistente-btn" onclick="navigate('assistente',this)">
-        <svg fill="currentColor" stroke="none" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>
+        <svg fill="currentColor" stroke="none" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         Captar IA
       </button>
       <div class="nav-section-label">Operacional</div>
@@ -1193,9 +1193,9 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <button class="notif-footer-btn" onclick="closeNotif()">Ver todas as notificações →</button>
           </div>
         </div>
-        <div class="topbar-btn no-print" title="Busca global (⌘K)" onclick="openSearch()" style="display:flex;align-items:center;gap:6px;width:auto;padding:0 10px;min-width:36px">
+        <div class="topbar-btn no-print" title="Busca global" onclick="openSearch()" style="display:flex;align-items:center;gap:6px;width:auto;padding:0 10px;min-width:36px">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <span style="font-size:10px;color:var(--t3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:1px 5px;letter-spacing:.02em;font-weight:600">⌘K</span>
+          <span id="gs-kbd-hint" style="display:none;font-size:10px;color:var(--t3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:1px 5px;letter-spacing:.02em;font-weight:600">⌘K</span>
         </div>
         <div class="topbar-avatar" title="Perfil">MR</div>
       </div>
@@ -1208,7 +1208,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         <!-- Captar IA — chat embutido -->
         <div class="captar-ia-card">
           <div class="captar-ia-header">
-            <div class="captar-ia-orb"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <div class="captar-ia-orb"><svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg></div>
             <div>
               <div class="captar-ia-title">Captar IA</div>
               <div class="captar-ia-subtitle">Assistente exclusivo do Grupo Captar</div>
@@ -1217,7 +1217,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
           <div class="ai-chat-log ai-chat-log-mini" id="ai-chat-log-mini"></div>
           <div class="ai-chat-typing" id="ai-chat-typing-mini" style="display:none">
-            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg></div>
             <span class="typing-dots"><span></span><span></span><span></span></span>
           </div>
           <div class="ai-chat-inputbar">
@@ -2406,12 +2406,12 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <div class="ai-tab-pane active" id="ai-pane-chat">
-          <div class="captar-ia-badge" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg> Captar IA · Grupo Captar</div>
+          <div class="captar-ia-badge" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg> Captar IA · Grupo Captar</div>
           <div class="ai-chat-log" id="ai-chat-log">
             <div class="ai-chat-empty">Carregando conversa…</div>
           </div>
           <div class="ai-chat-typing" id="ai-chat-typing" style="display:none">
-            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg></div>
+            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg></div>
             <span class="typing-dots"><span></span><span></span><span></span></span>
           </div>
           <div class="ai-chat-inputbar">
@@ -2463,9 +2463,9 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
           <div class="ai-img-presets-label">Sugestões rápidas</div>
           <div class="ai-suggestion-chips" id="ai-img-presets-row" style="justify-content:flex-start;margin:0 0 14px">
-            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Fachada moderna de casa de alto padrão, luz do pôr do sol, estilo revista de arquitetura')">🏠 Fachada moderna</button>
-            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Interior clean e minimalista, sala de estar iluminada, tons neutros, estilo revista de decoração')">🛋️ Interior clean</button>
-            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Banner de anúncio imobiliário, elegante, com espaço para texto, cores da marca em tons de roxo')">🖼️ Banner de anúncio</button>
+            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Fachada de uma casa térrea à venda, com 2 quartos e quintal, luz natural, estilo profissional para anúncio imobiliário')">🏠 Casa à venda, 2 quartos</button>
+            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Interior de um apartamento decorado, sala e cozinha integradas, bem iluminado, estilo clean para anúncio imobiliário')">🛋️ Apartamento decorado</button>
+            <button type="button" class="ai-suggestion-chip" onclick="usarPresetImagem(this,'Banner de anúncio imobiliário elegante, com espaço para preço e contato, cores da marca em tons de roxo')">🏷️ Banner com preço e contato</button>
           </div>
           <textarea class="form-input" id="ai-img-prompt" rows="2" placeholder="Ex: fachada moderna ao pôr do sol — ou descreva o que ajustar no resultado anterior" style="margin-bottom:8px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();generateAiImage();}"></textarea>
           <div style="display:flex;gap:8px">
@@ -2485,7 +2485,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 </div><!-- /app -->
 
 <button class="ai-fab" id="ai-fab-btn" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))" title="Captar IA — assistente exclusivo do Grupo Captar" aria-label="Abrir Captar IA">
-  <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg>
+  <svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg>
 </button>
 
 <!-- ══════ MODAL NOVO LEAD ══════ -->
@@ -3495,6 +3495,19 @@ function escHTML(s){
   if(s==null)return'';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+
+// Mostra o atalho de busca (⌘K/Ctrl+K) só em quem tem teclado físico de
+// verdade — em mobile/tablet (touch) o atalho não existe, então exibi-lo
+// só confunde.
+(function initSearchKbdHint(){
+  const kbd=document.getElementById('gs-kbd-hint');
+  if(!kbd)return;
+  const hasRealKeyboard=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if(!hasRealKeyboard)return;
+  const isMac=/Mac|iPod|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'');
+  kbd.textContent=isMac?'⌘K':'Ctrl+K';
+  kbd.style.display='inline';
+})();
 
 // ═══════════════════════════════════════════════════════════════
 // SUPABASE CONFIG — substitua pelas suas credenciais do projeto
@@ -8869,7 +8882,7 @@ function aiErrorMessage(status,data){
   return'Erro ao falar com a IA. Tente novamente.'+detail;
 }
 
-const CAPTAR_IA_SPARK_SVG='<svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" fill="white"/></svg>';
+const CAPTAR_IA_SPARK_SVG='<svg viewBox="0 0 24 24" fill="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white"/></svg>';
 
 async function ensureAiChatLoaded(){
   if(_aiChatLoaded)return;
