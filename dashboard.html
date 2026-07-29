@@ -1629,6 +1629,30 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
               <button type="button" class="btn-cancel" id="config-logo-remove-btn" style="display:none" onclick="removerLogo()">Remover</button>
             </div>
           </div>
+          <div class="config-card">
+            <div class="config-card-title">Perfil Público</div>
+            <div style="font-size:12px;color:var(--t3);margin-bottom:14px">Uma página com a sua marca e todos os imóveis que você compartilhou — um único link pra mandar pro cliente.</div>
+            <div class="config-form-group">
+              <label class="config-label">Bio curta (opcional)</label>
+              <textarea class="config-input" id="perfil-pub-bio" rows="3" placeholder="Ex: Corretor especializado em imóveis de alto padrão em Caxias do Sul, há 8 anos no mercado." style="resize:vertical;font-family:inherit"></textarea>
+            </div>
+            <div class="config-form-group">
+              <label class="config-label">Cor de destaque</label>
+              <div id="perfil-pub-cores" style="display:flex;gap:8px;margin-top:6px"></div>
+            </div>
+            <div class="toggle-row" style="margin-top:4px">
+              <div class="toggle-info">
+                <div class="toggle-name">Ativar perfil público</div>
+                <div class="toggle-desc">Libera o link com todos os seus imóveis compartilhados</div>
+              </div>
+              <button class="toggle off" id="perfil-pub-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+            </div>
+            <div id="perfil-pub-link-row" style="display:none;margin-top:12px;padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <a href="#" id="perfil-pub-link" target="_blank" style="color:var(--pl);word-break:break-all"></a>
+              <button type="button" class="link-btn" style="font-size:11px;flex-shrink:0" onclick="copiarLinkPerfilPublico()">Copiar</button>
+            </div>
+            <button class="config-save" onclick="salvarPerfilPublico(this)" style="margin-top:14px">Salvar perfil público</button>
+          </div>
         </div>
       </div>
 
@@ -3338,6 +3362,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         <label class="form-label">Fotos (máx. <span id="im-fotos-max-lbl">10</span>)</label>
         <input type="file" id="im-fotos-input" accept="image/*" multiple style="display:none" onchange="handleImovelFotosSelect(event)"/>
         <div id="im-fotos-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
+        <div id="im-fotos-hint" style="display:none;font-size:11px;color:var(--t3);margin-bottom:8px">Arraste as fotos pra reordenar — a primeira é a capa (aparece na grade e no link público).</div>
         <button type="button" class="link-btn" id="btn-add-fotos-imovel" onclick="document.getElementById('im-fotos-input').click()" style="font-size:12px">📷 Adicionar fotos</button>
       </div>
       <div class="full form-group">
@@ -4031,7 +4056,7 @@ function initPage(page){
   if(page==='relatorios') setTimeout(()=>{initPerfChart();initReceitaBar();renderFunnel();renderRelatorioCorretores();},100);
   if(page==='financeiro') setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100);
   if(page==='assistente') initAssistente();
-  if(page==='config') loadUserLogo();
+  if(page==='config'){loadUserLogo();loadPerfilPublico();}
 }
 
 // ─────────────────────────────────────────
@@ -4642,6 +4667,7 @@ function renderImoveis(){
         <span class="imovel-corretor">${escHTML(im.corretor?'👤 '+im.corretor:'')}</span>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           ${im.url_site?`<a href="${escHTML(im.url_site)}" target="_blank" class="imovel-btn" style="color:#22c55e;text-decoration:none" title="Ver no site">🌐 Site</a>`:''}
+          <button class="imovel-btn" onclick="event.stopPropagation();editarImovel('${escHTML(String(im.id))}')">✏️ Editar</button>
           <button class="imovel-btn" onclick="abrirQrCode('${escHTML(String(im.id))}')">📱 QR</button>
           <button class="compare-sel-btn" id="cmp-${escHTML(String(im.id))}" onclick="toggleCompare('${escHTML(String(im.id))}',this)">Comparar</button>
           <button class="imovel-btn" onclick="gerarPropostaPDF('${escHTML(String(im.id))}')">📄 Proposta</button>
@@ -5667,12 +5693,15 @@ function imovelFotoPublicUrl(path){
   return `${SUPABASE_URL}/storage/v1/object/public/imoveis-fotos/${path}`;
 }
 
+let _fotoDragFromIdx=null;
+
 function renderImovelFotosGrid(){
   const grid=document.getElementById('im-fotos-grid');
   if(!grid)return;
   grid.innerHTML=_imovelFotos.map((path,i)=>`
-    <div style="position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0">
-      <img src="${imovelFotoPublicUrl(path)}" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.opacity='.25'"/>
+    <div class="im-foto-thumb" draggable="true" data-idx="${i}" title="Arraste pra reordenar" style="position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;cursor:grab">
+      <img src="${imovelFotoPublicUrl(path)}" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none" onerror="this.style.opacity='.25'"/>
+      ${i===0?`<span style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.65);color:#fff;font-size:8px;font-weight:700;text-align:center;padding:1px 0;letter-spacing:.03em;pointer-events:none">CAPA</span>`:''}
       <button type="button" title="Remover foto" onclick="removerImovelFoto(${i})" style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0">×</button>
     </div>
   `).join('');
@@ -5681,6 +5710,32 @@ function renderImovelFotosGrid(){
     const cheio=_imovelFotos.length>=IMOVEL_FOTOS_MAX;
     addBtn.style.display=cheio?'none':'';
   }
+  const hint=document.getElementById('im-fotos-hint');
+  if(hint)hint.style.display=_imovelFotos.length>1?'block':'none';
+  wireImovelFotosDragDrop();
+}
+
+function wireImovelFotosDragDrop(){
+  const grid=document.getElementById('im-fotos-grid');
+  if(!grid)return;
+  grid.querySelectorAll('.im-foto-thumb').forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      _fotoDragFromIdx=Number(el.dataset.idx);
+      e.dataTransfer.effectAllowed='move';
+      el.style.opacity='.35';
+    });
+    el.addEventListener('dragend',()=>{el.style.opacity='';});
+    el.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';});
+    el.addEventListener('drop',e=>{
+      e.preventDefault();
+      const toIdx=Number(el.dataset.idx);
+      if(_fotoDragFromIdx===null||_fotoDragFromIdx===toIdx)return;
+      const [moved]=_imovelFotos.splice(_fotoDragFromIdx,1);
+      _imovelFotos.splice(toIdx,0,moved);
+      _fotoDragFromIdx=null;
+      renderImovelFotosGrid();
+    });
+  });
 }
 
 async function handleImovelFotosSelect(evt){
@@ -7216,6 +7271,103 @@ function renderFinKpis(){
 // ─────────────────────────────────────────
 // CONFIG — SAVE PROFILE
 // ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// PERFIL PÚBLICO DO CORRETOR
+// ═══════════════════════════════════════════════════════
+const PERFIL_PUBLICO_CORES=['#850277','#2563eb','#059669','#d97706','#dc2626','#0891b2'];
+let _perfilPublicoCorAtual=PERFIL_PUBLICO_CORES[0];
+let _perfilPublicoAtivo=false;
+
+function renderPerfilPublicoCores(){
+  const wrap=document.getElementById('perfil-pub-cores');
+  if(!wrap)return;
+  wrap.innerHTML=PERFIL_PUBLICO_CORES.map(cor=>{
+    const sel=cor===_perfilPublicoCorAtual;
+    return `<button type="button" onclick="selecionarCorPerfil('${cor}')" title="${cor}" style="width:28px;height:28px;border-radius:50%;background:${cor};border:2px solid ${sel?'var(--t1)':'transparent'};cursor:pointer;box-shadow:${sel?'0 0 0 2px var(--bg2)':'none'}"></button>`;
+  }).join('');
+}
+
+function selecionarCorPerfil(cor){
+  _perfilPublicoCorAtual=cor;
+  renderPerfilPublicoCores();
+}
+
+async function loadPerfilPublico(){
+  if(!_currentUser?.id)return;
+  renderPerfilPublicoCores();
+  const {data,error}=await _sb.from('perfil_publico').select('*').eq('user_id',_currentUser.id).maybeSingle();
+  if(error){console.error('loadPerfilPublico:',error);return;}
+  const bioEl=document.getElementById('perfil-pub-bio');
+  const toggle=document.getElementById('perfil-pub-toggle');
+  if(data){
+    if(bioEl)bioEl.value=data.bio||'';
+    _perfilPublicoCorAtual=data.cor_destaque||PERFIL_PUBLICO_CORES[0];
+    _perfilPublicoAtivo=!!data.ativo;
+  }else{
+    if(bioEl)bioEl.value='';
+    _perfilPublicoCorAtual=PERFIL_PUBLICO_CORES[0];
+    _perfilPublicoAtivo=false;
+  }
+  if(toggle){
+    toggle.classList.toggle('on',_perfilPublicoAtivo);
+    toggle.classList.toggle('off',!_perfilPublicoAtivo);
+  }
+  renderPerfilPublicoCores();
+  atualizarLinkPerfilPublico();
+}
+
+function atualizarLinkPerfilPublico(){
+  const row=document.getElementById('perfil-pub-link-row');
+  const link=document.getElementById('perfil-pub-link');
+  if(!row||!link||!_currentUser?.id)return;
+  if(_perfilPublicoAtivo){
+    const url=`${location.origin}/corretor-publico.html?id=${encodeURIComponent(_currentUser.id)}`;
+    link.href=url;
+    link.textContent=url;
+    row.style.display='flex';
+  }else{
+    row.style.display='none';
+  }
+}
+
+async function salvarPerfilPublico(btn){
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  const bio=(document.getElementById('perfil-pub-bio')?.value||'').trim();
+  const toggle=document.getElementById('perfil-pub-toggle');
+  const ativo=toggle?toggle.classList.contains('on'):false;
+  const meta=_currentUser?.user_metadata||{};
+  const payload={
+    user_id:_currentUser.id,
+    nome:meta.nome||'',
+    tel:meta.tel||'',
+    creci:meta.creci||'',
+    especialidade:meta.especialidade||'',
+    bio,
+    cor_destaque:_perfilPublicoCorAtual,
+    ativo,
+    updated_at:new Date().toISOString()
+  };
+  const oldText=btn.textContent;
+  btn.textContent='Salvando…';btn.disabled=true;
+  const {error}=await _sb.from('perfil_publico').upsert(payload,{onConflict:'user_id'});
+  btn.textContent=oldText;btn.disabled=false;
+  if(error){showToast('Erro ao salvar perfil público: '+error.message,'error');return;}
+  _perfilPublicoAtivo=ativo;
+  atualizarLinkPerfilPublico();
+  showToast(ativo?'Perfil público ativado!':'Perfil público salvo.','success');
+}
+
+async function copiarLinkPerfilPublico(){
+  const link=document.getElementById('perfil-pub-link');
+  if(!link||!link.href)return;
+  try{
+    await navigator.clipboard.writeText(link.href);
+    showToast('Link copiado!','success');
+  }catch(e){
+    showToast('Link: '+link.href,'success');
+  }
+}
+
 async function saveProfileConfig(btn){
   const card=btn.closest('.config-card');
   const inputs=card.querySelectorAll('.config-input,.config-select');
@@ -7238,6 +7390,10 @@ async function saveProfileConfig(btn){
     _currentUser.user_metadata=_currentUser.user_metadata||{};
     Object.assign(_currentUser.user_metadata,{nome,creci,tel,especialidade});
   }
+  // Mantém os dados denormalizados do perfil público em dia, se o
+  // corretor já tiver uma linha lá (não cria uma nova sozinho — só
+  // sincroniza a que já existe, criada em "Salvar perfil público").
+  _sb.from('perfil_publico').update({nome,tel,creci,especialidade}).eq('user_id',_currentUser?.id).then(()=>{},()=>{});
   showToast('Perfil salvo com sucesso!','success');
 }
 
