@@ -391,7 +391,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 
 /* ══════════════════════ IMOVEL MODALS ══════════════════════ */
 .imovel-detail-hero{height:180px;border-radius:var(--r);margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden}
-.imovel-detail-specs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.imovel-detail-specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(76px,1fr));gap:10px;margin-bottom:20px}
 .id-spec{background:var(--bg3);border-radius:var(--r);padding:12px;text-align:center}
 .id-spec-val{font-size:18px;font-weight:700;color:var(--t1);margin-bottom:2px}
 .id-spec-lbl{font-size:11px;color:var(--t3)}
@@ -1463,6 +1463,9 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </button>
           <button class="btn-secondary" onclick="abrirImportCSV('imoveis')" title="Importar imóveis de uma planilha CSV" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
             📥 Importar CSV
+          </button>
+          <button class="btn-secondary" onclick="abrirMeuPerfilPublicoRapido()" title="Seu perfil público com todos os imóveis, pronto pra mandar pro cliente" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--p);background:rgba(133,2,119,.12);color:var(--pl);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+            🔗 Meu Perfil Público
           </button>
           <button class="btn-add" onclick="abrirModalNovoImovel()">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -3630,6 +3633,19 @@ function escHTML(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+// Formata um valor de área isolado: se for só número (com . ou , de milhar),
+// assume m² — mas respeita o texto se o corretor já digitou a unidade (ex: "12 ha").
+function formatAreaValor(v){
+  v=String(v||'').trim();
+  if(!v)return'';
+  if(/^\d+$/.test(v))return v.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' m²';
+  return /^[\d.,]+$/.test(v)?v+' m²':v;
+}
+// im.area é salvo como "área construída / área do terreno" (ou só uma das duas)
+function formatAreaParts(raw){
+  return String(raw||'').split(' / ').map(p=>p.trim()).filter(Boolean).map(formatAreaValor);
+}
+
 // Converte um valor de preço digitado/importado (ex: "1.250.000,00", "R$ 650.000", "480000")
 // pros dígitos inteiros em reais, sem inflar o valor quando vem com centavos.
 // Convenção BR: vírgula é separador decimal, ponto é separador de milhar — então
@@ -3869,7 +3885,7 @@ async function showApp(){
     loadCidadesBR(),
     loadLeads(),loadImoveis(),loadLocacoes(),
     loadVisitas(),loadTransacoes(),loadTarefas(),loadCalEvents(),
-    loadLoteamentos(),loadMetasMensais()
+    loadLoteamentos(),loadMetasMensais(),loadPerfilPublico()
   ]);
   checkAdminAccess();
   // Update nav badges from real data
@@ -4660,7 +4676,7 @@ function renderImoveis(){
         <div class="imovel-specs">
           ${(im.quartos||0)>0?`<span class="imovel-spec"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 22V12h18v10M2 12V8a2 2 0 012-2h16a2 2 0 012 2v4"/></svg>${escHTML(String(im.quartos))} qts</span>`:''}
           <span class="imovel-spec"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 12V6a2 2 0 012-2h12a2 2 0 012 2v6M4 12v6h16v-6"/></svg>${escHTML(String(im.banheiros||1))} ban</span>
-          <span class="imovel-spec"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>${escHTML(im.area||'—')}</span>
+          <span class="imovel-spec"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>${escHTML(formatAreaParts(im.area).join(' · ')||'—')}</span>
         </div>
       </div>
       <div class="imovel-footer">
@@ -5585,7 +5601,12 @@ function openImovelDetail(idx){
     <div class="imovel-detail-specs">
       ${(im.quartos||0)>0?`<div class="id-spec"><div class="id-spec-val">${escHTML(String(im.quartos))}</div><div class="id-spec-lbl">Quartos</div></div>`:''}
       <div class="id-spec"><div class="id-spec-val">${escHTML(String(im.banheiros||1))}</div><div class="id-spec-lbl">Banheiros</div></div>
-      <div class="id-spec"><div class="id-spec-val">${escHTML(im.area||'—')}</div><div class="id-spec-lbl">Área</div></div>
+      ${(()=>{
+        const areaParts=formatAreaParts(im.area);
+        if(!areaParts.length)return`<div class="id-spec"><div class="id-spec-val">—</div><div class="id-spec-lbl">Área</div></div>`;
+        const labels=areaParts.length>1?['Área','Terreno']:['Área'];
+        return areaParts.map((v,i)=>`<div class="id-spec"><div class="id-spec-val">${escHTML(v)}</div><div class="id-spec-lbl">${labels[i]||'Área'}</div></div>`).join('');
+      })()}
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px">
       <span class="status-badge ${escHTML(im.statusClass||'status-novo')}">${escHTML(im.status||'—')}</span>
@@ -7384,6 +7405,21 @@ async function copiarLinkPerfilPublico(){
   }
 }
 
+// Acesso rápido ao perfil público a partir da página de Imóveis — se já
+// estiver ativo, abre direto; senão leva pra Configurações pra ativar.
+function abrirMeuPerfilPublicoRapido(){
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  if(_perfilPublicoAtivo){
+    window.open(`${location.origin}/corretor-publico.html?id=${encodeURIComponent(_currentUser.id)}`,'_blank');
+  }else{
+    navigate('config',document.querySelector('.nav-item[onclick*="config"]'));
+    showToast('Ative seu perfil público aqui embaixo pra gerar o link.','success');
+    setTimeout(()=>{
+      document.getElementById('perfil-pub-bio')?.scrollIntoView({behavior:'smooth',block:'center'});
+    },300);
+  }
+}
+
 async function saveProfileConfig(btn){
   const card=btn.closest('.config-card');
   const inputs=card.querySelectorAll('.config-input,.config-select');
@@ -7523,7 +7559,7 @@ function abrirComparativo(){
     {lbl:'Cidade',fn:im=>escHTML([im.cidade,im.estado].filter(Boolean).join('/')||'—')},
     {lbl:'Quartos',fn:im=>`${im.quartos||0} qts`},
     {lbl:'Banheiros',fn:im=>`${im.banheiros||1} ban`},
-    {lbl:'Área',fn:im=>escHTML(im.area||'—')},
+    {lbl:'Área',fn:im=>escHTML(formatAreaParts(im.area).join(' · ')||'—')},
     {lbl:'Status',fn:im=>`<span class="pmt-badge pmt-${(im.status||'').toLowerCase().replace(' ','-')}">${escHTML(im.status||'—')}</span>`},
     {lbl:'Corretor',fn:im=>escHTML(im.corretor||'—')},
     {lbl:'Link',fn:im=>im.url_site?`<a href="${escHTML(im.url_site)}" target="_blank" class="link-btn" style="color:#22c55e">🌐 Ver</a>`:'—'},
@@ -7611,7 +7647,7 @@ function gerarPropostaPDF(imId){
     <div class="specs">
       ${(im.quartos||0)>0?`<div class="spec"><div class="spec-val">${im.quartos}</div><div class="spec-lbl">Quartos</div></div>`:''}
       ${(im.banheiros||0)>0?`<div class="spec"><div class="spec-val">${im.banheiros}</div><div class="spec-lbl">Banheiros</div></div>`:''}
-      ${im.area?`<div class="spec"><div class="spec-val">${escHTML(im.area)}</div><div class="spec-lbl">Área</div></div>`:''}
+      ${im.area?`<div class="spec"><div class="spec-val">${escHTML(formatAreaParts(im.area).join(' · '))}</div><div class="spec-lbl">Área</div></div>`:''}
     </div>
   </div>
   ${financiado>0?`
