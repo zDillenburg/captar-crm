@@ -176,7 +176,8 @@ async function load(){
           <a class="im-card" href="imovel-publico.html?id=${encodeURIComponent(im.id)}">
             <div class="im-card-img" style="background:${escHtml(im.grad || 'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
               ${im.status ? `<span class="im-card-status">${escHtml(im.status)}</span>` : ''}
-              ${Array.isArray(im.fotos) && im.fotos.length ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" onerror="this.remove()"/>` : escHtml(im.emoji || '🏠')}
+              ${escHtml(im.emoji || '🏠')}
+              ${Array.isArray(im.fotos) && im.fotos.length ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" onerror="this.remove()"/>` : ''}
             </div>
             <div class="im-card-body">
               <div class="im-card-price">${escHtml(im.preco || 'Sob consulta')}</div>
