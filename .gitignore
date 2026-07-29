@@ -10,6 +10,7 @@ supabase-features-carte-blanche.sql
 supabase-fix-rpc-anon-exec.sql
 supabase-imovel-publico-stats.sql
 supabase-imovel-descricao.sql
+supabase-imovel-corretor-tel.sql
 .claude/
 .DS_Store
 *.env

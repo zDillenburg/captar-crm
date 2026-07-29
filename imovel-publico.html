@@ -22,8 +22,7 @@
   a{color:inherit}
   header{display:flex;align-items:center;justify-content:center;padding:20px;border-bottom:1px solid var(--border)}
   header a{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
-  header svg{width:26px;height:26px;color:var(--t1)}
-  header span{font-size:16px;font-weight:800;letter-spacing:-.01em}
+  header img{height:32px;width:auto}
   main{flex:1;display:flex;justify-content:center;padding:32px 16px 64px}
   .wrap{width:100%;max-width:640px}
 
@@ -70,8 +69,7 @@
 
   <header>
     <a href="index.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-      <span>GRUPO CAPTAR</span>
+      <img src="logo.svg" alt="Grupo Captar"/>
     </a>
   </header>
 
@@ -96,6 +94,15 @@ const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 function escHtml(s){
   if(s==null)return'';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Monta o número com DDI 55 pro wa.me, sem duplicar quando o telefone já
+// foi salvo com o código do país. BR local = 10-11 dígitos; com DDI = 12-13.
+function waPhoneBR(tel){
+  let d=String(tel||'').replace(/\D/g,'');
+  if(!d)return'';
+  if((d.length===12||d.length===13)&&d.startsWith('55')) d=d.slice(2);
+  return '55'+d;
 }
 
 function renderState(iconPath, msg){
@@ -125,6 +132,7 @@ async function load(){
 
   const featuresList = (im.features || '').split(',').map(f => f.trim()).filter(Boolean);
   const waText = encodeURIComponent(`Olá! Tenho interesse no imóvel "${im.titulo || ''}" que vi no link do Grupo Captar.`);
+  const corretorWaPhone = waPhoneBR(im.corretor_tel || '');
 
   document.getElementById('content').innerHTML = `
     <div class="hero" style="background:${escHtml(im.grad || 'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
@@ -147,11 +155,15 @@ async function load(){
       <div class="section-label">Diferenciais</div>
       <ul class="features">${featuresList.map(f => `<li>${escHtml(f)}</li>`).join('')}</ul>
     ` : ''}
-    <a class="cta" href="https://wa.me/5554996473047?text=${waText}" target="_blank" rel="noopener noreferrer" onclick="registrarCliqueWhatsapp('${escHtml(String(id))}')">
+    ${corretorWaPhone ? `
+    <a class="cta" href="https://wa.me/${corretorWaPhone}?text=${waText}" target="_blank" rel="noopener noreferrer" onclick="registrarCliqueWhatsapp('${escHtml(String(id))}')">
       <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>
       Falar sobre este imóvel
     </a>
     <p class="disclaimer">Anúncio compartilhado por um corretor parceiro do Grupo Captar. Fale direto pelo WhatsApp pra mais fotos, condições e visita.</p>
+    ` : `
+    <p class="disclaimer">Esse corretor ainda não configurou um WhatsApp de contato pra esse anúncio.</p>
+    `}
   `;
 }
 

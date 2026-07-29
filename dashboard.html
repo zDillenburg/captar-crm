@@ -5540,6 +5540,7 @@ const IMOVEIS_EXTRA=[]; // tracks added properties
 function openImovelDetail(idx){
   const im=IMOVEIS[idx];
   if(!im)return;
+  const corretorTel=(_currentUser?.user_metadata?.tel||'').trim();
   document.getElementById('imovel-detail-title').textContent=im.titulo;
   document.getElementById('imovel-detail-body').innerHTML=`
     <div class="imovel-detail-hero" style="background:${escHTML(im.grad||'linear-gradient(135deg,#1e3a5f,#1e40af)')}">${escHTML(im.emoji||'🏠')}</div>
@@ -5565,10 +5566,13 @@ function openImovelDetail(idx){
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>
         Excluir
       </button>
-      <a href="https://wa.me/5554996473047?text=Tenho%20interesse%20no%20im%C3%B3vel%20${encodeURIComponent(im.titulo)}" target="_blank" class="btn-submit" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;flex:1;justify-content:center">
+      ${corretorTel?`<a href="https://wa.me/${escHTML(waPhoneBR(corretorTel))}?text=${encodeURIComponent('Tenho interesse no imóvel '+(im.titulo||''))}" target="_blank" class="btn-submit" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;flex:1;justify-content:center">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51z"/></svg>
         WhatsApp
-      </a>
+      </a>`:`<button class="btn-cancel" disabled title="Configure seu WhatsApp em Configurações pra ativar este botão" style="display:inline-flex;align-items:center;gap:8px;flex:1;justify-content:center;opacity:.5;cursor:not-allowed">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51z"/></svg>
+        WhatsApp
+      </button>`}
       <button class="btn-cancel" id="btn-share-imovel" onclick="toggleImovelPublico('${escHTML(String(im.id))}')" style="display:inline-flex;align-items:center;gap:6px${im.publico?';color:#22c55e;border-color:rgba(34,197,94,.3)':''}">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         ${im.publico?'Compartilhado ✓':'Compartilhar'}
@@ -5755,7 +5759,8 @@ async function addImovel(){
     url_site:(document.getElementById('im-url-site')?.value||'').trim(),
     tipo,
     features,
-    descricao:document.getElementById('im-descricao')?.value.trim()||''
+    descricao:document.getElementById('im-descricao')?.value.trim()||'',
+    corretor_tel:(_currentUser?.user_metadata?.tel||'').trim()
   };
   if(_editingImovelId){
     // UPDATE mode
