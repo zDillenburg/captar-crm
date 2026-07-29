@@ -887,6 +887,14 @@ body.light-mode .ai-chat-empty{background:linear-gradient(160deg,rgba(133,2,119,
 .ai-msg-user{background:linear-gradient(135deg,var(--pl),var(--p));color:#fff;border-bottom-right-radius:4px}
 .ai-msg-assistant{background:var(--bg3);color:var(--t1);border:1px solid var(--border);border-bottom-left-radius:4px}
 .ai-msg-error{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.ai-msg-action{background:rgba(133,2,119,.1);color:var(--t1);border:1px solid rgba(133,2,119,.3)}
+.ai-msg-action-done{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.3)}
+.ai-msg-action-cancelled{background:var(--bg3);color:var(--t3);border:1px solid var(--border)}
+.ai-action-buttons{display:flex;gap:8px;margin-top:10px}
+.ai-action-confirm{padding:7px 14px;border-radius:8px;border:none;background:var(--p);color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s}
+.ai-action-confirm:hover{background:var(--pl)}
+.ai-action-cancel{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--t2);font-size:12px;font-weight:600;cursor:pointer}
+.ai-action-cancel:hover{color:var(--t1)}
 .ai-chat-typing{display:flex;align-items:center;gap:8px;padding:4px 0 10px}
 .typing-dots{display:inline-flex;gap:3px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:9px 12px}
 .typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--t3);animation:captarIaDot 1.2s ease-in-out infinite}
@@ -9524,7 +9532,8 @@ function renderAiChatLog(){
     const chipsHtml=sugestoes.map(s=>`<button type="button" class="ai-suggestion-chip" onclick="usarSugestaoChat(this,${JSON.stringify(s)})">${escHTML(s)}</button>`).join('');
     html=`<div class="ai-chat-empty"><div class="captar-ia-orb">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-chat-empty-title">Como posso ajudar hoje?</div><p>Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia com a <strong>Captar IA</strong>. 👋</p><div class="ai-suggestion-chips">${chipsHtml}</div></div>`;
   }else{
-    html=AI_CHAT_MESSAGES.map(m=>{
+    html=AI_CHAT_MESSAGES.map((m,idx)=>{
+      if(m._action)return renderAcaoIABubble(m,idx);
       const cls=m._error?'ai-msg-error':(m.role==='user'?'ai-msg-user':'ai-msg-assistant');
       const avatar=m.role==='assistant'?`<div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div>`:'';
       const body=(m.role==='assistant'&&!m._error)?formatAiMarkdown(m.content):escHTML(m.content);
@@ -9532,6 +9541,60 @@ function renderAiChatLog(){
     }).join('');
   }
   logs.forEach(log=>{log.innerHTML=html;log.scrollTop=log.scrollHeight;});
+}
+
+// A IA pode sugerir ações no CRM (hoje: mover lead de etapa) via function
+// calling do Gemini — mas nunca aplica sozinha. Só executa de fato quando o
+// corretor clica "Confirmar" aqui.
+function renderAcaoIABubble(m,idx){
+  const orb=`<div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div>`;
+  const a=m._action;
+  if(a.name!=='mover_lead_estagio'){
+    return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-error">Ação não reconhecida.</div></div>`;
+  }
+  const lead=LEADS_DATA.find(l=>String(l.id)===String(a.args.lead_id));
+  const col=COLUMNS.find(c=>c.key===a.args.novo_estagio);
+  if(!lead||!col){
+    return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-error">Não encontrei esse lead ou etapa pra mover — tente pedir de novo especificando o nome do lead.</div></div>`;
+  }
+  if(a.status==='done'){
+    return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-done">✅ <strong>${escHTML(lead.nome)}</strong> movido para <strong>${escHTML(col.label)}</strong>.</div></div>`;
+  }
+  if(a.status==='cancelled'){
+    return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-cancelled">Ação cancelada.</div></div>`;
+  }
+  return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action">
+    🤖 Sugestão: mover <strong>${escHTML(lead.nome)}</strong> para <strong>${escHTML(col.label)}</strong>
+    <div class="ai-action-buttons">
+      <button class="ai-action-confirm" onclick="confirmarAcaoIA(${idx})">Confirmar</button>
+      <button class="ai-action-cancel" onclick="cancelarAcaoIA(${idx})">Cancelar</button>
+    </div>
+  </div></div>`;
+}
+
+async function confirmarAcaoIA(idx){
+  const m=AI_CHAT_MESSAGES[idx];
+  if(!m||!m._action||m._action.status!=='pending')return;
+  const a=m._action;
+  if(a.name==='mover_lead_estagio'){
+    const lead=LEADS_DATA.find(l=>String(l.id)===String(a.args.lead_id));
+    const col=COLUMNS.find(c=>c.key===a.args.novo_estagio);
+    if(!lead||!col){renderAiChatLog();return;}
+    const {error}=await _sb.from('leads').update({coluna:a.args.novo_estagio}).eq('id',lead.id);
+    if(error){showToast('Erro ao mover lead: '+error.message,'error');return;}
+    lead.coluna=a.args.novo_estagio;
+    a.status='done';
+    renderAiChatLog();
+    if(document.getElementById('page-crm')?.classList.contains('active')){inited['crm']=false;renderKanban();}
+    showToast(`${lead.nome} movido para ${col.label}`,'success');
+  }
+}
+
+function cancelarAcaoIA(idx){
+  const m=AI_CHAT_MESSAGES[idx];
+  if(!m||!m._action)return;
+  m._action.status='cancelled';
+  renderAiChatLog();
 }
 
 async function refreshAiUsageDisplay(kind){
@@ -9572,6 +9635,16 @@ Imóveis por status: ${porStatusIm} — total ${IMOVEIS.length}
 Visitas agendadas: ${visitasAgendadas}
 Locações inadimplentes: ${locInadimplentes}
 [FIM DO RESUMO]`;
+}
+
+function buildAiLeadsContext(){
+  const ativos=LEADS_DATA.filter(l=>l.coluna!=='fechado'&&l.coluna!=='perdido').slice(0,60);
+  if(!ativos.length)return'';
+  const linhas=ativos.map(l=>{
+    const obs=(l.obs||'').replace(/[|\n\r]/g,' ').slice(0,60);
+    return `${l.id}|${l.nome||'—'}|${l.tipo||'—'}|${l.valor||'—'}|${l.coluna}|${l.dias||0}|${obs}`;
+  });
+  return `\n\n[LEADS ATIVOS] (formato: id|nome|tipo|valor|etapa|dias_sem_contato|obs)\n${linhas.join('\n')}\n[FIM DOS LEADS]`;
 }
 
 function chipClickFeedback(chipEl){
@@ -9616,7 +9689,7 @@ async function sendAiChat(scope){
     const resp=await fetch('/api/ai-chat',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({messages:AI_CHAT_MESSAGES,crmContext:buildAiCrmContext()}),
+      body:JSON.stringify({messages:AI_CHAT_MESSAGES,crmContext:buildAiCrmContext()+buildAiLeadsContext()}),
       signal:controller.signal
     });
     clearTimeout(timeoutId);
@@ -9632,16 +9705,21 @@ async function sendAiChat(scope){
 
     if(data.usage)setAiUsageFromResponse('chat',data.usage);
 
-    if(!data.reply){
+    if(!data.reply&&!data.functionCall){
       const msg=data.blocked?'A IA não pôde responder por política de segurança de conteúdo. Tente reformular.':'A IA não retornou uma resposta. Tente novamente.';
       AI_CHAT_MESSAGES.push({role:'assistant',content:msg});
       renderAiChatLog();
       return;
     }
 
-    AI_CHAT_MESSAGES.push({role:'assistant',content:data.reply});
+    if(data.reply){
+      AI_CHAT_MESSAGES.push({role:'assistant',content:data.reply});
+      persistAiMessage('assistant',data.reply,'chat');
+    }
+    if(data.functionCall){
+      AI_CHAT_MESSAGES.push({role:'assistant',content:'',_action:{name:data.functionCall.name,args:data.functionCall.args||{},status:'pending'}});
+    }
     renderAiChatLog();
-    persistAiMessage('assistant',data.reply,'chat');
   }catch(e){
     clearTimeout(timeoutId);
     const msg=e.name==='AbortError'?'A IA demorou demais para responder. Tente novamente.':'Erro de conexão com a IA. Tente novamente.';
