@@ -3320,6 +3320,13 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         <input class="form-input" id="im-features" type="text" placeholder="Ex: Piscina, Nascente, Pomar, Galpão, Energia solar…"/>
       </div>
       <div class="full form-group">
+        <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span>Descrição / Anúncio</span>
+          <button type="button" class="link-btn" id="btn-gerar-descricao-ia" style="font-size:11px" onclick="gerarDescricaoImovelIA()">✨ Gerar com IA</button>
+        </label>
+        <textarea class="form-input" id="im-descricao" rows="4" placeholder="Descrição do imóvel para anúncios — preencha os campos acima e clique em &quot;Gerar com IA&quot;, ou escreva a sua."></textarea>
+      </div>
+      <div class="full form-group">
         <label class="form-label">Corretor Responsável</label>
         <select class="form-input" id="im-corretor">
           <option value="">Selecione um corretor…</option>
@@ -5512,8 +5519,8 @@ function openImovelDetail(idx){
     <div style="display:flex;gap:10px;margin-bottom:16px">
       <span class="status-badge ${escHTML(im.statusClass||'status-novo')}">${escHTML(im.status||'—')}</span>
     </div>
-    <div style="font-size:13px;color:var(--t3);line-height:1.7;margin-bottom:20px">
-      Imóvel em excelente localização, com infraestrutura completa. Ideal para famílias ou investidores. Documentação regularizada e pronto para financiamento.
+    <div style="font-size:13px;color:var(--t3);line-height:1.7;margin-bottom:20px;white-space:pre-wrap">
+      ${escHTML(im.descricao||'Imóvel em excelente localização, com infraestrutura completa. Ideal para famílias ou investidores. Documentação regularizada e pronto para financiamento.')}
     </div>
     <div class="modal-actions" style="padding:0;flex-wrap:wrap;gap:8px">
       <button class="btn-cancel" onclick="editarImovel('${escHTML(String(im.id))}');document.getElementById('modal-imovel-detail').classList.remove('open')" style="display:inline-flex;align-items:center;gap:6px">
@@ -5569,6 +5576,62 @@ async function toggleImovelPublico(id){
   }
 }
 
+async function gerarDescricaoImovelIA(){
+  const btn=document.getElementById('btn-gerar-descricao-ia');
+  const titulo=document.getElementById('im-titulo').value.trim();
+  if(!titulo){showToast('Preencha ao menos o título antes de gerar a descrição.','error');return;}
+  const tipo=document.getElementById('im-tipo').value;
+  const cidade=document.getElementById('im-cidade').value.trim();
+  const estado=document.getElementById('im-estado').value;
+  const endereco=document.getElementById('im-endereco').value.trim();
+  const preco=document.getElementById('im-preco').value.trim();
+  const area=document.getElementById('im-area').value.trim();
+  const areaTotal=document.getElementById('im-area-total').value.trim();
+  const quartos=document.getElementById('im-quartos').value.trim();
+  const banheiros=document.getElementById('im-banheiros').value.trim();
+  const features=document.getElementById('im-features').value.trim();
+
+  const detalhes=[
+    `Título: ${titulo}`,
+    tipo?`Tipo: ${tipo}`:'',
+    (cidade||estado)?`Local: ${[cidade,estado].filter(Boolean).join(', ')}`:'',
+    endereco?`Endereço: ${endereco}`:'',
+    preco?`Preço: R$ ${preco}`:'',
+    quartos?`Quartos: ${quartos}`:'',
+    banheiros?`Banheiros: ${banheiros}`:'',
+    area?`Área construída: ${area}`:'',
+    areaTotal?`Área total/terreno: ${areaTotal}`:'',
+    features?`Diferenciais: ${features}`:''
+  ].filter(Boolean).join('\n');
+
+  const prompt=`Escreva uma descrição de anúncio pra este imóvel, pronta pra publicar num portal imobiliário. Use SOMENTE as informações abaixo — não invente nenhum dado que não esteja listado (nem endereço exato, nem características extras). Texto corrido, em português, 3 a 5 frases, tom vendedor mas sem exagero. IMPORTANTE: responda só com o texto puro da descrição, sem markdown (sem **, sem listas com "-", sem títulos), sem nenhuma frase antes ou depois explicando o que você fez.\n\n${detalhes}`;
+
+  const token=await getAiAccessToken();
+  if(!token){showToast('Sessão expirada, faça login novamente.','error');return;}
+
+  if(btn){btn.disabled=true;btn.textContent='✨ Gerando…';}
+  const controller=new AbortController();
+  const timeoutId=setTimeout(()=>controller.abort(),28000);
+  try{
+    const resp=await fetch('/api/ai-chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+      body:JSON.stringify({messages:[{role:'user',content:prompt}]}),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    const data=await resp.json().catch(()=>({}));
+    if(!resp.ok){showToast(aiErrorMessage(resp.status,data),'error');return;}
+    if(!data.reply){showToast('A IA não conseguiu gerar a descrição agora. Tente de novo.','error');return;}
+    document.getElementById('im-descricao').value=data.reply.trim();
+    if(data.usage)setAiUsageFromResponse('chat',data.usage);
+  }catch(e){
+    showToast('Erro de conexão ao gerar descrição.','error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='✨ Gerar com IA';}
+  }
+}
+
 async function addImovel(){
   const titulo=document.getElementById('im-titulo').value.trim();
   if(!titulo){showToast('Informe o título do imóvel','error');return;}
@@ -5617,7 +5680,8 @@ async function addImovel(){
     corretor:document.getElementById('im-corretor')?.value||'',
     url_site:(document.getElementById('im-url-site')?.value||'').trim(),
     tipo,
-    features
+    features,
+    descricao:document.getElementById('im-descricao')?.value.trim()||''
   };
   if(_editingImovelId){
     // UPDATE mode
@@ -5643,7 +5707,7 @@ async function addImovel(){
   document.getElementById('modal-imovel-add').classList.remove('open');
   document.getElementById('imovel-add-title').textContent='Adicionar Imóvel';
   document.getElementById('imovel-add-btn').textContent='Adicionar Imóvel';
-  ['im-titulo','im-cidade','im-endereco','im-preco','im-area','im-area-total','im-features','im-corretor','im-url-site'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['im-titulo','im-cidade','im-endereco','im-preco','im-area','im-area-total','im-features','im-corretor','im-url-site','im-descricao'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
 }
 
 // ─────────────────────────────────────────
@@ -5660,6 +5724,7 @@ function editarImovel(id){
   setVal('im-corretor',im.corretor);
   setVal('im-url-site',im.url_site);
   setVal('im-features',im.features);
+  setVal('im-descricao',im.descricao);
   const tipoSel=document.getElementById('im-tipo');
   if(tipoSel&&im.tipo)tipoSel.value=im.tipo;
   // Parse endereco back — best-effort

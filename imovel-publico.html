@@ -40,6 +40,7 @@
   .address svg{width:13px;height:13px;flex-shrink:0}
 
   .specs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+  .description{font-size:13.5px;color:var(--t2);line-height:1.7;margin-bottom:24px;white-space:pre-wrap}
   .spec{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center}
   .spec-val{font-size:17px;font-weight:800;margin-bottom:2px}
   .spec-lbl{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
@@ -120,7 +121,7 @@ async function load(){
   }
 
   document.title = `${im.titulo || 'Imóvel'} — Grupo Captar`;
-  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'view' }).catch(() => {});
+  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'view' }).then(() => {}, () => {});
 
   const featuresList = (im.features || '').split(',').map(f => f.trim()).filter(Boolean);
   const waText = encodeURIComponent(`Olá! Tenho interesse no imóvel "${im.titulo || ''}" que vi no link do Grupo Captar.`);
@@ -141,6 +142,7 @@ async function load(){
       <div class="spec"><div class="spec-val">${escHtml(String(im.banheiros || 1))}</div><div class="spec-lbl">Banheiros</div></div>
       <div class="spec"><div class="spec-val">${escHtml(im.area || '—')}</div><div class="spec-lbl">Área</div></div>
     </div>
+    ${im.descricao ? `<p class="description">${escHtml(im.descricao)}</p>` : ''}
     ${featuresList.length ? `
       <div class="section-label">Diferenciais</div>
       <ul class="features">${featuresList.map(f => `<li>${escHtml(f)}</li>`).join('')}</ul>
@@ -154,7 +156,7 @@ async function load(){
 }
 
 function registrarCliqueWhatsapp(id){
-  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'whatsapp' }).catch(() => {});
+  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'whatsapp' }).then(() => {}, () => {});
 }
 
 load();
