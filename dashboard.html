@@ -1456,7 +1456,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <button class="btn-secondary" onclick="abrirImportCSV('imoveis')" title="Importar imóveis de uma planilha CSV" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
             📥 Importar CSV
           </button>
-          <button class="btn-add" onclick="document.getElementById('modal-imovel-add').classList.add('open')">
+          <button class="btn-add" onclick="abrirModalNovoImovel()">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Adicionar Imóvel
           </button>
@@ -3235,7 +3235,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
   <div class="modal" style="max-width:500px">
     <div class="modal-header">
       <span class="modal-title" id="imovel-add-title">Adicionar Imóvel</span>
-      <button class="modal-close" onclick="document.getElementById('modal-imovel-add').classList.remove('open');_editingImovelId=null">
+      <button class="modal-close" onclick="fecharModalImovel()">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -3338,7 +3338,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="document.getElementById('modal-imovel-add').classList.remove('open');_editingImovelId=null">Cancelar</button>
+      <button class="btn-cancel" onclick="fecharModalImovel()">Cancelar</button>
       <button class="btn-submit" id="imovel-add-btn" onclick="addImovel()">Adicionar Imóvel</button>
     </div>
   </div>
@@ -3589,6 +3589,26 @@ function parseLocalDate(dateStr){
 function escHTML(s){
   if(s==null)return'';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Converte um valor de preço digitado/importado (ex: "1.250.000,00", "R$ 650.000", "480000")
+// pros dígitos inteiros em reais, sem inflar o valor quando vem com centavos.
+// Convenção BR: vírgula é separador decimal, ponto é separador de milhar — então
+// tudo depois da ÚLTIMA vírgula é descartado (centavos) antes de tirar os pontos.
+function parsePrecoInput(v){
+  v=String(v||'').trim();
+  const commaIdx=v.lastIndexOf(',');
+  if(commaIdx>-1) v=v.slice(0,commaIdx);
+  return v.replace(/[^\d]/g,'');
+}
+
+// Monta o número completo (com DDI 55) pra link do wa.me, sem duplicar o
+// 55 quando o telefone já foi digitado/importado com o código do país.
+// Número BR local = 10-11 dígitos (DDD+numero); com DDI = 12-13.
+function waPhoneBR(tel){
+  let d=String(tel||'').replace(/\D/g,'');
+  if((d.length===12||d.length===13)&&d.startsWith('55')) d=d.slice(2);
+  return '55'+d;
 }
 
 // Mostra o atalho de busca (⌘K/Ctrl+K) só em quem tem teclado físico de
@@ -4477,7 +4497,7 @@ function cardHTML(l){
         <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
         ${escHTML(l.origem||'—')}
       </span>
-      ${l.tel?`<button class="card-wa-btn" title="Chamar no WhatsApp" style="color:#25d366" onclick="event.stopPropagation();window.open('https://wa.me/55${escHTML((l.tel||'').replace(/\D/g,''))}?text=${encodeURIComponent('Olá, '+(l.nome||'')+'! Aqui é da Grupo Captar, sobre seu interesse em '+(l.tipo||'imóvel')+'.')}','_blank')">
+      ${(l.tel||'').replace(/\D/g,'')?`<button class="card-wa-btn" title="Chamar no WhatsApp" style="color:#25d366" onclick="event.stopPropagation();window.open('https://wa.me/${escHTML(waPhoneBR(l.tel))}?text=${encodeURIComponent('Olá, '+(l.nome||'')+'! Aqui é da Grupo Captar, sobre seu interesse em '+(l.tipo||'imóvel')+'.')}','_blank')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413z"/></svg>
       </button>`:''}
     </div>
@@ -4576,7 +4596,7 @@ function setLeadFilter(source,btn){
 function renderImoveis(){
   const grid=document.getElementById('imoveis-grid');
   if(!IMOVEIS.length){
-    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--t3)"><div style="font-size:40px;margin-bottom:16px">🏠</div><div style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--t2)">Nenhum imóvel cadastrado</div><div style="font-size:12px;margin-bottom:20px">Adicione seu primeiro imóvel ao portfólio.</div><button class="btn-add" onclick="document.getElementById('modal-imovel-add').classList.add('open')">+ Adicionar Imóvel</button></div>`;
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--t3)"><div style="font-size:40px;margin-bottom:16px">🏠</div><div style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--t2)">Nenhum imóvel cadastrado</div><div style="font-size:12px;margin-bottom:20px">Adicione seu primeiro imóvel ao portfólio.</div><button class="btn-add" onclick="abrirModalNovoImovel()">+ Adicionar Imóvel</button></div>`;
     return;
   }
   const _statusMapIm={'Ativo':'status-novo','Captado':'status-negociacao','Negociação':'status-contato','Vendido':'status-fechado'};
@@ -5576,6 +5596,28 @@ async function toggleImovelPublico(id){
   }
 }
 
+function resetImovelForm(){
+  _editingImovelId=null;
+  ['im-titulo','im-cidade','im-endereco','im-preco','im-area','im-area-total','im-features','im-corretor','im-url-site','im-descricao'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const tipoSel=document.getElementById('im-tipo');if(tipoSel)tipoSel.selectedIndex=0;
+  const statusSel=document.getElementById('im-status');if(statusSel)statusSel.value='Ativo';
+  const estadoSel=document.getElementById('im-estado');if(estadoSel)estadoSel.value='RS';
+  const qEl=document.getElementById('im-quartos');if(qEl)qEl.value='';
+  const bEl=document.getElementById('im-banheiros');if(bEl)bEl.value='';
+  document.getElementById('imovel-add-title').textContent='Adicionar Imóvel';
+  document.getElementById('imovel-add-btn').textContent='Adicionar Imóvel';
+}
+
+function abrirModalNovoImovel(){
+  resetImovelForm();
+  document.getElementById('modal-imovel-add').classList.add('open');
+}
+
+function fecharModalImovel(){
+  document.getElementById('modal-imovel-add').classList.remove('open');
+  resetImovelForm();
+}
+
 async function gerarDescricaoImovelIA(){
   const btn=document.getElementById('btn-gerar-descricao-ia');
   const titulo=document.getElementById('im-titulo').value.trim();
@@ -5669,7 +5711,7 @@ async function addImovel(){
     user_id:_currentUser?.id,
     titulo,
     endereco:endFull||'Localização a definir',
-    preco:'R$ '+(document.getElementById('im-preco').value||'0').replace(/[^\d]/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.'),
+    preco:'R$ '+(parsePrecoInput(document.getElementById('im-preco').value)||'0').replace(/\B(?=(\d{3})+(?!\d))/g,'.'),
     quartos:parseInt(document.getElementById('im-quartos').value)||0,
     banheiros:parseInt(document.getElementById('im-banheiros').value)||1,
     area:areaDisplay,
@@ -5705,9 +5747,7 @@ async function addImovel(){
   inited['imoveis']=false;
   renderImoveis();
   document.getElementById('modal-imovel-add').classList.remove('open');
-  document.getElementById('imovel-add-title').textContent='Adicionar Imóvel';
-  document.getElementById('imovel-add-btn').textContent='Adicionar Imóvel';
-  ['im-titulo','im-cidade','im-endereco','im-preco','im-area','im-area-total','im-features','im-corretor','im-url-site','im-descricao'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  resetImovelForm();
 }
 
 // ─────────────────────────────────────────
@@ -8431,13 +8471,14 @@ function handleCsvFileSelect(evt){
 
       _csvImportRows=mapped;
       const warnEl=document.getElementById('import-csv-warnings');
+      const avisos=[];
       if(rows.length-1>CSV_IMPORT_MAX_ROWS){
-        warnEl.textContent=`Arquivo tem mais de ${CSV_IMPORT_MAX_ROWS} linhas — só as primeiras ${CSV_IMPORT_MAX_ROWS} serão importadas.`;
-      }else if(invalid.length){
-        warnEl.textContent=`${invalid.length} linha(s) ignorada(s) por falta de campo obrigatório: linha(s) ${invalid.slice(0,10).join(', ')}${invalid.length>10?'…':''}.`;
-      }else{
-        warnEl.textContent='';
+        avisos.push(`Arquivo tem mais de ${CSV_IMPORT_MAX_ROWS} linhas — só as primeiras ${CSV_IMPORT_MAX_ROWS} serão consideradas.`);
       }
+      if(invalid.length){
+        avisos.push(`${invalid.length} linha(s) ignorada(s) por falta de campo obrigatório: linha(s) ${invalid.slice(0,10).join(', ')}${invalid.length>10?'…':''}.`);
+      }
+      warnEl.textContent=avisos.join(' ');
 
       document.getElementById('import-csv-count').textContent=String(mapped.length);
       const previewCols=schema.fields.filter(f=>colIndex[f.key]!==undefined);
@@ -8488,7 +8529,7 @@ async function confirmarImportCSV(){
       const defaultGrad='linear-gradient(135deg,#1e3a5f,#1e40af)';
       const statusMap={'Ativo':'status-novo','Captado':'status-negociacao','Negociação':'status-contato','Vendido':'status-fechado'};
       const payload=_csvImportRows.map(r=>{
-        const precoNum=(r.preco||'0').replace(/[^\d]/g,'');
+        const precoNum=parsePrecoInput(r.preco);
         const status=r.status||'Ativo';
         return{
           user_id:_currentUser?.id,
