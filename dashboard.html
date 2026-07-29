@@ -4623,7 +4623,7 @@ function renderImoveis(){
   grid.innerHTML=IMOVEIS.map(im=>`
     <div class="imovel-card">
       <div class="imovel-img" style="background:${escHTML(im.grad||'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
-        <div class="imovel-img-placeholder">${(Array.isArray(im.fotos)&&im.fotos.length)?`<img src="${escHTML(imovelFotoPublicUrl(im.fotos[0]))}" style="width:100%;height:100%;object-fit:cover" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:${JSON.stringify(im.emoji||'🏠')}}))"/>`:escHTML(im.emoji||'🏠')}</div>
+        <div class="imovel-img-placeholder">${(Array.isArray(im.fotos)&&im.fotos.length)?`<img src="${escHTML(imovelFotoPublicUrl(im.fotos[0]))}" data-fallback-emoji="${escHTML(im.emoji||'🏠')}" style="width:100%;height:100%;object-fit:cover" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.dataset.fallbackEmoji}))"/>`:escHTML(im.emoji||'🏠')}</div>
         <span class="imovel-status-badge ${escHTML(im.statusClass||_statusMapIm[im.status]||'status-novo')}">${escHTML(im.status||'—')}</span>
         <button class="imovel-fav">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
