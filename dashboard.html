@@ -5581,6 +5581,24 @@ function openImovelDetail(idx){
   document.getElementById('modal-imovel-detail').classList.add('open');
 }
 
+// Garante que o imóvel esteja marcado como público (ativando se ainda não
+// estiver) e devolve o link real da página pública — usado pelos atalhos
+// de "Copiar link"/QR Code, que devem sempre apontar pro link que
+// funciona de verdade, nunca pro dashboard (que exige login).
+async function garantirLinkPublico(id){
+  const im=IMOVEIS.find(i=>String(i.id)===String(id));
+  if(!im){showToast('Imóvel não encontrado','error');return null;}
+  if(!im.publico){
+    const {error}=await _sb.from('imoveis').update({publico:true}).eq('id',id);
+    if(error){showToast('Erro ao gerar link público: '+error.message,'error');return null;}
+    [IMOVEIS,IMOVEIS_EXTRA].forEach(arr=>{
+      const rec=arr.find(i=>String(i.id)===String(id));
+      if(rec)rec.publico=true;
+    });
+  }
+  return `${location.origin}/imovel-publico.html?id=${encodeURIComponent(id)}`;
+}
+
 async function toggleImovelPublico(id){
   const im=IMOVEIS.find(i=>String(i.id)===String(id));
   if(!im)return;
@@ -6173,13 +6191,15 @@ renderImoveis=function(){
     if(!footer.querySelector('.imovel-copy-btn')){
       const copyBtn=document.createElement('button');
       copyBtn.className='imovel-btn imovel-copy-btn';
-      copyBtn.title='Copiar link do imóvel';
+      copyBtn.title='Copiar link público do imóvel (ativa o compartilhamento se ainda não estiver)';
       copyBtn.textContent='📋 Copiar link';
-      copyBtn.onclick=(e)=>{
+      copyBtn.onclick=async(e)=>{
         e.stopPropagation();
         const im=IMOVEIS[i];
-        const url=`${location.origin}${location.pathname}?imovel=${encodeURIComponent(im?im.titulo:'imovel')}`;
-        navigator.clipboard.writeText(url).then(()=>showToast('Link copiado!','success')).catch(()=>showToast('Link: '+url,'success'));
+        if(!im)return;
+        const url=await garantirLinkPublico(im.id);
+        if(!url)return;
+        navigator.clipboard.writeText(url).then(()=>showToast('Link público copiado!','success')).catch(()=>showToast('Link: '+url,'success'));
       };
       footer.appendChild(copyBtn);
     }
@@ -7165,10 +7185,13 @@ if('serviceWorker' in navigator){
 let _qrInstance=null;
 let _qrUrl='';
 
-function abrirQrCode(imId){
+async function abrirQrCode(imId){
   const im=IMOVEIS.find(x=>String(x.id)===String(imId));
   if(!im){showToast('Imóvel não encontrado','error');return;}
-  const url=im.url_site||`https://grupocaptar.com.br/imovel/${imId}`;
+  // Se o corretor não cadastrou um link externo próprio (url_site), usa o
+  // link público de verdade da página do imóvel — nunca um link fantasma.
+  const url=im.url_site||await garantirLinkPublico(imId);
+  if(!url)return;
   _qrUrl=url;
   document.getElementById('qr-imovel-nome').textContent=im.titulo||'Imóvel';
   document.getElementById('qr-url-display').textContent=url;
