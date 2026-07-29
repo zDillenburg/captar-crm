@@ -11,6 +11,7 @@ supabase-fix-rpc-anon-exec.sql
 supabase-imovel-publico-stats.sql
 supabase-imovel-descricao.sql
 supabase-imovel-corretor-tel.sql
+supabase-imovel-fotos.sql
 .claude/
 .DS_Store
 *.env
