@@ -121,7 +121,7 @@ async function load(){
   }
 
   document.title = `${im.titulo || 'Imóvel'} — Grupo Captar`;
-  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'view' }).catch(() => {});
+  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'view' }).then(() => {}, () => {});
 
   const featuresList = (im.features || '').split(',').map(f => f.trim()).filter(Boolean);
   const waText = encodeURIComponent(`Olá! Tenho interesse no imóvel "${im.titulo || ''}" que vi no link do Grupo Captar.`);
@@ -156,7 +156,7 @@ async function load(){
 }
 
 function registrarCliqueWhatsapp(id){
-  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'whatsapp' }).catch(() => {});
+  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'whatsapp' }).then(() => {}, () => {});
 }
 
 load();
