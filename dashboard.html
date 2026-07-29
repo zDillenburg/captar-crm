@@ -3874,7 +3874,13 @@ async function loadLeads(){
   if(data) LEADS_DATA.push(...data);
 }
 async function loadImoveis(){
-  const {data,error}=await _sb.from('imoveis').select('*').order('created_at',{ascending:false});
+  // Filtro explícito por user_id é obrigatório aqui: desde que a policy
+  // "imoveis_public_read" existe (pra página pública de imóvel), o RLS
+  // passou a permitir SELECT também em linhas de OUTROS usuários que
+  // estejam marcadas publico=true (policies permissivas são combinadas com
+  // OR). Sem esse .eq(), o portfólio de um corretor passaria a incluir
+  // imóveis compartilhados por qualquer outro cliente do Grupo Captar.
+  const {data,error}=await _sb.from('imoveis').select('*').eq('user_id',_currentUser.id).order('created_at',{ascending:false});
   if(error){showToast('Erro ao carregar imóveis: '+error.message,'error');return;}
   IMOVEIS.length=0;
   if(data){
