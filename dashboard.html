@@ -9289,7 +9289,7 @@ function marcarAvisoLido(id){
   localStorage.setItem(key,'1');
   // Increment leituras on supabase (fire-and-forget)
   if(window._sb){
-    _sb.rpc('increment_aviso_leituras',{aviso_id:id}).catch(()=>{
+    _sb.rpc('increment_aviso_leituras',{aviso_id:id}).then(()=>{}, ()=>{
       // RPC may not exist; fallback: update field directly
       _sb.from('avisos').select('leituras').eq('id',id).single().then(({data})=>{
         if(data!==null){
