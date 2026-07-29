@@ -9449,6 +9449,23 @@ async function persistAiMessage(role,conteudo,tipo){
   await _sb.from('ai_mensagens').insert([{user_id:_currentUser.id,role,conteudo,tipo}]);
 }
 
+function buildAiCrmContext(){
+  const porEtapa=COLUMNS.map(c=>`${c.label}: ${LEADS_DATA.filter(l=>l.coluna===c.key).length}`).join(', ');
+  const perdidos=LEADS_DATA.filter(l=>l.coluna==='perdido').length;
+  const statusImLabels=['Ativo','Captado','Negociação','Vendido'];
+  const porStatusIm=statusImLabels.map(s=>`${s}: ${IMOVEIS.filter(im=>im.status===s).length}`).join(', ');
+  const visitasAgendadas=VISITAS.filter(v=>v.status==='agendada').length;
+  const locInadimplentes=LOCACOES.filter(l=>l.status==='atrasado').length;
+  const nome=_currentUser?.user_metadata?.nome||_currentUser?.email?.split('@')[0]||'';
+  return `[RESUMO ATUAL DO CRM]
+Corretor: ${nome||'—'}
+Leads por etapa: ${porEtapa}${perdidos?`, Perdido: ${perdidos}`:''} — total ${LEADS_DATA.length}
+Imóveis por status: ${porStatusIm} — total ${IMOVEIS.length}
+Visitas agendadas: ${visitasAgendadas}
+Locações inadimplentes: ${locInadimplentes}
+[FIM DO RESUMO]`;
+}
+
 function chipClickFeedback(chipEl){
   if(!chipEl)return;
   chipEl.classList.remove('chip-pop');
@@ -9491,7 +9508,7 @@ async function sendAiChat(scope){
     const resp=await fetch('/api/ai-chat',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({messages:AI_CHAT_MESSAGES}),
+      body:JSON.stringify({messages:AI_CHAT_MESSAGES,crmContext:buildAiCrmContext()}),
       signal:controller.signal
     });
     clearTimeout(timeoutId);

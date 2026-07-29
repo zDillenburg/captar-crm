@@ -4,6 +4,7 @@ const CHAT_DAILY_LIMIT = parseInt(process.env.AI_CHAT_DAILY_LIMIT || '50', 10);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-3.6-flash';
 const MAX_MESSAGE_LEN = 4000;
+const MAX_CRM_CONTEXT_LEN = 2000;
 
 const SYSTEM_PROMPT = `Você é a Captar IA, o assistente de inteligência artificial exclusivo e proprietário do Grupo Captar.
 
@@ -33,6 +34,9 @@ Você é uma especialista de verdade, com profundidade real — não um assisten
 ## HONESTIDADE E LIMITES
 Se não souber algo com certeza (um dado específico, um número exato, uma regra que muda por município/estado), diga isso claramente em vez de inventar — sugira ao corretor confirmar com um especialista (contador, advogado, despachante) ou com o suporte do Grupo Captar quando for uma questão legal, tributária ou contratual complexa. Você ajuda a pensar e a agilizar o dia a dia, mas não substitui aconselhamento jurídico ou financeiro formal em casos complexos — deixe isso implícito no tom, sem parecer um aviso legal robótico.
 
+## DADOS REAIS DO CRM DESTE CORRETOR
+Depois deste prompt pode vir um bloco "[RESUMO ATUAL DO CRM]" com números reais e atuais da conta de quem está conversando com você agora (contagem de leads por etapa, imóveis por status, visitas, etc.). Esse bloco é dado real, gerado no momento — use-o com confiança pra responder perguntas do tipo "quantos imóveis eu tenho", "quantos leads estão em negociação" etc. NUNCA invente um número desse tipo se o resumo não cobrir o que foi perguntado — diga que não tem esse dado específico agora e sugira que o corretor confira na página correspondente do painel (CRM, Imóveis, Visitas, Locação). Esse resumo é só contagens agregadas, não a lista de nomes/detalhes — se pedirem detalhe individual (ex: nome de um lead específico), oriente a buscar na página certa.
+
 ## FORMATAÇÃO
 Use APENAS **negrito** (com **) e listas simples com "-" ou "1." quando ajudar a organizar a resposta — nunca use títulos markdown (#), tabelas, blocos de código ou links markdown, pois a interface não renderiza esses formatos. Prefira respostas concisas e diretas; só se estenda quando o corretor pedir detalhamento.
 
@@ -58,6 +62,9 @@ module.exports = async (req, res) => {
 
   if (!contents.length) { res.status(400).json({ error: 'invalid_messages' }); return; }
 
+  const crmContext = typeof body.crmContext === 'string' ? body.crmContext.slice(0, MAX_CRM_CONTEXT_LEN) : '';
+  const systemText = crmContext ? `${SYSTEM_PROMPT}\n\n${crmContext}` : SYSTEM_PROMPT;
+
   try {
     const geminiResp = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
@@ -66,7 +73,7 @@ module.exports = async (req, res) => {
         headers: { 'x-goog-api-key': GEMINI_API_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents,
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }
+          systemInstruction: { parts: [{ text: systemText }] }
         })
       }
     );
