@@ -3638,6 +3638,7 @@ function escHTML(s){
 function formatAreaValor(v){
   v=String(v||'').trim();
   if(!v)return'';
+  if(/^\d+$/.test(v))return v.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' m²';
   return /^[\d.,]+$/.test(v)?v+' m²':v;
 }
 // im.area é salvo como "área construída / área do terreno" (ou só uma das duas)
