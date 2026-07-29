@@ -152,6 +152,19 @@ async function load(){
   document.title = `${im.titulo || 'Imóvel'} — Grupo Captar`;
   _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'view' }).then(() => {}, () => {});
 
+  // Aplica a cor de destaque do corretor, se ele tiver um perfil
+  // público ativo com uma cor escolhida — mantém a marca consistente
+  // entre o perfil dele e as páginas de cada imóvel.
+  if (im.user_id) {
+    _sb.from('perfil_publico').select('cor_destaque').eq('user_id', im.user_id).eq('ativo', true).maybeSingle()
+      .then(({ data: perfil }) => {
+        if (perfil && perfil.cor_destaque) {
+          document.documentElement.style.setProperty('--pl', perfil.cor_destaque);
+          document.documentElement.style.setProperty('--p', perfil.cor_destaque);
+        }
+      }, () => {});
+  }
+
   const featuresList = (im.features || '').split(',').map(f => f.trim()).filter(Boolean);
   const waText = encodeURIComponent(`Olá! Tenho interesse no imóvel "${im.titulo || ''}" que vi no link do Grupo Captar.`);
   const corretorWaPhone = waPhoneBR(im.corretor_tel || '');
@@ -189,13 +202,14 @@ async function load(){
       <ul class="features">${featuresList.map(f => `<li>${escHtml(f)}</li>`).join('')}</ul>
     ` : ''}
     ${im.corretor ? `
-    <div class="corretor-card">
+    <a class="corretor-card" href="corretor-publico.html?id=${encodeURIComponent(im.user_id || '')}" style="text-decoration:none;cursor:pointer">
       <img class="corretor-logo" src="${escHtml(corretorLogoUrl)}" alt="" onerror="this.remove()"/>
       <div class="corretor-info">
         <div class="corretor-label">Anunciado por</div>
         <div class="corretor-name">${escHtml(im.corretor)}</div>
       </div>
-    </div>
+      <span style="font-size:11px;color:var(--pl);font-weight:700;white-space:nowrap;flex-shrink:0">Ver todos →</span>
+    </a>
     ` : ''}
     ${corretorWaPhone ? `
     <a class="cta" href="https://wa.me/${corretorWaPhone}?text=${waText}" target="_blank" rel="noopener noreferrer" onclick="registrarCliqueWhatsapp('${escHtml(String(id))}')">
