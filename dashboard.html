@@ -3335,6 +3335,12 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         <textarea class="form-input" id="im-descricao" rows="4" placeholder="Descrição do imóvel para anúncios — preencha os campos acima e clique em &quot;Gerar com IA&quot;, ou escreva a sua."></textarea>
       </div>
       <div class="full form-group">
+        <label class="form-label">Fotos (máx. <span id="im-fotos-max-lbl">10</span>)</label>
+        <input type="file" id="im-fotos-input" accept="image/*" multiple style="display:none" onchange="handleImovelFotosSelect(event)"/>
+        <div id="im-fotos-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
+        <button type="button" class="link-btn" id="btn-add-fotos-imovel" onclick="document.getElementById('im-fotos-input').click()" style="font-size:12px">📷 Adicionar fotos</button>
+      </div>
+      <div class="full form-group">
         <label class="form-label">Corretor Responsável</label>
         <select class="form-input" id="im-corretor">
           <option value="">Selecione um corretor…</option>
@@ -4617,7 +4623,7 @@ function renderImoveis(){
   grid.innerHTML=IMOVEIS.map(im=>`
     <div class="imovel-card">
       <div class="imovel-img" style="background:${escHTML(im.grad||'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
-        <div class="imovel-img-placeholder">${escHTML(im.emoji||'🏠')}</div>
+        <div class="imovel-img-placeholder">${(Array.isArray(im.fotos)&&im.fotos.length)?`<img src="${escHTML(imovelFotoPublicUrl(im.fotos[0]))}" data-fallback-emoji="${escHTML(im.emoji||'🏠')}" style="width:100%;height:100%;object-fit:cover" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.dataset.fallbackEmoji}))"/>`:escHTML(im.emoji||'🏠')}</div>
         <span class="imovel-status-badge ${escHTML(im.statusClass||_statusMapIm[im.status]||'status-novo')}">${escHTML(im.status||'—')}</span>
         <button class="imovel-fav">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
@@ -5542,8 +5548,12 @@ function openImovelDetail(idx){
   if(!im)return;
   const corretorTel=(_currentUser?.user_metadata?.tel||'').trim();
   document.getElementById('imovel-detail-title').textContent=im.titulo;
+  const temFotos=Array.isArray(im.fotos)&&im.fotos.length>0;
   document.getElementById('imovel-detail-body').innerHTML=`
-    <div class="imovel-detail-hero" style="background:${escHTML(im.grad||'linear-gradient(135deg,#1e3a5f,#1e40af)')}">${escHTML(im.emoji||'🏠')}</div>
+    <div class="imovel-detail-hero" style="background:${escHTML(im.grad||'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
+      ${temFotos?`<img src="${escHTML(imovelFotoPublicUrl(im.fotos[0]))}" style="width:100%;height:100%;object-fit:cover" onerror="this.remove()"/>`:escHTML(im.emoji||'🏠')}
+      ${temFotos&&im.fotos.length>1?`<span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px">📷 ${im.fotos.length} fotos</span>`:''}
+    </div>
     <div style="font-size:22px;font-weight:800;color:var(--t1);margin-bottom:4px;letter-spacing:-.02em">${escHTML(im.preco||'—')}</div>
     <div style="font-size:13px;color:var(--t3);margin-bottom:18px">${escHTML(im.endereco||'—')}</div>
     <div class="imovel-detail-specs">
@@ -5634,6 +5644,9 @@ async function toggleImovelPublico(id){
 
 function resetImovelForm(){
   _editingImovelId=null;
+  _novoImovelId=null;
+  _imovelFotos=[];
+  renderImovelFotosGrid();
   ['im-titulo','im-cidade','im-endereco','im-preco','im-area','im-area-total','im-features','im-corretor','im-url-site','im-descricao'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const tipoSel=document.getElementById('im-tipo');if(tipoSel)tipoSel.selectedIndex=0;
   const statusSel=document.getElementById('im-status');if(statusSel)statusSel.value='Ativo';
@@ -5646,7 +5659,68 @@ function resetImovelForm(){
 
 function abrirModalNovoImovel(){
   resetImovelForm();
+  _novoImovelId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
   document.getElementById('modal-imovel-add').classList.add('open');
+}
+
+function imovelFotoPublicUrl(path){
+  return `${SUPABASE_URL}/storage/v1/object/public/imoveis-fotos/${path}`;
+}
+
+function renderImovelFotosGrid(){
+  const grid=document.getElementById('im-fotos-grid');
+  if(!grid)return;
+  grid.innerHTML=_imovelFotos.map((path,i)=>`
+    <div style="position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0">
+      <img src="${imovelFotoPublicUrl(path)}" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.opacity='.25'"/>
+      <button type="button" title="Remover foto" onclick="removerImovelFoto(${i})" style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0">×</button>
+    </div>
+  `).join('');
+  const addBtn=document.getElementById('btn-add-fotos-imovel');
+  if(addBtn){
+    const cheio=_imovelFotos.length>=IMOVEL_FOTOS_MAX;
+    addBtn.style.display=cheio?'none':'';
+  }
+}
+
+async function handleImovelFotosSelect(evt){
+  const files=Array.from(evt.target.files||[]);
+  evt.target.value='';
+  if(!files.length)return;
+  const workingId=_editingImovelId||_novoImovelId;
+  if(!workingId||!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  const vagas=IMOVEL_FOTOS_MAX-_imovelFotos.length;
+  if(vagas<=0){showToast(`Limite de ${IMOVEL_FOTOS_MAX} fotos atingido.`,'error');return;}
+  const validas=files.filter(f=>f.type.startsWith('image/'));
+  const aEnviar=validas.slice(0,vagas);
+  if(files.length>aEnviar.length){
+    showToast(`Só cabiam ${vagas} foto(s) — o restante não foi enviado.`,'error');
+  }
+  const addBtn=document.getElementById('btn-add-fotos-imovel');
+  if(addBtn){addBtn.textContent='Enviando…';addBtn.style.pointerEvents='none';addBtn.style.opacity='.6';}
+  for(const file of aEnviar){
+    try{
+      const {mimeType,data}=await resizeImageFile(file,1600,0.85);
+      const blob=base64ToBlob(data,mimeType);
+      const path=`${_currentUser.id}/${workingId}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;
+      const {error}=await _sb.storage.from('imoveis-fotos').upload(path,blob,{contentType:mimeType});
+      if(error){showToast('Erro ao enviar foto: '+error.message,'error');continue;}
+      _imovelFotos.push(path);
+      renderImovelFotosGrid();
+    }catch(e){
+      showToast('Não foi possível processar uma das fotos.','error');
+    }
+  }
+  if(addBtn){addBtn.textContent='📷 Adicionar fotos';addBtn.style.pointerEvents='';addBtn.style.opacity='';}
+}
+
+async function removerImovelFoto(i){
+  const path=_imovelFotos[i];
+  if(!path)return;
+  _imovelFotos.splice(i,1);
+  renderImovelFotosGrid();
+  const {error}=await _sb.storage.from('imoveis-fotos').remove([path]);
+  if(error)console.error('Erro ao remover foto do Storage:',error);
 }
 
 function fecharModalImovel(){
@@ -5760,7 +5834,8 @@ async function addImovel(){
     tipo,
     features,
     descricao:document.getElementById('im-descricao')?.value.trim()||'',
-    corretor_tel:(_currentUser?.user_metadata?.tel||'').trim()
+    corretor_tel:(_currentUser?.user_metadata?.tel||'').trim(),
+    fotos:_imovelFotos
   };
   if(_editingImovelId){
     // UPDATE mode
@@ -5773,10 +5848,11 @@ async function addImovel(){
     _editingImovelId=null;
     showToast(`Imóvel "${titulo}" atualizado!`,'success');
   } else {
-    // INSERT mode
-    const {data:saved,error}=await _sb.from('imoveis').insert([payload]).select().single();
+    // INSERT mode — usa o id já gerado no cliente (abrirModalNovoImovel),
+    // que é o mesmo usado no path das fotos já enviadas pra esse imóvel.
+    const {data:saved,error}=await _sb.from('imoveis').insert([{...payload,id:_novoImovelId}]).select().single();
     if(error){showToast('Erro ao salvar imóvel: '+error.message,'error');return;}
-    const newIm=saved||{...payload,id:Date.now()};
+    const newIm=saved||{...payload,id:_novoImovelId};
     IMOVEIS.push(newIm);
     IMOVEIS_EXTRA.push(newIm);
     showToast(`Imóvel "${titulo}" adicionado!`,'success');
@@ -5804,6 +5880,8 @@ function editarImovel(id){
   setVal('im-descricao',im.descricao);
   setVal('im-quartos',im.quartos);
   setVal('im-banheiros',im.banheiros);
+  _imovelFotos=Array.isArray(im.fotos)?[...im.fotos]:[];
+  renderImovelFotosGrid();
   const tipoSel=document.getElementById('im-tipo');
   if(tipoSel&&im.tipo)tipoSel.value=im.tipo;
   // Parse endereco back — best-effort
@@ -5920,6 +5998,9 @@ async function excluirTransacao(id, tipo){
 let _imTipoFilter='todos';
 let _imStatusFilter='todos';
 let _editingImovelId=null;
+let _novoImovelId=null; // uuid gerado no cliente pra já ter um id estável antes de salvar (usado no path das fotos)
+let _imovelFotos=[]; // paths (não URLs) das fotos já enviadas do imóvel em edição/criação
+const IMOVEL_FOTOS_MAX=10;
 
 // Emoji groups for type filtering (emoji is stored in DB)
 const _imRuralEmojis   =['🌿','🌾','🐄','🌳','🗺️'];
