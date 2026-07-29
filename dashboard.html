@@ -5672,6 +5672,7 @@ function resetImovelForm(){
   _editingImovelId=null;
   _novoImovelId=null;
   _imovelFotos=[];
+  _imovelFotosNovasSessao=[];
   renderImovelFotosGrid();
   ['im-titulo','im-cidade','im-endereco','im-preco','im-area','im-area-total','im-features','im-corretor','im-url-site','im-descricao'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const tipoSel=document.getElementById('im-tipo');if(tipoSel)tipoSel.selectedIndex=0;
@@ -5700,7 +5701,7 @@ function renderImovelFotosGrid(){
   if(!grid)return;
   grid.innerHTML=_imovelFotos.map((path,i)=>`
     <div class="im-foto-thumb" draggable="true" data-idx="${i}" title="Arraste pra reordenar" style="position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;cursor:grab">
-      <img src="${imovelFotoPublicUrl(path)}" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none" onerror="this.style.opacity='.25'"/>
+      <img src="${escHTML(imovelFotoPublicUrl(path))}" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none" onerror="this.style.opacity='.25'"/>
       ${i===0?`<span style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.65);color:#fff;font-size:8px;font-weight:700;text-align:center;padding:1px 0;letter-spacing:.03em;pointer-events:none">CAPA</span>`:''}
       <button type="button" title="Remover foto" onclick="removerImovelFoto(${i})" style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0">×</button>
     </div>
@@ -5761,6 +5762,7 @@ async function handleImovelFotosSelect(evt){
       const {error}=await _sb.storage.from('imoveis-fotos').upload(path,blob,{contentType:mimeType});
       if(error){showToast('Erro ao enviar foto: '+error.message,'error');continue;}
       _imovelFotos.push(path);
+      _imovelFotosNovasSessao.push(path);
       renderImovelFotosGrid();
     }catch(e){
       showToast('Não foi possível processar uma das fotos.','error');
@@ -5773,6 +5775,8 @@ async function removerImovelFoto(i){
   const path=_imovelFotos[i];
   if(!path)return;
   _imovelFotos.splice(i,1);
+  const novaIdx=_imovelFotosNovasSessao.indexOf(path);
+  if(novaIdx>-1)_imovelFotosNovasSessao.splice(novaIdx,1);
   renderImovelFotosGrid();
   const {error}=await _sb.storage.from('imoveis-fotos').remove([path]);
   if(error)console.error('Erro ao remover foto do Storage:',error);
@@ -5780,6 +5784,9 @@ async function removerImovelFoto(i){
 
 function fecharModalImovel(){
   document.getElementById('modal-imovel-add').classList.remove('open');
+  if(_imovelFotosNovasSessao.length){
+    _sb.storage.from('imoveis-fotos').remove(_imovelFotosNovasSessao).then(()=>{},()=>{});
+  }
   resetImovelForm();
 }
 
@@ -5967,6 +5974,14 @@ async function excluirImovel(id){
     const i=arr.findIndex(x=>String(x.id)===String(id));
     if(i>-1)arr.splice(i,1);
   });
+  if(_currentUser?.id){
+    const pasta=`${_currentUser.id}/${id}`;
+    _sb.storage.from('imoveis-fotos').list(pasta).then(({data:arquivos})=>{
+      if(Array.isArray(arquivos)&&arquivos.length){
+        _sb.storage.from('imoveis-fotos').remove(arquivos.map(f=>`${pasta}/${f.name}`)).then(()=>{},()=>{});
+      }
+    },()=>{});
+  }
   inited['imoveis']=false;
   renderImoveis();
   showToast(`Imóvel "${titulo}" excluído`,'success');
@@ -6055,6 +6070,7 @@ let _imStatusFilter='todos';
 let _editingImovelId=null;
 let _novoImovelId=null; // uuid gerado no cliente pra já ter um id estável antes de salvar (usado no path das fotos)
 let _imovelFotos=[]; // paths (não URLs) das fotos já enviadas do imóvel em edição/criação
+let _imovelFotosNovasSessao=[]; // paths enviados na sessão atual do modal, ainda não salvos no imóvel — limpos do Storage se o modal for cancelado
 const IMOVEL_FOTOS_MAX=10;
 
 // Emoji groups for type filtering (emoji is stored in DB)
