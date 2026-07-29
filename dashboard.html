@@ -5765,6 +5765,8 @@ function editarImovel(id){
   setVal('im-url-site',im.url_site);
   setVal('im-features',im.features);
   setVal('im-descricao',im.descricao);
+  setVal('im-quartos',im.quartos);
+  setVal('im-banheiros',im.banheiros);
   const tipoSel=document.getElementById('im-tipo');
   if(tipoSel&&im.tipo)tipoSel.value=im.tipo;
   // Parse endereco back — best-effort
