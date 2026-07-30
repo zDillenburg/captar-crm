@@ -7,6 +7,8 @@ const MAX_PROMPT_LEN = 2000;
 const MAX_IMAGE_BASE64_LEN = 10 * 1024 * 1024; // ~7.5MB de imagem antes do base64
 const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
+const IMAGE_SYSTEM_INSTRUCTION = 'Você gera e edita imagens para o Grupo Captar, uma plataforma de marketing imobiliário — o pedido deve servir pra anunciar ou apresentar um imóvel (fotos de fachada/interior, ambientação virtual, remoção de objetos, melhoria de iluminação, inclusão de logo, etc). Se o pedido não tiver relação nenhuma com imóveis ou marketing imobiliário, recuse: não gere nenhuma imagem.';
+
 function isValidImagePart(img) {
   return img
     && typeof img.mimeType === 'string' && ALLOWED_MIME_TYPES.has(img.mimeType)
@@ -58,6 +60,7 @@ module.exports = async (req, res) => {
         headers: { 'x-goog-api-key': GEMINI_API_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts }],
+          systemInstruction: { parts: [{ text: IMAGE_SYSTEM_INSTRUCTION }] },
           generationConfig: { responseModalities: ['Image'] }
         })
       }
