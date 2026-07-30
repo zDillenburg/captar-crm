@@ -2372,6 +2372,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                     <th>Plano</th>
                     <th>Status Assinatura</th>
                     <th>Acesso</th>
+                    <th>Perfil Público</th>
                     <th style="text-align:center">Ações</th>
                   </tr>
                 </thead>
@@ -7114,10 +7115,27 @@ async function loadAdminImoveis(){
   ADMIN_IMOVEIS.length = 0;
   if(data) ADMIN_IMOVEIS.push(...data);
 }
+
+// Links dos perfis públicos de todo mundo — não precisa de policy nova de
+// admin: perfil_publico já é lido publicamente por qualquer um (inclusive
+// anônimo) quando ativo=true, então o admin (autenticado) já enxerga essas
+// linhas com a policy "perfil_publico_public_read" que já existe.
+let ADMIN_PERFIS_PUBLICOS = [];
+async function loadAdminPerfisPublicos(){
+  const {data,error} = await _sb.from('perfil_publico').select('user_id,slug').eq('ativo',true);
+  if(error){showToast('Erro ao carregar perfis públicos: '+error.message,'error');return;}
+  ADMIN_PERFIS_PUBLICOS.length = 0;
+  if(data) ADMIN_PERFIS_PUBLICOS.push(...data);
+}
 function clienteLabelPorUserId(uid){
   const a = ASSINATURAS.find(a=>a.user_id===uid);
   if(a) return {nome:a.nome||'—',email:a.email||''};
   return {nome:'Cliente sem assinatura cadastrada',email:''};
+}
+function perfilPublicoUrlPorUserId(uid){
+  const perfil = ADMIN_PERFIS_PUBLICOS.find(p=>p.user_id===uid);
+  if(!perfil) return '';
+  return perfil.slug ? `${location.origin}/c/${encodeURIComponent(perfil.slug)}` : `${location.origin}/corretor-publico.html?id=${encodeURIComponent(uid)}`;
 }
 function filtrarAdminImoveis(){
   renderAdminImoveisGrouped();
@@ -7158,6 +7176,7 @@ function renderAdminImoveisGrouped(){
         <div>
           <div style="font-size:13px;font-weight:700;color:var(--t1)">${escHTML(g.cliente.nome)}</div>
           ${g.cliente.email?`<div style="font-size:11px;color:var(--t3)">${escHTML(g.cliente.email)}</div>`:''}
+          ${(()=>{const url=perfilPublicoUrlPorUserId(g.uid);return url?`<a href="${escHTML(url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:var(--pl)">🔗 Ver perfil público</a>`:'';})()}
         </div>
         <span style="font-size:11.5px;font-weight:700;color:var(--t2);background:var(--bg4);padding:4px 10px;border-radius:20px">${g.imoveis.length} imóve${g.imoveis.length>1?'is':'l'}</span>
       </div>
@@ -7178,6 +7197,7 @@ function renderAdminImoveisGrouped(){
 async function renderAdmin(){
   await loadAssinaturas();
   await loadAdminImoveis();
+  await loadAdminPerfisPublicos();
 
   const fmtBRL = v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
   const hoje = new Date(); hoje.setHours(0,0,0,0);
@@ -7478,13 +7498,14 @@ function renderUserTabela(){
   const tbody=document.getElementById('adm-user-tbody');
   if(!tbody) return;
   if(!_userFilteredRows.length){
-    tbody.innerHTML=`<tr><td colspan="5" class="admin-empty">Nenhum usuário encontrado.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="6" class="admin-empty">Nenhum usuário encontrado.</td></tr>`;
     return;
   }
   const sMap={pago:{cls:'pmt-pago',lbl:'✅ Em dia'},pendente:{cls:'pmt-pendente',lbl:'⏳ Pendente'},atrasado:{cls:'pmt-atrasado',lbl:'🔴 Atrasado'}};
   tbody.innerHTML=_userFilteredRows.map(a=>{
     const s=sMap[a.status]||{cls:'pmt-pendente',lbl:a.status};
     const blocked=!!a.bloqueado;
+    const perfilUrl=perfilPublicoUrlPorUserId(a.user_id);
     return `<tr>
       <td>
         <div style="font-weight:700;color:var(--t1)">${escHTML(a.nome)}</div>
@@ -7493,6 +7514,7 @@ function renderUserTabela(){
       <td><span style="font-size:12px">${escHTML(a.plano||'Alta Performance')}</span></td>
       <td><span class="pmt-badge ${s.cls}">${s.lbl}</span></td>
       <td>${blocked?'<span class="badge-block">🔒 Bloqueado</span>':'<span class="badge-actv">✅ Ativo</span>'}</td>
+      <td>${perfilUrl?`<a href="${escHTML(perfilUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:var(--pl)">🔗 Ver perfil</a>`:'<span style="font-size:11px;color:var(--t3)">Não ativado</span>'}</td>
       <td style="text-align:center">
         <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
           <button class="btn-add" style="padding:5px 10px;font-size:11px" onclick="switchAdminTab('assinaturas',document.querySelectorAll('.admin-tab-btn')[2]);openAdmModal('${escHTML(String(a.id))}')">✏️ Editar</button>
