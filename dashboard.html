@@ -22,7 +22,7 @@
 <meta name="apple-mobile-web-app-title" content="Captar CRM"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js" defer></script>
@@ -335,22 +335,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .pp-preview-col{position:sticky;top:20px}
 .pp-preview-label{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
 .pp-preview{
-  --ppbg:#0f0d0b;--ppbg2:#161310;--ppborder:rgba(255,255,255,.08);
-  --ppt1:#fffdea;--ppt2:rgba(255,253,234,.65);--ppt3:#8a8070;--pppl:#850277;
-  background:var(--ppbg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;font-family:'Inter',sans-serif;
+  --ppbg:#000000;--ppbg2:#111111;--ppborder:rgba(255,255,255,.09);
+  --ppt1:#f5f5f7;--ppt2:rgba(245,245,247,.68);--ppt3:rgba(245,245,247,.42);--pppl:#850277;
+  background:var(--ppbg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;font-family:'Inter',-apple-system,sans-serif;
 }
-.pp-preview-banner{height:88px;background:linear-gradient(160deg,var(--ppbg2),var(--ppbg));position:relative}
+.pp-preview-banner{height:88px;background:var(--ppbg2);position:relative}
 .pp-preview-banner img{width:100%;height:100%;object-fit:cover;display:block}
 .pp-preview-body{padding:0 18px 18px;margin-top:-28px}
-.pp-preview-avatar{width:56px;height:56px;border-radius:13px;border:3px solid var(--ppbg);object-fit:contain;background:#fff;display:block;margin-bottom:12px}
-.pp-preview-avatar-fallback{width:56px;height:56px;border-radius:13px;border:3px solid var(--ppbg);background:var(--pppl);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#fff;margin-bottom:12px}
-.pp-preview-name{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--ppt1);letter-spacing:-.01em;margin-bottom:4px}
-.pp-preview-tagline{font-family:'Fraunces',serif;font-style:italic;font-size:12.5px;color:var(--ppt2);line-height:1.5;margin-bottom:12px}
-.pp-preview-stats{display:flex;border-top:1px solid var(--ppborder);border-bottom:1px solid var(--ppborder);margin-bottom:14px}
-.pp-preview-stat{flex:1;text-align:center;padding:10px 2px}
-.pp-preview-stat-val{font-family:'Fraunces',serif;font-size:14px;color:var(--ppt1)}
-.pp-preview-stat-lbl{font-size:8px;color:var(--ppt3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
-.pp-preview-bio{font-family:'Fraunces',serif;font-size:12px;line-height:1.6;color:var(--ppt1);padding-left:10px;border-left:2px solid var(--pppl);margin-bottom:14px}
+.pp-preview-avatar{width:56px;height:56px;border-radius:16px;border:3px solid var(--ppbg);object-fit:contain;background:#fff;display:block;margin-bottom:12px}
+.pp-preview-avatar-fallback{width:56px;height:56px;border-radius:16px;border:3px solid var(--ppbg);background:var(--ppbg2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:var(--ppt2);margin-bottom:12px}
+.pp-preview-name{font-size:19px;font-weight:700;color:var(--ppt1);letter-spacing:-.02em;margin-bottom:4px}
+.pp-preview-tagline{font-size:12.5px;color:var(--ppt2);line-height:1.5;margin-bottom:12px}
+.pp-preview-stats{display:flex;gap:6px;margin-bottom:14px}
+.pp-preview-stat{flex:1;text-align:center;padding:8px 4px;background:var(--ppbg2);border-radius:10px}
+.pp-preview-stat-val{font-size:13px;font-weight:700;color:var(--ppt1)}
+.pp-preview-stat-lbl{font-size:8px;color:var(--ppt3);margin-top:2px;font-weight:500}
+.pp-preview-bio{font-size:12px;line-height:1.6;color:var(--ppt2);margin-bottom:14px}
 .pp-preview-cta{display:flex;align-items:center;justify-content:center;gap:6px;background:#25d366;color:#fff;font-size:11.5px;font-weight:700;padding:9px;border-radius:9px}
 @media(max-width:900px){
   .pp-layout{grid-template-columns:1fr}
@@ -7715,16 +7715,6 @@ function atualizarPreviewPerfilPublico(){
   const espVal=document.getElementById('pp-preview-stat-esp');
   if(espWrap)espWrap.style.display=especialidade?'block':'none';
   if(espVal)espVal.textContent=especialidade;
-
-  // Divisor só entre os stats visíveis — como creci/especialidade só somem
-  // via display:none (não saem do DOM), :not(:last-child) no CSS erra a
-  // conta quando o último elemento estrutural está escondido.
-  const statsWrap=document.querySelector('.pp-preview-stats');
-  if(statsWrap){
-    const visiveis=[...statsWrap.children].filter(el=>el.style.display!=='none');
-    [...statsWrap.children].forEach(el=>{el.style.borderRight='';});
-    visiveis.slice(0,-1).forEach(el=>{el.style.borderRight='1px solid var(--ppborder)';});
-  }
 
   const avatarImg=document.getElementById('pp-preview-avatar-img');
   const avatarFallback=document.getElementById('pp-preview-avatar-fallback');
