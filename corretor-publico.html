@@ -224,7 +224,12 @@ function siteUrl(url){
 
 async function load(){
   const params = new URLSearchParams(location.search);
-  const slug = params.get('u');
+  // O rewrite do Vercel (/c/:slug -> /corretor-publico.html?u=:slug) é
+  // invisível pro JS do navegador: location.search continua vazio, o
+  // slug só aparece em location.pathname. Por isso o ?u= no destino do
+  // rewrite serve só de documentação — na prática precisamos ler o path.
+  const pathMatch = location.pathname.match(/\/c\/([^/]+)\/?$/);
+  const slug = params.get('u') || (pathMatch ? decodeURIComponent(pathMatch[1]) : '');
   let id = params.get('id');
   if(!slug && !id){
     renderState('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', 'Link inválido — falta o identificador do corretor.');
