@@ -14,6 +14,7 @@ supabase-imovel-corretor-tel.sql
 supabase-imovel-fotos.sql
 supabase-perfil-publico.sql
 supabase-perfil-publico-v2.sql
+supabase-perfil-publico-slug.sql
 .claude/
 .DS_Store
 *.env

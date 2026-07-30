@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/c/:slug", "destination": "/corretor-publico.html?u=:slug" }
+  ]
+}

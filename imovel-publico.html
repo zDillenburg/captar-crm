@@ -17,12 +17,23 @@
     --border:rgba(255,255,255,0.09);
     --t1:#f5f5f7;--t2:rgba(245,245,247,.68);--t3:rgba(245,245,247,.42);
   }
+  body.light-mode{
+    --bg:#ffffff;--bg2:#f5f5f7;--bg3:#ececee;--bg4:#e2e2e5;
+    --border:rgba(0,0,0,0.08);
+    --t1:#1d1d1f;--t2:rgba(29,29,31,.68);--t3:rgba(29,29,31,.45);
+  }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;transition:background .2s ease,color .2s ease}
   a{color:inherit}
-  header{display:flex;align-items:center;justify-content:center;padding:22px;border-bottom:1px solid var(--border)}
+  header{display:flex;align-items:center;justify-content:center;padding:22px;border-bottom:1px solid var(--border);position:relative}
   header a{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
   header img{height:26px;width:auto;opacity:.9}
+  body.light-mode header img{filter:brightness(0) saturate(0);opacity:.85}
+  .theme-toggle{
+    position:absolute;right:20px;top:50%;transform:translateY(-50%);
+    width:34px;height:34px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--t2);
+  }
   main{flex:1;display:flex;justify-content:center;padding:32px 20px 130px}
   .wrap{width:100%;max-width:600px}
 
@@ -40,21 +51,44 @@
   .hero{border-radius:20px;padding:60px 24px;text-align:center;font-size:52px;margin-bottom:24px;position:relative;overflow:hidden;background:var(--bg2)}
   .status-pill{position:absolute;top:14px;right:14px;font-size:11px;font-weight:600;letter-spacing:.02em;padding:5px 12px;border-radius:20px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px)}
 
-  .gallery-main{width:100%;aspect-ratio:4/3;border-radius:20px;overflow:hidden;margin-bottom:10px;background:var(--bg2);position:relative}
+  .gallery-main{width:100%;aspect-ratio:4/3;border-radius:20px;overflow:hidden;margin-bottom:10px;background:var(--bg2);position:relative;cursor:zoom-in}
   .gallery-main img{width:100%;height:100%;object-fit:cover;display:block}
+  .gallery-zoom-hint{position:absolute;bottom:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;color:#fff;pointer-events:none}
+  .gallery-zoom-hint svg{width:16px;height:16px}
   .gallery-thumbs{display:flex;gap:8px;overflow-x:auto;margin-bottom:24px;padding-bottom:2px}
   .gallery-thumbs img{width:60px;height:60px;object-fit:cover;border-radius:12px;cursor:pointer;opacity:.45;transition:opacity .15s}
   .gallery-thumbs img.active{opacity:1}
 
-  .corretor-card{display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg2);border-radius:16px;margin-bottom:20px;transition:background .15s ease}
-  .corretor-card:hover{background:var(--bg3)}
-  .corretor-logo{width:48px;height:48px;border-radius:14px;object-fit:contain;background:#fff;flex-shrink:0}
-  .corretor-avatar-fallback{width:48px;height:48px;border-radius:14px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--t2);flex-shrink:0}
+  /* ── Lightbox ─────────────────────────────── */
+  .lightbox{position:fixed;inset:0;z-index:50;background:#000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .2s ease}
+  .lightbox.open{opacity:1;visibility:visible}
+  .lightbox img{max-width:92vw;max-height:82vh;object-fit:contain;border-radius:8px;user-select:none}
+  .lightbox-close,.lightbox-prev,.lightbox-next{
+    position:absolute;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);
+    display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:background .15s;
+  }
+  .lightbox-close:hover,.lightbox-prev:hover,.lightbox-next:hover{background:rgba(255,255,255,.2)}
+  .lightbox-close{top:20px;right:20px}
+  .lightbox-prev{left:20px;top:50%;transform:translateY(-50%)}
+  .lightbox-next{right:20px;top:50%;transform:translateY(-50%)}
+  .lightbox-close svg,.lightbox-prev svg,.lightbox-next svg{width:20px;height:20px}
+  .lightbox-counter{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:13px;font-weight:500}
+  @media(max-width:600px){
+    .lightbox-prev,.lightbox-next{width:38px;height:38px}
+    .lightbox-close{top:14px;right:14px}
+  }
+
+  .corretor-card{display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg2);border-radius:18px;margin-bottom:24px;transition:background .15s ease,transform .15s ease}
+  .corretor-card:hover{background:var(--bg3);transform:translateY(-1px)}
+  .corretor-logo{width:64px;height:64px;border-radius:18px;object-fit:contain;background:#fff;flex-shrink:0;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+  .corretor-avatar-fallback{width:64px;height:64px;border-radius:18px;background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:#fff;flex-shrink:0;box-shadow:0 6px 16px rgba(0,0,0,.3)}
   .corretor-info{flex:1;min-width:0}
-  .corretor-label{font-size:11px;color:var(--t3);margin-bottom:2px;font-weight:500}
-  .corretor-name{font-size:14.5px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .corretor-cta{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--t3);font-weight:600;white-space:nowrap;flex-shrink:0}
-  .corretor-cta svg{width:12px;height:12px}
+  .corretor-label{font-size:11.5px;color:var(--t3);margin-bottom:3px;font-weight:500}
+  .corretor-name{font-size:17px;font-weight:700;letter-spacing:-.01em;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+  .corretor-creci{font-size:12px;color:var(--t3);font-weight:500}
+  .corretor-cta{display:flex;align-items:center;gap:4px;font-size:12.5px;color:var(--t1);font-weight:600;white-space:nowrap;flex-shrink:0;background:var(--bg3);padding:9px 14px;border-radius:11px}
+  .corretor-card:hover .corretor-cta{background:var(--bg4)}
+  .corretor-cta svg{width:13px;height:13px}
 
   .price{font-size:34px;font-weight:700;letter-spacing:-.03em;margin-bottom:6px}
   .title{font-size:15.5px;color:var(--t2);margin-bottom:6px}
@@ -89,6 +123,7 @@
     border-top:1px solid var(--border);
     display:flex;justify-content:center;
   }
+  body.light-mode .sticky-cta{background:rgba(255,255,255,.82)}
   .sticky-cta a{
     width:100%;max-width:560px;display:flex;align-items:center;justify-content:center;gap:9px;
     background:#25d366;color:#fff;font-size:15px;font-weight:600;padding:14px;border-radius:14px;text-decoration:none;
@@ -98,6 +133,11 @@
   @media(max-width:480px){
     .hero{font-size:42px;padding:48px 20px}
     .price{font-size:28px}
+    .corretor-card{gap:10px;padding:14px}
+    .corretor-logo,.corretor-avatar-fallback{width:52px;height:52px}
+    .corretor-name{white-space:normal;overflow:visible;text-overflow:clip}
+    .corretor-cta{padding:9px 10px}
+    .corretor-cta span{display:none}
   }
 </style>
 </head>
@@ -107,6 +147,7 @@
     <a href="index.html">
       <img src="logo.svg" alt="Grupo Captar"/>
     </a>
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
   </header>
 
   <main>
@@ -122,10 +163,42 @@
     Anúncio de <a href="index.html">Grupo Captar</a> — assessoria imobiliária &amp; inteligência artificial
   </footer>
 
+  <div class="lightbox" id="lightbox" onclick="if(event.target===this)fecharLightbox()">
+    <button class="lightbox-close" onclick="fecharLightbox()" title="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="lightbox-prev" id="lightbox-prev" onclick="event.stopPropagation();navegarLightbox(-1)" title="Anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <img id="lightbox-img" src="" alt=""/>
+    <button class="lightbox-next" id="lightbox-next" onclick="event.stopPropagation();navegarLightbox(1)" title="Próxima">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+    <div class="lightbox-counter" id="lightbox-counter"></div>
+  </div>
+
 <script>
 const SUPABASE_URL = 'https://ntebllysafkushvhubos.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50ZWJsbHlzYWZrdXNodmh1Ym9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MjUyNjEsImV4cCI6MjA5NDEwMTI2MX0.2Zxqc5oISDGWlSOhi6Zse0uVdY5pateMcMw9wLxYESY';
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Tema claro/escuro — respeita a preferência do sistema por padrão, mas
+// lembra a escolha manual do visitante (cliente do corretor) no navegador dele.
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light-mode');
+  localStorage.setItem('captar_public_theme', isLight?'light':'dark');
+  const btn=document.getElementById('theme-toggle-btn');
+  if(btn)btn.textContent=isLight?'☀️':'🌙';
+}
+(function initTheme(){
+  const saved=localStorage.getItem('captar_public_theme');
+  const preferLight=saved?saved==='light':window.matchMedia('(prefers-color-scheme: light)').matches;
+  if(preferLight){
+    document.body.classList.add('light-mode');
+    const btn=document.getElementById('theme-toggle-btn');
+    if(btn)btn.textContent='☀️';
+  }
+})();
 
 function escHtml(s){
   if(s==null)return'';
@@ -163,11 +236,47 @@ function formatAreaValor(v){
 function formatAreaParts(raw){
   return String(raw||'').split(' / ').map(p=>p.trim()).filter(Boolean).map(formatAreaValor);
 }
+let _fotoAtualIdx = 0;
 function trocarFotoGaleria(idx){
   const mainImg = document.getElementById('gallery-main-img');
   if(mainImg && _fotosAtual[idx]) mainImg.src = fotoPublicUrl('imoveis-fotos', _fotosAtual[idx]);
   document.querySelectorAll('.gallery-thumbs img').forEach((el,i)=>el.classList.toggle('active', i===idx));
+  _fotoAtualIdx = idx;
 }
+
+function abrirLightbox(idx){
+  if(!_fotosAtual.length)return;
+  _fotoAtualIdx = idx;
+  atualizarLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function fecharLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+function navegarLightbox(delta){
+  _fotoAtualIdx = (_fotoAtualIdx + delta + _fotosAtual.length) % _fotosAtual.length;
+  atualizarLightbox();
+}
+function atualizarLightbox(){
+  const img = document.getElementById('lightbox-img');
+  const counter = document.getElementById('lightbox-counter');
+  const prevBtn = document.getElementById('lightbox-prev');
+  const nextBtn = document.getElementById('lightbox-next');
+  img.src = fotoPublicUrl('imoveis-fotos', _fotosAtual[_fotoAtualIdx]);
+  const varias = _fotosAtual.length > 1;
+  if(counter){counter.textContent = varias ? `${_fotoAtualIdx+1} / ${_fotosAtual.length}` : ''; counter.style.display = varias?'block':'none';}
+  if(prevBtn)prevBtn.style.display = varias?'flex':'none';
+  if(nextBtn)nextBtn.style.display = varias?'flex':'none';
+}
+document.addEventListener('keydown', e=>{
+  const lb = document.getElementById('lightbox');
+  if(!lb || !lb.classList.contains('open'))return;
+  if(e.key==='Escape')fecharLightbox();
+  else if(e.key==='ArrowLeft')navegarLightbox(-1);
+  else if(e.key==='ArrowRight')navegarLightbox(1);
+});
 
 function renderState(iconPath, msg){
   document.getElementById('content').innerHTML = `<div class="state-box">
@@ -196,18 +305,23 @@ async function load(){
   document.title = `${im.titulo || 'Imóvel'} — Grupo Captar`;
   _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'view' }).then(() => {}, () => {});
 
-  // Aplica a cor de destaque do corretor, se ele tiver um perfil
-  // público ativo com uma cor escolhida — mantém a marca consistente
-  // entre o perfil dele e as páginas de cada imóvel.
+  // Busca o perfil público do corretor (cor de destaque + CRECI) — a
+  // página do imóvel também mostra o CRECI, exigência comum em anúncios
+  // imobiliários no Brasil, então vale a pena esperar essa consulta em
+  // vez de só disparar e esquecer.
+  let perfilCorretor = null;
   if (im.user_id) {
-    _sb.from('perfil_publico').select('cor_destaque').eq('user_id', im.user_id).eq('ativo', true).maybeSingle()
-      .then(({ data: perfil }) => {
-        if (perfil && perfil.cor_destaque) {
-          document.documentElement.style.setProperty('--pl', perfil.cor_destaque);
-          document.documentElement.style.setProperty('--p', perfil.cor_destaque);
-        }
-      }, () => {});
+    const { data: perfil } = await _sb.from('perfil_publico').select('cor_destaque, creci, slug').eq('user_id', im.user_id).eq('ativo', true).maybeSingle();
+    perfilCorretor = perfil;
+    if (perfil && perfil.cor_destaque) {
+      document.documentElement.style.setProperty('--pl', perfil.cor_destaque);
+      document.documentElement.style.setProperty('--p', perfil.cor_destaque);
+    }
   }
+  const corretorCreci = (perfilCorretor?.creci || '').trim();
+  const corretorPerfilUrl = perfilCorretor?.slug
+    ? `corretor-publico.html?u=${encodeURIComponent(perfilCorretor.slug)}`
+    : `corretor-publico.html?id=${encodeURIComponent(im.user_id || '')}`;
 
   const featuresList = (im.features || '').split(',').map(f => f.trim()).filter(Boolean);
   const waText = encodeURIComponent(`Olá! Tenho interesse no imóvel "${im.titulo || ''}" que vi no link do Grupo Captar.`);
@@ -218,9 +332,10 @@ async function load(){
 
   document.getElementById('content').innerHTML = `
     ${temFotos ? `
-    <div class="gallery-main">
+    <div class="gallery-main" onclick="abrirLightbox(_fotoAtualIdx)">
       <img id="gallery-main-img" src="${escHtml(fotoPublicUrl('imoveis-fotos', _fotosAtual[0]))}" alt="${escHtml(im.titulo || 'Imóvel')}"/>
       ${im.status ? `<span class="status-pill">${escHtml(im.status)}</span>` : ''}
+      <div class="gallery-zoom-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
     </div>
     ${_fotosAtual.length > 1 ? `<div class="gallery-thumbs">${_fotosAtual.map((p, i) => `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', p))}" class="${i === 0 ? 'active' : ''}" onclick="trocarFotoGaleria(${i})" alt=""/>`).join('')}</div>` : ''}
     ` : `
@@ -237,6 +352,17 @@ async function load(){
       ${escHtml(im.endereco || 'Localização a combinar')}
     </div>
     </div>
+    ${im.corretor ? `
+    <a class="corretor-card fade-up" href="${escHtml(corretorPerfilUrl)}" style="text-decoration:none;cursor:pointer">
+      <img class="corretor-logo" src="${escHtml(corretorLogoUrl)}" data-fallback-initials="${escHtml(initialsOf(im.corretor))}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'corretor-avatar-fallback',textContent:this.dataset.fallbackInitials}))"/>
+      <div class="corretor-info">
+        <div class="corretor-label">Anunciado por</div>
+        <div class="corretor-name">${escHtml(im.corretor)}</div>
+        ${corretorCreci ? `<div class="corretor-creci">CRECI ${escHtml(corretorCreci)}</div>` : ''}
+      </div>
+      <span class="corretor-cta"><span>Ver perfil</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg></span>
+    </a>
+    ` : ''}
     <div class="specs fade-up d1">
       ${Number(im.quartos) > 0 ? `<div class="spec"><div class="spec-val">${escHtml(String(im.quartos))}</div><div class="spec-lbl">Quartos</div></div>` : ''}
       <div class="spec"><div class="spec-val">${escHtml(String(im.banheiros || 1))}</div><div class="spec-lbl">Banheiros</div></div>
@@ -251,16 +377,6 @@ async function load(){
     ${featuresList.length ? `
       <div class="section-label">Diferenciais</div>
       <ul class="features">${featuresList.map(f => `<li>${escHtml(f)}</li>`).join('')}</ul>
-    ` : ''}
-    ${im.corretor ? `
-    <a class="corretor-card" href="corretor-publico.html?id=${encodeURIComponent(im.user_id || '')}" style="text-decoration:none;cursor:pointer">
-      <img class="corretor-logo" src="${escHtml(corretorLogoUrl)}" data-fallback-initials="${escHtml(initialsOf(im.corretor))}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'corretor-avatar-fallback',textContent:this.dataset.fallbackInitials}))"/>
-      <div class="corretor-info">
-        <div class="corretor-label">Anunciado por</div>
-        <div class="corretor-name">${escHtml(im.corretor)}</div>
-      </div>
-      <span class="corretor-cta">Ver todos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg></span>
-    </a>
     ` : ''}
     ${corretorWaPhone ? `
     <p class="disclaimer">Anúncio compartilhado por um corretor parceiro do Grupo Captar. Fale direto pelo WhatsApp pra mais fotos, condições e visita.</p>
