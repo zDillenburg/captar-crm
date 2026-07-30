@@ -344,7 +344,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .pp-preview-tagline{font-family:'Fraunces',serif;font-style:italic;font-size:12.5px;color:var(--ppt2);line-height:1.5;margin-bottom:12px}
 .pp-preview-stats{display:flex;border-top:1px solid var(--ppborder);border-bottom:1px solid var(--ppborder);margin-bottom:14px}
 .pp-preview-stat{flex:1;text-align:center;padding:10px 2px}
-.pp-preview-stat:not(:last-child){border-right:1px solid var(--ppborder)}
 .pp-preview-stat-val{font-family:'Fraunces',serif;font-size:14px;color:var(--ppt1)}
 .pp-preview-stat-lbl{font-size:8px;color:var(--ppt3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
 .pp-preview-bio{font-family:'Fraunces',serif;font-size:12px;line-height:1.6;color:var(--ppt1);padding-left:10px;border-left:2px solid var(--pppl);margin-bottom:14px}
@@ -7726,6 +7725,16 @@ function atualizarPreviewPerfilPublico(){
   if(espWrap)espWrap.style.display=especialidade?'block':'none';
   if(espVal)espVal.textContent=especialidade;
 
+  // Divisor só entre os stats visíveis — como creci/especialidade só somem
+  // via display:none (não saem do DOM), :not(:last-child) no CSS erra a
+  // conta quando o último elemento estrutural está escondido.
+  const statsWrap=document.querySelector('.pp-preview-stats');
+  if(statsWrap){
+    const visiveis=[...statsWrap.children].filter(el=>el.style.display!=='none');
+    [...statsWrap.children].forEach(el=>{el.style.borderRight='';});
+    visiveis.slice(0,-1).forEach(el=>{el.style.borderRight='1px solid var(--ppborder)';});
+  }
+
   const avatarImg=document.getElementById('pp-preview-avatar-img');
   const avatarFallback=document.getElementById('pp-preview-avatar-fallback');
   if(_userLogoUrl){
@@ -7738,8 +7747,13 @@ function atualizarPreviewPerfilPublico(){
 
   const banner=document.getElementById('pp-preview-banner');
   if(banner){
+    banner.textContent='';
     const capaPreviewImg=document.getElementById('pp-capa-preview');
-    banner.innerHTML=(_perfilPublicoCapaPath&&capaPreviewImg&&capaPreviewImg.style.display!=='none')?`<img src="${capaPreviewImg.src}"/>`:'';
+    if(_perfilPublicoCapaPath&&capaPreviewImg&&capaPreviewImg.style.display!=='none'){
+      const img=document.createElement('img');
+      img.src=capaPreviewImg.src;
+      banner.appendChild(img);
+    }
   }
 }
 
