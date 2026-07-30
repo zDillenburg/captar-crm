@@ -13,6 +13,7 @@ supabase-imovel-descricao.sql
 supabase-imovel-corretor-tel.sql
 supabase-imovel-fotos.sql
 supabase-perfil-publico.sql
+supabase-perfil-publico-v2.sql
 .claude/
 .DS_Store
 *.env

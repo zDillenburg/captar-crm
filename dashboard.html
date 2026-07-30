@@ -22,7 +22,7 @@
 <meta name="apple-mobile-web-app-title" content="Captar CRM"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js" defer></script>
@@ -301,6 +301,57 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .plan-features{list-style:none;display:flex;flex-direction:column;gap:8px}
 .plan-features li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2)}
 .plan-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+
+/* ══════════════════════ PERFIL PÚBLICO ══════════════════════ */
+.pp-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.pp-form-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.pp-link-card{background:linear-gradient(135deg,rgba(133,2,119,.16),rgba(98,1,88,.1));border:1px solid rgba(133,2,119,.35);border-radius:var(--r2);padding:18px 20px}
+.pp-link-title{font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.pp-link-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pp-link-url{flex:1;min-width:0;font-size:13px;color:var(--pl);word-break:break-all;text-decoration:none}
+.pp-link-inactive{font-size:12.5px;color:var(--t3);line-height:1.6}
+.pp-section-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.pp-char-count{font-size:11px;color:var(--t3);text-align:right;margin-top:4px}
+.pp-cor-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.pp-cor-swatch{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;transition:transform .15s,border-color .15s}
+.pp-cor-swatch.selected{border-color:var(--t1);transform:scale(1.12)}
+.pp-cor-custom{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;background:none;overflow:hidden}
+.pp-cor-custom::-webkit-color-swatch-wrapper{padding:0}
+.pp-cor-custom::-webkit-color-swatch{border:none;border-radius:50%}
+.pp-avatar-row,.pp-capa-row{display:flex;align-items:center;gap:14px}
+.pp-avatar-preview{width:64px;height:64px;border-radius:14px;object-fit:contain;background:#fff;flex-shrink:0}
+.pp-avatar-empty{width:64px;height:64px;border-radius:14px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--t3);flex-shrink:0}
+.pp-capa-preview{width:110px;height:56px;border-radius:10px;object-fit:cover;background:var(--bg4);flex-shrink:0}
+.pp-capa-empty{width:110px;height:56px;border-radius:10px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--t3);flex-shrink:0;text-align:center;padding:4px}
+.pp-upload-btns{display:flex;gap:8px;flex-wrap:wrap}
+.pp-upload-label{padding:8px 14px;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;transition:border-color .15s}
+.pp-upload-label:hover{border-color:var(--p)}
+
+/* Preview — sempre escuro, replica exatamente o visual da página pública */
+.pp-preview-col{position:sticky;top:20px}
+.pp-preview-label{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.pp-preview{
+  --ppbg:#0f0d0b;--ppbg2:#161310;--ppborder:rgba(255,255,255,.08);
+  --ppt1:#fffdea;--ppt2:rgba(255,253,234,.65);--ppt3:#8a8070;--pppl:#850277;
+  background:var(--ppbg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;font-family:'Inter',sans-serif;
+}
+.pp-preview-banner{height:88px;background:linear-gradient(160deg,var(--ppbg2),var(--ppbg));position:relative}
+.pp-preview-banner img{width:100%;height:100%;object-fit:cover;display:block}
+.pp-preview-body{padding:0 18px 18px;margin-top:-28px}
+.pp-preview-avatar{width:56px;height:56px;border-radius:13px;border:3px solid var(--ppbg);object-fit:contain;background:#fff;display:block;margin-bottom:12px}
+.pp-preview-avatar-fallback{width:56px;height:56px;border-radius:13px;border:3px solid var(--ppbg);background:var(--pppl);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#fff;margin-bottom:12px}
+.pp-preview-name{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--ppt1);letter-spacing:-.01em;margin-bottom:4px}
+.pp-preview-tagline{font-family:'Fraunces',serif;font-style:italic;font-size:12.5px;color:var(--ppt2);line-height:1.5;margin-bottom:12px}
+.pp-preview-stats{display:flex;border-top:1px solid var(--ppborder);border-bottom:1px solid var(--ppborder);margin-bottom:14px}
+.pp-preview-stat{flex:1;text-align:center;padding:10px 2px}
+.pp-preview-stat-val{font-family:'Fraunces',serif;font-size:14px;color:var(--ppt1)}
+.pp-preview-stat-lbl{font-size:8px;color:var(--ppt3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.pp-preview-bio{font-family:'Fraunces',serif;font-size:12px;line-height:1.6;color:var(--ppt1);padding-left:10px;border-left:2px solid var(--pppl);margin-bottom:14px}
+.pp-preview-cta{display:flex;align-items:center;justify-content:center;gap:6px;background:#25d366;color:#fff;font-size:11.5px;font-weight:700;padding:9px;border-radius:9px}
+@media(max-width:900px){
+  .pp-layout{grid-template-columns:1fr}
+  .pp-preview-col{position:static;max-width:340px}
+}
 
 /* ══════════════════════ MODAL ══════════════════════ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
@@ -1127,6 +1178,10 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
         Imóveis
       </button>
+      <button class="nav-item" onclick="navigate('perfilpublico',this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 010 20M12 2a15 15 0 000 20M2 12h20"/></svg>
+        Perfil Público
+      </button>
       <button class="nav-item" onclick="navigate('locacao',this)">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
         Locação
@@ -1477,6 +1532,112 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
       </div>
 
+      <!-- ══════ PERFIL PÚBLICO PAGE ══════ -->
+      <div class="page" id="page-perfilpublico">
+        <div class="pp-layout">
+          <div class="pp-form-col">
+
+            <div class="pp-link-card">
+              <div class="pp-link-title">Seu link público</div>
+              <div id="perfil-pub-link-row" style="display:none" class="pp-link-row">
+                <a href="#" id="perfil-pub-link" target="_blank" class="pp-link-url"></a>
+                <button type="button" class="link-btn" onclick="copiarLinkPerfilPublico()">Copiar</button>
+              </div>
+              <div id="perfil-pub-link-empty" class="pp-link-inactive">Ative o perfil lá embaixo pra gerar o link — depois é só copiar e mandar pro cliente.</div>
+            </div>
+
+            <div class="config-card">
+              <div class="config-card-title">Aparência</div>
+              <div class="config-form-group">
+                <label class="config-label">Foto de perfil</label>
+                <div class="pp-avatar-row">
+                  <img id="pp-avatar-preview" class="pp-avatar-preview" style="display:none"/>
+                  <div id="pp-avatar-empty" class="pp-avatar-empty">📷</div>
+                  <div class="pp-upload-btns">
+                    <label class="pp-upload-label" for="pp-avatar-file">Enviar foto</label>
+                    <input type="file" id="pp-avatar-file" accept="image/*" style="display:none" onchange="handleAvatarFileSelect(event)"/>
+                  </div>
+                </div>
+              </div>
+              <div class="config-form-group">
+                <label class="config-label">Foto de capa</label>
+                <div class="pp-capa-row">
+                  <img id="pp-capa-preview" class="pp-capa-preview" style="display:none"/>
+                  <div id="pp-capa-empty" class="pp-capa-empty">Sem capa</div>
+                  <div class="pp-upload-btns">
+                    <label class="pp-upload-label" for="pp-capa-file">Enviar capa</label>
+                    <input type="file" id="pp-capa-file" accept="image/*" style="display:none" onchange="handleCapaFileSelect(event)"/>
+                    <button type="button" class="btn-cancel" id="pp-capa-remove-btn" style="display:none" onclick="removerCapaPerfilPublico()">Remover</button>
+                  </div>
+                </div>
+              </div>
+              <div class="config-form-group" style="margin-bottom:0">
+                <label class="config-label">Cor de destaque</label>
+                <div id="perfil-pub-cores" class="pp-cor-row"></div>
+              </div>
+            </div>
+
+            <div class="config-card">
+              <div class="config-card-title">Sobre você</div>
+              <div class="config-form-group">
+                <label class="config-label">Frase de destaque</label>
+                <input class="config-input" type="text" id="pp-tagline" maxlength="90" placeholder="Ex: Encontrar o imóvel certo é sobre entender pessoas, não só metros quadrados." oninput="atualizarPreviewPerfilPublico();document.getElementById('pp-tagline-count').textContent=this.value.length"/>
+                <div class="pp-char-count"><span id="pp-tagline-count">0</span>/90</div>
+              </div>
+              <div class="config-form-group" style="margin-bottom:0">
+                <label class="config-label">Bio</label>
+                <textarea class="config-input" id="perfil-pub-bio" rows="4" placeholder="Ex: Corretor especializado em imóveis de alto padrão em Caxias do Sul, há 8 anos no mercado." style="resize:vertical;font-family:inherit" oninput="atualizarPreviewPerfilPublico()"></textarea>
+              </div>
+            </div>
+
+            <div class="config-card">
+              <div class="config-card-title">Redes e contato</div>
+              <div class="config-form-group">
+                <label class="config-label">Instagram</label>
+                <input class="config-input" type="text" id="pp-instagram" placeholder="@seuusuario"/>
+              </div>
+              <div class="config-form-group" style="margin-bottom:0">
+                <label class="config-label">Site</label>
+                <input class="config-input" type="text" id="pp-site" placeholder="seusite.com.br"/>
+              </div>
+            </div>
+
+            <div class="config-card">
+              <div class="config-card-title">Publicação</div>
+              <div class="toggle-row" style="border-bottom:none;padding-top:0">
+                <div class="toggle-info">
+                  <div class="toggle-name">Ativar perfil público</div>
+                  <div class="toggle-desc">Libera o link com todos os seus imóveis compartilhados</div>
+                </div>
+                <button class="toggle off" id="perfil-pub-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off');atualizarLinkPerfilPublico()"></button>
+              </div>
+              <button class="config-save" onclick="salvarPerfilPublico(this)" style="margin-top:14px;width:100%">Salvar perfil público</button>
+            </div>
+
+          </div>
+
+          <div class="pp-preview-col">
+            <div class="pp-preview-label">Preview ao vivo</div>
+            <div class="pp-preview">
+              <div class="pp-preview-banner" id="pp-preview-banner"></div>
+              <div class="pp-preview-body">
+                <img id="pp-preview-avatar-img" class="pp-preview-avatar" style="display:none"/>
+                <div id="pp-preview-avatar-fallback" class="pp-preview-avatar-fallback">?</div>
+                <div class="pp-preview-name" id="pp-preview-name">Seu nome</div>
+                <p class="pp-preview-tagline" id="pp-preview-tagline" style="display:none"></p>
+                <div class="pp-preview-stats">
+                  <div class="pp-preview-stat"><div class="pp-preview-stat-val" id="pp-preview-stat-imoveis">0</div><div class="pp-preview-stat-lbl">Imóveis</div></div>
+                  <div class="pp-preview-stat" id="pp-preview-stat-creci-wrap" style="display:none"><div class="pp-preview-stat-val" id="pp-preview-stat-creci">—</div><div class="pp-preview-stat-lbl">CRECI</div></div>
+                  <div class="pp-preview-stat" id="pp-preview-stat-esp-wrap" style="display:none"><div class="pp-preview-stat-val" id="pp-preview-stat-esp" style="font-size:11px">—</div><div class="pp-preview-stat-lbl">Especialidade</div></div>
+                </div>
+                <p class="pp-preview-bio" id="pp-preview-bio" style="display:none"></p>
+                <div class="pp-preview-cta">💬 Falar no WhatsApp</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ══════ RELATÓRIOS PAGE ══════ -->
       <div class="page" id="page-relatorios">
         <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:16px;gap:8px" class="no-print">
@@ -1634,27 +1795,8 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
           <div class="config-card">
             <div class="config-card-title">Perfil Público</div>
-            <div style="font-size:12px;color:var(--t3);margin-bottom:14px">Uma página com a sua marca e todos os imóveis que você compartilhou — um único link pra mandar pro cliente.</div>
-            <div class="config-form-group">
-              <label class="config-label">Bio curta (opcional)</label>
-              <textarea class="config-input" id="perfil-pub-bio" rows="3" placeholder="Ex: Corretor especializado em imóveis de alto padrão em Caxias do Sul, há 8 anos no mercado." style="resize:vertical;font-family:inherit"></textarea>
-            </div>
-            <div class="config-form-group">
-              <label class="config-label">Cor de destaque</label>
-              <div id="perfil-pub-cores" style="display:flex;gap:8px;margin-top:6px"></div>
-            </div>
-            <div class="toggle-row" style="margin-top:4px">
-              <div class="toggle-info">
-                <div class="toggle-name">Ativar perfil público</div>
-                <div class="toggle-desc">Libera o link com todos os seus imóveis compartilhados</div>
-              </div>
-              <button class="toggle off" id="perfil-pub-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
-            </div>
-            <div id="perfil-pub-link-row" style="display:none;margin-top:12px;padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;align-items:center;justify-content:space-between;gap:8px">
-              <a href="#" id="perfil-pub-link" target="_blank" style="color:var(--pl);word-break:break-all"></a>
-              <button type="button" class="link-btn" style="font-size:11px;flex-shrink:0" onclick="copiarLinkPerfilPublico()">Copiar</button>
-            </div>
-            <button class="config-save" onclick="salvarPerfilPublico(this)" style="margin-top:14px">Salvar perfil público</button>
+            <div style="font-size:12px;color:var(--t3);margin-bottom:14px">Sua página com bio, capa, redes sociais e todos os imóveis que você compartilhou — ganhou uma aba própria, com preview ao vivo.</div>
+            <button class="config-save" onclick="navigate('perfilpublico',document.querySelector('.nav-item[onclick*=&quot;perfilpublico&quot;]'))">🔗 Abrir Perfil Público →</button>
           </div>
         </div>
       </div>
@@ -4003,6 +4145,7 @@ const pageMeta={
   dashboard:{title:'Dashboard',sub:'Visão geral — '+_mesAtual},
   crm:{title:'CRM / Leads',sub:'Pipeline de relacionamento com clientes'},
   imoveis:{title:'Imóveis',sub:'Gestão do portfólio de imóveis'},
+  perfilpublico:{title:'Perfil Público',sub:'Sua página para clientes — personalize e compartilhe com um link'},
   locacao:{title:'Locação',sub:'Contratos, inquilinos e inadimplência'},
   visitas:{title:'Visitas',sub:'Agendamento e controle de visitas aos imóveis'},
   calendario:{title:'Calendário',sub:'Agenda completa de compromissos e eventos'},
@@ -4072,7 +4215,8 @@ function initPage(page){
   if(page==='relatorios') setTimeout(()=>{initPerfChart();initReceitaBar();renderFunnel();renderRelatorioCorretores();},100);
   if(page==='financeiro') setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100);
   if(page==='assistente') initAssistente();
-  if(page==='config'){loadUserLogo();loadPerfilPublico();}
+  if(page==='config'){loadUserLogo();}
+  if(page==='perfilpublico'){loadUserLogo().then(loadAvatarPreviewPP);loadPerfilPublico();}
 }
 
 // ─────────────────────────────────────────
@@ -7314,19 +7458,21 @@ function renderFinKpis(){
 const PERFIL_PUBLICO_CORES=['#850277','#2563eb','#059669','#d97706','#dc2626','#0891b2'];
 let _perfilPublicoCorAtual=PERFIL_PUBLICO_CORES[0];
 let _perfilPublicoAtivo=false;
+let _perfilPublicoCapaPath='';
 
 function renderPerfilPublicoCores(){
   const wrap=document.getElementById('perfil-pub-cores');
   if(!wrap)return;
-  wrap.innerHTML=PERFIL_PUBLICO_CORES.map(cor=>{
-    const sel=cor===_perfilPublicoCorAtual;
-    return `<button type="button" onclick="selecionarCorPerfil('${cor}')" title="${cor}" style="width:28px;height:28px;border-radius:50%;background:${cor};border:2px solid ${sel?'var(--t1)':'transparent'};cursor:pointer;box-shadow:${sel?'0 0 0 2px var(--bg2)':'none'}"></button>`;
-  }).join('');
+  const custom=!PERFIL_PUBLICO_CORES.includes(_perfilPublicoCorAtual);
+  wrap.innerHTML=PERFIL_PUBLICO_CORES.map(cor=>
+    `<button type="button" class="pp-cor-swatch${cor===_perfilPublicoCorAtual?' selected':''}" onclick="selecionarCorPerfil('${cor}')" title="${cor}" style="background:${cor}"></button>`
+  ).join('')+`<input type="color" class="pp-cor-custom" id="pp-cor-custom-input" title="Cor personalizada" value="${custom?_perfilPublicoCorAtual:'#850277'}" oninput="selecionarCorPerfil(this.value)"/>`;
 }
 
 function selecionarCorPerfil(cor){
   _perfilPublicoCorAtual=cor;
   renderPerfilPublicoCores();
+  atualizarPreviewPerfilPublico();
 }
 
 async function loadPerfilPublico(){
@@ -7335,26 +7481,42 @@ async function loadPerfilPublico(){
   const {data,error}=await _sb.from('perfil_publico').select('*').eq('user_id',_currentUser.id).maybeSingle();
   if(error){console.error('loadPerfilPublico:',error);return;}
   const bioEl=document.getElementById('perfil-pub-bio');
+  const taglineEl=document.getElementById('pp-tagline');
+  const instaEl=document.getElementById('pp-instagram');
+  const siteEl=document.getElementById('pp-site');
   const toggle=document.getElementById('perfil-pub-toggle');
   if(data){
     if(bioEl)bioEl.value=data.bio||'';
+    if(taglineEl)taglineEl.value=data.tagline||'';
+    if(instaEl)instaEl.value=data.instagram||'';
+    if(siteEl)siteEl.value=data.site_url||'';
     _perfilPublicoCorAtual=data.cor_destaque||PERFIL_PUBLICO_CORES[0];
     _perfilPublicoAtivo=!!data.ativo;
+    _perfilPublicoCapaPath=data.capa_path||'';
   }else{
     if(bioEl)bioEl.value='';
+    if(taglineEl)taglineEl.value='';
+    if(instaEl)instaEl.value='';
+    if(siteEl)siteEl.value='';
     _perfilPublicoCorAtual=PERFIL_PUBLICO_CORES[0];
     _perfilPublicoAtivo=false;
+    _perfilPublicoCapaPath='';
   }
+  const countEl=document.getElementById('pp-tagline-count');
+  if(countEl)countEl.textContent=String((taglineEl?.value||'').length);
   if(toggle){
     toggle.classList.toggle('on',_perfilPublicoAtivo);
     toggle.classList.toggle('off',!_perfilPublicoAtivo);
   }
   renderPerfilPublicoCores();
   atualizarLinkPerfilPublico();
+  loadCapaPreview();
+  atualizarPreviewPerfilPublico();
 }
 
 function atualizarLinkPerfilPublico(){
   const row=document.getElementById('perfil-pub-link-row');
+  const empty=document.getElementById('perfil-pub-link-empty');
   const link=document.getElementById('perfil-pub-link');
   if(!row||!link||!_currentUser?.id)return;
   if(_perfilPublicoAtivo){
@@ -7362,14 +7524,19 @@ function atualizarLinkPerfilPublico(){
     link.href=url;
     link.textContent=url;
     row.style.display='flex';
+    if(empty)empty.style.display='none';
   }else{
     row.style.display='none';
+    if(empty)empty.style.display='block';
   }
 }
 
 async function salvarPerfilPublico(btn){
   if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
   const bio=(document.getElementById('perfil-pub-bio')?.value||'').trim();
+  const tagline=(document.getElementById('pp-tagline')?.value||'').trim();
+  const instagram=(document.getElementById('pp-instagram')?.value||'').trim();
+  const siteUrl=(document.getElementById('pp-site')?.value||'').trim();
   const toggle=document.getElementById('perfil-pub-toggle');
   const ativo=toggle?toggle.classList.contains('on'):false;
   const meta=_currentUser?.user_metadata||{};
@@ -7380,6 +7547,10 @@ async function salvarPerfilPublico(btn){
     creci:meta.creci||'',
     especialidade:meta.especialidade||'',
     bio,
+    tagline,
+    instagram,
+    site_url:siteUrl,
+    capa_path:_perfilPublicoCapaPath,
     cor_destaque:_perfilPublicoCorAtual,
     ativo,
     updated_at:new Date().toISOString()
@@ -7406,17 +7577,183 @@ async function copiarLinkPerfilPublico(){
 }
 
 // Acesso rápido ao perfil público a partir da página de Imóveis — se já
-// estiver ativo, abre direto; senão leva pra Configurações pra ativar.
+// estiver ativo, abre direto; senão leva direto pra aba de edição.
 function abrirMeuPerfilPublicoRapido(){
   if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
   if(_perfilPublicoAtivo){
     window.open(`${location.origin}/corretor-publico.html?id=${encodeURIComponent(_currentUser.id)}`,'_blank');
   }else{
-    navigate('config',document.querySelector('.nav-item[onclick*="config"]'));
-    showToast('Ative seu perfil público aqui embaixo pra gerar o link.','success');
+    navigate('perfilpublico',document.querySelector('.nav-item[onclick*="perfilpublico"]'));
+    showToast('Preencha e ative seu perfil público pra gerar o link.','success');
     setTimeout(()=>{
-      document.getElementById('perfil-pub-bio')?.scrollIntoView({behavior:'smooth',block:'center'});
+      document.getElementById('pp-tagline')?.scrollIntoView({behavior:'smooth',block:'center'});
     },300);
+  }
+}
+
+// ── Avatar (reaproveita o mesmo arquivo logos/${uid}/logo.jpg usado na
+// Captar IA) e capa (logos/${uid}/capa.jpg) do perfil público ──
+async function loadCapaPreview(){
+  if(!_currentUser?.id)return;
+  const preview=document.getElementById('pp-capa-preview');
+  const empty=document.getElementById('pp-capa-empty');
+  const removeBtn=document.getElementById('pp-capa-remove-btn');
+  if(_perfilPublicoCapaPath){
+    const {data:signed}=await _sb.storage.from('logos').createSignedUrl(`${_currentUser.id}/capa.jpg`,3600);
+    if(signed?.signedUrl){
+      if(preview){preview.src=signed.signedUrl;preview.style.display='block';}
+      if(empty)empty.style.display='none';
+      if(removeBtn)removeBtn.style.display='inline-block';
+      return;
+    }
+  }
+  if(preview)preview.style.display='none';
+  if(empty)empty.style.display='flex';
+  if(removeBtn)removeBtn.style.display='none';
+}
+
+async function loadAvatarPreviewPP(){
+  if(!_currentUser?.id)return;
+  const preview=document.getElementById('pp-avatar-preview');
+  const empty=document.getElementById('pp-avatar-empty');
+  if(_userLogoUrl){
+    if(preview){preview.src=_userLogoUrl;preview.style.display='block';}
+    if(empty)empty.style.display='none';
+  }else{
+    if(preview)preview.style.display='none';
+    if(empty)empty.style.display='flex';
+  }
+}
+
+async function handleAvatarFileSelect(evt){
+  const file=evt.target.files&&evt.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('Selecione um arquivo de imagem.','error');evt.target.value='';return;}
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  const label=document.querySelector('label[for="pp-avatar-file"]');
+  const originalLabel=label?label.textContent:'';
+  if(label){label.textContent='Enviando…';label.style.pointerEvents='none';label.style.opacity='.6';}
+  try{
+    const {mimeType,data}=await resizeImageFile(file,800,0.92);
+    const blob=base64ToBlob(data,mimeType);
+    const path=`${_currentUser.id}/logo.jpg`;
+    const {error}=await _sb.storage.from('logos').upload(path,blob,{contentType:mimeType,upsert:true});
+    if(error){showToast('Erro ao enviar foto: '+error.message,'error');return;}
+    showToast('Foto de perfil enviada!','success');
+    await loadUserLogo();
+    await loadAvatarPreviewPP();
+    atualizarPreviewPerfilPublico();
+  }catch(e){
+    showToast('Não foi possível enviar a foto: '+(e&&e.message?e.message:'erro desconhecido'),'error');
+  }finally{
+    if(label){label.textContent=originalLabel;label.style.pointerEvents='';label.style.opacity='';}
+    evt.target.value='';
+  }
+}
+
+async function handleCapaFileSelect(evt){
+  const file=evt.target.files&&evt.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('Selecione um arquivo de imagem.','error');evt.target.value='';return;}
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  const label=document.querySelector('label[for="pp-capa-file"]');
+  const originalLabel=label?label.textContent:'';
+  if(label){label.textContent='Enviando…';label.style.pointerEvents='none';label.style.opacity='.6';}
+  try{
+    const {mimeType,data}=await resizeImageFile(file,1600,0.85);
+    const blob=base64ToBlob(data,mimeType);
+    const path=`${_currentUser.id}/capa.jpg`;
+    const {error}=await _sb.storage.from('logos').upload(path,blob,{contentType:mimeType,upsert:true});
+    if(error){showToast('Erro ao enviar capa: '+error.message,'error');return;}
+    _perfilPublicoCapaPath='capa.jpg';
+    showToast('Capa enviada! Não esqueça de salvar.','success');
+    await loadCapaPreview();
+    atualizarPreviewPerfilPublico();
+  }catch(e){
+    showToast('Não foi possível enviar a capa: '+(e&&e.message?e.message:'erro desconhecido'),'error');
+  }finally{
+    if(label){label.textContent=originalLabel;label.style.pointerEvents='';label.style.opacity='';}
+    evt.target.value='';
+  }
+}
+
+async function removerCapaPerfilPublico(){
+  if(!_currentUser?.id)return;
+  if(!confirm('Remover a capa salva?'))return;
+  await _sb.storage.from('logos').remove([`${_currentUser.id}/capa.jpg`]);
+  _perfilPublicoCapaPath='';
+  showToast('Capa removida. Não esqueça de salvar.','success');
+  loadCapaPreview();
+  atualizarPreviewPerfilPublico();
+}
+
+function atualizarPreviewPerfilPublico(){
+  const nome=(_currentUser?.user_metadata?.nome||_currentUser?.user_metadata?.name||'Seu nome').trim()||'Seu nome';
+  const tagline=(document.getElementById('pp-tagline')?.value||'').trim();
+  const bio=(document.getElementById('perfil-pub-bio')?.value||'').trim();
+  const creci=(_currentUser?.user_metadata?.creci||'').trim();
+  const especialidade=(_currentUser?.user_metadata?.especialidade||'').trim();
+  const qtdImoveis=(IMOVEIS||[]).filter(im=>im.publico).length;
+
+  document.documentElement.style.setProperty('--pp-preview-accent',_perfilPublicoCorAtual);
+  const preview=document.querySelector('.pp-preview');
+  if(preview)preview.style.setProperty('--pppl',_perfilPublicoCorAtual);
+
+  const nameEl=document.getElementById('pp-preview-name');
+  if(nameEl)nameEl.textContent=nome;
+
+  const taglineEl=document.getElementById('pp-preview-tagline');
+  if(taglineEl){
+    if(tagline){taglineEl.textContent=`"${tagline}"`;taglineEl.style.display='block';}
+    else taglineEl.style.display='none';
+  }
+
+  const bioEl=document.getElementById('pp-preview-bio');
+  if(bioEl){
+    if(bio){bioEl.textContent=bio;bioEl.style.display='block';}
+    else bioEl.style.display='none';
+  }
+
+  const statImoveis=document.getElementById('pp-preview-stat-imoveis');
+  if(statImoveis)statImoveis.textContent=String(qtdImoveis);
+  const creciWrap=document.getElementById('pp-preview-stat-creci-wrap');
+  const creciVal=document.getElementById('pp-preview-stat-creci');
+  if(creciWrap)creciWrap.style.display=creci?'block':'none';
+  if(creciVal)creciVal.textContent=creci;
+  const espWrap=document.getElementById('pp-preview-stat-esp-wrap');
+  const espVal=document.getElementById('pp-preview-stat-esp');
+  if(espWrap)espWrap.style.display=especialidade?'block':'none';
+  if(espVal)espVal.textContent=especialidade;
+
+  // Divisor só entre os stats visíveis — como creci/especialidade só somem
+  // via display:none (não saem do DOM), :not(:last-child) no CSS erra a
+  // conta quando o último elemento estrutural está escondido.
+  const statsWrap=document.querySelector('.pp-preview-stats');
+  if(statsWrap){
+    const visiveis=[...statsWrap.children].filter(el=>el.style.display!=='none');
+    [...statsWrap.children].forEach(el=>{el.style.borderRight='';});
+    visiveis.slice(0,-1).forEach(el=>{el.style.borderRight='1px solid var(--ppborder)';});
+  }
+
+  const avatarImg=document.getElementById('pp-preview-avatar-img');
+  const avatarFallback=document.getElementById('pp-preview-avatar-fallback');
+  if(_userLogoUrl){
+    if(avatarImg){avatarImg.src=_userLogoUrl;avatarImg.style.display='block';}
+    if(avatarFallback)avatarFallback.style.display='none';
+  }else{
+    if(avatarImg)avatarImg.style.display='none';
+    if(avatarFallback){avatarFallback.style.display='flex';avatarFallback.textContent=initials(nome);}
+  }
+
+  const banner=document.getElementById('pp-preview-banner');
+  if(banner){
+    banner.textContent='';
+    const capaPreviewImg=document.getElementById('pp-capa-preview');
+    if(_perfilPublicoCapaPath&&capaPreviewImg&&capaPreviewImg.style.display!=='none'){
+      const img=document.createElement('img');
+      img.src=capaPreviewImg.src;
+      banner.appendChild(img);
+    }
   }
 }
 
