@@ -2295,6 +2295,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         <div class="admin-tabs-nav">
           <button class="admin-tab-btn active" onclick="switchAdminTab('geral',this)">📊 Visão Geral</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('usuarios',this)">👥 Usuários</button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('imoveis',this)">🏠 Imóveis</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('assinaturas',this)">💳 Assinaturas</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('avisos',this)">📢 Avisos</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('demo',this)">🎯 Modo Demo</button>
@@ -2367,6 +2368,20 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <tbody id="adm-user-tbody"></tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        <!-- ── TAB: IMÓVEIS (todos os clientes) ── -->
+        <div class="admin-tab-pane" id="adm-pane-imoveis">
+          <div class="admin-section">
+            <div class="admin-section-hdr" style="flex-wrap:wrap;gap:12px">
+              <div class="admin-section-title">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+                Imóveis de todos os clientes
+              </div>
+              <input id="adm-imoveis-busca" type="text" placeholder="🔍  Buscar por cliente, endereço ou tipo…" oninput="filtrarAdminImoveis()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:7px 12px;font-size:12px;color:var(--t1);width:260px;outline:none">
+            </div>
+            <div id="adm-imoveis-groups" style="padding:16px"></div>
           </div>
         </div>
 
@@ -7045,8 +7060,81 @@ async function loadAssinaturas(){
   if(data) ASSINATURAS.push(...data);
 }
 
+// Todos os imóveis da plataforma (só carrega de verdade se o admin tiver a
+// policy "imoveis_admin_select" aplicada — ver supabase-admin-imoveis-view.sql;
+// sem ela, RLS simplesmente devolve zero linhas de outros usuários).
+let ADMIN_IMOVEIS = [];
+let _admImoveisFiltered = [];
+async function loadAdminImoveis(){
+  const {data,error} = await _sb.from('imoveis').select('*').order('created_at',{ascending:false});
+  if(error){showToast('Erro ao carregar imóveis: '+error.message,'error');return;}
+  ADMIN_IMOVEIS.length = 0;
+  if(data) ADMIN_IMOVEIS.push(...data);
+}
+function clienteLabelPorUserId(uid){
+  const a = ASSINATURAS.find(a=>a.user_id===uid);
+  if(a) return {nome:a.nome||'—',email:a.email||''};
+  return {nome:'Cliente sem assinatura cadastrada',email:''};
+}
+function filtrarAdminImoveis(){
+  renderAdminImoveisGrouped();
+}
+function renderAdminImoveisGrouped(){
+  const wrap = document.getElementById('adm-imoveis-groups');
+  if(!wrap) return;
+  const q = (document.getElementById('adm-imoveis-busca')?.value||'').toLowerCase().trim();
+  const porUsuario = new Map();
+  ADMIN_IMOVEIS.forEach(im=>{
+    const uid = im.user_id||'sem-usuario';
+    if(!porUsuario.has(uid)) porUsuario.set(uid,[]);
+    porUsuario.get(uid).push(im);
+  });
+  let grupos = [...porUsuario.entries()].map(([uid,imoveis])=>({uid,imoveis,cliente:clienteLabelPorUserId(uid)}));
+  if(q){
+    grupos = grupos
+      .map(g=>({...g,imoveis:g.imoveis.filter(im=>
+        g.cliente.nome.toLowerCase().includes(q) ||
+        g.cliente.email.toLowerCase().includes(q) ||
+        (im.endereco||'').toLowerCase().includes(q) ||
+        (im.tipo||'').toLowerCase().includes(q)
+      )}))
+      .filter(g=>g.imoveis.length>0 || g.cliente.nome.toLowerCase().includes(q) || g.cliente.email.toLowerCase().includes(q));
+  }
+  grupos.sort((a,b)=>b.imoveis.length-a.imoveis.length);
+  if(!ADMIN_IMOVEIS.length){
+    wrap.innerHTML = `<div class="admin-empty">Nenhum imóvel cadastrado na plataforma ainda.</div>`;
+    return;
+  }
+  if(!grupos.length){
+    wrap.innerHTML = `<div class="admin-empty">Nenhum resultado para "${escHTML(q)}".</div>`;
+    return;
+  }
+  wrap.innerHTML = grupos.map(g=>`
+    <div style="margin-bottom:18px;border:1px solid var(--border);border-radius:var(--r2);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg3)">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--t1)">${escHTML(g.cliente.nome)}</div>
+          ${g.cliente.email?`<div style="font-size:11px;color:var(--t3)">${escHTML(g.cliente.email)}</div>`:''}
+        </div>
+        <span style="font-size:11.5px;font-weight:700;color:var(--t2);background:var(--bg4);padding:4px 10px;border-radius:20px">${g.imoveis.length} imóve${g.imoveis.length>1?'is':'l'}</span>
+      </div>
+      ${g.imoveis.length?`<div style="overflow-x:auto"><table class="admin-table" style="margin:0">
+        <thead><tr><th>Endereço</th><th>Tipo</th><th>Preço</th><th>Status</th></tr></thead>
+        <tbody>
+          ${g.imoveis.map(im=>`<tr>
+            <td>${escHTML(im.endereco||'—')}</td>
+            <td>${escHTML(im.tipo||'—')}</td>
+            <td>${escHTML(im.preco||'—')}</td>
+            <td>${escHTML(im.status||'—')}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>`:`<div class="admin-empty" style="padding:14px">Nenhum imóvel corresponde à busca pra este cliente.</div>`}
+    </div>`).join('');
+}
+
 async function renderAdmin(){
   await loadAssinaturas();
+  await loadAdminImoveis();
 
   const fmtBRL = v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
   const hoje = new Date(); hoje.setHours(0,0,0,0);
@@ -7261,6 +7349,7 @@ function switchAdminTab(tab, btn){
   if(btn) btn.classList.add('active');
   if(tab==='geral')       renderAdminGeral();
   if(tab==='usuarios')    renderUsuarios();
+  if(tab==='imoveis')     renderAdminImoveisGrouped();
   if(tab==='avisos')      loadAvisos().then(()=>renderAvisos());
   if(tab==='demo')        initDemoToggle();
 }
