@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex"/>
 <title>Imóvel — Grupo Captar</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -144,8 +144,8 @@
 <body>
 
   <header>
-    <a href="index.html">
-      <img src="logo.svg" alt="Grupo Captar"/>
+    <a href="/index.html">
+      <img src="/logo.svg" alt="Grupo Captar"/>
     </a>
     <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
   </header>
@@ -160,7 +160,7 @@
   </main>
 
   <footer>
-    Anúncio de <a href="index.html">Grupo Captar</a> — assessoria imobiliária &amp; inteligência artificial
+    Anúncio de <a href="/index.html">Grupo Captar</a> — assessoria imobiliária &amp; inteligência artificial
   </footer>
 
   <div class="lightbox" id="lightbox" onclick="if(event.target===this)fecharLightbox()">
@@ -320,8 +320,8 @@ async function load(){
   }
   const corretorCreci = (perfilCorretor?.creci || '').trim();
   const corretorPerfilUrl = perfilCorretor?.slug
-    ? `corretor-publico.html?u=${encodeURIComponent(perfilCorretor.slug)}`
-    : `corretor-publico.html?id=${encodeURIComponent(im.user_id || '')}`;
+    ? `/c/${encodeURIComponent(perfilCorretor.slug)}`
+    : `/corretor-publico.html?id=${encodeURIComponent(im.user_id || '')}`;
 
   const featuresList = (im.features || '').split(',').map(f => f.trim()).filter(Boolean);
   const waText = encodeURIComponent(`Olá! Tenho interesse no imóvel "${im.titulo || ''}" que vi no link do Grupo Captar.`);
