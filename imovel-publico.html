@@ -133,6 +133,11 @@
   @media(max-width:480px){
     .hero{font-size:42px;padding:48px 20px}
     .price{font-size:28px}
+    .corretor-card{gap:10px;padding:14px}
+    .corretor-logo,.corretor-avatar-fallback{width:52px;height:52px}
+    .corretor-name{white-space:normal;overflow:visible;text-overflow:clip}
+    .corretor-cta{padding:9px 10px}
+    .corretor-cta span{display:none}
   }
 </style>
 </head>
@@ -355,7 +360,7 @@ async function load(){
         <div class="corretor-name">${escHtml(im.corretor)}</div>
         ${corretorCreci ? `<div class="corretor-creci">CRECI ${escHtml(corretorCreci)}</div>` : ''}
       </div>
-      <span class="corretor-cta">Ver perfil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg></span>
+      <span class="corretor-cta"><span>Ver perfil</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg></span>
     </a>
     ` : ''}
     <div class="specs fade-up d1">

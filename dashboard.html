@@ -318,7 +318,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .pp-slug-input-row{display:flex;align-items:center;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
 .pp-slug-prefix{padding:10px 0 10px 12px;font-size:12.5px;color:var(--t3);white-space:nowrap;font-family:ui-monospace,monospace}
 .pp-slug-input{flex:1;min-width:0;padding:10px 12px 10px 2px;background:none;border:none;outline:none;font-size:12.5px;color:var(--t1);font-family:ui-monospace,monospace}
-.pp-section-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
 .pp-char-count{font-size:11px;color:var(--t3);text-align:right;margin-top:4px}
 .pp-cor-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:8px;max-width:280px}
 .pp-cor-swatch{width:40px;height:40px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center}
@@ -5272,7 +5271,7 @@ function renderCalendar(){
     html+=`<div class="${classes}" onclick="selectCalDay('${dateStr}')">
       <div class="cal-day-num"><div class="cal-day-num-inner">${day}</div></div>
       <div class="cal-events-chips">
-        ${events.slice(0,3).map(ev=>`<div class="cal-event-chip" style="background:${ev.color}22;color:${ev.color}">${ev.title}</div>`).join('')}
+        ${events.slice(0,3).map(ev=>`<div class="cal-event-chip" style="background:${ev.color}22;color:${ev.color}">${escHTML(ev.title)}</div>`).join('')}
         ${events.length>3?`<div class="cal-event-chip" style="background:var(--bg4);color:var(--t3)">+${events.length-3} mais</div>`:''}
       </div>
     </div>`;
@@ -5301,8 +5300,8 @@ function showCalEvents(dateStr){
     <div class="cal-event-item">
       <div class="cal-event-color" style="background:${ev.color}"></div>
       <div class="cal-event-info">
-        <div class="cal-event-title">${ev.title}</div>
-        <div class="cal-event-time">${ev.time}</div>
+        <div class="cal-event-title">${escHTML(ev.title)}</div>
+        <div class="cal-event-time">${escHTML(ev.time)}</div>
       </div>
     </div>`).join('');
 }
@@ -5322,8 +5321,8 @@ function renderUpcoming(){
     return`<div class="cal-event-item">
       <div class="cal-event-color" style="background:${ev.color}"></div>
       <div class="cal-event-info">
-        <div class="cal-event-title">${ev.title}</div>
-        <div class="cal-event-time">${parseInt(d)}/${parseInt(m)} · ${ev.time}</div>
+        <div class="cal-event-title">${escHTML(ev.title)}</div>
+        <div class="cal-event-time">${parseInt(d)}/${parseInt(m)} · ${escHTML(ev.time)}</div>
       </div>
     </div>`;
   }).join('');
@@ -6619,7 +6618,7 @@ function runSearch(q){
   if(!results.length){el.innerHTML='<div class="gs-empty">Nenhum resultado para "<strong>'+escHTML(q)+'</strong>"</div>';return;}
   el.innerHTML=results.map((r,i)=>`
     <div class="gs-item" onclick="selectSearchResult(${i})" data-idx="${i}">
-      <div class="gs-item-icon" style="${r.icon.startsWith('#')?'background:'+r.icon:'background:var(--bg4)'}">
+      <div class="gs-item-icon" style="${r.icon.startsWith('#')?'background:'+escHTML(r.icon):'background:var(--bg4)'}">
         ${r.icon.startsWith('#')?`<span style="font-size:11px;font-weight:700;color:#fff">${escHTML(r.label.split(' ').map(w=>w[0]).join('').slice(0,2))}</span>`:r.icon}
       </div>
       <div class="gs-item-main">
@@ -7659,7 +7658,11 @@ async function copiarLinkPerfilPublico(){
 function abrirMeuPerfilPublicoRapido(){
   if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
   if(_perfilPublicoAtivo){
-    window.open(`${location.origin}/corretor-publico.html?id=${encodeURIComponent(_currentUser.id)}`,'_blank');
+    const slug=(document.getElementById('pp-slug')?.value||'').trim();
+    const url=slug
+      ? `${location.origin}/c/${encodeURIComponent(slug)}`
+      : `${location.origin}/corretor-publico.html?id=${encodeURIComponent(_currentUser.id)}`;
+    window.open(url,'_blank');
   }else{
     navigate('perfilpublico',document.querySelector('.nav-item[onclick*="perfilpublico"]'));
     showToast('Preencha e ative seu perfil público pra gerar o link.','success');
@@ -7864,7 +7867,10 @@ async function saveProfileConfig(btn){
   // Mantém os dados denormalizados do perfil público em dia, se o
   // corretor já tiver uma linha lá (não cria uma nova sozinho — só
   // sincroniza a que já existe, criada em "Salvar perfil público").
-  _sb.from('perfil_publico').update({nome,tel,creci,especialidade}).eq('user_id',_currentUser?.id).then(()=>{},()=>{});
+  // creci fica de fora: desde que o Perfil Público ganhou seu próprio campo
+  // de CRECI (pp-creci), essa coluna passou a ser dele — sobrescrever aqui
+  // apagaria silenciosamente o que o corretor configurou lá.
+  _sb.from('perfil_publico').update({nome,tel,especialidade}).eq('user_id',_currentUser?.id).then(()=>{},()=>{});
   showToast('Perfil salvo com sucesso!','success');
 }
 
@@ -9548,7 +9554,7 @@ function renderAniversarios(){
     const cor=d===0?'#f59e0b':d<=7?'#34d399':'var(--t3)';
     const tel=(l.tel||'').replace(/\D/g,'');
     return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
-      <div class="mini-avatar" style="background:${l.cor||'#850277'}">${initials(l.nome)}</div>
+      <div class="mini-avatar" style="background:${escHTML(l.cor||'#850277')}">${initials(l.nome)}</div>
       <div style="flex:1"><div style="font-weight:600;font-size:13px">${escHTML(l.nome)}</div><div style="font-size:11px;color:var(--t3)">${parseLocalDate(l.data_nasc).toLocaleDateString('pt-BR',{day:'2-digit',month:'long'})}</div></div>
       <div style="font-size:12px;font-weight:700;color:${cor}">${tag}</div>
       ${tel?`<a href="https://wa.me/55${tel}?text=${encodeURIComponent('Olá '+l.nome+'! Feliz aniversário! 🎉')}" target="_blank" class="btn-add" style="padding:5px 10px;font-size:11px;gap:5px">
