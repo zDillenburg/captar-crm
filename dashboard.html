@@ -314,14 +314,23 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .pp-link-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .pp-link-url{flex:1;min-width:0;font-size:13px;color:var(--pl);word-break:break-all;text-decoration:none}
 .pp-link-inactive{font-size:12.5px;color:var(--t3);line-height:1.6}
+.pp-slug-row{margin-top:14px;padding-top:14px;border-top:1px solid rgba(133,2,119,.25)}
+.pp-slug-input-row{display:flex;align-items:center;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.pp-slug-prefix{padding:10px 0 10px 12px;font-size:12.5px;color:var(--t3);white-space:nowrap;font-family:ui-monospace,monospace}
+.pp-slug-input{flex:1;min-width:0;padding:10px 12px 10px 2px;background:none;border:none;outline:none;font-size:12.5px;color:var(--t1);font-family:ui-monospace,monospace}
 .pp-section-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
 .pp-char-count{font-size:11px;color:var(--t3);text-align:right;margin-top:4px}
-.pp-cor-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
-.pp-cor-swatch{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;transition:transform .15s,border-color .15s}
-.pp-cor-swatch.selected{border-color:var(--t1);transform:scale(1.12)}
-.pp-cor-custom{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;background:none;overflow:hidden}
-.pp-cor-custom::-webkit-color-swatch-wrapper{padding:0}
-.pp-cor-custom::-webkit-color-swatch{border:none;border-radius:50%}
+.pp-cor-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:8px;max-width:280px}
+.pp-cor-swatch{width:40px;height:40px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;display:flex;align-items:center;justify-content:center}
+.pp-cor-swatch svg{width:16px;height:16px}
+.pp-cor-swatch:hover{transform:scale(1.08)}
+.pp-cor-swatch.selected{box-shadow:0 0 0 2px var(--bg2),0 0 0 4px var(--t1);transform:scale(1.05)}
+.pp-cor-custom-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.pp-cor-custom{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);cursor:pointer;padding:0;background:none;overflow:hidden;flex-shrink:0}
+.pp-cor-custom::-webkit-color-swatch-wrapper{padding:2px}
+.pp-cor-custom::-webkit-color-swatch{border:none;border-radius:7px}
+.pp-cor-hex-input{width:90px;padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);font-size:13px;font-family:ui-monospace,monospace;color:var(--t1);text-transform:uppercase}
+.pp-cor-nome{font-size:12.5px;color:var(--t3);font-weight:500}
 .pp-avatar-row,.pp-capa-row{display:flex;align-items:center;gap:14px}
 .pp-avatar-preview{width:64px;height:64px;border-radius:14px;object-fit:contain;background:#fff;flex-shrink:0}
 .pp-avatar-empty{width:64px;height:64px;border-radius:14px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--t3);flex-shrink:0}
@@ -339,7 +348,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
   --ppt1:#f5f5f7;--ppt2:rgba(245,245,247,.68);--ppt3:rgba(245,245,247,.42);--pppl:#850277;
   background:var(--ppbg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;font-family:'Inter',-apple-system,sans-serif;
 }
-.pp-preview-banner{height:88px;background:var(--ppbg2);position:relative}
+.pp-preview-banner{height:88px;background:var(--ppbg2)}
 .pp-preview-banner img{width:100%;height:100%;object-fit:cover;display:block}
 .pp-preview-body{padding:0 18px 18px;margin-top:-28px}
 .pp-preview-avatar{width:56px;height:56px;border-radius:16px;border:3px solid var(--ppbg);object-fit:contain;background:#fff;display:block;margin-bottom:12px}
@@ -350,6 +359,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .pp-preview-stat{flex:1;text-align:center;padding:8px 4px;background:var(--ppbg2);border-radius:10px}
 .pp-preview-stat-val{font-size:13px;font-weight:700;color:var(--ppt1)}
 .pp-preview-stat-lbl{font-size:8px;color:var(--ppt3);margin-top:2px;font-weight:500}
+.pp-preview-stat-line{font-size:11.5px;color:var(--ppt3);font-weight:500;margin-bottom:14px}
 .pp-preview-bio{font-size:12px;line-height:1.6;color:var(--ppt2);margin-bottom:14px}
 .pp-preview-cta{display:flex;align-items:center;justify-content:center;gap:6px;background:#25d366;color:#fff;font-size:11.5px;font-weight:700;padding:9px;border-radius:9px}
 @media(max-width:900px){
@@ -1548,6 +1558,13 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <button type="button" class="link-btn" onclick="copiarLinkPerfilPublico()">Copiar</button>
               </div>
               <div id="perfil-pub-link-empty" class="pp-link-inactive">Ative o perfil lá embaixo pra gerar o link — depois é só copiar e mandar pro cliente.</div>
+              <div class="pp-slug-row">
+                <label class="config-label" style="margin-bottom:6px;display:block">Personalize o link</label>
+                <div class="pp-slug-input-row">
+                  <span class="pp-slug-prefix" id="pp-slug-prefix"></span>
+                  <input type="text" class="pp-slug-input" id="pp-slug" maxlength="60" placeholder="seu-nome" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'');atualizarLinkPerfilPublico()"/>
+                </div>
+              </div>
             </div>
 
             <div class="config-card">
@@ -1578,12 +1595,16 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
               </div>
               <div class="config-form-group" style="margin-bottom:0">
                 <label class="config-label">Cor de destaque</label>
-                <div id="perfil-pub-cores" class="pp-cor-row"></div>
+                <div id="perfil-pub-cores"></div>
               </div>
             </div>
 
             <div class="config-card">
               <div class="config-card-title">Sobre você</div>
+              <div class="config-form-group">
+                <label class="config-label">CRECI</label>
+                <input class="config-input" type="text" id="pp-creci" maxlength="20" placeholder="Ex: RS-12.458" oninput="atualizarPreviewPerfilPublico()"/>
+              </div>
               <div class="config-form-group">
                 <label class="config-label">Frase de destaque</label>
                 <input class="config-input" type="text" id="pp-tagline" maxlength="90" placeholder="Ex: Encontrar o imóvel certo é sobre entender pessoas, não só metros quadrados." oninput="atualizarPreviewPerfilPublico();document.getElementById('pp-tagline-count').textContent=this.value.length"/>
@@ -1630,11 +1651,12 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <div id="pp-preview-avatar-fallback" class="pp-preview-avatar-fallback">?</div>
                 <div class="pp-preview-name" id="pp-preview-name">Seu nome</div>
                 <p class="pp-preview-tagline" id="pp-preview-tagline" style="display:none"></p>
-                <div class="pp-preview-stats">
+                <div class="pp-preview-stats" id="pp-preview-stats" style="display:none">
                   <div class="pp-preview-stat"><div class="pp-preview-stat-val" id="pp-preview-stat-imoveis">0</div><div class="pp-preview-stat-lbl">Imóveis</div></div>
                   <div class="pp-preview-stat" id="pp-preview-stat-creci-wrap" style="display:none"><div class="pp-preview-stat-val" id="pp-preview-stat-creci">—</div><div class="pp-preview-stat-lbl">CRECI</div></div>
                   <div class="pp-preview-stat" id="pp-preview-stat-esp-wrap" style="display:none"><div class="pp-preview-stat-val" id="pp-preview-stat-esp" style="font-size:11px">—</div><div class="pp-preview-stat-lbl">Especialidade</div></div>
                 </div>
+                <div class="pp-preview-stat-line" id="pp-preview-stat-line"></div>
                 <p class="pp-preview-bio" id="pp-preview-bio" style="display:none"></p>
                 <div class="pp-preview-cta">💬 Falar no WhatsApp</div>
               </div>
@@ -3778,6 +3800,16 @@ function parseLocalDate(dateStr){
 function escHTML(s){
   if(s==null)return'';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Slug pro link público do corretor (ex: "Guilherme Dillenburg" -> "guilherme-dillenburg")
+function slugify(s){
+  return String(s||'').trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // tira acentos
+    .replace(/[^a-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-|-$/g,'');
 }
 
 // Formata um valor de área isolado: se for só número (com . ou , de milhar),
@@ -7441,7 +7473,12 @@ function renderFinKpis(){
 // ═══════════════════════════════════════════════════════
 // PERFIL PÚBLICO DO CORRETOR
 // ═══════════════════════════════════════════════════════
-const PERFIL_PUBLICO_CORES=['#850277','#2563eb','#059669','#d97706','#dc2626','#0891b2'];
+const PERFIL_PUBLICO_CORES_NOMEADAS=[
+  {v:'#850277',n:'Magenta'},{v:'#9333ea',n:'Roxo'},{v:'#4f46e5',n:'Índigo'},{v:'#2563eb',n:'Azul'},
+  {v:'#0891b2',n:'Ciano'},{v:'#0d9488',n:'Verde-água'},{v:'#059669',n:'Verde'},{v:'#65a30d',n:'Lima'},
+  {v:'#d97706',n:'Âmbar'},{v:'#ea580c',n:'Laranja'},{v:'#dc2626',n:'Vermelho'},{v:'#e11d48',n:'Rosa'},
+];
+const PERFIL_PUBLICO_CORES=PERFIL_PUBLICO_CORES_NOMEADAS.map(c=>c.v);
 let _perfilPublicoCorAtual=PERFIL_PUBLICO_CORES[0];
 let _perfilPublicoAtivo=false;
 let _perfilPublicoCapaPath='';
@@ -7450,9 +7487,21 @@ function renderPerfilPublicoCores(){
   const wrap=document.getElementById('perfil-pub-cores');
   if(!wrap)return;
   const custom=!PERFIL_PUBLICO_CORES.includes(_perfilPublicoCorAtual);
-  wrap.innerHTML=PERFIL_PUBLICO_CORES.map(cor=>
-    `<button type="button" class="pp-cor-swatch${cor===_perfilPublicoCorAtual?' selected':''}" onclick="selecionarCorPerfil('${cor}')" title="${cor}" style="background:${cor}"></button>`
-  ).join('')+`<input type="color" class="pp-cor-custom" id="pp-cor-custom-input" title="Cor personalizada" value="${custom?_perfilPublicoCorAtual:'#850277'}" oninput="selecionarCorPerfil(this.value)"/>`;
+  const nomeAtual=custom?'Personalizada':(PERFIL_PUBLICO_CORES_NOMEADAS.find(c=>c.v===_perfilPublicoCorAtual)?.n||'');
+  wrap.innerHTML=`
+    <div class="pp-cor-grid">
+      ${PERFIL_PUBLICO_CORES_NOMEADAS.map(c=>`
+        <button type="button" class="pp-cor-swatch${c.v===_perfilPublicoCorAtual?' selected':''}" onclick="selecionarCorPerfil('${c.v}')" title="${c.n}" style="background:${c.v}">
+          ${c.v===_perfilPublicoCorAtual?'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>':''}
+        </button>
+      `).join('')}
+    </div>
+    <div class="pp-cor-custom-row">
+      <input type="color" class="pp-cor-custom" id="pp-cor-custom-input" title="Cor personalizada" value="${custom?_perfilPublicoCorAtual:'#850277'}" oninput="selecionarCorPerfil(this.value);document.getElementById('pp-cor-hex-input').value=this.value"/>
+      <input type="text" class="pp-cor-hex-input" id="pp-cor-hex-input" value="${_perfilPublicoCorAtual}" maxlength="7" spellcheck="false" onchange="if(/^#[0-9a-fA-F]{6}$/.test(this.value))selecionarCorPerfil(this.value);else this.value=_perfilPublicoCorAtual"/>
+      <span class="pp-cor-nome" id="pp-cor-nome">${nomeAtual}</span>
+    </div>
+  `;
 }
 
 function selecionarCorPerfil(cor){
@@ -7468,22 +7517,31 @@ async function loadPerfilPublico(){
   if(error){console.error('loadPerfilPublico:',error);return;}
   const bioEl=document.getElementById('perfil-pub-bio');
   const taglineEl=document.getElementById('pp-tagline');
+  const creciEl=document.getElementById('pp-creci');
   const instaEl=document.getElementById('pp-instagram');
   const siteEl=document.getElementById('pp-site');
+  const slugEl=document.getElementById('pp-slug');
   const toggle=document.getElementById('perfil-pub-toggle');
+  const metaCreci=(_currentUser?.user_metadata?.creci||'').trim();
+  const prefixEl=document.getElementById('pp-slug-prefix');
+  if(prefixEl)prefixEl.textContent=`${location.origin}/c/`;
   if(data){
     if(bioEl)bioEl.value=data.bio||'';
     if(taglineEl)taglineEl.value=data.tagline||'';
+    if(creciEl)creciEl.value=data.creci||metaCreci||'';
     if(instaEl)instaEl.value=data.instagram||'';
     if(siteEl)siteEl.value=data.site_url||'';
+    if(slugEl)slugEl.value=data.slug||'';
     _perfilPublicoCorAtual=data.cor_destaque||PERFIL_PUBLICO_CORES[0];
     _perfilPublicoAtivo=!!data.ativo;
     _perfilPublicoCapaPath=data.capa_path||'';
   }else{
     if(bioEl)bioEl.value='';
     if(taglineEl)taglineEl.value='';
+    if(creciEl)creciEl.value=metaCreci||'';
     if(instaEl)instaEl.value='';
     if(siteEl)siteEl.value='';
+    if(slugEl)slugEl.value='';
     _perfilPublicoCorAtual=PERFIL_PUBLICO_CORES[0];
     _perfilPublicoAtivo=false;
     _perfilPublicoCapaPath='';
@@ -7506,7 +7564,10 @@ function atualizarLinkPerfilPublico(){
   const link=document.getElementById('perfil-pub-link');
   if(!row||!link||!_currentUser?.id)return;
   if(_perfilPublicoAtivo){
-    const url=`${location.origin}/corretor-publico.html?id=${encodeURIComponent(_currentUser.id)}`;
+    const slug=(document.getElementById('pp-slug')?.value||'').trim();
+    const url=slug
+      ? `${location.origin}/c/${encodeURIComponent(slug)}`
+      : `${location.origin}/corretor-publico.html?id=${encodeURIComponent(_currentUser.id)}`;
     link.href=url;
     link.textContent=url;
     row.style.display='flex';
@@ -7517,20 +7578,35 @@ function atualizarLinkPerfilPublico(){
   }
 }
 
+// Garante que o slug seja único — se outro corretor já usa o mesmo,
+// desambigua com um sufixo curto e estável (derivado do próprio user_id,
+// não aleatório, pra dar o mesmo resultado se o corretor salvar de novo).
+async function resolverSlugUnico(candidato){
+  if(!candidato)return'';
+  const {data}=await _sb.from('perfil_publico').select('user_id').eq('slug',candidato).maybeSingle();
+  if(!data||data.user_id===_currentUser.id)return candidato;
+  return `${candidato}-${_currentUser.id.slice(0,4)}`;
+}
+
 async function salvarPerfilPublico(btn){
   if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
   const bio=(document.getElementById('perfil-pub-bio')?.value||'').trim();
   const tagline=(document.getElementById('pp-tagline')?.value||'').trim();
+  const creci=(document.getElementById('pp-creci')?.value||'').trim();
   const instagram=(document.getElementById('pp-instagram')?.value||'').trim();
   const siteUrl=(document.getElementById('pp-site')?.value||'').trim();
   const toggle=document.getElementById('perfil-pub-toggle');
   const ativo=toggle?toggle.classList.contains('on'):false;
   const meta=_currentUser?.user_metadata||{};
+  const slugCandidato=slugify((document.getElementById('pp-slug')?.value||'').trim()||meta.nome||'');
+  const oldText=btn.textContent;
+  btn.textContent='Salvando…';btn.disabled=true;
+  const slug=await resolverSlugUnico(slugCandidato);
   const payload={
     user_id:_currentUser.id,
     nome:meta.nome||'',
     tel:meta.tel||'',
-    creci:meta.creci||'',
+    creci,
     especialidade:meta.especialidade||'',
     bio,
     tagline,
@@ -7538,14 +7614,15 @@ async function salvarPerfilPublico(btn){
     site_url:siteUrl,
     capa_path:_perfilPublicoCapaPath,
     cor_destaque:_perfilPublicoCorAtual,
+    slug:slug||null,
     ativo,
     updated_at:new Date().toISOString()
   };
-  const oldText=btn.textContent;
-  btn.textContent='Salvando…';btn.disabled=true;
   const {error}=await _sb.from('perfil_publico').upsert(payload,{onConflict:'user_id'});
   btn.textContent=oldText;btn.disabled=false;
   if(error){showToast('Erro ao salvar perfil público: '+error.message,'error');return;}
+  const slugEl=document.getElementById('pp-slug');
+  if(slugEl)slugEl.value=slug||'';
   _perfilPublicoAtivo=ativo;
   atualizarLinkPerfilPublico();
   showToast(ativo?'Perfil público ativado!':'Perfil público salvo.','success');
@@ -7682,7 +7759,7 @@ function atualizarPreviewPerfilPublico(){
   const nome=(_currentUser?.user_metadata?.nome||_currentUser?.user_metadata?.name||'Seu nome').trim()||'Seu nome';
   const tagline=(document.getElementById('pp-tagline')?.value||'').trim();
   const bio=(document.getElementById('perfil-pub-bio')?.value||'').trim();
-  const creci=(_currentUser?.user_metadata?.creci||'').trim();
+  const creci=(document.getElementById('pp-creci')?.value||'').trim();
   const especialidade=(_currentUser?.user_metadata?.especialidade||'').trim();
   const qtdImoveis=(IMOVEIS||[]).filter(im=>im.publico).length;
 
@@ -7715,6 +7792,15 @@ function atualizarPreviewPerfilPublico(){
   const espVal=document.getElementById('pp-preview-stat-esp');
   if(espWrap)espWrap.style.display=especialidade?'block':'none';
   if(espVal)espVal.textContent=especialidade;
+
+  const statsRow=document.getElementById('pp-preview-stats');
+  const statLine=document.getElementById('pp-preview-stat-line');
+  const temCreciOuEsp=!!(creci||especialidade);
+  if(statsRow)statsRow.style.display=temCreciOuEsp?'flex':'none';
+  if(statLine){
+    statLine.style.display=temCreciOuEsp?'none':'block';
+    statLine.textContent=`${qtdImoveis} imóve${qtdImoveis===1?'l':'is'} disponíve${qtdImoveis===1?'l':'is'} publicamente`;
+  }
 
   const avatarImg=document.getElementById('pp-preview-avatar-img');
   const avatarFallback=document.getElementById('pp-preview-avatar-fallback');

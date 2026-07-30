@@ -17,14 +17,25 @@
     --border:rgba(255,255,255,0.09);
     --t1:#f5f5f7;--t2:rgba(245,245,247,.68);--t3:rgba(245,245,247,.42);
   }
+  body.light-mode{
+    --bg:#ffffff;--bg2:#f5f5f7;--bg3:#ececee;--bg4:#e2e2e5;
+    --border:rgba(0,0,0,0.08);
+    --t1:#1d1d1f;--t2:rgba(29,29,31,.68);--t3:rgba(29,29,31,.45);
+  }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html{-webkit-text-size-adjust:100%}
-  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;transition:background .2s ease,color .2s ease}
   a{color:inherit}
 
-  header{display:flex;align-items:center;justify-content:center;padding:22px;border-bottom:1px solid var(--border)}
+  header{display:flex;align-items:center;justify-content:center;padding:22px;border-bottom:1px solid var(--border);position:relative}
   header a{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
   header img{height:26px;width:auto;opacity:.9}
+  body.light-mode header img{filter:brightness(0) saturate(0);opacity:.85}
+  .theme-toggle{
+    position:absolute;right:20px;top:50%;transform:translateY(-50%);
+    width:34px;height:34px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--t2);
+  }
   main{flex:1;display:flex;justify-content:center}
   .wrap{width:100%;max-width:640px;padding-bottom:120px}
 
@@ -99,6 +110,7 @@
     border-top:1px solid var(--border);
     display:flex;justify-content:center;
   }
+  body.light-mode .sticky-cta{background:rgba(255,255,255,.82)}
   .sticky-cta a{
     width:100%;max-width:600px;display:flex;align-items:center;justify-content:center;gap:9px;
     background:#25d366;color:#fff;font-size:15px;font-weight:600;padding:14px;border-radius:14px;text-decoration:none;
@@ -118,6 +130,7 @@
     <a href="index.html">
       <img src="logo.svg" alt="Grupo Captar"/>
     </a>
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
   </header>
 
   <main>
@@ -137,6 +150,24 @@
 const SUPABASE_URL = 'https://ntebllysafkushvhubos.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50ZWJsbHlzYWZrdXNodmh1Ym9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MjUyNjEsImV4cCI6MjA5NDEwMTI2MX0.2Zxqc5oISDGWlSOhi6Zse0uVdY5pateMcMw9wLxYESY';
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Tema claro/escuro — respeita a preferência do sistema por padrão, mas
+// lembra a escolha manual do visitante (cliente do corretor) no navegador dele.
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light-mode');
+  localStorage.setItem('captar_public_theme', isLight?'light':'dark');
+  const btn=document.getElementById('theme-toggle-btn');
+  if(btn)btn.textContent=isLight?'☀️':'🌙';
+}
+(function initTheme(){
+  const saved=localStorage.getItem('captar_public_theme');
+  const preferLight=saved?saved==='light':window.matchMedia('(prefers-color-scheme: light)').matches;
+  if(preferLight){
+    document.body.classList.add('light-mode');
+    const btn=document.getElementById('theme-toggle-btn');
+    if(btn)btn.textContent='☀️';
+  }
+})();
 
 function escHtml(s){
   if(s==null)return'';
@@ -193,13 +224,20 @@ function siteUrl(url){
 
 async function load(){
   const params = new URLSearchParams(location.search);
-  const id = params.get('id');
-  if(!id){
+  const slug = params.get('u');
+  let id = params.get('id');
+  if(!slug && !id){
     renderState('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', 'Link inválido — falta o identificador do corretor.');
     return;
   }
 
-  const {data: perfil, error} = await _sb.from('perfil_publico').select('*').eq('user_id', id).eq('ativo', true).maybeSingle();
+  // Aceita tanto o link antigo (?id=uuid) quanto o novo, com o nome do
+  // corretor no link (?u=slug, ou /c/slug via rewrite do Vercel).
+  const query = slug
+    ? _sb.from('perfil_publico').select('*').eq('slug', slug)
+    : _sb.from('perfil_publico').select('*').eq('user_id', id);
+  const {data: perfil, error} = await query.eq('ativo', true).maybeSingle();
+  if(perfil)id = perfil.user_id;
 
   if(error || !perfil){
     renderState('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', 'Esse perfil não está disponível publicamente, ou o link está incorreto.');
