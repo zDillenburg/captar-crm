@@ -44,10 +44,22 @@
   /* ── Banner + avatar ─────────────────────────────── */
   .banner{
     height:200px;position:relative;overflow:hidden;
-    background:linear-gradient(160deg,var(--bg3),var(--bg));
+    background:
+      radial-gradient(120% 160% at 12% -20%, color-mix(in srgb, var(--pl) 38%, transparent), transparent 62%),
+      linear-gradient(160deg,var(--bg3),var(--bg));
   }
-  .banner img{width:100%;height:100%;object-fit:cover;display:block}
+  .banner::before{
+    content:'';position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px);
+    background-size:18px 18px;
+    -webkit-mask-image:linear-gradient(180deg,#000,transparent);
+    mask-image:linear-gradient(180deg,#000,transparent);
+  }
+  .banner img{width:100%;height:100%;object-fit:cover;display:block;position:relative}
   .banner::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,var(--bg) 100%)}
+
+  .verified-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--t3);margin-bottom:14px}
+  .verified-badge svg{width:13px;height:13px;color:var(--pl);flex-shrink:0}
   .profile-head{padding:0 24px;margin-top:-46px;position:relative;z-index:1}
   .profile-avatar-row{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px}
   .profile-logo,.profile-avatar-fallback{width:92px;height:92px;border-radius:20px;flex-shrink:0;border:4px solid var(--bg);box-shadow:0 8px 24px rgba(0,0,0,.35)}
@@ -91,7 +103,13 @@
   .im-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .2s cubic-bezier(.16,1,.3,1),border-color .2s ease,box-shadow .2s ease}
   .im-card:hover{transform:translateY(-3px);border-color:var(--pl);box-shadow:0 14px 32px rgba(0,0,0,.35)}
   .im-card-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;overflow:hidden}
-  .im-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+  .im-card-img::before{
+    content:'';position:absolute;inset:0;z-index:0;
+    background-image:radial-gradient(rgba(255,255,255,.09) 1px, transparent 1px);
+    background-size:14px 14px;
+  }
+  .im-card-emoji{position:relative;z-index:1}
+  .im-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1}
   .im-card-status{position:absolute;top:9px;right:9px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:4px 9px;border-radius:20px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:1}
   .im-card-body{padding:14px}
   .im-card-price{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:3px}
@@ -214,7 +232,7 @@ async function load(){
   const {data: imoveisData} = await _sb.from('imoveis').select('*').eq('user_id', id).eq('publico', true).order('created_at', { ascending: false });
   const lista = imoveisData || [];
 
-  const logoUrl = fotoPublicUrl('logos', `${id}/logo.jpg`);
+  const logoUrl = fotoPublicUrl('logos', `${id}/avatar.jpg`);
   const capaUrl = perfil.capa_path ? fotoPublicUrl('logos', `${id}/capa.jpg`) : '';
   const waPhone = waPhoneBR(perfil.tel || '');
   const waText = encodeURIComponent(`Olá! Vi seu perfil no Grupo Captar e quero saber mais sobre seus imóveis.`);
@@ -237,15 +255,21 @@ async function load(){
     </div>
     <div class="wrap-pad">
       <div class="fade-up d1">
+        <div class="verified-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.6 2.1 3.3-.5 1 3.2 3 1.6-1 3.3 1 3.3-3 1.6-1 3.2-3.3-.5L12 21l-2.6-2.1-3.3.5-1-3.2-3-1.6 1-3.3-1-3.3 3-1.6 1-3.2 3.3.5z"/><path d="M9 12l2 2 4-4" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Corretor parceiro Grupo Captar
+        </div>
         <div class="profile-name serif">${escHtml(perfil.nome || 'Corretor')}</div>
         ${perfil.tagline ? `<p class="profile-tagline">"${escHtml(perfil.tagline)}"</p>` : ''}
       </div>
 
+      ${(perfil.creci || perfil.especialidade) ? `
       <div class="stat-row fade-up d2">
         <div class="stat"><div class="stat-val serif">${lista.length}</div><div class="stat-lbl">Imóve${lista.length===1?'l':'is'}</div></div>
         ${perfil.creci ? `<div class="stat"><div class="stat-val serif">${escHtml(perfil.creci)}</div><div class="stat-lbl">CRECI</div></div>` : ''}
         ${perfil.especialidade ? `<div class="stat"><div class="stat-val serif" style="font-size:14px;line-height:1.5;padding-top:2px">${escHtml(perfil.especialidade)}</div><div class="stat-lbl">Especialidade</div></div>` : ''}
       </div>
+      ` : `<div class="fade-up d2" style="font-size:13px;color:var(--t3);margin-bottom:26px">${lista.length} imóve${lista.length===1?'l':'is'} disponíve${lista.length===1?'l':'is'} publicamente</div>`}
 
       ${perfil.bio ? `<p class="profile-bio">${escHtml(perfil.bio)}</p>` : ''}
 
@@ -265,8 +289,9 @@ async function load(){
             <a class="im-card" href="imovel-publico.html?id=${encodeURIComponent(im.id)}">
               <div class="im-card-img" style="background:${escHtml(im.grad || 'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
                 ${im.status ? `<span class="im-card-status">${escHtml(im.status)}</span>` : ''}
-                ${escHtml(im.emoji || '🏠')}
-                ${Array.isArray(im.fotos) && im.fotos.length ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.dataset.fallbackEmoji}))"/>` : ''}
+                ${Array.isArray(im.fotos) && im.fotos.length
+                  ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'im-card-emoji',textContent:this.dataset.fallbackEmoji}))"/>`
+                  : `<span class="im-card-emoji">${escHtml(im.emoji || '🏠')}</span>`}
               </div>
               <div class="im-card-body">
                 <div class="im-card-price serif">${escHtml(im.preco || 'Sob consulta')}</div>

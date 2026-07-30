@@ -1550,6 +1550,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
               <div class="config-card-title">Aparência</div>
               <div class="config-form-group">
                 <label class="config-label">Foto de perfil</label>
+                <div style="font-size:11.5px;color:var(--t3);margin-bottom:8px">Sua foto de rosto — aparece no seu perfil e nos imóveis que você anuncia. É diferente do logo da imobiliária usado pela Captar IA.</div>
                 <div class="pp-avatar-row">
                   <img id="pp-avatar-preview" class="pp-avatar-preview" style="display:none"/>
                   <div id="pp-avatar-empty" class="pp-avatar-empty">📷</div>
@@ -4216,7 +4217,7 @@ function initPage(page){
   if(page==='financeiro') setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100);
   if(page==='assistente') initAssistente();
   if(page==='config'){loadUserLogo();}
-  if(page==='perfilpublico'){loadUserLogo().then(loadAvatarPreviewPP);loadPerfilPublico();}
+  if(page==='perfilpublico'){loadAvatarPreviewPP();loadPerfilPublico();}
 }
 
 // ─────────────────────────────────────────
@@ -7591,8 +7592,12 @@ function abrirMeuPerfilPublicoRapido(){
   }
 }
 
-// ── Avatar (reaproveita o mesmo arquivo logos/${uid}/logo.jpg usado na
-// Captar IA) e capa (logos/${uid}/capa.jpg) do perfil público ──
+// ── Avatar (foto pessoal, logos/${uid}/avatar.jpg — separado do
+// logos/${uid}/logo.jpg usado pela Captar IA, que é a marca da
+// imobiliária, não a foto do corretor) e capa (logos/${uid}/capa.jpg)
+// do perfil público ──
+let _userAvatarUrl=null;
+
 async function loadCapaPreview(){
   if(!_currentUser?.id)return;
   const preview=document.getElementById('pp-capa-preview');
@@ -7616,13 +7621,16 @@ async function loadAvatarPreviewPP(){
   if(!_currentUser?.id)return;
   const preview=document.getElementById('pp-avatar-preview');
   const empty=document.getElementById('pp-avatar-empty');
-  if(_userLogoUrl){
-    if(preview){preview.src=_userLogoUrl;preview.style.display='block';}
+  const {data:signed}=await _sb.storage.from('logos').createSignedUrl(`${_currentUser.id}/avatar.jpg`,3600);
+  _userAvatarUrl=signed?.signedUrl||null;
+  if(_userAvatarUrl){
+    if(preview){preview.src=_userAvatarUrl;preview.style.display='block';}
     if(empty)empty.style.display='none';
   }else{
     if(preview)preview.style.display='none';
     if(empty)empty.style.display='flex';
   }
+  atualizarPreviewPerfilPublico();
 }
 
 async function handleAvatarFileSelect(evt){
@@ -7636,13 +7644,11 @@ async function handleAvatarFileSelect(evt){
   try{
     const {mimeType,data}=await resizeImageFile(file,800,0.92);
     const blob=base64ToBlob(data,mimeType);
-    const path=`${_currentUser.id}/logo.jpg`;
+    const path=`${_currentUser.id}/avatar.jpg`;
     const {error}=await _sb.storage.from('logos').upload(path,blob,{contentType:mimeType,upsert:true});
     if(error){showToast('Erro ao enviar foto: '+error.message,'error');return;}
     showToast('Foto de perfil enviada!','success');
-    await loadUserLogo();
     await loadAvatarPreviewPP();
-    atualizarPreviewPerfilPublico();
   }catch(e){
     showToast('Não foi possível enviar a foto: '+(e&&e.message?e.message:'erro desconhecido'),'error');
   }finally{
@@ -7737,8 +7743,8 @@ function atualizarPreviewPerfilPublico(){
 
   const avatarImg=document.getElementById('pp-preview-avatar-img');
   const avatarFallback=document.getElementById('pp-preview-avatar-fallback');
-  if(_userLogoUrl){
-    if(avatarImg){avatarImg.src=_userLogoUrl;avatarImg.style.display='block';}
+  if(_userAvatarUrl){
+    if(avatarImg){avatarImg.src=_userAvatarUrl;avatarImg.style.display='block';}
     if(avatarFallback)avatarFallback.style.display='none';
   }else{
     if(avatarImg)avatarImg.style.display='none';

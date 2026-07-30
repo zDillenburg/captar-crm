@@ -201,7 +201,7 @@ async function load(){
   const corretorWaPhone = waPhoneBR(im.corretor_tel || '');
   _fotosAtual = Array.isArray(im.fotos) ? im.fotos : [];
   const temFotos = _fotosAtual.length > 0;
-  const corretorLogoUrl = im.user_id ? fotoPublicUrl('logos', `${im.user_id}/logo.jpg`) : '';
+  const corretorLogoUrl = im.user_id ? fotoPublicUrl('logos', `${im.user_id}/avatar.jpg`) : '';
 
   document.getElementById('content').innerHTML = `
     ${temFotos ? `
