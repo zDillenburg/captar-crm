@@ -8,125 +8,107 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
     --p:#850277;--pl:#a3039a;--pd:#620158;
-    --bg:#0f0d0b;--bg2:#161310;--bg3:#1c1916;--bg4:#221e1b;
-    --border:rgba(255,255,255,0.08);
-    --t1:#fffdea;--t2:rgba(255,253,234,.65);--t3:#8a8070;
+    --bg:#000000;--bg2:#111111;--bg3:#1a1a1a;--bg4:#222222;
+    --border:rgba(255,255,255,0.09);
+    --t1:#f5f5f7;--t2:rgba(245,245,247,.68);--t3:rgba(245,245,247,.42);
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html{-webkit-text-size-adjust:100%}
-  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
   a{color:inherit}
-  .serif{font-family:'Fraunces',serif}
 
-  header{display:flex;align-items:center;justify-content:center;padding:20px;border-bottom:1px solid var(--border)}
+  header{display:flex;align-items:center;justify-content:center;padding:22px;border-bottom:1px solid var(--border)}
   header a{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
-  header img{height:30px;width:auto;opacity:.9}
+  header img{height:26px;width:auto;opacity:.9}
   main{flex:1;display:flex;justify-content:center}
-  .wrap{width:100%;max-width:820px;padding-bottom:64px}
+  .wrap{width:100%;max-width:640px;padding-bottom:120px}
 
   @media(prefers-reduced-motion:no-preference){
-    .fade-up{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both}
-    .fade-up.d1{animation-delay:.05s}
-    .fade-up.d2{animation-delay:.12s}
-    .fade-up.d3{animation-delay:.19s}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both}
+    .fade-up.d1{animation-delay:.04s}
+    .fade-up.d2{animation-delay:.09s}
+    .fade-up.d3{animation-delay:.14s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
   }
 
-  .state-box{text-align:center;padding:100px 20px;color:var(--t3);max-width:420px;margin:0 auto}
-  .state-box svg{width:36px;height:36px;margin-bottom:18px;opacity:.45}
-  .state-box p{font-size:14px;line-height:1.7}
+  .state-box{text-align:center;padding:120px 20px;color:var(--t3);max-width:380px;margin:0 auto}
+  .state-box svg{width:32px;height:32px;margin-bottom:20px;opacity:.4}
+  .state-box p{font-size:15px;line-height:1.6}
 
-  /* ── Banner + avatar ─────────────────────────────── */
-  .banner{
-    height:200px;position:relative;overflow:hidden;
-    background:
-      radial-gradient(120% 160% at 12% -20%, color-mix(in srgb, var(--pl) 38%, transparent), transparent 62%),
-      linear-gradient(160deg,var(--bg3),var(--bg));
-  }
-  .banner::before{
-    content:'';position:absolute;inset:0;
-    background-image:radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px);
-    background-size:18px 18px;
-    -webkit-mask-image:linear-gradient(180deg,#000,transparent);
-    mask-image:linear-gradient(180deg,#000,transparent);
-  }
-  .banner img{width:100%;height:100%;object-fit:cover;display:block;position:relative}
-  .banner::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,var(--bg) 100%)}
-
-  .verified-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--t3);margin-bottom:14px}
-  .verified-badge svg{width:13px;height:13px;color:var(--pl);flex-shrink:0}
-  .profile-head{padding:0 24px;margin-top:-46px;position:relative;z-index:1}
-  .profile-avatar-row{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px}
-  .profile-logo,.profile-avatar-fallback{width:92px;height:92px;border-radius:20px;flex-shrink:0;border:4px solid var(--bg);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  /* ── Banner + avatar — quiet, no decoration ─────────────── */
+  .banner{height:180px;background:var(--bg2)}
+  .banner img{width:100%;height:100%;object-fit:cover;display:block}
+  .profile-head{padding:0 28px;margin-top:-40px;position:relative}
+  .profile-avatar-row{display:flex;align-items:flex-end;gap:14px;margin-bottom:20px}
+  .profile-logo,.profile-avatar-fallback{width:88px;height:88px;border-radius:22px;flex-shrink:0;border:3px solid var(--bg);box-shadow:0 12px 28px rgba(0,0,0,.45)}
   .profile-logo{object-fit:contain;background:#fff}
-  .profile-avatar-fallback{background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:600;color:#fff}
-  .profile-social{display:flex;gap:8px;margin-bottom:6px}
+  .profile-avatar-fallback{background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600;color:var(--t2)}
+  .profile-social{display:flex;gap:8px;margin-bottom:4px}
   .profile-social a{
-    width:34px;height:34px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);
-    display:flex;align-items:center;justify-content:center;color:var(--t2);transition:border-color .15s,color .15s;
+    width:34px;height:34px;border-radius:50%;background:var(--bg3);
+    display:flex;align-items:center;justify-content:center;color:var(--t2);transition:background .15s,color .15s;
   }
-  .profile-social a:hover{border-color:var(--pl);color:var(--pl)}
-  .profile-social svg{width:16px;height:16px}
+  .profile-social a:hover{background:var(--bg4);color:var(--t1)}
+  .profile-social svg{width:15px;height:15px}
 
-  .wrap-pad{padding:0 24px}
-  .profile-name{font-size:30px;font-weight:600;letter-spacing:-.01em;line-height:1.15;margin-bottom:6px}
-  .profile-tagline{font-family:'Fraunces',serif;font-style:italic;font-size:16px;color:var(--t2);line-height:1.5;margin-bottom:22px;max-width:52ch}
+  .wrap-pad{padding:0 28px}
+  .verified-line{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--t3);font-weight:500;margin-bottom:8px}
+  .verified-line svg{width:13px;height:13px;color:var(--pl);flex-shrink:0}
+  .profile-name{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px}
+  .profile-tagline{font-size:16px;color:var(--t2);line-height:1.5;margin-bottom:24px;max-width:48ch;font-weight:400}
 
-  .stat-row{display:flex;gap:0;margin-bottom:26px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-  .stat{flex:1;padding:16px 4px;text-align:center}
-  .stat:not(:last-child){border-right:1px solid var(--border)}
-  .stat-val{font-family:'Fraunces',serif;font-size:22px;font-weight:500;line-height:1}
-  .stat-lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-top:5px}
+  .stat-row{display:flex;gap:10px;margin-bottom:28px}
+  .stat{flex:1;background:var(--bg2);border-radius:16px;padding:16px 8px;text-align:center}
+  .stat-val{font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  .stat-lbl{font-size:11px;color:var(--t3);margin-top:4px;font-weight:500}
+  .stat-line{font-size:14px;color:var(--t3);margin-bottom:28px;font-weight:500}
 
-  .profile-bio{
-    position:relative;padding-left:18px;margin-bottom:28px;max-width:60ch;
-    font-family:'Fraunces',serif;font-size:16.5px;line-height:1.7;color:var(--t1);font-weight:400;
-  }
-  .profile-bio::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:2px;background:var(--pl)}
+  .profile-bio{font-size:16px;line-height:1.6;color:var(--t2);font-weight:400;margin-bottom:28px;max-width:56ch}
 
-  .profile-cta{
-    display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    background:#25d366;color:#fff;font-size:14px;font-weight:700;
-    padding:13px 22px;border-radius:12px;text-decoration:none;margin-bottom:36px;
-  }
-  .profile-cta svg{width:18px;height:18px;flex-shrink:0}
+  .section-label{font-size:13px;font-weight:600;color:var(--t3);margin-bottom:16px}
 
-  .section-label{font-size:11px;font-weight:700;color:var(--pl);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-  .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
-
-  .im-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-  .im-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .2s cubic-bezier(.16,1,.3,1),border-color .2s ease,box-shadow .2s ease}
-  .im-card:hover{transform:translateY(-3px);border-color:var(--pl);box-shadow:0 14px 32px rgba(0,0,0,.35)}
-  .im-card-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;overflow:hidden}
-  .im-card-img::before{
-    content:'';position:absolute;inset:0;z-index:0;
-    background-image:radial-gradient(rgba(255,255,255,.09) 1px, transparent 1px);
-    background-size:14px 14px;
-  }
-  .im-card-emoji{position:relative;z-index:1}
+  .im-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+  .im-card{background:var(--bg2);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease}
+  .im-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+  .im-card-img{height:150px;display:flex;align-items:center;justify-content:center;font-size:34px;position:relative;overflow:hidden;background:var(--bg3)}
   .im-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1}
-  .im-card-status{position:absolute;top:9px;right:9px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:4px 9px;border-radius:20px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:1}
-  .im-card-body{padding:14px}
-  .im-card-price{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:3px}
-  .im-card-addr{font-size:11.5px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px}
-  .im-card-specs{display:flex;gap:10px;font-size:10.5px;color:var(--t2)}
-  .im-card-specs span{display:flex;align-items:center;gap:3px}
-  .im-card-specs svg{width:11px;height:11px;opacity:.7}
+  .im-card-emoji{position:relative;z-index:1;opacity:.85}
+  .im-card-status{position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;letter-spacing:.02em;padding:4px 10px;border-radius:20px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:2}
+  .im-card-body{padding:16px}
+  .im-card-price{font-size:17px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+  .im-card-addr{font-size:12.5px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:10px}
+  .im-card-specs{display:flex;gap:12px;font-size:11.5px;color:var(--t2);font-weight:500}
+  .im-card-specs span{display:flex;align-items:center;gap:4px}
+  .im-card-specs svg{width:12px;height:12px;opacity:.6}
 
-  .empty-imoveis{text-align:center;padding:48px 20px;color:var(--t3);font-size:13px;background:var(--bg2);border:1px dashed var(--border);border-radius:16px}
+  .empty-imoveis{text-align:center;padding:56px 20px;color:var(--t3);font-size:14px;background:var(--bg2);border-radius:18px}
 
-  footer{text-align:center;padding:22px;border-top:1px solid var(--border);font-size:12px;color:var(--t3)}
-  footer a{color:var(--pl);text-decoration:none;font-weight:700}
+  footer{text-align:center;padding:24px;font-size:12.5px;color:var(--t3)}
+  footer a{color:var(--t2);text-decoration:none;font-weight:600}
+
+  /* CTA fixo — prático pro cliente não precisar rolar de volta */
+  .sticky-cta{
+    position:fixed;bottom:0;left:0;right:0;z-index:20;
+    padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+    background:rgba(10,10,10,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border-top:1px solid var(--border);
+    display:flex;justify-content:center;
+  }
+  .sticky-cta a{
+    width:100%;max-width:600px;display:flex;align-items:center;justify-content:center;gap:9px;
+    background:#25d366;color:#fff;font-size:15px;font-weight:600;padding:14px;border-radius:14px;text-decoration:none;
+  }
+  .sticky-cta svg{width:19px;height:19px;flex-shrink:0}
 
   @media(max-width:600px){
-    .banner{height:150px}
-    .profile-name{font-size:25px}
-    .stat-row{gap:0}
+    .banner{height:140px}
+    .profile-name{font-size:27px}
+    .stat-row{gap:8px}
   }
 </style>
 </head>
@@ -194,6 +176,8 @@ function renderState(iconPath, msg){
 
 const ICON_INSTAGRAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>';
 const ICON_SITE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>';
+const ICON_WHATSAPP = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>';
+const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
 
 function instagramUrl(handle){
   handle=String(handle||'').trim();
@@ -255,30 +239,20 @@ async function load(){
     </div>
     <div class="wrap-pad">
       <div class="fade-up d1">
-        <div class="verified-badge">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.6 2.1 3.3-.5 1 3.2 3 1.6-1 3.3 1 3.3-3 1.6-1 3.2-3.3-.5L12 21l-2.6-2.1-3.3.5-1-3.2-3-1.6 1-3.3-1-3.3 3-1.6 1-3.2 3.3.5z"/><path d="M9 12l2 2 4-4" stroke="var(--bg)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Corretor parceiro Grupo Captar
-        </div>
-        <div class="profile-name serif">${escHtml(perfil.nome || 'Corretor')}</div>
-        ${perfil.tagline ? `<p class="profile-tagline">"${escHtml(perfil.tagline)}"</p>` : ''}
+        <div class="verified-line">${ICON_CHECK} Corretor parceiro Grupo Captar</div>
+        <div class="profile-name">${escHtml(perfil.nome || 'Corretor')}</div>
+        ${perfil.tagline ? `<p class="profile-tagline">${escHtml(perfil.tagline)}</p>` : ''}
       </div>
 
       ${(perfil.creci || perfil.especialidade) ? `
       <div class="stat-row fade-up d2">
-        <div class="stat"><div class="stat-val serif">${lista.length}</div><div class="stat-lbl">Imóve${lista.length===1?'l':'is'}</div></div>
-        ${perfil.creci ? `<div class="stat"><div class="stat-val serif">${escHtml(perfil.creci)}</div><div class="stat-lbl">CRECI</div></div>` : ''}
-        ${perfil.especialidade ? `<div class="stat"><div class="stat-val serif" style="font-size:14px;line-height:1.5;padding-top:2px">${escHtml(perfil.especialidade)}</div><div class="stat-lbl">Especialidade</div></div>` : ''}
+        <div class="stat"><div class="stat-val">${lista.length}</div><div class="stat-lbl">Imóve${lista.length===1?'l':'is'}</div></div>
+        ${perfil.creci ? `<div class="stat"><div class="stat-val">${escHtml(perfil.creci)}</div><div class="stat-lbl">CRECI</div></div>` : ''}
+        ${perfil.especialidade ? `<div class="stat"><div class="stat-val" style="font-size:13px;line-height:1.4;padding-top:2px">${escHtml(perfil.especialidade)}</div><div class="stat-lbl">Especialidade</div></div>` : ''}
       </div>
-      ` : `<div class="fade-up d2" style="font-size:13px;color:var(--t3);margin-bottom:26px">${lista.length} imóve${lista.length===1?'l':'is'} disponíve${lista.length===1?'l':'is'} publicamente</div>`}
+      ` : `<div class="stat-line fade-up d2">${lista.length} imóve${lista.length===1?'l':'is'} disponíve${lista.length===1?'l':'is'} publicamente</div>`}
 
-      ${perfil.bio ? `<p class="profile-bio">${escHtml(perfil.bio)}</p>` : ''}
-
-      ${waPhone ? `
-      <a class="profile-cta" href="https://wa.me/${waPhone}?text=${waText}" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>
-        Falar no WhatsApp
-      </a>
-      ` : ''}
+      ${perfil.bio ? `<p class="profile-bio fade-up d2" style="margin-bottom:36px">${escHtml(perfil.bio)}</p>` : ''}
 
       <div class="section-label">Imóveis disponíveis${lista.length ? ' · ' + lista.length : ''}</div>
       ${lista.length ? `
@@ -287,14 +261,14 @@ async function load(){
             const areaParts=[im.quartos>0?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22V12h18v10M2 12V8a2 2 0 012-2h16a2 2 0 012 2v4"/></svg>${escHtml(String(im.quartos))} qts</span>`:'', formatAreaValor(String(im.area||'').split(' / ')[0])?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>${escHtml(formatAreaValor(String(im.area||'').split(' / ')[0]))}</span>`:''].filter(Boolean).join('');
             return `
             <a class="im-card" href="imovel-publico.html?id=${encodeURIComponent(im.id)}">
-              <div class="im-card-img" style="background:${escHtml(im.grad || 'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
+              <div class="im-card-img">
                 ${im.status ? `<span class="im-card-status">${escHtml(im.status)}</span>` : ''}
                 ${Array.isArray(im.fotos) && im.fotos.length
                   ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'im-card-emoji',textContent:this.dataset.fallbackEmoji}))"/>`
                   : `<span class="im-card-emoji">${escHtml(im.emoji || '🏠')}</span>`}
               </div>
               <div class="im-card-body">
-                <div class="im-card-price serif">${escHtml(im.preco || 'Sob consulta')}</div>
+                <div class="im-card-price">${escHtml(im.preco || 'Sob consulta')}</div>
                 <div class="im-card-addr">${escHtml(im.endereco || '—')}</div>
                 ${areaParts ? `<div class="im-card-specs">${areaParts}</div>` : ''}
               </div>
@@ -304,6 +278,14 @@ async function load(){
       ` : `<div class="empty-imoveis">Nenhum imóvel compartilhado publicamente no momento.</div>`}
     </div>
   `;
+
+  if(waPhone){
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="sticky-cta">
+        <a href="https://wa.me/${waPhone}?text=${waText}" target="_blank" rel="noopener noreferrer">${ICON_WHATSAPP} Falar no WhatsApp</a>
+      </div>
+    `);
+  }
 }
 
 load();
