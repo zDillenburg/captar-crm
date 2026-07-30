@@ -90,6 +90,7 @@
   .im-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1}
   .im-card-emoji{position:relative;z-index:1;opacity:.85}
   .im-card-status{position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;letter-spacing:.02em;padding:4px 10px;border-radius:20px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:2}
+  .im-card-destaque{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;letter-spacing:.02em;padding:4px 10px;border-radius:20px;background:rgba(245,158,11,.92);color:#1a1200;z-index:2}
   .im-card-body{padding:16px}
   .im-card-price{font-size:17px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
   .im-card-addr{font-size:12.5px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:10px}
@@ -257,7 +258,10 @@ async function load(){
   }
 
   const {data: imoveisData} = await _sb.from('imoveis').select('*').eq('user_id', id).eq('publico', true).order('created_at', { ascending: false });
-  const lista = imoveisData || [];
+  // Imóveis marcados como destaque pelo corretor aparecem primeiro —
+  // sort estável, então dentro de cada grupo (destaque / não-destaque)
+  // a ordem por data mais recente já vinda do banco é preservada.
+  const lista = (imoveisData || []).slice().sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
 
   const logoUrl = fotoPublicUrl('logos', `${id}/avatar.jpg`);
   const capaUrl = perfil.capa_path ? fotoPublicUrl('logos', `${id}/capa.jpg`) : '';
@@ -306,6 +310,7 @@ async function load(){
             <a class="im-card" href="imovel-publico.html?id=${encodeURIComponent(im.id)}">
               <div class="im-card-img">
                 ${im.status ? `<span class="im-card-status">${escHtml(im.status)}</span>` : ''}
+                ${im.destaque ? `<span class="im-card-destaque">⭐ Destaque</span>` : ''}
                 ${Array.isArray(im.fotos) && im.fotos.length
                   ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'im-card-emoji',textContent:this.dataset.fallbackEmoji}))"/>`
                   : `<span class="im-card-emoji">${escHtml(im.emoji || '🏠')}</span>`}

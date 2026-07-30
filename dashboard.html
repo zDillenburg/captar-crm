@@ -277,8 +277,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .imovel-img{height:160px;position:relative;overflow:hidden}
 .imovel-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px}
 .imovel-status-badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em}
-.imovel-fav{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:color .15s}
+.imovel-fav{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:color .15s,background .15s}
 .imovel-fav:hover{color:#f43f5e}
+.imovel-fav.active{color:#f43f5e;background:rgba(244,63,94,.18)}
+.imovel-destaque-badge{position:absolute;top:10px;left:10px;margin-top:24px;padding:3px 9px;border-radius:20px;font-size:9.5px;font-weight:700;letter-spacing:.03em;background:rgba(245,158,11,.9);color:#1a1200}
 .imovel-body{padding:16px}
 .imovel-price{font-size:18px;font-weight:800;color:var(--t1);letter-spacing:-.02em;margin-bottom:4px}
 .imovel-address{font-size:12px;color:var(--t3);margin-bottom:12px}
@@ -345,6 +347,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .pp-activate-row .toggle{width:48px;height:26px;border-radius:13px}
 .pp-activate-row .toggle::after{width:20px;height:20px}
 .pp-activate-row .toggle.on::after{left:25px}
+.pp-traction-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid rgba(133,2,119,.25);font-size:12.5px;color:var(--t2)}
+.pp-traction-stat span:first-child{font-weight:700;color:var(--t1)}
+.pp-traction-note{font-size:11px;color:var(--t3);margin-left:auto}
 .pp-link-title{font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
 .pp-link-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .pp-link-url{flex:1;min-width:0;font-size:13px;color:var(--pl);word-break:break-all;text-decoration:none}
@@ -1637,6 +1642,11 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <button type="button" class="link-btn" onclick="copiarLinkPerfilPublico()">Copiar</button>
               </div>
               <div id="perfil-pub-link-empty" class="pp-link-inactive">Ative o perfil aqui em cima pra gerar o link — depois é só copiar e mandar pro cliente.</div>
+              <div id="pp-traction-row" class="pp-traction-row" style="display:none">
+                <div class="pp-traction-stat"><span id="pp-traction-views">0</span> visualizaç<span id="pp-traction-views-suffix">ões</span></div>
+                <div class="pp-traction-stat"><span id="pp-traction-wa">0</span> clique<span id="pp-traction-wa-suffix">s</span> no WhatsApp</div>
+                <div class="pp-traction-note">Somando todos os seus imóveis públicos</div>
+              </div>
               <div class="pp-slug-row">
                 <label class="config-label" style="margin-bottom:6px;display:block">Personalize o link</label>
                 <div class="pp-slug-input-row">
@@ -5029,9 +5039,10 @@ function renderImoveis(){
       <div class="imovel-img" style="background:${escHTML(im.grad||'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
         <div class="imovel-img-placeholder">${(Array.isArray(im.fotos)&&im.fotos.length)?`<img src="${escHTML(imovelFotoPublicUrl(im.fotos[0]))}" data-fallback-emoji="${escHTML(im.emoji||'🏠')}" style="width:100%;height:100%;object-fit:cover" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.dataset.fallbackEmoji}))"/>`:escHTML(im.emoji||'🏠')}</div>
         <span class="imovel-status-badge ${escHTML(im.statusClass||_statusMapIm[im.status]||'status-novo')}">${escHTML(im.status||'—')}</span>
-        <button class="imovel-fav" onclick="event.stopPropagation()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <button class="imovel-fav ${im.destaque?'active':''}" title="${im.destaque?'Remover destaque':'Marcar como destaque no perfil público'}" onclick="event.stopPropagation();toggleDestaqueImovel('${escHTML(String(im.id))}',this)">
+          <svg width="14" height="14" fill="${im.destaque?'currentColor':'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
         </button>
+        ${im.destaque?'<span class="imovel-destaque-badge">⭐ Destaque</span>':''}
       </div>
       <div class="imovel-body">
         <div class="imovel-price">${escHTML(im.preco)}</div>
@@ -6728,6 +6739,38 @@ async function copiarLinkImovel(id){
   navigator.clipboard.writeText(url).then(()=>showToast('Link público copiado!','success'),()=>showToast('Link: '+url,'success'));
 }
 
+// Imóveis em destaque aparecem primeiro no perfil público do corretor
+// (corretor-publico.html) com um selo — limite de 3 pra manter o
+// perfil enxuto e o destaque significando algo.
+const MAX_IMOVEIS_DESTAQUE=3;
+async function toggleDestaqueImovel(id,btn){
+  const im=IMOVEIS.find(i=>String(i.id)===String(id));
+  if(!im)return;
+  const novoValor=!im.destaque;
+  if(novoValor){
+    const jaDestacados=IMOVEIS.filter(i=>i.destaque).length;
+    if(jaDestacados>=MAX_IMOVEIS_DESTAQUE){
+      showToast(`Você já tem ${MAX_IMOVEIS_DESTAQUE} imóveis em destaque — remova um antes de adicionar outro.`,'error');
+      return;
+    }
+  }
+  im.destaque=novoValor;
+  btn.classList.toggle('active',novoValor);
+  btn.title=novoValor?'Remover destaque':'Marcar como destaque no perfil público';
+  const svg=btn.querySelector('svg');
+  if(svg)svg.setAttribute('fill',novoValor?'currentColor':'none');
+  const {error}=await _sb.from('imoveis').update({destaque:novoValor}).eq('id',id);
+  if(error){
+    im.destaque=!novoValor;
+    btn.classList.toggle('active',!novoValor);
+    if(svg)svg.setAttribute('fill',!novoValor?'currentColor':'none');
+    showToast('Erro ao atualizar destaque: '+error.message,'error');
+    return;
+  }
+  showToast(novoValor?'⭐ Imóvel marcado como destaque!':'Destaque removido.','success');
+  renderImoveis();
+}
+
 // ─────────────────────────────────────────
 // CONTRATO ADD
 // ─────────────────────────────────────────
@@ -7816,6 +7859,24 @@ async function loadPerfilPublico(){
   atualizarLinkPerfilPublico();
   loadCapaPreview();
   atualizarPreviewPerfilPublico();
+  atualizarTracaoPerfilPublico();
+}
+
+// Soma visualizações/cliques já rastreados por imóvel (mesmo dado que
+// aparece no modal de detalhe) — não é uma métrica nova, só um resumo
+// disso no lugar onde o corretor pensa no perfil público como um todo.
+function atualizarTracaoPerfilPublico(){
+  const row=document.getElementById('pp-traction-row');
+  if(!row)return;
+  const publicos=(typeof IMOVEIS!=='undefined'?IMOVEIS:[]).filter(im=>im.publico);
+  const totalViews=publicos.reduce((s,im)=>s+(Number(im.visualizacoes)||0),0);
+  const totalWa=publicos.reduce((s,im)=>s+(Number(im.cliques_whatsapp)||0),0);
+  if(totalViews===0&&totalWa===0){row.style.display='none';return;}
+  document.getElementById('pp-traction-views').textContent=totalViews.toLocaleString('pt-BR');
+  document.getElementById('pp-traction-views-suffix').textContent=totalViews===1?'ão':'ões';
+  document.getElementById('pp-traction-wa').textContent=totalWa.toLocaleString('pt-BR');
+  document.getElementById('pp-traction-wa-suffix').textContent=totalWa===1?'':'s';
+  row.style.display='flex';
 }
 
 function atualizarLinkPerfilPublico(){
