@@ -310,6 +310,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .pp-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
 .pp-form-col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .pp-link-card{background:linear-gradient(135deg,rgba(133,2,119,.16),rgba(98,1,88,.1));border:1px solid rgba(133,2,119,.35);border-radius:var(--r2);padding:18px 20px}
+.pp-activate-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid rgba(133,2,119,.25)}
+.pp-activate-row .toggle-name{font-size:15px;font-weight:700;color:var(--t1)}
+.pp-activate-row .toggle-desc{font-size:12px;color:var(--t2);margin-top:3px}
+.pp-activate-row .toggle{width:48px;height:26px;border-radius:13px}
+.pp-activate-row .toggle::after{width:20px;height:20px}
+.pp-activate-row .toggle.on::after{left:25px}
 .pp-link-title{font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
 .pp-link-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .pp-link-url{flex:1;min-width:0;font-size:13px;color:var(--pl);word-break:break-all;text-decoration:none}
@@ -361,6 +367,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit
 .pp-preview-stat-line{font-size:11.5px;color:var(--ppt3);font-weight:500;margin-bottom:14px}
 .pp-preview-bio{font-size:12px;line-height:1.6;color:var(--ppt2);margin-bottom:14px}
 .pp-preview-cta{display:flex;align-items:center;justify-content:center;gap:6px;background:#25d366;color:#fff;font-size:11.5px;font-weight:700;padding:9px;border-radius:9px}
+.pp-tips-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;margin-top:16px}
+.pp-tips-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.pp-tips-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.pp-tips-list li{font-size:12px;color:var(--t2);line-height:1.5;padding-left:16px;position:relative}
+.pp-tips-list li::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--p)}
 @media(max-width:900px){
   .pp-layout{grid-template-columns:1fr}
   .pp-preview-col{position:static;max-width:340px}
@@ -1334,7 +1345,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
         </div>
         <!-- Overdue Alert Banner -->
-        <div id="overdue-banner" style="display:none;margin-bottom:20px;padding:13px 18px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:8px;cursor:pointer;align-items:center;gap:14px;transition:background .2s" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1])" onmouseenter="this.style.background='rgba(245,158,11,.14)'" onmouseleave="this.style.background='rgba(245,158,11,.08)'">
+        <div id="overdue-banner" style="display:none;margin-bottom:20px;padding:13px 18px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:8px;cursor:pointer;align-items:center;gap:14px;transition:background .2s" onclick="navigate('crm',document.querySelector('.nav-item[onclick*=&quot;navigate(\'crm\'&quot;]'))" onmouseenter="this.style.background='rgba(245,158,11,.14)'" onmouseleave="this.style.background='rgba(245,158,11,.08)'">
           <span style="font-size:20px;flex-shrink:0">⚠️</span>
           <div style="flex:1;min-width:0">
             <div id="overdue-banner-text" style="font-size:13px;font-weight:700;color:#f59e0b"></div>
@@ -1388,7 +1399,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <div class="kpi-label">Imóveis Ativos</div>
             <div class="kpi-sparkline" id="spark-imoveis"></div>
           </div>
-          <div class="kpi-card" id="kpi-sem-resposta-card" style="cursor:pointer;border-color:rgba(245,158,11,.25)" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1])">
+          <div class="kpi-card" id="kpi-sem-resposta-card" style="cursor:pointer;border-color:rgba(245,158,11,.25)" onclick="navigate('crm',document.querySelector('.nav-item[onclick*=&quot;navigate(\'crm\'&quot;]'))">
             <div class="kpi-top">
               <div class="kpi-icon" style="background:rgba(245,158,11,.12)">
                 <svg fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -1551,12 +1562,19 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <div class="pp-form-col">
 
             <div class="pp-link-card">
+              <div class="pp-activate-row">
+                <div class="toggle-info">
+                  <div class="toggle-name">Perfil público</div>
+                  <div class="toggle-desc" id="pp-activate-desc">Desativado — ative pra liberar o link com todos os seus imóveis compartilhados</div>
+                </div>
+                <button class="toggle off" id="perfil-pub-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off');atualizarLinkPerfilPublico()"></button>
+              </div>
               <div class="pp-link-title">Seu link público</div>
               <div id="perfil-pub-link-row" style="display:none" class="pp-link-row">
                 <a href="#" id="perfil-pub-link" target="_blank" class="pp-link-url"></a>
                 <button type="button" class="link-btn" onclick="copiarLinkPerfilPublico()">Copiar</button>
               </div>
-              <div id="perfil-pub-link-empty" class="pp-link-inactive">Ative o perfil lá embaixo pra gerar o link — depois é só copiar e mandar pro cliente.</div>
+              <div id="perfil-pub-link-empty" class="pp-link-inactive">Ative o perfil aqui em cima pra gerar o link — depois é só copiar e mandar pro cliente.</div>
               <div class="pp-slug-row">
                 <label class="config-label" style="margin-bottom:6px;display:block">Personalize o link</label>
                 <div class="pp-slug-input-row">
@@ -1564,6 +1582,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                   <input type="text" class="pp-slug-input" id="pp-slug" maxlength="60" placeholder="seu-nome" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'');atualizarLinkPerfilPublico()"/>
                 </div>
               </div>
+              <button class="config-save" onclick="salvarPerfilPublico(this)" style="margin-top:14px;width:100%">Salvar perfil público</button>
             </div>
 
             <div class="config-card">
@@ -1618,6 +1637,11 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <div class="config-card">
               <div class="config-card-title">Redes e contato</div>
               <div class="config-form-group">
+                <label class="config-label">WhatsApp</label>
+                <input class="config-input" type="text" id="pp-whatsapp" placeholder="Ex: (54) 99999-9999" oninput="atualizarPreviewPerfilPublico()"/>
+                <div style="font-size:11px;color:var(--t3);margin-top:4px">Número usado no botão "Falar no WhatsApp" do seu perfil e dos seus imóveis. Se deixar em branco, usa o WhatsApp das suas Configurações.</div>
+              </div>
+              <div class="config-form-group">
                 <label class="config-label">Instagram</label>
                 <input class="config-input" type="text" id="pp-instagram" placeholder="@seuusuario"/>
               </div>
@@ -1625,18 +1649,6 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <label class="config-label">Site</label>
                 <input class="config-input" type="text" id="pp-site" placeholder="seusite.com.br"/>
               </div>
-            </div>
-
-            <div class="config-card">
-              <div class="config-card-title">Publicação</div>
-              <div class="toggle-row" style="border-bottom:none;padding-top:0">
-                <div class="toggle-info">
-                  <div class="toggle-name">Ativar perfil público</div>
-                  <div class="toggle-desc">Libera o link com todos os seus imóveis compartilhados</div>
-                </div>
-                <button class="toggle off" id="perfil-pub-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off');atualizarLinkPerfilPublico()"></button>
-              </div>
-              <button class="config-save" onclick="salvarPerfilPublico(this)" style="margin-top:14px;width:100%">Salvar perfil público</button>
             </div>
 
           </div>
@@ -1659,6 +1671,15 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <p class="pp-preview-bio" id="pp-preview-bio" style="display:none"></p>
                 <div class="pp-preview-cta">💬 Falar no WhatsApp</div>
               </div>
+            </div>
+            <div class="pp-tips-card">
+              <div class="pp-tips-title">Dicas rápidas</div>
+              <ul class="pp-tips-list">
+                <li>Foto de rosto + CRECI visível passam mais confiança pro cliente.</li>
+                <li>Uma frase de destaque curta ajuda o cliente a te lembrar.</li>
+                <li>Link personalizado é mais fácil de divulgar do que um link com id.</li>
+                <li>Mande o link direto pelo WhatsApp assim que ativar o perfil.</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -1752,27 +1773,27 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <div class="config-card-title">Dados do Perfil</div>
             <div class="config-form-group">
               <label class="config-label">Nome completo</label>
-              <input class="config-input" type="text" value="Marcos Ribeiro"/>
+              <input class="config-input" type="text" id="cfg-nome" placeholder="Seu nome completo"/>
             </div>
             <div class="config-form-group">
               <label class="config-label">CRECI</label>
-              <input class="config-input" type="text" value="RS-12.458"/>
+              <input class="config-input" type="text" id="cfg-creci" placeholder="Ex: RS-12.458"/>
             </div>
             <div class="config-form-group">
               <label class="config-label">E-mail</label>
-              <input class="config-input" type="email" value="corretor@grupocaptar.com"/>
+              <input class="config-input" type="email" id="cfg-email" disabled/>
             </div>
             <div class="config-form-group">
               <label class="config-label">WhatsApp</label>
-              <input class="config-input" type="text" value="(54) 99647-3047"/>
+              <input class="config-input" type="text" id="cfg-whatsapp" placeholder="Ex: (54) 99999-9999"/>
             </div>
             <div class="config-form-group">
               <label class="config-label">Especialidade</label>
-              <select class="config-select">
-                <option selected>Residencial Alto Padrão</option>
-                <option>Residencial Popular</option>
-                <option>Comercial</option>
-                <option>Rural / Terrenos</option>
+              <select class="config-select" id="cfg-especialidade">
+                <option value="Residencial Alto Padrão">Residencial Alto Padrão</option>
+                <option value="Residencial Popular">Residencial Popular</option>
+                <option value="Comercial">Comercial</option>
+                <option value="Rural / Terrenos">Rural / Terrenos</option>
               </select>
             </div>
             <button class="config-save" onclick="saveProfileConfig(this)">Salvar alterações</button>
@@ -3718,22 +3739,22 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
     <div class="mbn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
     Início
   </button>
-  <button class="mbn-item" id="mbn-crm" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1]);setMbn('crm')">
+  <button class="mbn-item" id="mbn-crm" onclick="navigate('crm',document.querySelector('.nav-item[onclick*=&quot;navigate(\'crm\'&quot;]'));setMbn('crm')">
     <div class="mbn-icon">
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
       <span class="mbn-badge" id="mbn-badge-crm" style="display:none">0</span>
     </div>
     Leads
   </button>
-  <button class="mbn-item" id="mbn-imoveis" onclick="navigate('imoveis',document.querySelectorAll('.nav-item')[2]);setMbn('imoveis')">
+  <button class="mbn-item" id="mbn-imoveis" onclick="navigate('imoveis',document.querySelector('.nav-item[onclick*=&quot;navigate(\'imoveis\'&quot;]'));setMbn('imoveis')">
     <div class="mbn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
     Imóveis
   </button>
-  <button class="mbn-item" id="mbn-calendario" onclick="navigate('calendario',document.querySelectorAll('.nav-item')[5]);setMbn('calendario')">
+  <button class="mbn-item" id="mbn-calendario" onclick="navigate('calendario',document.querySelector('.nav-item[onclick*=&quot;navigate(\'calendario\'&quot;]'));setMbn('calendario')">
     <div class="mbn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
     Agenda
   </button>
-  <button class="mbn-item" id="mbn-financeiro" onclick="navigate('financeiro',document.querySelectorAll('.nav-item')[8]);setMbn('financeiro')">
+  <button class="mbn-item" id="mbn-financeiro" onclick="navigate('financeiro',document.querySelector('.nav-item[onclick*=&quot;navigate(\'financeiro\'&quot;]'));setMbn('financeiro')">
     <div class="mbn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
     Financeiro
   </button>
@@ -4043,17 +4064,21 @@ async function showApp(){
     document.querySelectorAll('.sidebar-user-role').forEach(el=>el.textContent=role);
     document.querySelectorAll('.topbar-avatar').forEach(el=>el.textContent=ini);
     document.querySelectorAll('.avatar').forEach(el=>el.textContent=ini);
-    // Populate config page fields from user_metadata
-    const allConfigInputs=document.querySelectorAll('.config-input');
-    if(allConfigInputs.length>=4){
-      allConfigInputs[0].value=nome;
-      allConfigInputs[1].value=meta.creci||'';
-      allConfigInputs[2].value=_currentUser.email||'';
-      allConfigInputs[3].value=meta.tel||'';
-    }
-    const configSelect=document.querySelector('.config-select');
-    if(configSelect&&meta.especialidade){
-      const opt=[...configSelect.options].find(o=>o.value===meta.especialidade||o.textContent===meta.especialidade);
+    // Populate config page fields from user_metadata. Usa ids dedicados
+    // (não a classe .config-input compartilhada) — essa classe também é
+    // usada nos campos do Perfil Público, e indexar por posição global
+    // pegava os campos errados assim que essa outra seção crescia.
+    const cfgNome=document.getElementById('cfg-nome');
+    const cfgCreci=document.getElementById('cfg-creci');
+    const cfgEmail=document.getElementById('cfg-email');
+    const cfgWhatsapp=document.getElementById('cfg-whatsapp');
+    if(cfgNome)cfgNome.value=nome;
+    if(cfgCreci)cfgCreci.value=meta.creci||'';
+    if(cfgEmail)cfgEmail.value=_currentUser.email||'';
+    if(cfgWhatsapp)cfgWhatsapp.value=meta.tel||'';
+    const cfgEspecialidade=document.getElementById('cfg-especialidade');
+    if(cfgEspecialidade&&meta.especialidade){
+      const opt=[...cfgEspecialidade.options].find(o=>o.value===meta.especialidade||o.textContent===meta.especialidade);
       if(opt)opt.selected=true;
     }
   }
@@ -4605,7 +4630,7 @@ function renderRecentLeads(){
   const tbody=document.getElementById('recent-leads-tbody');
   const recent=LEADS_DATA.slice(0,6);
   if(!recent.length){
-    tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:32px 0;color:var(--t3);font-size:13px">Nenhum lead cadastrado ainda. <button class="link-btn" onclick="navigate('crm',document.querySelectorAll('.nav-item')[1])">Adicionar o primeiro lead →</button></td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:32px 0;color:var(--t3);font-size:13px">Nenhum lead cadastrado ainda. <button class="link-btn" onclick="navigate('crm',document.querySelector('.nav-item[onclick*=&quot;navigate(\'crm\'&quot;]'))">Adicionar o primeiro lead →</button></td></tr>`;
     return;
   }
   tbody.innerHTML=recent.map(l=>`
@@ -4643,7 +4668,7 @@ function maskCurrency(el){
 function renderTasks(){
   const list=document.getElementById('tasks-list');
   if(!TASKS.length){
-    list.innerHTML=`<div style="text-align:center;padding:24px 0;color:var(--t3);font-size:13px">Nenhuma tarefa para hoje.<br><button class="link-btn" style="margin-top:8px" onclick="navigate('calendario',document.querySelectorAll('.nav-item')[5])">Adicionar ao calendário →</button></div>`;
+    list.innerHTML=`<div style="text-align:center;padding:24px 0;color:var(--t3);font-size:13px">Nenhuma tarefa para hoje.<br><button class="link-btn" style="margin-top:8px" onclick="navigate('calendario',document.querySelector('.nav-item[onclick*=&quot;navigate(\'calendario\'&quot;]'))">Adicionar ao calendário →</button></div>`;
     return;
   }
   list.innerHTML=TASKS.map((t,i)=>`
@@ -6607,13 +6632,13 @@ function runSearch(q){
   const ql=q.toLowerCase();
   const results=[];
   // Leads
-  LEADS_DATA.filter(l=>(l.nome||'').toLowerCase().includes(ql)||(l.tipo||'').toLowerCase().includes(ql)||(l.email||'').toLowerCase().includes(ql)).slice(0,4).forEach(l=>results.push({type:'Lead',icon:l.cor||'#850277',label:l.nome||'—',sub:(l.tipo||'—')+' · '+(l.valor||'—'),page:'crm',action:()=>{navigate('crm',document.querySelectorAll('.nav-item')[1]);setTimeout(()=>openLeadDetail(l.id),300);}}));
+  LEADS_DATA.filter(l=>(l.nome||'').toLowerCase().includes(ql)||(l.tipo||'').toLowerCase().includes(ql)||(l.email||'').toLowerCase().includes(ql)).slice(0,4).forEach(l=>results.push({type:'Lead',icon:l.cor||'#850277',label:l.nome||'—',sub:(l.tipo||'—')+' · '+(l.valor||'—'),page:'crm',action:()=>{navigate('crm',document.querySelector('.nav-item[onclick*="navigate(\'crm\'"]'));setTimeout(()=>openLeadDetail(l.id),300);}}));
   // Imóveis
-  IMOVEIS.filter(im=>(im.titulo||'').toLowerCase().includes(ql)||(im.endereco||'').toLowerCase().includes(ql)).slice(0,3).forEach((im,i)=>results.push({type:'Imóvel',icon:'🏠',label:im.titulo||'Imóvel',sub:(im.preco||'—')+' · '+(im.endereco||'—'),page:'imoveis',action:()=>{navigate('imoveis',document.querySelectorAll('.nav-item')[2]);setTimeout(()=>openImovelDetail(i),300);}}));
+  IMOVEIS.filter(im=>(im.titulo||'').toLowerCase().includes(ql)||(im.endereco||'').toLowerCase().includes(ql)).slice(0,3).forEach((im,i)=>results.push({type:'Imóvel',icon:'🏠',label:im.titulo||'Imóvel',sub:(im.preco||'—')+' · '+(im.endereco||'—'),page:'imoveis',action:()=>{navigate('imoveis',document.querySelector('.nav-item[onclick*="navigate(\'imoveis\'"]'));setTimeout(()=>openImovelDetail(i),300);}}));
   // Locações
-  LOCACOES.filter(l=>(l.inquilino||'').toLowerCase().includes(ql)||(l.imovel||'').toLowerCase().includes(ql)).slice(0,3).forEach(l=>results.push({type:'Locação',icon:'📄',label:l.inquilino||'—',sub:l.imovel||'—',page:'locacao',action:()=>navigate('locacao',document.querySelectorAll('.nav-item')[3])}));
+  LOCACOES.filter(l=>(l.inquilino||'').toLowerCase().includes(ql)||(l.imovel||'').toLowerCase().includes(ql)).slice(0,3).forEach(l=>results.push({type:'Locação',icon:'📄',label:l.inquilino||'—',sub:l.imovel||'—',page:'locacao',action:()=>navigate('locacao',document.querySelector('.nav-item[onclick*="navigate(\'locacao\'"]'))}));
   // Visitas
-  VISITAS.filter(v=>(v.cliente||'').toLowerCase().includes(ql)||(v.imovel||'').toLowerCase().includes(ql)).slice(0,2).forEach(v=>results.push({type:'Visita',icon:'📍',label:v.cliente||'—',sub:(v.imovel||'—')+' · '+(v.data||''),page:'visitas',action:()=>navigate('visitas',document.querySelectorAll('.nav-item')[4])}));
+  VISITAS.filter(v=>(v.cliente||'').toLowerCase().includes(ql)||(v.imovel||'').toLowerCase().includes(ql)).slice(0,2).forEach(v=>results.push({type:'Visita',icon:'📍',label:v.cliente||'—',sub:(v.imovel||'—')+' · '+(v.data||''),page:'visitas',action:()=>navigate('visitas',document.querySelector('.nav-item[onclick*="navigate(\'visitas\'"]'))}));
 
   if(!results.length){el.innerHTML='<div class="gs-empty">Nenhum resultado para "<strong>'+escHTML(q)+'</strong>"</div>';return;}
   el.innerHTML=results.map((r,i)=>`
@@ -7517,17 +7542,20 @@ async function loadPerfilPublico(){
   const bioEl=document.getElementById('perfil-pub-bio');
   const taglineEl=document.getElementById('pp-tagline');
   const creciEl=document.getElementById('pp-creci');
+  const whatsappEl=document.getElementById('pp-whatsapp');
   const instaEl=document.getElementById('pp-instagram');
   const siteEl=document.getElementById('pp-site');
   const slugEl=document.getElementById('pp-slug');
   const toggle=document.getElementById('perfil-pub-toggle');
   const metaCreci=(_currentUser?.user_metadata?.creci||'').trim();
+  const metaTel=(_currentUser?.user_metadata?.tel||'').trim();
   const prefixEl=document.getElementById('pp-slug-prefix');
   if(prefixEl)prefixEl.textContent=`${location.origin}/c/`;
   if(data){
     if(bioEl)bioEl.value=data.bio||'';
     if(taglineEl)taglineEl.value=data.tagline||'';
     if(creciEl)creciEl.value=data.creci||metaCreci||'';
+    if(whatsappEl)whatsappEl.value=data.tel||metaTel||'';
     if(instaEl)instaEl.value=data.instagram||'';
     if(siteEl)siteEl.value=data.site_url||'';
     if(slugEl)slugEl.value=data.slug||'';
@@ -7538,6 +7566,7 @@ async function loadPerfilPublico(){
     if(bioEl)bioEl.value='';
     if(taglineEl)taglineEl.value='';
     if(creciEl)creciEl.value=metaCreci||'';
+    if(whatsappEl)whatsappEl.value=metaTel||'';
     if(instaEl)instaEl.value='';
     if(siteEl)siteEl.value='';
     if(slugEl)slugEl.value='';
@@ -7561,8 +7590,16 @@ function atualizarLinkPerfilPublico(){
   const row=document.getElementById('perfil-pub-link-row');
   const empty=document.getElementById('perfil-pub-link-empty');
   const link=document.getElementById('perfil-pub-link');
+  const toggle=document.getElementById('perfil-pub-toggle');
+  const desc=document.getElementById('pp-activate-desc');
+  const ativo=toggle?toggle.classList.contains('on'):_perfilPublicoAtivo;
+  if(desc){
+    desc.textContent=ativo
+      ? 'Ativado — qualquer pessoa com o link vê seus imóveis compartilhados'
+      : 'Desativado — ative pra liberar o link com todos os seus imóveis compartilhados';
+  }
   if(!row||!link||!_currentUser?.id)return;
-  if(_perfilPublicoAtivo){
+  if(ativo){
     const slug=(document.getElementById('pp-slug')?.value||'').trim();
     const url=slug
       ? `${location.origin}/c/${encodeURIComponent(slug)}`
@@ -7592,6 +7629,7 @@ async function salvarPerfilPublico(btn){
   const bio=(document.getElementById('perfil-pub-bio')?.value||'').trim();
   const tagline=(document.getElementById('pp-tagline')?.value||'').trim();
   const creci=(document.getElementById('pp-creci')?.value||'').trim();
+  const whatsapp=(document.getElementById('pp-whatsapp')?.value||'').trim();
   const instagram=(document.getElementById('pp-instagram')?.value||'').trim();
   const siteUrl=(document.getElementById('pp-site')?.value||'').trim();
   const toggle=document.getElementById('perfil-pub-toggle');
@@ -7604,7 +7642,7 @@ async function salvarPerfilPublico(btn){
   const montarPayload=()=>({
     user_id:_currentUser.id,
     nome:meta.nome||'',
-    tel:meta.tel||'',
+    tel:whatsapp||meta.tel||'',
     creci,
     especialidade:meta.especialidade||'',
     bio,
@@ -7843,13 +7881,11 @@ function atualizarPreviewPerfilPublico(){
 }
 
 async function saveProfileConfig(btn){
-  const card=btn.closest('.config-card');
-  const inputs=card.querySelectorAll('.config-input,.config-select');
-  const nome=(inputs[0]?.value||'').trim();
+  const nome=(document.getElementById('cfg-nome')?.value||'').trim();
   if(!nome){showToast('Informe seu nome','error');return;}
-  const creci=(inputs[1]?.value||'').trim();
-  const tel=(inputs[3]?.value||'').trim();
-  const especialidade=inputs[4]?.value||'';
+  const creci=(document.getElementById('cfg-creci')?.value||'').trim();
+  const tel=(document.getElementById('cfg-whatsapp')?.value||'').trim();
+  const especialidade=document.getElementById('cfg-especialidade')?.value||'';
   const oldText=btn.textContent;
   btn.textContent='Salvando…';btn.disabled=true;
   const updateData={data:{nome,creci,tel,especialidade}};
@@ -7867,10 +7903,10 @@ async function saveProfileConfig(btn){
   // Mantém os dados denormalizados do perfil público em dia, se o
   // corretor já tiver uma linha lá (não cria uma nova sozinho — só
   // sincroniza a que já existe, criada em "Salvar perfil público").
-  // creci fica de fora: desde que o Perfil Público ganhou seu próprio campo
-  // de CRECI (pp-creci), essa coluna passou a ser dele — sobrescrever aqui
-  // apagaria silenciosamente o que o corretor configurou lá.
-  _sb.from('perfil_publico').update({nome,tel,especialidade}).eq('user_id',_currentUser?.id).then(()=>{},()=>{});
+  // creci e tel ficam de fora: o Perfil Público tem seus próprios campos
+  // pra isso (pp-creci, pp-whatsapp) — sobrescrever aqui apagaria
+  // silenciosamente o que o corretor configurou lá.
+  _sb.from('perfil_publico').update({nome,especialidade}).eq('user_id',_currentUser?.id).then(()=>{},()=>{});
   showToast('Perfil salvo com sucesso!','success');
 }
 
