@@ -1877,28 +1877,28 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <div class="toggle-name">Novo lead captado</div>
                 <div class="toggle-desc">Receba alertas imediatos de novos contatos</div>
               </div>
-              <button class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+              <button class="toggle on" id="notif-toggle-lead" onclick="toggleNotifPref('lead',this)"></button>
             </div>
             <div class="toggle-row">
               <div class="toggle-info">
                 <div class="toggle-name">Relatório semanal</div>
                 <div class="toggle-desc">Resumo de performance às segundas-feiras</div>
               </div>
-              <button class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+              <button class="toggle on" id="notif-toggle-relatorio" onclick="toggleNotifPref('relatorio',this)"></button>
             </div>
             <div class="toggle-row">
               <div class="toggle-info">
                 <div class="toggle-name">Lembretes de follow-up</div>
                 <div class="toggle-desc">Alerta quando um lead ficou sem resposta por 3 dias</div>
               </div>
-              <button class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+              <button class="toggle on" id="notif-toggle-followup" onclick="toggleNotifPref('followup',this)"></button>
             </div>
             <div class="toggle-row">
               <div class="toggle-info">
                 <div class="toggle-name">Novidades da plataforma</div>
                 <div class="toggle-desc">Atualizações e novas funcionalidades</div>
               </div>
-              <button class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+              <button class="toggle off" id="notif-toggle-novidades" onclick="toggleNotifPref('novidades',this)"></button>
             </div>
           </div>
           <div class="config-card">
@@ -4169,6 +4169,14 @@ async function showApp(){
       const opt=[...cfgEspecialidade.options].find(o=>o.value===meta.especialidade||o.textContent===meta.especialidade);
       if(opt)opt.selected=true;
     }
+    // Preferências de notificação — default é o estado já desenhado no HTML
+    // (lead/relatorio/followup ligados, novidades desligado) pra quem nunca
+    // salvou nada ainda.
+    const notifPrefs=Object.assign({lead:true,relatorio:true,followup:true,novidades:false},meta.notif_prefs||{});
+    Object.entries(notifPrefs).forEach(([key,val])=>{
+      const btn=document.getElementById('notif-toggle-'+key);
+      if(btn){btn.classList.toggle('on',!!val);btn.classList.toggle('off',!val);}
+    });
   }
   // Carrega cidades BR e dados do banco em paralelo
   showToast('Carregando dados…','success');
@@ -5936,8 +5944,6 @@ function closeLeadDetail(e){
   document.body.style.overflow='';
 }
 
-// Patch kanban card to open detail on click (not drag)
-const _origCardHTML=cardHTML;
 // Override renderKanban to add click handlers after render
 const _origRenderKanban=renderKanban;
 renderKanban=function(){
@@ -8192,6 +8198,29 @@ function atualizarPreviewPerfilPublico(){
       img.src=capaPreviewImg.src;
       banner.appendChild(img);
     }
+  }
+}
+
+// As 4 chaves de notificação ficavam só na tela — o toggle mudava de cor
+// mas nunca salvava em lugar nenhum, então voltava ao padrão a cada login.
+// Guarda em user_metadata.notif_prefs, mesmo lugar dos outros dados
+// pessoais (nome/creci/tel) já salvos por saveProfileConfig.
+async function toggleNotifPref(key,btn){
+  const novoValor=!btn.classList.contains('on');
+  btn.classList.toggle('on',novoValor);
+  btn.classList.toggle('off',!novoValor);
+  const meta=_currentUser?.user_metadata||{};
+  const notifPrefs=Object.assign({lead:true,relatorio:true,followup:true,novidades:false},meta.notif_prefs||{},{[key]:novoValor});
+  const {error}=await _sb.auth.updateUser({data:{notif_prefs:notifPrefs}});
+  if(error){
+    btn.classList.toggle('on',!novoValor);
+    btn.classList.toggle('off',novoValor);
+    showToast('Erro ao salvar preferência: '+error.message,'error');
+    return;
+  }
+  if(_currentUser){
+    _currentUser.user_metadata=_currentUser.user_metadata||{};
+    _currentUser.user_metadata.notif_prefs=notifPrefs;
   }
 }
 
@@ -10466,18 +10495,22 @@ async function checkUserAvisosPatched(){
     });
   }catch(e){}
 }
+// Aplica o patch assim que a função existe, não só quando initExtras()
+// roda (800ms depois de #app virar .visible). showApp() chama
+// checkUserAvisos() logo após o Promise.all() dos dados iniciais, o que
+// costuma terminar bem antes desses 800ms — sem isso, essa primeira
+// chamada (a única que existe) pegava a versão sem marcarAvisoLido,
+// e os avisos nunca eram marcados como lidos na sessão.
+window.checkUserAvisos=checkUserAvisosPatched;
 
 // ─────────────────────────────────────────
 // INIT EXTRAS (called after login)
 // ─────────────────────────────────────────
 function initExtras(){
-  // Override checkUserAvisos
-  window.checkUserAvisos=checkUserAvisosPatched;
-  // Override openLeadDetail to include history
-  if(typeof openLeadDetail==='function'){
-    window._origOpenLeadDetail=openLeadDetail;
-    window.openLeadDetail=openLeadDetailWithHistory;
-  }
+  // openLeadDetail já foi trocado por openLeadDetailWithHistory no
+  // DOMContentLoaded logo abaixo — reaplicar aqui capturaria o próprio
+  // wrapper como "original" em window._origOpenLeadDetail (que ninguém
+  // lê), então não repete o patch.
   // Update leads sem resposta KPI (call after data loads)
   setTimeout(updateLeadsSemResposta,2000);
   // Start realtime
