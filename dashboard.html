@@ -7497,8 +7497,8 @@ function renderPerfilPublicoCores(){
       `).join('')}
     </div>
     <div class="pp-cor-custom-row">
-      <input type="color" class="pp-cor-custom" id="pp-cor-custom-input" title="Cor personalizada" value="${custom?_perfilPublicoCorAtual:'#850277'}" oninput="selecionarCorPerfil(this.value);document.getElementById('pp-cor-hex-input').value=this.value"/>
-      <input type="text" class="pp-cor-hex-input" id="pp-cor-hex-input" value="${_perfilPublicoCorAtual}" maxlength="7" spellcheck="false" onchange="if(/^#[0-9a-fA-F]{6}$/.test(this.value))selecionarCorPerfil(this.value);else this.value=_perfilPublicoCorAtual"/>
+      <input type="color" class="pp-cor-custom" id="pp-cor-custom-input" title="Cor personalizada" value="${escHTML(custom?_perfilPublicoCorAtual:'#850277')}" oninput="selecionarCorPerfil(this.value);document.getElementById('pp-cor-hex-input').value=this.value"/>
+      <input type="text" class="pp-cor-hex-input" id="pp-cor-hex-input" value="${escHTML(_perfilPublicoCorAtual)}" maxlength="7" spellcheck="false" onchange="if(/^#[0-9a-fA-F]{6}$/.test(this.value))selecionarCorPerfil(this.value);else this.value=_perfilPublicoCorAtual"/>
       <span class="pp-cor-nome" id="pp-cor-nome">${nomeAtual}</span>
     </div>
   `;
@@ -7601,8 +7601,8 @@ async function salvarPerfilPublico(btn){
   const slugCandidato=slugify((document.getElementById('pp-slug')?.value||'').trim()||meta.nome||'');
   const oldText=btn.textContent;
   btn.textContent='Salvando…';btn.disabled=true;
-  const slug=await resolverSlugUnico(slugCandidato);
-  const payload={
+  let slug=await resolverSlugUnico(slugCandidato);
+  const montarPayload=()=>({
     user_id:_currentUser.id,
     nome:meta.nome||'',
     tel:meta.tel||'',
@@ -7617,8 +7617,23 @@ async function salvarPerfilPublico(btn){
     slug:slug||null,
     ativo,
     updated_at:new Date().toISOString()
-  };
-  const {error}=await _sb.from('perfil_publico').upsert(payload,{onConflict:'user_id'});
+  });
+  let {error}=await _sb.from('perfil_publico').upsert(montarPayload(),{onConflict:'user_id'});
+  // resolverSlugUnico só enxerga slugs de perfis já ativos (RLS não deixa ver
+  // os inativos de outra pessoa) — se mesmo assim colidir na constraint única
+  // do banco, tenta de novo com o sufixo e, em último caso, sem slug nenhum.
+  if(error?.code==='23505'&&/slug/i.test(error.message||'')){
+    const sufixo=`${slugCandidato}-${_currentUser.id.slice(0,4)}`;
+    if(slug!==sufixo){
+      slug=sufixo;
+      ({error}=await _sb.from('perfil_publico').upsert(montarPayload(),{onConflict:'user_id'}));
+    }
+    if(error?.code==='23505'){
+      slug='';
+      ({error}=await _sb.from('perfil_publico').upsert(montarPayload(),{onConflict:'user_id'}));
+      if(!error)showToast('Perfil salvo, mas não foi possível gerar um link personalizado agora — tente de novo em instantes.','success');
+    }
+  }
   btn.textContent=oldText;btn.disabled=false;
   if(error){showToast('Erro ao salvar perfil público: '+error.message,'error');return;}
   const slugEl=document.getElementById('pp-slug');
