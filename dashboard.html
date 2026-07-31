@@ -3979,6 +3979,7 @@ let _currentUser = null;
 // ─────────────────────────────────────────
 const LEADS_DATA = [];
 let _leadPriorityMap = {}; // {id: {score, label, motivo}} — preenchido por priorizarLeadsComIA()
+const LEAD_CONTATOS = []; // histórico de contatos de todos os leads, carregado uma vez no login
 
 const IMOVEIS = [];
 
@@ -4182,9 +4183,9 @@ async function showApp(){
   showToast('Carregando dados…','success');
   await Promise.all([
     loadCidadesBR(),
-    loadLeads(),loadImoveis(),loadLocacoes(),
+    loadLeads(),loadLeadContatos(),loadImoveis(),loadLocacoes(),
     loadVisitas(),loadTransacoes(),loadTarefas(),loadCalEvents(),
-    loadLoteamentos(),loadMetasMensais(),loadPerfilPublico()
+    loadLoteamentos(),loadMetasMensais(),loadPerfilPublico(),loadChecklists()
   ]);
   checkAdminAccess();
   // Update nav badges from real data
@@ -4218,6 +4219,19 @@ async function loadLeads(){
   if(error){showToast('Erro ao carregar leads: '+error.message,'error');return;}
   LEADS_DATA.length=0;
   if(data) LEADS_DATA.push(...data);
+}
+async function loadLeadContatos(){
+  const {data,error}=await _sb.from('lead_contatos').select('*').order('created_at',{ascending:true});
+  if(error){showToast('Erro ao carregar histórico de contatos: '+error.message,'error');return;}
+  LEAD_CONTATOS.length=0;
+  if(data) LEAD_CONTATOS.push(...data);
+}
+const CHECKLISTS_SAVED=[]; // um registro por (imóvel ou 'global') + tipo
+async function loadChecklists(){
+  const {data,error}=await _sb.from('checklists').select('*');
+  if(error){showToast('Erro ao carregar checklists: '+error.message,'error');return;}
+  CHECKLISTS_SAVED.length=0;
+  if(data) CHECKLISTS_SAVED.push(...data);
 }
 async function loadImoveis(){
   // Filtro explícito por user_id é obrigatório aqui: desde que a policy
@@ -5389,10 +5403,13 @@ async function salvarEdicaoVisita(){
   closeVisitaModal();
   showToast('Visita atualizada!','success');
 }
-function salvarNotaLead(leadId){
+async function salvarNotaLead(leadId){
   const ta=document.getElementById('nota-lead-'+leadId);
   if(!ta)return;
-  localStorage.setItem('nota_lead_'+leadId,ta.value);
+  const {error}=await _sb.from('leads').update({anotacoes:ta.value}).eq('id',leadId);
+  if(error){showToast('Erro ao salvar anotação: '+error.message,'error');return;}
+  const lead=LEADS_DATA.find(l=>String(l.id)===String(leadId));
+  if(lead)lead.anotacoes=ta.value;
   showToast('Anotação salva!','success');
 }
 // Também popula ao abrir modal de contrato
@@ -5925,7 +5942,7 @@ function openLeadDetail(id){
     </div>
     <div class="so-section">
       <div class="so-section-title">Anotações</div>
-      <textarea class="notes-input" id="nota-lead-${l.id}" placeholder="Adicione observações sobre este lead…">${escHTML(localStorage.getItem('nota_lead_'+l.id)||'')}</textarea>
+      <textarea class="notes-input" id="nota-lead-${l.id}" placeholder="Adicione observações sobre este lead…">${escHTML(l.anotacoes||'')}</textarea>
       <button class="btn-submit" style="margin-top:8px;font-size:12px;padding:8px 16px" onclick="salvarNotaLead('${escHTML(String(l.id))}')">Salvar</button>
     </div>`;
   const waPhone = '55'+(l.tel||'').replace(/\D/g,'');
@@ -8549,9 +8566,13 @@ function setChecklistTipo(tipo,btn){
   renderChecklistItems();
 }
 
+function _ckSavedRow(){
+  return CHECKLISTS_SAVED.find(c=>c.context_id===_ckId&&c.tipo===_ckTipo);
+}
+
 function renderChecklistItems(){
   const items=CHECKLISTS[_ckTipo]||[];
-  let saved;try{saved=JSON.parse(localStorage.getItem(`ck_${_ckId}_${_ckTipo}`)||'{}');}catch(e){saved={};}
+  const saved=_ckSavedRow()?.itens||{};
   const done=items.filter((_,i)=>saved[i]).length;
   document.getElementById('ck-progress-label').textContent=`${done} de ${items.length} concluídos`;
   document.getElementById('ck-prog-fill').style.width=items.length>0?Math.round(done/items.length*100)+'%':'0%';
@@ -8564,16 +8585,25 @@ function renderChecklistItems(){
     </label>`).join('');
 }
 
-function toggleCkItem(idx,checked){
-  const key=`ck_${_ckId}_${_ckTipo}`;
-  let saved;try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};}
-  if(checked)saved[idx]=true;else delete saved[idx];
-  localStorage.setItem(key,JSON.stringify(saved));
+async function toggleCkItem(idx,checked){
+  let row=_ckSavedRow();
+  const itens=Object.assign({},row?.itens||{});
+  if(checked)itens[idx]=true;else delete itens[idx];
+  const {data:saved,error}=await _sb.from('checklists')
+    .upsert({user_id:_currentUser?.id,context_id:_ckId,tipo:_ckTipo,itens,updated_at:new Date().toISOString()},{onConflict:'user_id,context_id,tipo'})
+    .select().single();
+  if(error){showToast('Erro ao salvar checklist: '+error.message,'error');return;}
+  if(row)row.itens=itens;else CHECKLISTS_SAVED.push(saved||{context_id:_ckId,tipo:_ckTipo,itens});
   renderChecklistItems();
 }
 
-function resetChecklist(){
-  localStorage.removeItem(`ck_${_ckId}_${_ckTipo}`);
+async function resetChecklist(){
+  const row=_ckSavedRow();
+  if(row){
+    const {error}=await _sb.from('checklists').update({itens:{},updated_at:new Date().toISOString()}).eq('user_id',_currentUser?.id).eq('context_id',_ckId).eq('tipo',_ckTipo);
+    if(error){showToast('Erro ao resetar checklist: '+error.message,'error');return;}
+    row.itens={};
+  }
   renderChecklistItems();
   showToast('Checklist resetado','success');
 }
@@ -9055,8 +9085,11 @@ function matchImoveisPorLead(lead){
 // HISTÓRICO DE CONTATOS (localStorage por lead)
 // ═══════════════════════════════════════════════════════
 function carregarHistoricoContatos(leadId){
-  try{return JSON.parse(localStorage.getItem('contatos_lead_'+leadId)||'[]');}
-  catch{return [];}
+  return LEAD_CONTATOS.filter(c=>String(c.lead_id)===String(leadId)).map(c=>({
+    tipo:c.tipo,
+    nota:c.nota,
+    data:new Date(c.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})
+  }));
 }
 
 function abrirRegistroContato(leadId){
@@ -9074,23 +9107,24 @@ function selectContatoTipo(btn,tipo){
   btn.classList.add('sel');
 }
 
-function salvarRegistroContato(){
+async function salvarRegistroContato(){
   const leadId=document.getElementById('cl-lead-id').value;
   const tipoBtn=document.querySelector('#cl-tipos .contact-type-btn.sel');
   const tipo=tipoBtn?tipoBtn.textContent.trim():'📞 Ligação';
   const nota=document.getElementById('cl-nota').value.trim();
-  const now=new Date();
-  const data=`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const contatos=carregarHistoricoContatos(leadId);
-  contatos.push({tipo,nota,data});
-  localStorage.setItem('contatos_lead_'+leadId,JSON.stringify(contatos));
+  const {data:saved,error}=await _sb.from('lead_contatos').insert([{
+    user_id:_currentUser?.id,lead_id:leadId,tipo,nota
+  }]).select().single();
+  if(error){showToast('Erro ao registrar contato: '+error.message,'error');return;}
+  LEAD_CONTATOS.push(saved);
   document.getElementById('modal-contato-log').classList.remove('open');
   // Atualiza log no painel se estiver aberto
   const logEl=document.getElementById('contact-log-'+leadId);
   if(logEl){
+    const dataStr=new Date(saved.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
     const novo=document.createElement('div');
     novo.className='contact-log-item';
-    novo.innerHTML=`<div class="contact-log-icon">${tipo.split(' ')[0]}</div><div class="contact-log-body"><div class="contact-log-text">${escHTML(tipo)} — ${escHTML(nota||'sem observação')}</div><div class="contact-log-date">${escHTML(data)}</div></div>`;
+    novo.innerHTML=`<div class="contact-log-icon">${escHTML(tipo.split(' ')[0])}</div><div class="contact-log-body"><div class="contact-log-text">${escHTML(tipo)} — ${escHTML(nota||'sem observação')}</div><div class="contact-log-date">${escHTML(dataStr)}</div></div>`;
     logEl.insertBefore(novo,logEl.firstChild);
   }
   showToast('Contato registrado!','success');
@@ -11072,9 +11106,9 @@ function renderAiImageThread(){
       }
       if(m.image){
         return `<div class="ai-msg-row"><div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div><div class="ai-img-thread-result">
-          <img src="${m.imageDataUrl}" alt="Imagem gerada"/>
+          <img src="${escHTML(m.imageDataUrl)}" alt="Imagem gerada"/>
           <div class="ai-img-thread-actions">
-            <a class="btn-add" href="${m.imageDataUrl}" download="captar-ia-${i}.png">Baixar</a>
+            <a class="btn-add" href="${escHTML(m.imageDataUrl)}" download="captar-ia-${i}.png">Baixar</a>
             <button class="btn-cancel" onclick="salvarAiImagemByIndex(${i},this)">💾 Salvar</button>
           </div>
         </div></div>`;

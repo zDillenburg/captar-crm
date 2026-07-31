@@ -19,6 +19,8 @@ supabase-admin-imoveis-view.sql
 supabase-imovel-destaque.sql
 supabase-vistoria-cloud.sql
 supabase-comissao-configuravel.sql
+supabase-lead-anotacoes-contatos.sql
+supabase-checklist-nuvem.sql
 .claude/
 .DS_Store
 *.env
