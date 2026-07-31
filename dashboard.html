@@ -4258,7 +4258,10 @@ async function loadVisitas(){
   if(data) VISITAS.push(...data);
 }
 async function loadTransacoes(){
-  const {data,error}=await _sb.from('transacoes').select('*').order('data',{ascending:false});
+  // Ordena por created_at (timestamp real), não pela string "data" —
+  // "dd/mm/yyyy" ordenado como texto bagunça tudo (ex: "05/03" vem antes
+  // de "20/01" porque compara caractere a caractere, não cronologicamente).
+  const {data,error}=await _sb.from('transacoes').select('*').order('created_at',{ascending:false});
   if(error){showToast('Erro ao carregar transações: '+error.message,'error');return;}
   TRANSACOES.entradas=[];
   TRANSACOES.saidas=[];
@@ -4345,9 +4348,15 @@ function toggleSidebar(){
 // ─────────────────────────────────────────
 const inited={};
 function initPage(page){
-  // pagamentos and admin always reload fresh data on every navigation
+  // pagamentos, admin e financeiro sempre recarregam do zero a cada
+  // navegação — financeiro entrou aqui porque, se o corretor abrisse a
+  // página antes do Promise.all() inicial terminar, ela renderizava uma
+  // vez com os arrays ainda vazios (R$ 0 em tudo) e o cache de `inited`
+  // impedia qualquer nova renderização depois, mesmo com o dado real já
+  // carregado — só um F5 resolvia.
   if(page==='pagamentos'){ renderPagamentos(); return; }
   if(page==='admin'){ renderAdmin(); return; }
+  if(page==='financeiro'){ setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100); return; }
   if(inited[page])return;
   inited[page]=true;
   if(page==='dashboard'){
@@ -4371,7 +4380,6 @@ function initPage(page){
   if(page==='contratos') initContratos();
   if(page==='financiamento') calcFP();
   if(page==='relatorios') setTimeout(()=>{initPerfChart();initReceitaBar();renderFunnel();renderRelatorioCorretores();},100);
-  if(page==='financeiro') setTimeout(()=>{initFinChart();renderFinTables();renderFinKpis();renderComissoes();},100);
   if(page==='assistente') initAssistente();
   if(page==='config'){loadUserLogo();}
   if(page==='perfilpublico'){loadAvatarPreviewPP();loadPerfilPublico();}
@@ -5237,13 +5245,13 @@ function renderVisitas(filter){
           </span>
         </div>
       </div>
-      <span class="vis-badge ${badgeMap[v.status]||'vis-agendada'}">${labelMap[v.status]||v.status||'—'}</span>
+      <span class="vis-badge ${badgeMap[v.status]||'vis-agendada'}">${labelMap[v.status]||escHTML(v.status)||'—'}</span>
       <div class="vis-actions">
         ${v.status==='agendada'?`
-          <button class="icon-btn" title="Confirmar realizada" onclick="confirmVisita('${v.id}')">
+          <button class="icon-btn" title="Confirmar realizada" onclick="confirmVisita('${escHTML(String(v.id))}')">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
           </button>
-          <button class="icon-btn" title="Cancelar" onclick="cancelVisita('${v.id}')">
+          <button class="icon-btn" title="Cancelar" onclick="cancelVisita('${escHTML(String(v.id))}')">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>`:''
         }
@@ -5329,6 +5337,13 @@ function openVisitaModal(){
   document.querySelector('#modal-visita .btn-submit').textContent='Agendar Visita';
   document.querySelector('#modal-visita .btn-submit').onclick=addVisita;
   ['v-cliente','v-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  // Sem isso, uma visita nova herdava a data/hora digitada numa edição
+  // anterior (ou a data de exemplo fixa do HTML, já no passado) —
+  // mesma classe de bug já corrigida no campo Estado do Loteamento.
+  const vData=document.getElementById('v-data');
+  if(vData)vData.value=new Date().toISOString().slice(0,10);
+  const vHora=document.getElementById('v-hora');
+  if(vHora)vHora.value='10:00';
   document.getElementById('modal-visita').classList.add('open');
 }
 function closeVisitaModal(){
@@ -5714,6 +5729,11 @@ function gerarAlertsFollowup(){
   }
   // Visitas agendadas para hoje
   const hoje=new Date();
+  hoje.setHours(0,0,0,0); // sem isso, a checagem de "vencendo hoje" logo
+  // abaixo comparava meia-noite do vencimento com a hora atual do dia —
+  // à tarde/noite isso já dá negativo e o aviso de vencimento some
+  // silenciosamente pro resto do dia (mesma classe de bug já corrigida
+  // nos KPIs do Financeiro/Dashboard, reaparecendo aqui).
   const hStr=`${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`;
   VISITAS.filter(v=>v.status==='agendada'&&v.data===hStr).forEach(v=>{
     const existe=NOTIFICATIONS.some(n=>n._visId===v.id);
@@ -8910,8 +8930,8 @@ function renderLoteamentos(){
               <div style="font-size:11px;color:rgba(255,255,255,.65);margin-top:3px">${escHTML(l.incorporadora||'—')} · ${escHTML(l.cidade||'—')}${l.estado?'/'+escHTML(l.estado):''}</div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
-              <span style="background:${corStatus}22;color:${corStatus};border:1px solid ${corStatus}44;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.05em;white-space:nowrap">${LOT_STATUS_LABEL[l.status]||l.status}</span>
-              <span style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);border-radius:20px;padding:2px 9px;font-size:10px;white-space:nowrap">${LOT_TIPO_LABEL[l.tipo]||l.tipo}</span>
+              <span style="background:${corStatus}22;color:${corStatus};border:1px solid ${corStatus}44;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.05em;white-space:nowrap">${LOT_STATUS_LABEL[l.status]||escHTML(l.status)}</span>
+              <span style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);border-radius:20px;padding:2px 9px;font-size:10px;white-space:nowrap">${LOT_TIPO_LABEL[l.tipo]||escHTML(l.tipo)}</span>
             </div>
           </div>
         </div>
@@ -9376,7 +9396,11 @@ async function addTransacao(tipo){
   if(isNaN(val)||val<=0){showToast('Valor inválido','error');return;}
   const cat=prompt('Categoria (ex: Comissão, Marketing, Locação):') || 'Outros';
   const today=new Date();
-  const dataStr=`${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}`;
+  // Com ano: sem isso, o gráfico de Receita x Despesas (que já sabe ler
+  // "dd/mm/yyyy" corretamente) caía no fallback de "assume o ano atual"
+  // pra toda transação — passado um ano, uma transação de julho do ano
+  // passado voltava a contar como "julho" outra vez neste ano.
+  const dataStr=`${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
   const payload={user_id:_currentUser?.id,tipo,descricao:desc,valor:val,categoria:cat,data:dataStr};
   const {data:saved,error}=await _sb.from('transacoes').insert([payload]).select().single();
   if(error){showToast('Erro ao salvar: '+error.message,'error');return;}
