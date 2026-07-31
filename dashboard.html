@@ -2203,7 +2203,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
           <div style="overflow-x:auto">
             <table class="comissao-table">
-              <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Comissão (6%)</th><th>Data</th></tr></thead>
+              <thead><tr><th>Cliente</th><th>Tipo</th><th>Valor</th><th>%</th><th>Comissão</th><th>Data</th></tr></thead>
               <tbody id="com-tbody"></tbody>
             </table>
           </div>
@@ -8634,11 +8634,16 @@ const VISTORIA_STATES=['Ótimo','Bom','Regular','Ruim'];
 const VISTORIA_STATE_CLS=['ok','bom','reg','ruim'];
 let _vistoriaMode='entrada';
 let _vistoriaLocId='';
+// { entrada:{idx:{estado,obs}}, saida:{idx:{estado,obs}} } — carregado do
+// registro da locação ao abrir o modal, salvo de volta nele ao clicar em
+// "Salvar" (não mais em localStorage, que sumia ao trocar de aparelho).
+let _vistoriaData={entrada:{},saida:{}};
 
 function abrirVistoria(locId){
   const rec=LOCACOES.find(l=>String(l.id)===String(locId));
   _vistoriaLocId=locId;
   _vistoriaMode='entrada';
+  _vistoriaData={entrada:(rec&&rec.vistoria_entrada)||{},saida:(rec&&rec.vistoria_saida)||{}};
   document.getElementById('vis-loc-id').value=locId;
   document.getElementById('vis-inquilino').textContent=(rec&&rec.inquilino)||'—';
   document.getElementById('vis-btn-entrada').classList.add('active');
@@ -8655,8 +8660,7 @@ function setVistoriaMode(mode){
 }
 
 function renderVistoriaItems(){
-  const key=`vistoria_${_vistoriaLocId}_${_vistoriaMode}`;
-  let saved;try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};}
+  const saved=_vistoriaData[_vistoriaMode]||{};
   document.getElementById('vis-items').innerHTML=VISTORIA_ITENS.map((item,i)=>{
     const est=saved[i]?.estado||'';
     const obs=saved[i]?.obs||'';
@@ -8671,25 +8675,32 @@ function renderVistoriaItems(){
 }
 
 function setVistoriaEstado(idx,estado,clsIdx){
-  const key=`vistoria_${_vistoriaLocId}_${_vistoriaMode}`;
-  let saved;try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};}
+  const saved=_vistoriaData[_vistoriaMode];
   if(!saved[idx])saved[idx]={};
   saved[idx].estado=estado;
-  localStorage.setItem(key,JSON.stringify(saved));
   // Update buttons visually
   const item=document.querySelectorAll('.vistoria-item')[idx];
   if(item){item.querySelectorAll('.vistoria-state-btn').forEach((b,j)=>{b.className='vistoria-state-btn'+(j===clsIdx?' '+VISTORIA_STATE_CLS[j]:'')+''});}
 }
 
 function saveVistoriaObs(idx,obs){
-  const key=`vistoria_${_vistoriaLocId}_${_vistoriaMode}`;
-  let saved;try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};}
+  const saved=_vistoriaData[_vistoriaMode];
   if(!saved[idx])saved[idx]={};
   saved[idx].obs=obs;
-  localStorage.setItem(key,JSON.stringify(saved));
 }
 
-function salvarVistoria(){
+async function salvarVistoria(){
+  const btn=document.querySelector('#modal-vistoria .btn-submit');
+  const oldText=btn?btn.textContent:'';
+  if(btn){btn.textContent='Salvando…';btn.disabled=true;}
+  const {error}=await _sb.from('locacoes').update({
+    vistoria_entrada:_vistoriaData.entrada,
+    vistoria_saida:_vistoriaData.saida
+  }).eq('id',_vistoriaLocId);
+  if(btn){btn.textContent=oldText;btn.disabled=false;}
+  if(error){showToast('Erro ao salvar vistoria: '+error.message,'error');return;}
+  const rec=LOCACOES.find(l=>String(l.id)===String(_vistoriaLocId));
+  if(rec){rec.vistoria_entrada=_vistoriaData.entrada;rec.vistoria_saida=_vistoriaData.saida;}
   showToast(`Vistoria de ${_vistoriaMode==='entrada'?'entrada':'saída'} salva!`,'success');
   document.getElementById('modal-vistoria').classList.remove('open');
 }
@@ -8715,9 +8726,7 @@ function renderRelatorioCorretores(){
     const fechados=leads.filter(l=>l.coluna==='fechado').length;
     const visitas=VISITAS.filter(v=>v.corretor===nome).length;
     const taxa=leads.length>0?Math.round(fechados/leads.length*100):0;
-    const comissao=leads.filter(l=>l.coluna==='fechado').reduce((s,l)=>{
-      return s+(parseInt((l.valor||'').replace(/\D/g,''))||0)*0.06;
-    },0);
+    const comissao=leads.filter(l=>l.coluna==='fechado').reduce((s,l)=>s+comissaoValorLead(l),0);
     return {nome,leads:leads.length,fechados,visitas,taxa,comissao};
   }).sort((a,b)=>b.fechados-a.fechados||b.leads-a.leads);
 
@@ -9254,10 +9263,7 @@ function renderMetas(editMode=false){
   const leadsMes=LEADS_DATA.filter(l=>isThisMonthMeta(l.created_at)).length;
   const visitasMes=VISITAS.filter(v=>v.status==='realizada'&&isThisMonthMeta(v.created_at)).length;
   const fechadosMes=LEADS_DATA.filter(l=>l.coluna==='fechado'&&isThisMonthMeta(l.created_at)).length;
-  const comTotal=LEADS_DATA.filter(l=>l.coluna==='fechado'&&isThisMonthMeta(l.created_at)).reduce((s,l)=>{
-    const v=parseInt((l.valor||'').replace(/\D/g,''))||0;
-    return s+v*0.06;
-  },0);
+  const comTotal=LEADS_DATA.filter(l=>l.coluna==='fechado'&&isThisMonthMeta(l.created_at)).reduce((s,l)=>s+comissaoValorLead(l),0);
   const configs=[
     {key:'leads',label:'Leads no mês',atual:leadsMes,cor:'#a3039a',prefix:'',suffix:''},
     {key:'visitas',label:'Visitas realizadas',atual:visitasMes,cor:'#3b82f6',prefix:'',suffix:''},
@@ -9302,14 +9308,39 @@ async function editarMeta(key,label,atual){
 // ═══════════════════════════════════════════════════════
 // COMISSÕES
 // ═══════════════════════════════════════════════════════
+// % de comissão configurável por negócio — antes era uma taxa de 6%
+// fixa no código pra todo mundo; agora cada lead tem a própria (coluna
+// leads.pct_comissao, default 6 pra quem nunca editou, mesmo espírito
+// do pct_comissao que já existe em locacoes).
+function pctComissaoLead(l){
+  const v=Number(l.pct_comissao);
+  return Number.isFinite(v)&&v>=0?v:6;
+}
+function comissaoValorLead(l){
+  const val=parseInt((l.valor||'').replace(/\D/g,''))||0;
+  return val*(pctComissaoLead(l)/100);
+}
+async function atualizarPctComissaoLead(id,novoValor){
+  const pct=parseFloat(String(novoValor).replace(',','.'));
+  if(isNaN(pct)||pct<0){showToast('% de comissão inválido','error');renderComissoes();return;}
+  const lead=LEADS_DATA.find(l=>String(l.id)===String(id));
+  if(!lead)return;
+  const antigo=lead.pct_comissao;
+  lead.pct_comissao=pct;
+  const {error}=await _sb.from('leads').update({pct_comissao:pct}).eq('id',id);
+  if(error){
+    lead.pct_comissao=antigo;
+    showToast('Erro ao salvar % de comissão: '+error.message,'error');
+  }
+  renderComissoes();
+}
 function renderComissoes(){
   const fechados=LEADS_DATA.filter(l=>l.coluna==='fechado');
-  const TAXA=0.06; // 6% padrão
   let totalComissao=0;
   const tbody=document.getElementById('com-tbody');
   if(!tbody)return;
   if(!fechados.length){
-    tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Nenhum negócio fechado ainda. Mova leads para "Fechado" no CRM.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Nenhum negócio fechado ainda. Mova leads para "Fechado" no CRM.</td></tr>`;
     document.getElementById('com-total').textContent='R$ 0';
     document.getElementById('com-qtd').textContent='0';
     document.getElementById('com-ticket').textContent='R$ 0';
@@ -9317,13 +9348,16 @@ function renderComissoes(){
   }
   tbody.innerHTML=fechados.map(l=>{
     const val=parseInt((l.valor||'').replace(/\D/g,''))||0;
-    const com=val*TAXA;
+    const com=comissaoValorLead(l);
     totalComissao+=com;
     const dataStr=l.created_at?new Date(l.created_at).toLocaleDateString('pt-BR'):'—';
     return `<tr>
       <td style="font-weight:600;color:var(--t1)">${escHTML(l.nome)}</td>
       <td style="color:var(--t3)">${escHTML(l.tipo||'—')}</td>
       <td style="color:#c453bb;font-weight:600">${escHTML(l.valor||'—')}</td>
+      <td>
+        <input type="number" min="0" step="0.5" value="${escHTML(String(pctComissaoLead(l)))}" class="comissao-pct-input" style="width:56px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:12px;color:var(--t1);text-align:center" onchange="atualizarPctComissaoLead('${escHTML(String(l.id))}',this.value)"/>%
+      </td>
       <td style="color:#4ade80;font-weight:700">${val>0?'R$ '+Math.round(com).toLocaleString('pt-BR'):'—'}</td>
       <td style="color:var(--t3)">${escHTML(dataStr)}</td>
     </tr>`;
