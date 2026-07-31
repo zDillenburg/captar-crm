@@ -1012,6 +1012,11 @@
       font-size: 11px; font-weight: 800; letter-spacing: .06em;
       color: var(--ac); opacity: .45;
     }
+    @media (min-width: 901px) {
+      #area-cliente .feat-grid { grid-template-columns: repeat(4, 1fr); }
+      #area-cliente .feat-card:nth-child(9),
+      #area-cliente .feat-card:nth-child(10) { grid-column: span 2; }
+    }
     @media (max-width: 600px) {
       .feat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
       .feat-card { padding: 18px 16px 16px; }
@@ -1395,6 +1400,8 @@
     @media (max-width: 900px) {
       .pp-showcase-grid { grid-template-columns: 1fr; }
       .pp-phone-wrap { order: -1; margin-bottom: 8px; }
+      .pp-link-demo { display: flex; width: fit-content; margin: 0 auto; }
+      .pp-link-demo-label { text-align: center; }
     }
 
     /* ── CAPTAR IA SHOWCASE ── */
