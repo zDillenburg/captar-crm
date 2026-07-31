@@ -17,6 +17,8 @@ supabase-perfil-publico-v2.sql
 supabase-perfil-publico-slug.sql
 supabase-admin-imoveis-view.sql
 supabase-imovel-destaque.sql
+supabase-vistoria-cloud.sql
+supabase-comissao-configuravel.sql
 .claude/
 .DS_Store
 *.env
