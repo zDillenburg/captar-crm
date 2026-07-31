@@ -1272,6 +1272,131 @@
       .mock-kpi-row { grid-template-columns: repeat(2, 1fr); }
     }
 
+    /* ── PERFIL PÚBLICO SHOWCASE ── */
+    .pp-eyebrow-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, rgba(59,130,246,.16), rgba(133,2,119,.16));
+      border: 1px solid rgba(59,130,246,.4);
+      border-radius: 20px; padding: 7px 18px 7px 14px; margin-bottom: 22px;
+    }
+    .pp-eyebrow-badge svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .pp-eyebrow-badge span {
+      font-size: 12px; font-weight: 700; letter-spacing: .04em;
+      background: linear-gradient(90deg, #60a5fa, #e879d4);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .pp-showcase-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 420px;
+      gap: clamp(32px, 5vw, 72px);
+      align-items: center;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .pp-showcase-copy { max-width: 480px; }
+    .pp-showcase-title {
+      font-size: clamp(26px, 3.6vw, 42px); font-weight: 800; color: var(--white);
+      letter-spacing: -.03em; line-height: 1.15; margin-bottom: 18px;
+    }
+    .pp-showcase-title em { color: #60a5fa; font-style: normal; }
+    .pp-showcase-desc {
+      font-size: 15.5px; color: rgba(255,253,234,.58); line-height: 1.75; margin-bottom: 28px;
+    }
+    .pp-bullet-list { list-style: none; padding: 0; margin: 0 0 32px; display: flex; flex-direction: column; gap: 14px; }
+    .pp-bullet-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: rgba(255,253,234,.75); line-height: 1.5; }
+    .pp-bullet-icon {
+      width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+      background: rgba(59,130,246,.15); display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .pp-bullet-icon svg { width: 13px; height: 13px; color: #60a5fa; }
+    .pp-bullet-list b { color: var(--white); font-weight: 700; }
+
+    /* Link pill — "seu link, sua marca" */
+    .pp-link-demo {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(96,165,250,.3);
+      border-radius: 12px; padding: 12px 14px 12px 18px;
+      font-family: 'Menlo','Consolas',monospace; font-size: 13px;
+      box-shadow: 0 0 0 0 rgba(96,165,250,.4);
+      animation: pp-pulse-ring 2.8s ease-out infinite;
+      cursor: pointer; user-select: none; max-width: 100%;
+    }
+    @keyframes pp-pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(96,165,250,.28); }
+      70%  { box-shadow: 0 0 0 10px rgba(96,165,250,0); }
+      100% { box-shadow: 0 0 0 0 rgba(96,165,250,0); }
+    }
+    .pp-link-demo:hover { border-color: #60a5fa; background: rgba(96,165,250,.08); }
+    .pp-link-demo .domain { color: rgba(255,253,234,.4); }
+    .pp-link-demo .slug { color: #60a5fa; font-weight: 700; }
+    .pp-link-demo .copy-icon { width: 15px; height: 15px; color: rgba(255,253,234,.5); flex-shrink: 0; transition: color .2s, transform .2s; }
+    .pp-link-demo.copied .copy-icon { color: #4ade80; transform: scale(1.15); }
+    .pp-link-demo-label { font-size: 11px; color: rgba(255,253,234,.35); margin-top: 10px; letter-spacing: .02em; }
+
+    /* Phone mockup */
+    .pp-phone-wrap {
+      display: flex; justify-content: center; position: relative;
+      animation: pp-float 6s ease-in-out infinite;
+    }
+    @keyframes pp-float {
+      0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+      50%      { transform: translateY(-14px) rotate(1deg); }
+    }
+    .pp-phone {
+      width: 260px; border-radius: 34px; background: #1c1916;
+      border: 1px solid rgba(255,255,255,.1); padding: 10px;
+      box-shadow: 0 40px 100px rgba(59,130,246,.16), 0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+    }
+    .pp-phone-notch {
+      width: 84px; height: 18px; background: #1c1916; border-radius: 0 0 14px 14px;
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 3;
+    }
+    .pp-phone-screen {
+      background: #0c0a09; border-radius: 26px; overflow: hidden; position: relative;
+      height: 480px;
+    }
+    .pp-mock-banner { height: 64px; background: linear-gradient(135deg,#1a1f2e,#241626); }
+    .pp-mock-body { padding: 0 16px 16px; margin-top: -26px; position: relative; }
+    .pp-mock-avatar {
+      width: 52px; height: 52px; border-radius: 14px; border: 3px solid #0c0a09;
+      background: linear-gradient(135deg,#60a5fa,#e879d4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 10px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.4);
+    }
+    .pp-mock-verified { display: flex; align-items: center; gap: 4px; font-size: 8.5px; color: rgba(255,253,234,.4); font-weight: 600; margin-bottom: 5px; }
+    .pp-mock-verified svg { width: 9px; height: 9px; color: #60a5fa; }
+    .pp-mock-name { font-size: 15px; font-weight: 800; color: var(--white); letter-spacing: -.02em; margin-bottom: 3px; }
+    .pp-mock-tagline { font-size: 10px; color: rgba(255,253,234,.42); margin-bottom: 12px; line-height: 1.4; }
+    .pp-mock-stats { display: flex; gap: 6px; margin-bottom: 14px; }
+    .pp-mock-stat { flex: 1; background: rgba(255,255,255,.04); border-radius: 9px; padding: 7px 4px; text-align: center; }
+    .pp-mock-stat-val { font-size: 11px; font-weight: 800; color: var(--white); }
+    .pp-mock-stat-lbl { font-size: 6.5px; color: rgba(255,253,234,.35); text-transform: uppercase; letter-spacing: .04em; margin-top: 1px; }
+    .pp-mock-section-lbl { font-size: 8.5px; color: rgba(255,253,234,.35); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em; }
+    .pp-mock-card { background: rgba(255,255,255,.04); border-radius: 12px; overflow: hidden; position: relative; margin-bottom: 8px; }
+    .pp-mock-card-img { height: 64px; background: linear-gradient(135deg,#2a2440,#1a1f2e); position: relative; }
+    .pp-mock-badge-destaque {
+      position: absolute; top: 6px; left: 6px; background: #f59e0b; color: #1a1200;
+      font-size: 6.5px; font-weight: 800; padding: 2px 6px; border-radius: 20px; letter-spacing: .03em;
+      display: flex; align-items: center; gap: 2px;
+    }
+    .pp-mock-card-body { padding: 8px 10px; }
+    .pp-mock-card-price { font-size: 10.5px; font-weight: 800; color: var(--white); }
+    .pp-mock-card-addr { font-size: 7.5px; color: rgba(255,253,234,.4); margin-top: 1px; }
+    .pp-mock-cta {
+      position: absolute; bottom: 12px; left: 16px; right: 16px;
+      background: #25d366; color: #fff; font-size: 10.5px; font-weight: 700;
+      border-radius: 10px; padding: 10px; text-align: center;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      box-shadow: 0 8px 20px rgba(37,211,102,.35);
+    }
+    .pp-mock-cta svg { width: 12px; height: 12px; }
+    @media (max-width: 900px) {
+      .pp-showcase-grid { grid-template-columns: 1fr; }
+      .pp-phone-wrap { order: -1; margin-bottom: 8px; }
+    }
+
     /* ── CAPTAR IA SHOWCASE ── */
     .ia-eyebrow-badge {
       display: inline-flex; align-items: center; gap: 8px;
@@ -1547,6 +1672,7 @@
       <a href="#servicos">Serviços</a>
       <a href="#captar-ia">Captar IA</a>
       <a href="#area-cliente">Painel de Gestão</a>
+      <a href="#perfil-publico">Perfil Público</a>
       <a href="#contato">Contato</a>
       <a href="dashboard.html" class="nav-contact" style="background:var(--purple);border-color:var(--purple)">Entrar</a>
     </div>
@@ -1561,6 +1687,7 @@
     <a href="#servicos" class="nav-mobile-link">Serviços</a>
     <a href="#captar-ia" class="nav-mobile-link">Captar IA</a>
     <a href="#area-cliente" class="nav-mobile-link">Painel de Gestão</a>
+    <a href="#perfil-publico" class="nav-mobile-link">Perfil Público</a>
     <a href="#contato" class="nav-mobile-link">Contato</a>
     <a href="dashboard.html" class="nav-mobile-cta">Entrar no Painel</a>
   </div>
@@ -1985,6 +2112,28 @@
           <ul class="feat-tags"><li>Vencimentos</li><li>Lembretes</li><li>Automático</li></ul>
         </div>
 
+        <!-- 09 Vistoria Digital -->
+        <div class="feat-card" style="--ac:#22d3ee;--delay:480ms">
+          <span class="feat-num">09</span>
+          <div class="feat-icon" style="background:rgba(34,211,238,.15)">
+            <svg width="22" height="22" fill="none" stroke="#22d3ee" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <div class="feat-title">Vistoria Digital</div>
+          <div class="feat-desc">Checklist de vistoria de entrada e saída do imóvel, item por item, salvo na nuvem — pronto pra qualquer disputa de caução.</div>
+          <ul class="feat-tags"><li>Entrada</li><li>Saída</li><li>Nuvem</li></ul>
+        </div>
+
+        <!-- 10 Checklist de Documentos -->
+        <div class="feat-card" style="--ac:#a78bfa;--delay:540ms">
+          <span class="feat-num">10</span>
+          <div class="feat-icon" style="background:rgba(167,139,250,.15)">
+            <svg width="22" height="22" fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="feat-title">Checklist de Documentos</div>
+          <div class="feat-desc">Nunca mais esqueça um documento de compra, venda ou locação — checklist completo, salvo por imóvel, sempre acessível.</div>
+          <ul class="feat-tags"><li>Compra</li><li>Venda</li><li>Locação</li></ul>
+        </div>
+
       </div>
 
       <!-- CTA -->
@@ -1994,6 +2143,88 @@
           Acessar minha Área do Cliente
         </a>
         <p style="margin-top:14px;font-size:12px;color:rgba(255,253,234,.3)">Exclusivo para corretores e imobiliárias parceiras do Grupo Captar</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PERFIL PÚBLICO -->
+  <section id="perfil-publico" style="padding:clamp(64px,8vw,96px) 0;background:linear-gradient(180deg,#0c0a09 0%,var(--black) 100%);overflow:hidden">
+    <div style="max-width:1180px;margin:0 auto;padding:0 clamp(20px,5%,32px)">
+
+      <div class="pp-showcase-grid">
+        <div class="pp-showcase-copy anim-left">
+          <div class="pp-eyebrow-badge">
+            <svg fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            <span>Novo no painel</span>
+          </div>
+          <h2 class="pp-showcase-title">
+            Um link com o seu nome.<br/><em>Sua cara, seus imóveis.</em>
+          </h2>
+          <p class="pp-showcase-desc">
+            Todo corretor parceiro ganha uma página pública própria — bonita, rápida e com a sua marca — pra mandar pro cliente em um clique. Sem precisar de site, sem precisar de designer.
+          </p>
+          <ul class="pp-bullet-list">
+            <li>
+              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></span>
+              <span><b>Link com o seu nome</b> — grupocaptar.com.br/c/seu-nome, fácil de lembrar e divulgar</span>
+            </li>
+            <li>
+              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+              <span><b>Imóveis em destaque</b> — escolha o que aparece primeiro pro cliente que abrir o link</span>
+            </li>
+            <li>
+              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.062 0-.874.727-1.625 1.625-1.625H16c3.312 0 6-2.688 6-6 0-4.813-4.5-8.5-10-8.5z"/></svg></span>
+              <span><b>Cor de destaque personalizável</b> — escolha entre 12 tons ou defina a sua própria em hexadecimal</span>
+            </li>
+            <li>
+              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12.05 22a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374A9.86 9.86 0 012.17 12C2.17 6.55 6.604 2.116 12.057 2.116c2.64 0 5.122 1.03 6.988 2.898A9.825 9.825 0 0121.938 12c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg></span>
+              <span><b>Botão de WhatsApp direto</b> — o cliente fala com você sem precisar procurar seu contato</span>
+            </li>
+          </ul>
+          <div class="pp-link-demo" id="pp-link-demo" onclick="ppCopyDemoLink(this)" title="Clique para copiar (exemplo)">
+            <span class="domain">grupocaptar.com.br/c/</span><span class="slug">seu-nome</span>
+            <svg class="copy-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </div>
+          <div class="pp-link-demo-label">↑ é só clicar — seu link fica pronto assim que você ativa o perfil</div>
+        </div>
+
+        <div class="pp-phone-wrap anim-right" style="--d:120ms">
+          <div class="pp-phone">
+            <div class="pp-phone-notch"></div>
+            <div class="pp-phone-screen">
+              <div class="pp-mock-banner"></div>
+              <div class="pp-mock-body">
+                <div class="pp-mock-avatar">GD</div>
+                <div class="pp-mock-verified">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                  Corretor parceiro Grupo Captar
+                </div>
+                <div class="pp-mock-name">Guilherme Dillenburg</div>
+                <div class="pp-mock-tagline">"Encontrar o imóvel certo é sobre entender pessoas."</div>
+                <div class="pp-mock-stats">
+                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">12</div><div class="pp-mock-stat-lbl">Imóveis</div></div>
+                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">RS-99.999</div><div class="pp-mock-stat-lbl">CRECI</div></div>
+                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">Alto Padrão</div><div class="pp-mock-stat-lbl">Foco</div></div>
+                </div>
+                <div class="pp-mock-section-lbl">Imóveis disponíveis</div>
+                <div class="pp-mock-card">
+                  <div class="pp-mock-card-img">
+                    <span class="pp-mock-badge-destaque">⭐ Destaque</span>
+                  </div>
+                  <div class="pp-mock-card-body">
+                    <div class="pp-mock-card-price">R$ 850.000</div>
+                    <div class="pp-mock-card-addr">Apartamento · Centro</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pp-mock-cta">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                Falar no WhatsApp
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -2309,6 +2540,28 @@
       document.querySelectorAll('.feat-card').forEach(el => obs.observe(el));
       document.querySelectorAll('.anim-up, .anim-left, .anim-right').forEach(el => obs.observe(el));
     })();
+
+    // Demonstração do link personalizado do Perfil Público — copia um
+    // texto de exemplo (o link real só existe depois que o corretor
+    // ativa o próprio perfil no painel).
+    function ppCopyDemoLink(el){
+      const texto = 'grupocaptar.com.br/c/seu-nome';
+      const marcarCopiado = () => {
+        el.classList.add('copied');
+        const label = el.parentElement.querySelector('.pp-link-demo-label');
+        const original = label ? label.textContent : '';
+        if(label) label.textContent = '✓ Copiado! É assim que fica o seu.';
+        setTimeout(() => {
+          el.classList.remove('copied');
+          if(label) label.textContent = original;
+        }, 2200);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(texto).then(marcarCopiado, marcarCopiado);
+      } else {
+        marcarCopiado();
+      }
+    }
 
     // Hamburger menu
     const hamburger = document.getElementById('hamburger');
