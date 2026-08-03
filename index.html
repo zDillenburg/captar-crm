@@ -481,6 +481,39 @@
       width: 100%; max-width: var(--container);
       margin: 0 auto; padding: 0 var(--gutter);
       display: flex; flex-direction: column; align-items: center;
+      position: relative; z-index: 1;
+    }
+
+    /* Fundo: skyline/fachadas reais em zoom lento, trocando entre si —
+       substitui o brilho abstrato por algo com peso e credibilidade
+       imobiliária, sem perder a elegância. */
+    .hero-photo { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+    .hero-photo-layer {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0; transform: scale(1);
+      animation: heroPhotoCycle 27s ease-in-out infinite;
+    }
+    .hero-photo-layer:nth-child(1) { background-image: url('background1.webp'); animation-delay: 0s; }
+    .hero-photo-layer:nth-child(2) { background-image: url('background2.webp'); animation-delay: -9s; }
+    .hero-photo-layer:nth-child(3) { background-image: url('background3.webp'); animation-delay: -18s; }
+    @keyframes heroPhotoCycle {
+      0%    { opacity: 0; transform: scale(1); }
+      4%    { opacity: .5; }
+      11%   { opacity: .5; transform: scale(1.1); }
+      33%   { opacity: 0; transform: scale(1.16); }
+      100%  { opacity: 0; }
+    }
+    .hero-photo::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(10,9,8,.62) 0%, rgba(10,9,8,.8) 55%, var(--base) 100%),
+        radial-gradient(ellipse 65% 55% at 50% 28%, rgba(133,2,119,.16) 0%, transparent 72%);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-photo-layer { animation: none; opacity: .3; }
+      .hero-photo-layer:nth-child(n+2) { display: none; }
     }
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: 10px;
@@ -521,7 +554,7 @@
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
     }
-    .line-mask { display: block; overflow: hidden; padding-bottom: .06em; }
+    .line-mask { display: block; overflow: hidden; padding-bottom: .22em; margin-bottom: -.22em; }
     .line-mask > span {
       display: block;
       transform: translateY(112%);
@@ -863,8 +896,10 @@
       border-radius: var(--r-sm);
       border: 1px solid var(--line);
       background:
-        linear-gradient(135deg, rgba(133,2,119,.22), rgba(163,3,154,.06) 55%, rgba(0,0,0,.35)),
-        repeating-linear-gradient(45deg, rgba(255,253,234,.03) 0 10px, transparent 10px 20px);
+        linear-gradient(135deg, rgba(133,2,119,.28), rgba(163,3,154,.05) 45%, rgba(0,0,0,.1)),
+        url('background1.webp');
+      background-size: cover;
+      background-position: center;
       display: flex; align-items: center; justify-content: center;
       color: rgba(255,253,234,.3);
       min-height: 108px;
@@ -1025,8 +1060,11 @@
     .pp-mock-card-img {
       height: 82px; position: relative;
       background:
-        linear-gradient(135deg, rgba(133,2,119,.3), rgba(0,0,0,.5)),
-        repeating-linear-gradient(45deg, rgba(255,253,234,.035) 0 9px, transparent 9px 18px);
+        linear-gradient(180deg, rgba(20,17,14,.05) 55%, rgba(10,9,8,.55) 100%),
+        linear-gradient(135deg, rgba(133,2,119,.22), rgba(0,0,0,.15)),
+        url('background2.webp');
+      background-size: cover, cover, cover;
+      background-position: center, center, center 62%;
     }
     .pp-mock-badge-destaque {
       position: absolute; top: 8px; left: 8px;
@@ -1604,6 +1642,11 @@
 
   <!-- HERO -->
   <section class="hero" id="hero">
+    <div class="hero-photo" aria-hidden="true">
+      <div class="hero-photo-layer"></div>
+      <div class="hero-photo-layer"></div>
+      <div class="hero-photo-layer"></div>
+    </div>
     <div class="hero-inner">
       <span class="hero-eyebrow hero-fade hero-fade-1"><span class="hero-eyebrow-dot"></span>A primeira IA 100% especialista em imóveis do Brasil</span>
       <h1 class="hero-title">
@@ -1696,9 +1739,7 @@
                 <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
                 Gerar imagem
               </span>
-              <div class="ia-image-frame">
-                <svg fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-              </div>
+              <div class="ia-image-frame"></div>
               <div class="ia-image-caption">"Fachada moderna ao pôr do sol"</div>
             </div>
           </div>
