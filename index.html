@@ -134,28 +134,70 @@
       overflow: hidden;
     }
 
-    .hero-bg {
+    /* Aurora animada — substitui o slideshow de fotos por um fundo
+       abstrato em gradiente, mais alinhado à identidade "tech/IA". */
+    .hero-aurora {
+      position: absolute;
+      inset: -10%;
+      z-index: 0;
+      pointer-events: none;
+      filter: blur(70px);
+      opacity: 0.85;
+    }
+    .hero-aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.55;
+    }
+    .hero-aurora-blob:nth-child(1) {
+      width: 46vw; height: 46vw; max-width: 640px; max-height: 640px;
+      top: -12%; right: -8%;
+      background: radial-gradient(circle, var(--purple-light) 0%, transparent 68%);
+      animation: auroraDrift1 22s ease-in-out infinite alternate;
+    }
+    .hero-aurora-blob:nth-child(2) {
+      width: 34vw; height: 34vw; max-width: 480px; max-height: 480px;
+      bottom: -14%; left: 2%;
+      background: radial-gradient(circle, var(--purple) 0%, transparent 68%);
+      animation: auroraDrift2 26s ease-in-out infinite alternate;
+    }
+    .hero-aurora-blob:nth-child(3) {
+      width: 26vw; height: 26vw; max-width: 380px; max-height: 380px;
+      top: 32%; left: 26%;
+      background: radial-gradient(circle, #e879d4 0%, transparent 70%);
+      opacity: 0.28;
+      animation: auroraDrift3 18s ease-in-out infinite alternate;
+    }
+    @keyframes auroraDrift1 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-6%, 6%) scale(1.12); }
+    }
+    @keyframes auroraDrift2 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(8%, -8%) scale(1.08); }
+    }
+    @keyframes auroraDrift3 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-10%, -12%) scale(1.2); }
+    }
+    .hero-grid-overlay {
       position: absolute;
       inset: 0;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 0;
-      transition: opacity 1.2s ease-in-out;
-      z-index: 0;
+      z-index: 1;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(255,253,234,0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 0%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 0%, transparent 100%);
     }
-    .hero-bg.active { opacity: 1; }
-    .hero-bg:nth-child(1) { background-image: url('background1.webp'); }
-    .hero-bg:nth-child(2) { background-image: url('background2.webp'); }
-    .hero-bg:nth-child(3) { background-image: url('background3.webp'); }
 
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to right, rgba(23,20,16,0.88) 40%, rgba(23,20,16,0.45) 100%),
-        radial-gradient(ellipse 60% 70% at 80% 50%, rgba(133,2,119,0.18) 0%, transparent 70%);
+        linear-gradient(180deg, rgba(23,20,16,0.2) 0%, rgba(23,20,16,0.55) 60%, var(--black) 100%),
+        radial-gradient(ellipse 70% 60% at 20% 30%, rgba(133,2,119,0.16) 0%, transparent 70%);
       pointer-events: none;
       z-index: 1;
     }
@@ -163,29 +205,50 @@
     .hero-content { position: relative; max-width: 820px; z-index: 2; }
 
     .hero-eyebrow {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .18em;
+      font-weight: 700;
+      letter-spacing: .16em;
       text-transform: uppercase;
       color: var(--purple-light);
       margin-bottom: 28px;
-      padding: 6px 14px;
+      padding: 7px 16px 7px 12px;
       border: 1px solid rgba(163,3,154,0.35);
-      border-radius: 2px;
+      background: rgba(163,3,154,0.08);
+      border-radius: 20px;
+    }
+    .hero-eyebrow-dot {
+      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+      background: var(--purple-light);
+      box-shadow: 0 0 0 0 rgba(163,3,154,.5);
+      animation: heroDotPulse 2s ease-out infinite;
+    }
+    @keyframes heroDotPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(163,3,154,.5); }
+      70%  { box-shadow: 0 0 0 7px rgba(163,3,154,0); }
+      100% { box-shadow: 0 0 0 0 rgba(163,3,154,0); }
     }
 
     .hero-title {
-      font-size: clamp(42px, 7vw, 88px);
+      font-size: clamp(40px, 6.6vw, 82px);
       font-weight: 800;
-      line-height: 1.02;
+      line-height: 1.04;
       color: var(--white);
       letter-spacing: -.03em;
       margin-bottom: 28px;
     }
     .hero-title em {
       font-style: normal;
-      color: var(--purple-light);
+      background: linear-gradient(100deg, var(--purple-light) 10%, #e879d4 55%, var(--purple-light) 90%);
+      background-size: 200% auto;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: heroTitleShine 6s linear infinite;
+    }
+    @keyframes heroTitleShine {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
     }
 
     .hero-subtitle {
@@ -193,8 +256,8 @@
       font-weight: 300;
       line-height: 1.7;
       color: #faf9fc;
-      max-width: 540px;
-      margin-bottom: 48px;
+      max-width: 560px;
+      margin-bottom: 36px;
     }
 
     .hero-actions {
@@ -202,6 +265,7 @@
       flex-wrap: wrap;
       gap: 16px;
       align-items: center;
+      margin-bottom: 44px;
     }
 
     .btn-primary {
@@ -223,25 +287,45 @@
       transform: translateY(-2px);
       box-shadow: 0 12px 32px rgba(133,2,119,0.4);
     }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 40px;
-      left: 5%;
-      display: flex;
+    .btn-ghost {
+      display: inline-flex;
       align-items: center;
-      z-index: 2;
       gap: 10px;
-      color: rgba(255,255,255,0.3);
-      font-size: 11px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
+      padding: 16px 30px;
+      background: transparent;
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-decoration: none;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.22);
+      transition: background .2s, border-color .2s, transform .15s;
     }
-    .hero-scroll-line {
-      width: 40px;
-      height: 1px;
-      background: rgba(255,255,255,0.2);
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.4);
+      transform: translateY(-2px);
     }
+
+    .hero-trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .hero-trust-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: rgba(255,253,234,0.6);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 7px 14px;
+    }
+    .hero-trust-chip svg { width: 13px; height: 13px; color: var(--purple-light); flex-shrink: 0; }
 
     .hero-arrow {
       position: absolute;
@@ -271,6 +355,9 @@
     @keyframes hero-bounce {
       0%, 100% { transform: translateX(-50%) translateY(0); }
       50%       { transform: translateX(-50%) translateY(10px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-aurora-blob, .hero-title em, .hero-eyebrow-dot, .hero-arrow { animation: none; }
     }
 
     /* ── SOBRE ── */
@@ -425,6 +512,7 @@
       border-radius: 50%;
       background: radial-gradient(circle, rgba(133,2,119,0.15) 0%, transparent 70%);
       pointer-events: none;
+      animation: auroraDrift1 24s ease-in-out infinite alternate;
     }
     .manifesto::after {
       content: '';
@@ -434,6 +522,10 @@
       border-radius: 50%;
       background: radial-gradient(circle, rgba(133,2,119,0.08) 0%, transparent 70%);
       pointer-events: none;
+      animation: auroraDrift2 20s ease-in-out infinite alternate;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .manifesto::before, .manifesto::after { animation: none; }
     }
 
     .manifesto-inner {
@@ -533,15 +625,34 @@
       background: var(--white);
       padding: 52px 48px;
       position: relative;
-      transition: background .25s;
       display: flex;
       flex-direction: column;
+      z-index: 0;
+    }
+    .service-card.anim-up {
+      transition:
+        opacity .7s cubic-bezier(.16,1,.3,1),
+        transform .35s cubic-bezier(.16,1,.3,1),
+        background .25s, box-shadow .35s;
+      transition-delay: var(--d, 0ms);
+    }
+    .service-card.anim-up.in { transition-delay: 0ms; }
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(133,2,119,0.14);
+      z-index: 1;
     }
 
     .service-card.highlighted {
       background: var(--black);
     }
-    .service-card.highlighted:hover { background: #111; }
+    .service-card.highlighted:hover {
+      background: #111;
+      box-shadow: 0 24px 70px rgba(133,2,119,0.35);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .service-card:hover { transform: none; }
+    }
 
     .service-number {
       font-size: 11px;
@@ -911,7 +1022,7 @@
       .hero-arrow { bottom: 16px; }
       .hero-subtitle { font-size: 15px; margin-bottom: 36px; }
       .hero-actions { gap: 12px; flex-direction: column; width: 100%; }
-      .hero-actions .btn-primary {
+      .hero-actions .btn-primary, .hero-actions .btn-ghost {
         width: 100%;
         justify-content: center;
         padding: 15px 22px;
@@ -1675,11 +1786,11 @@
       <img src="logo.svg" alt="Grupo Captar" />
     </a>
     <div class="nav-links">
+      <a href="#captar-ia">Captar IA</a>
+      <a href="#perfil-publico">Perfil Público</a>
+      <a href="#area-cliente">Painel de Gestão</a>
       <a href="#sobre">O Grupo Captar</a>
       <a href="#servicos">Serviços</a>
-      <a href="#captar-ia">Captar IA</a>
-      <a href="#area-cliente">Painel de Gestão</a>
-      <a href="#perfil-publico">Perfil Público</a>
       <a href="#contato">Contato</a>
       <a href="dashboard.html" class="nav-contact" style="background:var(--purple);border-color:var(--purple)">Entrar</a>
     </div>
@@ -1690,38 +1801,47 @@
 
   <!-- MENU MOBILE -->
   <div class="nav-mobile-menu" id="mobileMenu">
+    <a href="#captar-ia" class="nav-mobile-link">Captar IA</a>
+    <a href="#perfil-publico" class="nav-mobile-link">Perfil Público</a>
+    <a href="#area-cliente" class="nav-mobile-link">Painel de Gestão</a>
     <a href="#sobre" class="nav-mobile-link">O Grupo Captar</a>
     <a href="#servicos" class="nav-mobile-link">Serviços</a>
-    <a href="#captar-ia" class="nav-mobile-link">Captar IA</a>
-    <a href="#area-cliente" class="nav-mobile-link">Painel de Gestão</a>
-    <a href="#perfil-publico" class="nav-mobile-link">Perfil Público</a>
     <a href="#contato" class="nav-mobile-link">Contato</a>
     <a href="dashboard.html" class="nav-mobile-cta">Entrar no Painel</a>
   </div>
 
   <!-- HERO -->
   <section class="hero" id="hero">
-    <div class="hero-bg active"></div>
-    <div class="hero-bg"></div>
-    <div class="hero-bg"></div>
+    <div class="hero-aurora">
+      <div class="hero-aurora-blob"></div>
+      <div class="hero-aurora-blob"></div>
+      <div class="hero-aurora-blob"></div>
+    </div>
+    <div class="hero-grid-overlay"></div>
     <div class="hero-content">
-      <span class="hero-eyebrow">Marketing Imobiliário &amp; Inteligência Artificial</span>
+      <span class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>A primeira IA 100% especialista em imóveis do Brasil</span>
       <h1 class="hero-title">
-        Nós construímos<br/>
-        <em>autoridade</em><br/>
-        imobiliária.
+        Inteligência artificial<br/>
+        que <em>vende imóveis</em><br/>
+        por você.
       </h1>
       <p class="hero-subtitle">
-        Do conteúdo diário ao site exclusivo — cuidamos de toda a sua presença digital e entregamos um painel de gestão imobiliária completo, com a <strong style="color:var(--purple-light);font-weight:700">Captar IA</strong>, a inteligência artificial mais completa do mercado imobiliário brasileiro, para que você foque no que importa: vender.
+        A <strong style="color:var(--purple-light);font-weight:700">Captar IA</strong> responde clientes, escreve descrições e gera imagens de anúncio — enquanto cuidamos do seu conteúdo diário, tráfego pago e site exclusivo. Você foca só em uma coisa: fechar negócio.
       </p>
       <div class="hero-actions">
-        <a href="#servicos" class="btn-primary">
-          Nossos serviços
+        <a href="#captar-ia" class="btn-primary">
+          Conhecer a Captar IA
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
+        <a href="#servicos" class="btn-ghost">Ver planos</a>
+      </div>
+      <div class="hero-trust-row">
+        <span class="hero-trust-chip"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>380+ corretores ativos</span>
+        <span class="hero-trust-chip"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3z" fill="currentColor" stroke="none"/></svg>Captar IA própria</span>
+        <span class="hero-trust-chip"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>27 estados atendidos</span>
       </div>
     </div>
-    <button class="hero-arrow" aria-label="Rolar para a próxima seção" onclick="window.scrollTo({top: document.getElementById('sobre').offsetTop - 72, behavior: 'smooth'})">
+    <button class="hero-arrow" aria-label="Rolar para a próxima seção" onclick="window.scrollTo({top: document.getElementById('captar-ia').offsetTop - 72, behavior: 'smooth'})">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 12 15 18 9"/>
       </svg>
@@ -1750,189 +1870,198 @@
     </div>
   </section>
 
-  <!-- SOBRE -->
-  <section class="sobre" id="sobre">
+  <!-- CAPTAR IA -->
+  <section id="captar-ia" style="padding:clamp(64px,8vw,96px) 0;background:var(--black);overflow:hidden">
+    <div style="max-width:1180px;margin:0 auto;padding:0 clamp(20px,5%,32px)">
 
-    <div class="sobre-left anim-left">
-      <span class="sobre-eyebrow">O Grupo Captar</span>
-      <h2 class="sobre-title">Somos especialistas em <em style="font-style:normal;color:var(--purple)">autoridade imobiliária.</em></h2>
-      <p class="sobre-text">
-        O Grupo Captar nasceu para resolver um problema real do mercado: <strong>corretores e imobiliárias excelentes no que fazem, mas invisíveis no digital.</strong>
-      </p>
-      <p class="sobre-text">
-        Cuidamos de toda a sua presença — do conteúdo diário nas redes sociais ao site exclusivo com portfólio de imóveis — para que você transmita credibilidade, atraia os clientes certos e feche mais negócios.
-      </p>
-      <p class="sobre-text">
-        <strong>Você vende. Nós construímos a sua autoridade.</strong>
-      </p>
-      <p class="sobre-claim">O melhor custo-benefício do <span>Brasil.</span></p>
+      <!-- Header -->
+      <div style="text-align:center;margin-bottom:56px" class="anim-up">
+        <div class="ia-eyebrow-badge">
+          <svg fill="none" stroke="#e879d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 3v2.5"/><rect x="5" y="8.5" width="14" height="10.5" rx="4"/><circle cx="9.5" cy="13.5" r="1.2" fill="#e879d4" stroke="none"/><circle cx="14.5" cy="13.5" r="1.2" fill="#e879d4" stroke="none"/></svg>
+          <span>A melhor IA do mercado imobiliário</span>
+        </div>
+        <h2 class="ia-section-title">
+          A Captar IA é a especialista<br/>imobiliária que <em>nunca dorme.</em>
+        </h2>
+        <p class="ia-section-desc">
+          Somos assessoria imobiliária <strong style="color:var(--white)">e</strong> inteligência artificial. A Captar IA é a mais completa do setor no Brasil, direto no seu painel de gestão: peça descrições de imóveis, tire dúvidas sobre financiamento e negociação, e gere ou edite imagens profissionais para os seus anúncios.
+        </p>
+      </div>
+
+      <!-- Mockup: chat + geração de imagem -->
+      <div class="ia-mockup-wrap anim-up" style="--d:100ms">
+        <div class="browser-chrome">
+          <div class="browser-dot" style="background:#ff5f57"></div>
+          <div class="browser-dot" style="background:#febc2e"></div>
+          <div class="browser-dot" style="background:#28c840"></div>
+          <div class="browser-bar">
+            <span class="browser-bar-text">grupocaptar.com.br/dashboard — Captar IA</span>
+          </div>
+        </div>
+        <div class="browser-body">
+          <div class="ia-mock-pane ia-mock-pane-chat anim-left" style="--d:150ms">
+            <div class="ia-mock-badge">💬 Chat</div>
+            <div class="ia-mock-bubble ia-mock-bubble-user">Escreva uma descrição pro apartamento de 2 quartos no centro</div>
+            <div class="ia-mock-bubble ia-mock-bubble-ai">Apartamento de 2 quartos no coração do centro, com acabamento moderno e ampla iluminação natural. Localização privilegiada, a poucos passos de comércio, escolas e transporte público...</div>
+          </div>
+          <div class="ia-mock-pane ia-mock-pane-image anim-right" style="--d:250ms">
+            <div class="ia-mock-badge">🖼️ Gerar Imagem</div>
+            <div class="ia-mock-image-frame">
+              <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+            <div class="ia-mock-image-caption">"Fachada moderna ao pôr do sol"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature grid -->
+      <div class="feat-grid" style="margin-bottom:56px">
+
+        <div class="feat-card anim-up" style="--ac:#a3039a;--delay:0ms">
+          <div class="feat-icon" style="background:rgba(163,3,154,.15)">
+            <svg width="22" height="22" fill="none" stroke="#a3039a" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          </div>
+          <div class="feat-title">Chat Especialista 24h</div>
+          <div class="feat-desc">Financiamento, documentação, negociação e tendências do mercado — respondido na hora, a qualquer momento do dia.</div>
+          <ul class="feat-tags"><li>Financiamento</li><li>Documentação</li><li>Negociação</li></ul>
+        </div>
+
+        <div class="feat-card anim-up" style="--ac:#e879d4;--delay:80ms">
+          <div class="feat-icon" style="background:rgba(232,121,212,.15)">
+            <svg width="22" height="22" fill="none" stroke="#e879d4" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <div class="feat-title">Descrições que Vendem</div>
+          <div class="feat-desc">Peça uma descrição pra qualquer imóvel e receba um texto pronto pra publicar, sem gastar meia hora escrevendo.</div>
+          <ul class="feat-tags"><li>Anúncios</li><li>Copywriting</li><li>Instantâneo</li></ul>
+        </div>
+
+        <div class="feat-card anim-up" style="--ac:#a3039a;--delay:160ms">
+          <div class="feat-icon" style="background:rgba(163,3,154,.15)">
+            <svg width="22" height="22" fill="none" stroke="#a3039a" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <div class="feat-title">Geração de Imagens</div>
+          <div class="feat-desc">Crie fachadas, interiores e banners de anúncio profissionais a partir de uma simples descrição em texto.</div>
+          <ul class="feat-tags"><li>Fachadas</li><li>Interiores</li><li>Banners</li></ul>
+        </div>
+
+        <div class="feat-card anim-up" style="--ac:#e879d4;--delay:240ms">
+          <div class="feat-icon" style="background:rgba(232,121,212,.15)">
+            <svg width="22" height="22" fill="none" stroke="#e879d4" stroke-width="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          </div>
+          <div class="feat-title">Edição de Fotos Reais</div>
+          <div class="feat-desc">Envie uma foto do imóvel e peça ajustes — iluminação, mobília virtual, remoção de objetos — sem precisar de um editor.</div>
+          <ul class="feat-tags"><li>Iluminação</li><li>Mobília</li><li>Retoque</li></ul>
+        </div>
+
+        <div class="feat-card anim-up" style="--ac:#a3039a;--delay:320ms">
+          <div class="feat-icon" style="background:rgba(163,3,154,.15)">
+            <svg width="22" height="22" fill="none" stroke="#a3039a" stroke-width="2" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+          </div>
+          <div class="feat-title">Sua Marca, Automática</div>
+          <div class="feat-desc">Salve o logo da sua imobiliária uma vez e inclua automaticamente em toda imagem gerada.</div>
+          <ul class="feat-tags"><li>Logo</li><li>Marca</li><li>Automático</li></ul>
+        </div>
+
+        <div class="feat-card anim-up" style="--ac:#e879d4;--delay:400ms">
+          <div class="feat-icon" style="background:rgba(232,121,212,.15)">
+            <svg width="22" height="22" fill="none" stroke="#e879d4" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <div class="feat-title">Direto no Painel</div>
+          <div class="feat-desc">Sem instalar nada, sem outra assinatura. A Captar IA já está dentro da sua Área do Cliente, incluída no seu plano.</div>
+          <ul class="feat-tags"><li>Incluída</li><li>Sem custo extra</li></ul>
+        </div>
+
+      </div>
+
+      <!-- CTA -->
+      <div style="text-align:center" class="anim-up">
+        <a href="#perfil-publico" style="display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:linear-gradient(135deg,#a3039a,var(--purple));color:var(--white);font-size:15px;font-weight:700;border-radius:8px;text-decoration:none;letter-spacing:.02em;transition:all .2s;box-shadow:0 0 40px rgba(133,2,119,.35)" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          Já incluída no seu plano
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <p style="margin-top:14px;font-size:12px;color:rgba(255,253,234,.3)">Disponível para todos os corretores e imobiliárias parceiras do Grupo Captar</p>
+      </div>
+
     </div>
-
-    <div class="sobre-right">
-      <div class="sobre-pillar anim-up" style="--d:0ms">
-        <div class="sobre-pillar-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="#850277"/></svg>
-        </div>
-        <div class="sobre-pillar-body">
-          <p class="sobre-pillar-title">Inteligência Artificial Exclusiva</p>
-          <p class="sobre-pillar-desc">A Captar IA é a nossa inteligência artificial própria, treinada especificamente para o mercado imobiliário brasileiro — a mais completa do setor, incluída em todos os planos.</p>
-        </div>
-      </div>
-      <div class="sobre-pillar anim-up" style="--d:60ms">
-        <div class="sobre-pillar-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="sobre-pillar-body">
-          <p class="sobre-pillar-title">Terceirização Total</p>
-          <p class="sobre-pillar-desc">Você não perde um minuto com marketing. Cuidamos de toda a demanda, do digital ao físico.</p>
-        </div>
-      </div>
-      <div class="sobre-pillar anim-up" style="--d:120ms">
-        <div class="sobre-pillar-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="sobre-pillar-body">
-          <p class="sobre-pillar-title">Identidade Forte</p>
-          <p class="sobre-pillar-desc">Criamos um padrão estético que transmite credibilidade instantânea e diferencia você da concorrência.</p>
-        </div>
-      </div>
-      <div class="sobre-pillar anim-up" style="--d:200ms">
-        <div class="sobre-pillar-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="sobre-pillar-body">
-          <p class="sobre-pillar-title">Resultados Reais</p>
-          <p class="sobre-pillar-desc">Conteúdo estratégico e tráfego pago para colocar os seus imóveis na frente de compradores qualificados.</p>
-        </div>
-      </div>
-      <div class="sobre-pillar anim-up" style="--d:300ms">
-        <div class="sobre-pillar-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="sobre-pillar-body">
-          <p class="sobre-pillar-title">Suporte Diário</p>
-          <p class="sobre-pillar-desc">Nossa equipe está sempre disponível para resolver qualquer necessidade imediata da sua operação.</p>
-        </div>
-      </div>
-    </div>
-
   </section>
 
-  <!-- MANIFESTO -->
-  <section class="manifesto" id="manifesto">
-    <div class="manifesto-inner anim-up">
-      <span class="manifesto-open-quote">"</span>
-      <p class="manifesto-quote">
-        Estamos na era digital e o mercado imobiliário<br/>
-        não tem mais espaço para <em>amadorismo</em>.<br/>
-        Quem não domina a própria imagem,<br/>
-        perde o cliente para quem domina.
-      </p>
-      <div class="manifesto-divider"></div>
-      <p class="manifesto-sub">O nível da sua apresentação define o tamanho do seu comissionamento.</p>
-    </div>
-  </section>
+  <!-- PERFIL PÚBLICO -->
+  <section id="perfil-publico" style="padding:clamp(64px,8vw,96px) 0;background:linear-gradient(180deg,#0c0a09 0%,var(--black) 100%);overflow:hidden">
+    <div style="max-width:1180px;margin:0 auto;padding:0 clamp(20px,5%,32px)">
 
-  <!-- SERVICES -->
-  <section class="services" id="servicos">
-    <div class="services-header anim-up">
-      <span class="services-eyebrow">O que oferecemos</span>
-      <h2 class="services-title">Dois planos.<br/>Um objetivo.</h2>
-      <p class="services-desc">Escolha o nível de presença que a sua marca merece no mercado imobiliário. Os dois planos já incluem a Captar IA, nossa inteligência artificial exclusiva para o setor.</p>
-    </div>
+      <div class="pp-showcase-grid">
+        <div class="pp-showcase-copy anim-left">
+          <div class="pp-eyebrow-badge">
+            <svg fill="none" stroke="#a3039a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            <span>Novo no painel</span>
+          </div>
+          <h2 class="pp-showcase-title">
+            Um link com o seu nome.<br/><em>Sua cara, seus imóveis.</em>
+          </h2>
+          <p class="pp-showcase-desc">
+            Todo corretor parceiro ganha uma página pública própria — bonita, rápida e com a sua marca — pra mandar pro cliente em um clique. Sem precisar de site, sem precisar de designer.
+          </p>
+          <ul class="pp-bullet-list">
+            <li>
+              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></span>
+              <span><b>Link com o seu nome</b> — grupocaptar.com.br/c/seu-nome, fácil de lembrar e divulgar</span>
+            </li>
+            <li>
+              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+              <span><b>Imóveis em destaque</b> — escolha o que aparece primeiro pro cliente que abrir o link</span>
+            </li>
+            <li>
+              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.062 0-.874.727-1.625 1.625-1.625H16c3.312 0 6-2.688 6-6 0-4.813-4.5-8.5-10-8.5z"/></svg></span>
+              <span><b>Cor de destaque personalizável</b> — escolha entre 12 tons ou defina a sua própria em hexadecimal</span>
+            </li>
+            <li>
+              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12.05 22a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374A9.86 9.86 0 012.17 12C2.17 6.55 6.604 2.116 12.057 2.116c2.64 0 5.122 1.03 6.988 2.898A9.825 9.825 0 0121.938 12c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg></span>
+              <span><b>Botão de WhatsApp direto</b> — o cliente fala com você sem precisar procurar seu contato</span>
+            </li>
+          </ul>
+          <div class="pp-link-demo" id="pp-link-demo" onclick="ppCopyDemoLink(this)" title="Clique para copiar (exemplo)">
+            <span class="domain">grupocaptar.com.br/c/</span><span class="slug">seu-nome</span>
+            <svg class="copy-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </div>
+          <div class="pp-link-demo-label">↑ é só clicar — seu link fica pronto assim que você ativa o perfil</div>
+        </div>
 
-    <div class="services-grid">
-
-      <!-- Plano 01 -->
-      <div class="service-card anim-up" style="--d:0ms">
-        <span class="service-number">Plano 01</span>
-        <h3 class="service-name">Conteúdo Diário</h3>
-        <p class="service-tagline">Domine a atenção do seu cliente todos os dias com uma presença profissional.</p>
-        <ul class="service-features">
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Terceirização Total</span> — do digital ao físico (placas, outdoors)</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Identidade Visual Impecável</span> — padrão estético forte para a sua marca</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Cronograma Estratégico</span> — calendário exato do que vai ao ar e quando</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Postagens Diárias</span> — Feed, Stories ou Reels</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Textos Diretos</span> — legendas focadas em gerar desejo e conversão</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Organização de Perfil</span> — biografia e destaques do Instagram otimizados</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Gestão de Anúncios</span> — tráfego pago direcionado a compradores qualificados</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Painel de Gestão Imobiliária</span> — CRM de leads, controle de locações, financeiro, contratos e calendário em um só lugar</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Captar IA</span> — chat especialista e gerador de imagens com inteligência artificial, direto no painel</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Suporte Diário</span> — acompanhamento constante da nossa equipe</span>
-          </li>
-        </ul>
-        <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Plano%20de%20Conte%C3%BAdo%20Di%C3%A1rio." target="_blank" class="service-btn">
-          Quero este plano
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </div>
-
-      <!-- Plano 02 -->
-      <div class="service-card highlighted anim-up" style="--d:120ms">
-        <span class="service-badge">Mais completo</span>
-        <span class="service-number">Plano 02</span>
-        <h3 class="service-name">Alta Performance com site</h3>
-        <p class="service-tagline">O ecossistema definitivo para quem quer passar o máximo de autoridade.</p>
-        <span class="service-includes">Tudo do Plano 01, mais:</span>
-        <ul class="service-features">
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Site Exclusivo</span> — plataforma própria, rápida e blindada da concorrência</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Painel de Gestão Imobiliária</span> — CRM de leads, controle de locações, financeiro, contratos e calendário em um só lugar</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Captar IA</span> — chat especialista e gerador de imagens com inteligência artificial, direto no painel</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Gestão de Imóveis</span> — portfólio cadastrado e atualizado com a melhor apresentação visual</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">Tecnologia e Manutenção</span> — hospedagem, suporte técnico e atualizações incluídas</span>
-          </li>
-          <li>
-            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="feature-bold">WhatsApp Integrado</span> — botões diretos para conversão imediata</span>
-          </li>
-        </ul>
-        <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Plano%20Alta%20Performance." target="_blank" class="service-btn">
-          Quero este plano
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
+        <div class="pp-phone-wrap anim-right" style="--d:120ms">
+          <div class="pp-phone">
+            <div class="pp-phone-notch"></div>
+            <div class="pp-phone-screen">
+              <div class="pp-mock-banner"></div>
+              <div class="pp-mock-body">
+                <div class="pp-mock-avatar">FR</div>
+                <div class="pp-mock-verified">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                  Corretor parceiro Grupo Captar
+                </div>
+                <div class="pp-mock-name">Fernando Ramos</div>
+                <div class="pp-mock-tagline">"Encontrar o imóvel certo é sobre entender pessoas."</div>
+                <div class="pp-mock-stats">
+                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">12</div><div class="pp-mock-stat-lbl">Imóveis</div></div>
+                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">RS-99.999</div><div class="pp-mock-stat-lbl">CRECI</div></div>
+                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">Alto Padrão</div><div class="pp-mock-stat-lbl">Foco</div></div>
+                </div>
+                <div class="pp-mock-section-lbl">Imóveis disponíveis</div>
+                <div class="pp-mock-card">
+                  <div class="pp-mock-card-img">
+                    <span class="pp-mock-badge-destaque">⭐ Destaque</span>
+                  </div>
+                  <div class="pp-mock-card-body">
+                    <div class="pp-mock-card-price">R$ 850.000</div>
+                    <div class="pp-mock-card-addr">Apartamento · Centro</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pp-mock-cta">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                Falar no WhatsApp
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -2146,198 +2275,189 @@
     </div>
   </section>
 
-  <!-- PERFIL PÚBLICO -->
-  <section id="perfil-publico" style="padding:clamp(64px,8vw,96px) 0;background:linear-gradient(180deg,#0c0a09 0%,var(--black) 100%);overflow:hidden">
-    <div style="max-width:1180px;margin:0 auto;padding:0 clamp(20px,5%,32px)">
-
-      <div class="pp-showcase-grid">
-        <div class="pp-showcase-copy anim-left">
-          <div class="pp-eyebrow-badge">
-            <svg fill="none" stroke="#a3039a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-            <span>Novo no painel</span>
-          </div>
-          <h2 class="pp-showcase-title">
-            Um link com o seu nome.<br/><em>Sua cara, seus imóveis.</em>
-          </h2>
-          <p class="pp-showcase-desc">
-            Todo corretor parceiro ganha uma página pública própria — bonita, rápida e com a sua marca — pra mandar pro cliente em um clique. Sem precisar de site, sem precisar de designer.
-          </p>
-          <ul class="pp-bullet-list">
-            <li>
-              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></span>
-              <span><b>Link com o seu nome</b> — grupocaptar.com.br/c/seu-nome, fácil de lembrar e divulgar</span>
-            </li>
-            <li>
-              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
-              <span><b>Imóveis em destaque</b> — escolha o que aparece primeiro pro cliente que abrir o link</span>
-            </li>
-            <li>
-              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.062 0-.874.727-1.625 1.625-1.625H16c3.312 0 6-2.688 6-6 0-4.813-4.5-8.5-10-8.5z"/></svg></span>
-              <span><b>Cor de destaque personalizável</b> — escolha entre 12 tons ou defina a sua própria em hexadecimal</span>
-            </li>
-            <li>
-              <span class="pp-bullet-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12.05 22a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374A9.86 9.86 0 012.17 12C2.17 6.55 6.604 2.116 12.057 2.116c2.64 0 5.122 1.03 6.988 2.898A9.825 9.825 0 0121.938 12c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg></span>
-              <span><b>Botão de WhatsApp direto</b> — o cliente fala com você sem precisar procurar seu contato</span>
-            </li>
-          </ul>
-          <div class="pp-link-demo" id="pp-link-demo" onclick="ppCopyDemoLink(this)" title="Clique para copiar (exemplo)">
-            <span class="domain">grupocaptar.com.br/c/</span><span class="slug">seu-nome</span>
-            <svg class="copy-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          </div>
-          <div class="pp-link-demo-label">↑ é só clicar — seu link fica pronto assim que você ativa o perfil</div>
-        </div>
-
-        <div class="pp-phone-wrap anim-right" style="--d:120ms">
-          <div class="pp-phone">
-            <div class="pp-phone-notch"></div>
-            <div class="pp-phone-screen">
-              <div class="pp-mock-banner"></div>
-              <div class="pp-mock-body">
-                <div class="pp-mock-avatar">FR</div>
-                <div class="pp-mock-verified">
-                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-                  Corretor parceiro Grupo Captar
-                </div>
-                <div class="pp-mock-name">Fernando Ramos</div>
-                <div class="pp-mock-tagline">"Encontrar o imóvel certo é sobre entender pessoas."</div>
-                <div class="pp-mock-stats">
-                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">12</div><div class="pp-mock-stat-lbl">Imóveis</div></div>
-                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">RS-99.999</div><div class="pp-mock-stat-lbl">CRECI</div></div>
-                  <div class="pp-mock-stat"><div class="pp-mock-stat-val">Alto Padrão</div><div class="pp-mock-stat-lbl">Foco</div></div>
-                </div>
-                <div class="pp-mock-section-lbl">Imóveis disponíveis</div>
-                <div class="pp-mock-card">
-                  <div class="pp-mock-card-img">
-                    <span class="pp-mock-badge-destaque">⭐ Destaque</span>
-                  </div>
-                  <div class="pp-mock-card-body">
-                    <div class="pp-mock-card-price">R$ 850.000</div>
-                    <div class="pp-mock-card-addr">Apartamento · Centro</div>
-                  </div>
-                </div>
-              </div>
-              <div class="pp-mock-cta">
-                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
-                Falar no WhatsApp
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+  <!-- MANIFESTO -->
+  <section class="manifesto" id="manifesto">
+    <div class="manifesto-inner anim-up">
+      <span class="manifesto-open-quote">"</span>
+      <p class="manifesto-quote">
+        Estamos na era digital e o mercado imobiliário<br/>
+        não tem mais espaço para <em>amadorismo</em>.<br/>
+        Quem não domina a própria imagem,<br/>
+        perde o cliente para quem domina.
+      </p>
+      <div class="manifesto-divider"></div>
+      <p class="manifesto-sub">O nível da sua apresentação define o tamanho do seu comissionamento.</p>
     </div>
   </section>
 
-  <!-- CAPTAR IA -->
-  <section id="captar-ia" style="padding:clamp(64px,8vw,96px) 0;background:var(--black);overflow:hidden">
-    <div style="max-width:1180px;margin:0 auto;padding:0 clamp(20px,5%,32px)">
+  <!-- SOBRE -->
+  <section class="sobre" id="sobre">
 
-      <!-- Header -->
-      <div style="text-align:center;margin-bottom:56px" class="anim-up">
-        <div class="ia-eyebrow-badge">
-          <svg fill="none" stroke="#e879d4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 3v2.5"/><rect x="5" y="8.5" width="14" height="10.5" rx="4"/><circle cx="9.5" cy="13.5" r="1.2" fill="#e879d4" stroke="none"/><circle cx="14.5" cy="13.5" r="1.2" fill="#e879d4" stroke="none"/></svg>
-          <span>A melhor IA do mercado imobiliário</span>
-        </div>
-        <h2 class="ia-section-title">
-          A Captar IA é a especialista<br/>imobiliária que <em>nunca dorme.</em>
-        </h2>
-        <p class="ia-section-desc">
-          Somos assessoria imobiliária <strong style="color:var(--white)">e</strong> inteligência artificial. A Captar IA é a mais completa do setor no Brasil, direto no seu painel de gestão: peça descrições de imóveis, tire dúvidas sobre financiamento e negociação, e gere ou edite imagens profissionais para os seus anúncios.
-        </p>
-      </div>
+    <div class="sobre-left anim-left">
+      <span class="sobre-eyebrow">O Grupo Captar</span>
+      <h2 class="sobre-title">Somos especialistas em <em style="font-style:normal;color:var(--purple)">autoridade imobiliária.</em></h2>
+      <p class="sobre-text">
+        O Grupo Captar nasceu para resolver um problema real do mercado: <strong>corretores e imobiliárias excelentes no que fazem, mas invisíveis no digital.</strong>
+      </p>
+      <p class="sobre-text">
+        Cuidamos de toda a sua presença — do conteúdo diário nas redes sociais ao site exclusivo com portfólio de imóveis — para que você transmita credibilidade, atraia os clientes certos e feche mais negócios.
+      </p>
+      <p class="sobre-text">
+        <strong>Você vende. Nós construímos a sua autoridade.</strong>
+      </p>
+      <p class="sobre-claim">O melhor custo-benefício do <span>Brasil.</span></p>
+    </div>
 
-      <!-- Mockup: chat + geração de imagem -->
-      <div class="ia-mockup-wrap anim-up" style="--d:100ms">
-        <div class="browser-chrome">
-          <div class="browser-dot" style="background:#ff5f57"></div>
-          <div class="browser-dot" style="background:#febc2e"></div>
-          <div class="browser-dot" style="background:#28c840"></div>
-          <div class="browser-bar">
-            <span class="browser-bar-text">grupocaptar.com.br/dashboard — Captar IA</span>
-          </div>
+    <div class="sobre-right">
+      <div class="sobre-pillar anim-up" style="--d:0ms">
+        <div class="sobre-pillar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="#850277"/></svg>
         </div>
-        <div class="browser-body">
-          <div class="ia-mock-pane ia-mock-pane-chat">
-            <div class="ia-mock-badge">💬 Chat</div>
-            <div class="ia-mock-bubble ia-mock-bubble-user">Escreva uma descrição pro apartamento de 2 quartos no centro</div>
-            <div class="ia-mock-bubble ia-mock-bubble-ai">Apartamento de 2 quartos no coração do centro, com acabamento moderno e ampla iluminação natural. Localização privilegiada, a poucos passos de comércio, escolas e transporte público...</div>
-          </div>
-          <div class="ia-mock-pane ia-mock-pane-image">
-            <div class="ia-mock-badge">🖼️ Gerar Imagem</div>
-            <div class="ia-mock-image-frame">
-              <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-            </div>
-            <div class="ia-mock-image-caption">"Fachada moderna ao pôr do sol"</div>
-          </div>
+        <div class="sobre-pillar-body">
+          <p class="sobre-pillar-title">Inteligência Artificial Exclusiva</p>
+          <p class="sobre-pillar-desc">A Captar IA é a nossa inteligência artificial própria, treinada especificamente para o mercado imobiliário brasileiro — a mais completa do setor, incluída em todos os planos.</p>
         </div>
       </div>
-
-      <!-- Feature grid -->
-      <div class="feat-grid" style="margin-bottom:56px">
-
-        <div class="feat-card anim-up" style="--ac:#a3039a;--delay:0ms">
-          <div class="feat-icon" style="background:rgba(163,3,154,.15)">
-            <svg width="22" height="22" fill="none" stroke="#a3039a" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-          </div>
-          <div class="feat-title">Chat Especialista 24h</div>
-          <div class="feat-desc">Financiamento, documentação, negociação e tendências do mercado — respondido na hora, a qualquer momento do dia.</div>
-          <ul class="feat-tags"><li>Financiamento</li><li>Documentação</li><li>Negociação</li></ul>
+      <div class="sobre-pillar anim-up" style="--d:60ms">
+        <div class="sobre-pillar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-
-        <div class="feat-card anim-up" style="--ac:#e879d4;--delay:80ms">
-          <div class="feat-icon" style="background:rgba(232,121,212,.15)">
-            <svg width="22" height="22" fill="none" stroke="#e879d4" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          </div>
-          <div class="feat-title">Descrições que Vendem</div>
-          <div class="feat-desc">Peça uma descrição pra qualquer imóvel e receba um texto pronto pra publicar, sem gastar meia hora escrevendo.</div>
-          <ul class="feat-tags"><li>Anúncios</li><li>Copywriting</li><li>Instantâneo</li></ul>
+        <div class="sobre-pillar-body">
+          <p class="sobre-pillar-title">Terceirização Total</p>
+          <p class="sobre-pillar-desc">Você não perde um minuto com marketing. Cuidamos de toda a demanda, do digital ao físico.</p>
         </div>
-
-        <div class="feat-card anim-up" style="--ac:#a3039a;--delay:160ms">
-          <div class="feat-icon" style="background:rgba(163,3,154,.15)">
-            <svg width="22" height="22" fill="none" stroke="#a3039a" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          </div>
-          <div class="feat-title">Geração de Imagens</div>
-          <div class="feat-desc">Crie fachadas, interiores e banners de anúncio profissionais a partir de uma simples descrição em texto.</div>
-          <ul class="feat-tags"><li>Fachadas</li><li>Interiores</li><li>Banners</li></ul>
-        </div>
-
-        <div class="feat-card anim-up" style="--ac:#e879d4;--delay:240ms">
-          <div class="feat-icon" style="background:rgba(232,121,212,.15)">
-            <svg width="22" height="22" fill="none" stroke="#e879d4" stroke-width="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-          </div>
-          <div class="feat-title">Edição de Fotos Reais</div>
-          <div class="feat-desc">Envie uma foto do imóvel e peça ajustes — iluminação, mobília virtual, remoção de objetos — sem precisar de um editor.</div>
-          <ul class="feat-tags"><li>Iluminação</li><li>Mobília</li><li>Retoque</li></ul>
-        </div>
-
-        <div class="feat-card anim-up" style="--ac:#a3039a;--delay:320ms">
-          <div class="feat-icon" style="background:rgba(163,3,154,.15)">
-            <svg width="22" height="22" fill="none" stroke="#a3039a" stroke-width="2" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
-          </div>
-          <div class="feat-title">Sua Marca, Automática</div>
-          <div class="feat-desc">Salve o logo da sua imobiliária uma vez e inclua automaticamente em toda imagem gerada.</div>
-          <ul class="feat-tags"><li>Logo</li><li>Marca</li><li>Automático</li></ul>
-        </div>
-
-        <div class="feat-card anim-up" style="--ac:#e879d4;--delay:400ms">
-          <div class="feat-icon" style="background:rgba(232,121,212,.15)">
-            <svg width="22" height="22" fill="none" stroke="#e879d4" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          </div>
-          <div class="feat-title">Direto no Painel</div>
-          <div class="feat-desc">Sem instalar nada, sem outra assinatura. A Captar IA já está dentro da sua Área do Cliente, incluída no seu plano.</div>
-          <ul class="feat-tags"><li>Incluída</li><li>Sem custo extra</li></ul>
-        </div>
-
       </div>
+      <div class="sobre-pillar anim-up" style="--d:120ms">
+        <div class="sobre-pillar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="sobre-pillar-body">
+          <p class="sobre-pillar-title">Identidade Forte</p>
+          <p class="sobre-pillar-desc">Criamos um padrão estético que transmite credibilidade instantânea e diferencia você da concorrência.</p>
+        </div>
+      </div>
+      <div class="sobre-pillar anim-up" style="--d:200ms">
+        <div class="sobre-pillar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="sobre-pillar-body">
+          <p class="sobre-pillar-title">Resultados Reais</p>
+          <p class="sobre-pillar-desc">Conteúdo estratégico e tráfego pago para colocar os seus imóveis na frente de compradores qualificados.</p>
+        </div>
+      </div>
+      <div class="sobre-pillar anim-up" style="--d:300ms">
+        <div class="sobre-pillar-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="#850277" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="sobre-pillar-body">
+          <p class="sobre-pillar-title">Suporte Diário</p>
+          <p class="sobre-pillar-desc">Nossa equipe está sempre disponível para resolver qualquer necessidade imediata da sua operação.</p>
+        </div>
+      </div>
+    </div>
 
-      <!-- CTA -->
-      <div style="text-align:center" class="anim-up">
-        <a href="#servicos" style="display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:linear-gradient(135deg,#a3039a,var(--purple));color:var(--white);font-size:15px;font-weight:700;border-radius:8px;text-decoration:none;letter-spacing:.02em;transition:all .2s;box-shadow:0 0 40px rgba(133,2,119,.35)" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-          Já incluída no seu plano
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="servicos">
+    <div class="services-header anim-up">
+      <span class="services-eyebrow">O que oferecemos</span>
+      <h2 class="services-title">Dois planos.<br/>Um objetivo.</h2>
+      <p class="services-desc">Escolha o nível de presença que a sua marca merece no mercado imobiliário. Os dois planos já incluem a Captar IA, nossa inteligência artificial exclusiva para o setor.</p>
+    </div>
+
+    <div class="services-grid">
+
+      <!-- Plano 01 -->
+      <div class="service-card anim-up" style="--d:0ms">
+        <span class="service-number">Plano 01</span>
+        <h3 class="service-name">Conteúdo Diário</h3>
+        <p class="service-tagline">Domine a atenção do seu cliente todos os dias com uma presença profissional.</p>
+        <ul class="service-features">
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Terceirização Total</span> — do digital ao físico (placas, outdoors)</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Identidade Visual Impecável</span> — padrão estético forte para a sua marca</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Cronograma Estratégico</span> — calendário exato do que vai ao ar e quando</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Postagens Diárias</span> — Feed, Stories ou Reels</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Textos Diretos</span> — legendas focadas em gerar desejo e conversão</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Organização de Perfil</span> — biografia e destaques do Instagram otimizados</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Gestão de Anúncios</span> — tráfego pago direcionado a compradores qualificados</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Painel de Gestão Imobiliária</span> — CRM de leads, controle de locações, financeiro, contratos e calendário em um só lugar</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Captar IA</span> — chat especialista e gerador de imagens com inteligência artificial, direto no painel</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Suporte Diário</span> — acompanhamento constante da nossa equipe</span>
+          </li>
+        </ul>
+        <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Plano%20de%20Conte%C3%BAdo%20Di%C3%A1rio." target="_blank" class="service-btn">
+          Quero este plano
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
-        <p style="margin-top:14px;font-size:12px;color:rgba(255,253,234,.3)">Disponível para todos os corretores e imobiliárias parceiras do Grupo Captar</p>
+      </div>
+
+      <!-- Plano 02 -->
+      <div class="service-card highlighted anim-up" style="--d:120ms">
+        <span class="service-badge">Mais completo</span>
+        <span class="service-number">Plano 02</span>
+        <h3 class="service-name">Alta Performance com site</h3>
+        <p class="service-tagline">O ecossistema definitivo para quem quer passar o máximo de autoridade.</p>
+        <span class="service-includes">Tudo do Plano 01, mais:</span>
+        <ul class="service-features">
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Site Exclusivo</span> — plataforma própria, rápida e blindada da concorrência</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Painel de Gestão Imobiliária</span> — CRM de leads, controle de locações, financeiro, contratos e calendário em um só lugar</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Captar IA</span> — chat especialista e gerador de imagens com inteligência artificial, direto no painel</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Gestão de Imóveis</span> — portfólio cadastrado e atualizado com a melhor apresentação visual</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">Tecnologia e Manutenção</span> — hospedagem, suporte técnico e atualizações incluídas</span>
+          </li>
+          <li>
+            <span class="check"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#850277" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><span class="feature-bold">WhatsApp Integrado</span> — botões diretos para conversão imediata</span>
+          </li>
+        </ul>
+        <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Plano%20Alta%20Performance." target="_blank" class="service-btn">
+          Quero este plano
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </div>
 
     </div>
@@ -2509,15 +2629,6 @@
   </footer>
 
   <script>
-    // Hero background slideshow
-    const slides = document.querySelectorAll('.hero-bg');
-    let current = 0;
-    setInterval(() => {
-      slides[current].classList.remove('active');
-      current = (current + 1) % slides.length;
-      slides[current].classList.add('active');
-    }, 5000);
-
     // Nav shadow on scroll
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
