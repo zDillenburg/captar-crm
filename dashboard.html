@@ -314,9 +314,11 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .view-btn{width:32px;height:28px;border-radius:5px;border:none;background:none;cursor:pointer;color:var(--t3);display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
 .view-btn.active{background:var(--bg4);color:var(--t1)}
 .imoveis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.imovel-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s}
-.imovel-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.imovel-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:border-color .3s,transform .3s var(--ease,ease),box-shadow .3s}
+.imovel-card:hover{border-color:var(--border2);transform:translateY(-5px);box-shadow:0 22px 44px -18px rgba(0,0,0,.55)}
+.imovel-card:hover .imovel-img img{transform:scale(1.05)}
 .imovel-img{height:160px;position:relative;overflow:hidden}
+.imovel-img img{transition:transform .5s var(--ease,ease)}
 .imovel-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px}
 .imovel-status-badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em}
 .imovel-fav{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:color .15s,background .15s}
@@ -1640,7 +1642,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
       <!-- ══════ IMÓVEIS PAGE ══════ -->
       <div class="page" id="page-imoveis">
-        <div class="imoveis-toolbar">
+        <div class="imoveis-toolbar dash-anim">
           <div class="search-wrap">
             <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input class="search-input" type="text" placeholder="Buscar por endereço ou tipo…" oninput="_applyImFilter()"/>
@@ -1660,13 +1662,13 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <button class="chip im-status-chip" onclick="setImStatusFilter('negociação',this)">Negociação</button>
             <button class="chip im-status-chip" onclick="setImStatusFilter('vendido',this)">Vendido</button>
           </div>
-          <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
+          <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos">
             📋 Docs
           </button>
-          <button class="btn-secondary" onclick="abrirImportCSV('imoveis')" title="Importar imóveis de uma planilha CSV" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
+          <button class="btn-secondary" onclick="abrirImportCSV('imoveis')" title="Importar imóveis de uma planilha CSV">
             📥 Importar CSV
           </button>
-          <button class="btn-secondary" onclick="abrirMeuPerfilPublicoRapido()" title="Seu perfil público com todos os imóveis, pronto pra mandar pro cliente" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--p);background:rgba(133,2,119,.12);color:var(--pl);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+          <button class="btn-secondary accent" onclick="abrirMeuPerfilPublicoRapido()" title="Seu perfil público com todos os imóveis, pronto pra mandar pro cliente">
             🔗 Meu Perfil Público
           </button>
           <button class="btn-add" onclick="abrirModalNovoImovel()">
@@ -1674,7 +1676,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             Adicionar Imóvel
           </button>
         </div>
-        <div class="imoveis-grid" id="imoveis-grid">
+        <div class="imoveis-grid dash-anim d1" id="imoveis-grid">
           <!-- Populated by JS -->
         </div>
       </div>
@@ -5117,7 +5119,7 @@ function setLeadFilter(source,btn){
 function renderImoveis(){
   const grid=document.getElementById('imoveis-grid');
   if(!IMOVEIS.length){
-    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--t3)"><div style="font-size:40px;margin-bottom:16px">🏠</div><div style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--t2)">Nenhum imóvel cadastrado</div><div style="font-size:12px;margin-bottom:20px">Adicione seu primeiro imóvel ao portfólio.</div><button class="btn-add" onclick="abrirModalNovoImovel()">+ Adicionar Imóvel</button></div>`;
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🏠</div><div class="empty-state-title">Nenhum imóvel cadastrado</div><div class="empty-state-desc">Adicione seu primeiro imóvel ao portfólio.</div><div class="empty-state-action"><button class="btn-add" onclick="abrirModalNovoImovel()">+ Adicionar Imóvel</button></div></div>`;
     return;
   }
   const _statusMapIm={'Ativo':'status-novo','Captado':'status-negociacao','Negociação':'status-contato','Vendido':'status-fechado'};
