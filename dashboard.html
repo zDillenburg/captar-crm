@@ -273,18 +273,26 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .filter-chips{display:flex;gap:8px;flex-wrap:wrap}
 .btn-add{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--p);color:#fff;font-size:13px;font-weight:600;border:none;border-radius:var(--r);cursor:pointer;transition:background .2s,transform .15s;margin-left:auto}
 .btn-add:hover{background:var(--pl);transform:translateY(-1px)}
+/* Antes era repetido como style= inline em cada botão da toolbar do CRM
+   (Checklist, Importar CSV, Priorizar com IA) — três cópias do mesmo
+   bloco de estilo. Formalizado aqui como componente de verdade. */
+.btn-secondary{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:border-color .2s,background .2s,color .2s;font-family:inherit}
+.btn-secondary:hover{border-color:var(--border2);background:var(--bg4);color:var(--t1)}
+.btn-secondary.accent{border-color:rgba(163,3,154,.35);background:rgba(133,2,119,.1);color:#e6b3df;font-weight:700}
+.btn-secondary.accent:hover{border-color:rgba(163,3,154,.5);background:rgba(133,2,119,.16)}
 
 /* Kanban */
 .kanban-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:start}
-.kanban-column{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.kanban-column{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:border-color .25s}
+.kanban-column:hover{border-color:var(--border2)}
 .kanban-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .kanban-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .kanban-col-title{font-size:13px;font-weight:700;color:var(--t1);flex:1}
 .kanban-count{font-size:11px;font-weight:700;background:var(--bg4);color:var(--t3);padding:2px 7px;border-radius:20px}
 .kanban-cards{padding:12px;min-height:120px;display:flex;flex-direction:column;gap:10px;transition:background .2s}
 .kanban-cards.drag-over{background:rgba(133,2,119,.06)}
-.lead-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:grab;transition:border-color .2s,box-shadow .2s,transform .15s;user-select:none}
-.lead-card:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(0,0,0,.3);transform:translateY(-1px)}
+.lead-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:grab;transition:border-color .25s,box-shadow .25s,transform .25s var(--ease,ease);user-select:none}
+.lead-card:hover{border-color:var(--border2);box-shadow:0 14px 32px -14px rgba(0,0,0,.5);transform:translateY(-3px)}
 .lead-card.dragging{opacity:.5;cursor:grabbing}
 .lead-card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .lead-priority-badge{display:block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:help}
@@ -1599,7 +1607,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
       <!-- ══════ CRM PAGE ══════ -->
       <div class="page" id="page-crm">
-        <div class="crm-toolbar">
+        <div class="crm-toolbar dash-anim">
           <div class="search-wrap">
             <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input class="search-input" type="text" placeholder="Buscar lead por nome ou telefone…" oninput="filterLeads(this.value)"/>
@@ -1610,13 +1618,13 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <button class="chip" onclick="setLeadFilter('site',this)">Site</button>
             <button class="chip" onclick="setLeadFilter('indicacao',this)">Indicação</button>
           </div>
-          <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos por transação" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
+          <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos por transação">
             📋 Checklist
           </button>
-          <button class="btn-secondary" onclick="abrirImportCSV('leads')" title="Importar leads de uma planilha CSV" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">
+          <button class="btn-secondary" onclick="abrirImportCSV('leads')" title="Importar leads de uma planilha CSV">
             📥 Importar CSV
           </button>
-          <button class="btn-secondary" id="btn-priorizar-ia" onclick="priorizarLeadsComIA()" title="A Captar IA analisa seus leads e sugere por quem começar" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid rgba(163,3,154,.35);background:rgba(133,2,119,.1);color:#e6b3df;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+          <button class="btn-secondary accent" id="btn-priorizar-ia" onclick="priorizarLeadsComIA()" title="A Captar IA analisa seus leads e sugere por quem começar">
             ✨ Priorizar com IA
           </button>
           <button class="btn-add" onclick="openModal()">
@@ -1625,7 +1633,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </button>
         </div>
 
-        <div class="kanban-board" id="kanban-board">
+        <div class="kanban-board dash-anim d1" id="kanban-board">
           <!-- Columns populated by JS -->
         </div>
       </div>
