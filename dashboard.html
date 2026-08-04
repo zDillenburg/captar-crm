@@ -827,7 +827,8 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .admin-header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--r2);margin-bottom:24px}
 .admin-badge{padding:3px 10px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;border-radius:20px;text-transform:uppercase}
 .admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:24px}
-.admin-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px}
+.admin-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;transition:border-color .25s,transform .25s var(--ease,ease)}
+.admin-stat:hover{border-color:var(--border2);transform:translateY(-2px)}
 .admin-stat-val{font-size:28px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
 .admin-stat-lbl{font-size:12px;color:var(--t3)}
 .admin-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:16px;overflow:hidden}
@@ -837,7 +838,8 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .admin-table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:10px 20px;text-align:left;border-bottom:1px solid var(--border)}
 .admin-table td{padding:11px 20px;border-bottom:1px solid var(--border);font-size:12px;color:var(--t2);vertical-align:middle}
 .admin-table tr:last-child td{border-bottom:none}
-.admin-table tr:hover td{background:var(--bg3)}
+.admin-table tr{transition:background .15s}
+.admin-table tr:hover{background:var(--bg3)}
 .btn-del{padding:5px 11px;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);border-radius:var(--r);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
 .btn-del:hover{background:rgba(239,68,68,.25);color:#fff}
 .admin-empty{padding:32px;text-align:center;color:var(--t3);font-size:13px}
@@ -1198,8 +1200,8 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 .ferr-tab-btn.active{background:var(--p);color:#fff;border-color:var(--p)}
 .ferr-tab-pane{display:none}.ferr-tab-pane.active{display:block}
 .ferr-export-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
-.ferr-export-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px 14px;text-align:center;cursor:pointer;transition:all .2s}
-.ferr-export-card:hover{border-color:var(--p);background:rgba(133,2,119,.06);transform:translateY(-2px)}
+.ferr-export-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px 14px;text-align:center;cursor:pointer;transition:border-color .25s,background .25s,transform .25s var(--ease,ease),box-shadow .25s}
+.ferr-export-card:hover{border-color:var(--p);background:rgba(133,2,119,.06);transform:translateY(-4px);box-shadow:0 14px 28px -14px rgba(133,2,119,.35)}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:700px){.calc-grid{grid-template-columns:1fr}}
 @media(max-width:400px){.kpi-grid{grid-template-columns:1fr}.loc-summary,.vis-summary{grid-template-columns:1fr}}
@@ -2365,7 +2367,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
       <div class="page" id="page-admin">
 
         <!-- Header -->
-        <div class="admin-header">
+        <div class="admin-header dash-anim">
           <span class="admin-badge">ADMIN</span>
           <div>
             <div style="font-size:14px;font-weight:700;color:var(--t1)">Painel Administrativo</div>
@@ -2374,7 +2376,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- Admin Tabs Navigation -->
-        <div class="admin-tabs-nav">
+        <div class="admin-tabs-nav dash-anim">
           <button class="admin-tab-btn active" onclick="switchAdminTab('geral',this)">📊 Visão Geral</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('usuarios',this)">👥 Usuários</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('imoveis',this)">🏠 Imóveis</button>
@@ -2384,7 +2386,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- ── TAB: VISÃO GERAL ── -->
-        <div class="admin-tab-pane active" id="adm-pane-geral">
+        <div class="admin-tab-pane active dash-anim d1" id="adm-pane-geral">
           <div class="admin-grid" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px">
             <div class="admin-stat">
               <div class="admin-stat-val" id="adm-total" style="color:#a3039a">0</div>
@@ -2427,7 +2429,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- ── TAB: USUÁRIOS ── -->
-        <div class="admin-tab-pane" id="adm-pane-usuarios">
+        <div class="admin-tab-pane dash-anim" id="adm-pane-usuarios">
           <div class="admin-section">
             <div class="admin-section-hdr" style="flex-wrap:wrap;gap:12px">
               <div class="admin-section-title">
@@ -2455,7 +2457,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- ── TAB: IMÓVEIS (todos os clientes) ── -->
-        <div class="admin-tab-pane" id="adm-pane-imoveis">
+        <div class="admin-tab-pane dash-anim" id="adm-pane-imoveis">
           <div class="admin-section">
             <div class="admin-section-hdr" style="flex-wrap:wrap;gap:12px">
               <div class="admin-section-title">
@@ -2469,7 +2471,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- ── TAB: ASSINATURAS ── -->
-        <div class="admin-tab-pane" id="adm-pane-assinaturas">
+        <div class="admin-tab-pane dash-anim" id="adm-pane-assinaturas">
           <div class="admin-section">
             <div class="admin-section-hdr" style="flex-wrap:wrap;gap:12px">
               <div class="admin-section-title">
@@ -2504,7 +2506,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- ── TAB: AVISOS ── -->
-        <div class="admin-tab-pane" id="adm-pane-avisos">
+        <div class="admin-tab-pane dash-anim" id="adm-pane-avisos">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:12px">
             <div>
               <div style="font-size:15px;font-weight:700;color:var(--t1)">Avisos para Usuários</div>
@@ -2519,7 +2521,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- ── TAB: MODO DEMO ── -->
-        <div class="admin-tab-pane" id="adm-pane-demo">
+        <div class="admin-tab-pane dash-anim" id="adm-pane-demo">
           <div class="admin-section">
             <div class="admin-section-hdr">
               <div class="admin-section-title">🎯 Modo Demonstração</div>
@@ -2611,7 +2613,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
       <!-- ══════ FERRAMENTAS ══════ -->
       <div class="page" id="page-ferramentas">
-        <div class="ferr-tabs-nav">
+        <div class="ferr-tabs-nav dash-anim">
           <button class="ferr-tab-btn active" onclick="switchFerrTab('exportar',this)">📥 Exportar Dados</button>
           <button class="ferr-tab-btn" onclick="switchFerrTab('calc',this)">🧮 Calculadoras</button>
           <button class="ferr-tab-btn" onclick="switchFerrTab('wa',this)">📲 WhatsApp em Massa</button>
@@ -2619,7 +2621,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <button class="ferr-tab-btn" onclick="switchFerrTab('relatorio',this)">📄 Relatório PDF</button>
         </div>
         <!-- Exportar -->
-        <div class="ferr-tab-pane active" id="ferr-pane-exportar">
+        <div class="ferr-tab-pane active dash-anim d1" id="ferr-pane-exportar">
           <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">Exportar Dados</div>
           <div style="font-size:12px;color:var(--t3);margin-bottom:20px">Baixe suas tabelas em CSV (abre no Excel) ou faça backup completo em JSON</div>
           <div class="ferr-export-grid">
@@ -2632,7 +2634,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
         </div>
         <!-- Calculadoras -->
-        <div class="ferr-tab-pane" id="ferr-pane-calc">
+        <div class="ferr-tab-pane dash-anim" id="ferr-pane-calc">
           <div class="calc-grid">
             <div class="calc-card">
               <div class="calc-title">🏦 Calculadora de Financiamento</div>
@@ -2653,7 +2655,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
         </div>
         <!-- WhatsApp em Massa -->
-        <div class="ferr-tab-pane" id="ferr-pane-wa">
+        <div class="ferr-tab-pane dash-anim" id="ferr-pane-wa">
           <div class="wa-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
             <div>
               <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:12px">1️⃣ Selecione os destinatários</div>
@@ -2682,13 +2684,13 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
         </div>
         <!-- Aniversários -->
-        <div class="ferr-tab-pane" id="ferr-pane-aniversarios">
+        <div class="ferr-tab-pane dash-anim" id="ferr-pane-aniversarios">
           <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">🎂 Aniversários de Clientes</div>
           <div style="font-size:12px;color:var(--t3);margin-bottom:20px">Leads que fazem aniversário este mês ou em breve.</div>
           <div id="ferr-aniversarios-list"><div style="text-align:center;padding:40px;color:var(--t3)">Carregando...</div></div>
         </div>
         <!-- Relatório PDF -->
-        <div class="ferr-tab-pane" id="ferr-pane-relatorio">
+        <div class="ferr-tab-pane dash-anim" id="ferr-pane-relatorio">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
             <div>
               <div style="font-size:15px;font-weight:700;color:var(--t1)">📄 Relatório Executivo</div>
