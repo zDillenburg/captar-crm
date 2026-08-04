@@ -101,9 +101,10 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 #app.visible{opacity:1}
 
 /* ── SIDEBAR ── */
-.sidebar{width:var(--sw);height:100vh;min-height:100vh;position:fixed;left:0;top:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s;overflow:hidden}
-.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border)}
+.sidebar{width:var(--sw);height:100vh;min-height:100vh;position:fixed;left:0;top:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s var(--ease,ease);overflow:hidden}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .sidebar-logo img{height:40px}
+.sidebar-close{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:50%;width:32px;height:32px;align-items:center;justify-content:center;color:var(--t2);cursor:pointer;flex-shrink:0}
 .sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto}
 .nav-section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding:0 8px;margin:16px 0 8px}
 .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r);font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;transition:background .15s,color .15s;margin-bottom:2px;text-decoration:none;border:none;background:none;width:100%;text-align:left}
@@ -223,14 +224,27 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .link-btn{font-size:12px;color:var(--pl);text-decoration:none;font-weight:500;cursor:pointer;background:none;border:none}
 .link-btn:hover{text-decoration:underline}
 
-/* Recent leads table */
-.leads-table{width:100%;border-collapse:collapse}
-.leads-table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:0 12px 10px 0;text-align:left;border-bottom:1px solid var(--border)}
-.leads-table td{padding:12px 12px 12px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--t2);vertical-align:middle}
-.leads-table tr:last-child td{border-bottom:none}
-.leads-table tr{transition:background .15s}
-.leads-table tr:hover td{color:var(--t1)}
-.leads-table tr:hover{background:var(--bg3)}
+/* Recent leads table — .data-table é o nome genérico do componente pra
+   páginas futuras (contratos, pagamentos, corretores etc.); .leads-table
+   continua funcionando como alias, sem precisar tocar no HTML que já usa
+   esse nome hoje. */
+.leads-table,.data-table{width:100%;border-collapse:collapse}
+.leads-table th,.data-table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:0 12px 10px 0;text-align:left;border-bottom:1px solid var(--border)}
+.leads-table td,.data-table td{padding:12px 12px 12px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--t2);vertical-align:middle}
+.leads-table tr:last-child td,.data-table tr:last-child td{border-bottom:none}
+.leads-table tr,.data-table tr{transition:background .15s}
+.leads-table tr:hover td,.data-table tr:hover td{color:var(--t1)}
+.leads-table tr:hover,.data-table tr:hover{background:var(--bg3)}
+
+/* ── Estado vazio — componente genérico (ícone + título + descrição +
+   ação), pronto pra ser usado conforme cada página for migrada. Nenhum
+   dos ~10 estados vazios hoje espalhados pelo dashboard foi reescrito
+   nesta passada — isso é infraestrutura, não uma migração em massa. ── */
+.empty-state{text-align:center;padding:56px 24px;color:var(--t3)}
+.empty-state-icon{font-size:32px;margin-bottom:16px;opacity:.6}
+.empty-state-title{font-size:14px;font-weight:700;color:var(--t2);margin-bottom:6px}
+.empty-state-desc{font-size:12.5px;line-height:1.6;max-width:36ch;margin:0 auto}
+.empty-state-action{margin-top:18px}
 .lead-name-cell{display:flex;align-items:center;gap:10px}
 .mini-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
 .status-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em}
@@ -399,13 +413,16 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .pp-upload-label{padding:8px 14px;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;transition:border-color .15s}
 .pp-upload-label:hover{border-color:var(--p)}
 
-/* Preview — sempre escuro, replica exatamente o visual da página pública */
+/* Preview — sempre escuro, replica exatamente o visual da página pública.
+   Valores realinhados com o redesign de corretor-publico.html (Manrope +
+   tokens --base/--surface/--t-100) — esse preview tinha ficado defasado
+   mostrando o visual antigo da página pública depois daquele redesign. */
 .pp-preview-col{position:sticky;top:20px}
 .pp-preview-label{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
 .pp-preview{
-  --ppbg:#000000;--ppbg2:#111111;--ppborder:rgba(255,255,255,.09);
-  --ppt1:#f5f5f7;--ppt2:rgba(245,245,247,.68);--ppt3:rgba(245,245,247,.42);--pppl:#850277;
-  background:var(--ppbg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;font-family:'Inter',-apple-system,sans-serif;
+  --ppbg:#100e0d;--ppbg2:#17140f;--ppborder:rgba(255,253,234,.085);
+  --ppt1:#fffdea;--ppt2:rgba(255,253,234,.70);--ppt3:rgba(255,253,234,.52);--pppl:#a3039a;
+  background:var(--ppbg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;font-family:'Manrope',-apple-system,sans-serif;
 }
 .pp-preview-banner{height:88px;background:var(--ppbg2)}
 .pp-preview-banner img{width:100%;height:100%;object-fit:cover;display:block}
@@ -706,8 +723,16 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 }
 @media(max-width:900px){
   :root{--sw:0px}
-  .sidebar{transform:translateX(-260px);width:260px}
+  /* O hambúrguer reabre essa mesma sidebar — no mobile ela vira um menu
+     próprio (alvos de toque maiores, botão de fechar visível, largura um
+     pouco maior), não uma cópia espremida da barra de desktop. */
+  .sidebar{transform:translateX(-280px);width:280px;box-shadow:24px 0 60px -20px rgba(0,0,0,.6)}
   .sidebar.open{transform:translateX(0)}
+  .sidebar-close{display:flex}
+  .sidebar-nav{padding:18px 14px}
+  .nav-item{padding:13px 14px;font-size:14px}
+  .nav-item svg{width:20px;height:20px}
+  .nav-section-label{margin:20px 0 10px}
   .main{margin-left:0;width:100%}
   .topbar-hamburger{display:flex}
   .config-grid{grid-template-columns:1fr}
@@ -1240,6 +1265,9 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <a href="index.html"><img src="logo.svg" alt="Grupo Captar"/></a>
+      <button class="sidebar-close" onclick="toggleSidebar()" aria-label="Fechar menu">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Principal</div>
@@ -3530,7 +3558,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 </div>
 
 <!-- SIDEBAR OVERLAY (mobile) -->
-<div id="sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90" onclick="toggleSidebar()"></div>
+<div id="sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:90" onclick="toggleSidebar()"></div>
 
 <!-- ══════ LEAD DETAIL SLIDE-OVER ══════ -->
 <div class="slide-over-overlay" id="lead-detail-overlay" onclick="closeLeadDetail(event)">
