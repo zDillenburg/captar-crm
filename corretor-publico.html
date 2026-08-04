@@ -8,119 +8,204 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
-    --p:#850277;--pl:#a3039a;--pd:#620158;
-    --bg:#000000;--bg2:#111111;--bg3:#1a1a1a;--bg4:#222222;
-    --border:rgba(255,255,255,0.09);
-    --t1:#f5f5f7;--t2:rgba(245,245,247,.68);--t3:rgba(245,245,247,.42);
+    --purple:#850277;--purple-light:#a3039a;--purple-dark:#620158;
+    --black:#100e0d;--ink:#0a0908;--base:#100e0d;--surface:#17140f;--surface-2:#1d1916;
+    --line:rgba(255,253,234,.085);--line-mid:rgba(255,253,234,.14);--line-strong:rgba(255,253,234,.22);
+    --t-100:#fffdea;--t-70:rgba(255,253,234,.70);--t-55:rgba(255,253,234,.55);--t-40:rgba(255,253,234,.52);--t-28:rgba(255,253,234,.46);
+    --r-xs:6px;--r-sm:10px;--r:14px;--r-lg:22px;
+    --ease:cubic-bezier(.16,1,.3,1);--ease-io:cubic-bezier(.4,0,.2,1);
   }
   body.light-mode{
-    --bg:#ffffff;--bg2:#f5f5f7;--bg3:#ececee;--bg4:#e2e2e5;
-    --border:rgba(0,0,0,0.08);
-    --t1:#1d1d1f;--t2:rgba(29,29,31,.68);--t3:rgba(29,29,31,.45);
+    --black:#fffdea;--ink:#fffdea;--base:#fffdea;--surface:#f5f3e4;--surface-2:#ece9d5;
+    --line:rgba(16,14,13,.08);--line-mid:rgba(16,14,13,.14);--line-strong:rgba(16,14,13,.24);
+    --t-100:#100e0d;--t-70:rgba(16,14,13,.72);--t-55:rgba(16,14,13,.56);--t-40:rgba(16,14,13,.48);--t-28:rgba(16,14,13,.40);
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html{-webkit-text-size-adjust:100%}
-  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;transition:background .2s ease,color .2s ease}
+  body{font-family:'Manrope',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--base);color:var(--t-100);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;transition:background .25s ease,color .25s ease}
   a{color:inherit}
+  ::selection{background:var(--purple-light);color:#fff}
 
-  header{display:flex;align-items:center;justify-content:center;padding:22px;border-bottom:1px solid var(--border);position:relative}
+  header{display:flex;align-items:center;justify-content:center;padding:20px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--base) 88%, transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
   header a{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
-  header img{height:26px;width:auto;opacity:.9}
-  body.light-mode header img{filter:brightness(0) saturate(0);opacity:.85}
+  header img{height:24px;width:auto;opacity:.92}
+  body.light-mode header img{filter:brightness(0) saturate(0);opacity:.82}
   .theme-toggle{
     position:absolute;right:20px;top:50%;transform:translateY(-50%);
-    width:34px;height:34px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--t2);
+    width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--line);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--t-70);transition:background .2s ease,transform .2s var(--ease);
   }
+  .theme-toggle:hover{background:var(--surface-2);transform:translateY(-50%) scale(1.06)}
   main{flex:1;display:flex;justify-content:center}
-  .wrap{width:100%;max-width:640px;padding-bottom:120px}
+  .wrap{width:100%;max-width:680px;padding-bottom:130px}
 
   @media(prefers-reduced-motion:no-preference){
-    .fade-up{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both}
-    .fade-up.d1{animation-delay:.04s}
-    .fade-up.d2{animation-delay:.09s}
-    .fade-up.d3{animation-delay:.14s}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{opacity:0;transform:translateY(14px);animation:fadeUp .6s var(--ease) forwards}
+    .fade-up.d1{animation-delay:.06s}
+    .fade-up.d2{animation-delay:.12s}
+    .fade-up.d3{animation-delay:.18s}
+    .fade-up.d4{animation-delay:.24s}
+    @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+    .card-in{opacity:0;transform:translateY(16px) scale(.98);animation:cardIn .55s var(--ease) forwards;animation-delay:calc(var(--i, 0) * 45ms)}
+    @keyframes cardIn{to{opacity:1;transform:translateY(0) scale(1)}}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .fade-up,.card-in{opacity:1!important;transform:none!important;animation:none!important}
   }
 
-  .state-box{text-align:center;padding:120px 20px;color:var(--t3);max-width:380px;margin:0 auto}
-  .state-box svg{width:32px;height:32px;margin-bottom:20px;opacity:.4}
+  .state-box{text-align:center;padding:120px 20px;color:var(--t-40);max-width:380px;margin:0 auto}
+  .state-box svg{width:32px;height:32px;margin-bottom:20px;opacity:.5}
   .state-box p{font-size:15px;line-height:1.6}
 
-  /* ── Banner + avatar — quiet, no decoration ─────────────── */
-  .banner{height:180px;background:var(--bg2)}
-  .banner img{width:100%;height:100%;object-fit:cover;display:block}
-  .profile-head{padding:0 28px;margin-top:-40px;position:relative}
+  /* ── Skeleton de carregamento — já sugere o layout final ── */
+  .skel{background:linear-gradient(90deg, var(--surface) 22%, var(--surface-2) 40%, var(--surface) 58%);background-size:400% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:var(--r)}
+  @keyframes shimmer{0%{background-position:120% 0}100%{background-position:-20% 0}}
+  .skel-wrap{padding-bottom:60px}
+  .skel-banner{height:180px;border-radius:0}
+  .skel-head{padding:0 28px;margin-top:-40px;position:relative}
+  .skel-avatar{width:88px;height:88px;border-radius:22px;border:3px solid var(--base)}
+  .skel-pad{padding:24px 28px 0}
+  .skel-line{height:14px;margin-bottom:10px}
+  .skel-stats{display:flex;gap:10px;padding:0 28px;margin:24px 0}
+  .skel-stat{flex:1;height:64px;border-radius:16px}
+  .skel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;padding:0 28px}
+  .skel-card{height:230px}
+  @media(prefers-reduced-motion:reduce){.skel{animation:none;background:var(--surface)}}
+
+  /* ── Banner + avatar ─────────────────────────────── */
+  .banner{height:190px;background:var(--surface);position:relative;overflow:hidden}
+  .banner::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,var(--base) 100%);opacity:.85}
+  .banner img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.04)}
+  .profile-head{padding:0 28px;margin-top:-44px;position:relative;z-index:2}
   .profile-avatar-row{display:flex;align-items:flex-end;gap:14px;margin-bottom:20px}
-  .profile-logo,.profile-avatar-fallback{width:88px;height:88px;border-radius:22px;flex-shrink:0;border:3px solid var(--bg);box-shadow:0 12px 28px rgba(0,0,0,.45)}
+  .profile-logo,.profile-avatar-fallback{width:88px;height:88px;border-radius:22px;flex-shrink:0;border:3px solid var(--base);box-shadow:0 16px 32px -8px rgba(0,0,0,.55)}
   .profile-logo{object-fit:contain;background:#fff}
-  .profile-avatar-fallback{background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600;color:var(--t2)}
+  .profile-avatar-fallback{background:linear-gradient(160deg,var(--purple-light),var(--purple-dark));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff}
   .profile-social{display:flex;gap:8px;margin-bottom:4px}
   .profile-social a{
-    width:34px;height:34px;border-radius:50%;background:var(--bg3);
-    display:flex;align-items:center;justify-content:center;color:var(--t2);transition:background .15s,color .15s;
+    width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;color:var(--t-70);transition:background .18s,color .18s,transform .18s var(--ease);
   }
-  .profile-social a:hover{background:var(--bg4);color:var(--t1)}
+  .profile-social a:hover{background:var(--purple);color:#fff;transform:translateY(-2px)}
   .profile-social svg{width:15px;height:15px}
 
   .wrap-pad{padding:0 28px}
-  .verified-line{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--t3);font-weight:500;margin-bottom:8px}
-  .verified-line svg{width:13px;height:13px;color:var(--pl);flex-shrink:0}
-  .profile-name{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px}
-  .profile-tagline{font-size:16px;color:var(--t2);line-height:1.5;margin-bottom:24px;max-width:48ch;font-weight:400}
+  .verified-line{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--t-40);font-weight:600;margin-bottom:9px;letter-spacing:.01em}
+  .verified-line svg{width:13px;height:13px;color:var(--purple-light);flex-shrink:0}
+  .profile-name{font-size:clamp(26px,5vw,34px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin-bottom:9px}
+  .profile-tagline{font-size:16px;color:var(--t-70);line-height:1.55;margin-bottom:24px;max-width:48ch;font-weight:500}
 
   .stat-row{display:flex;gap:10px;margin-bottom:28px}
-  .stat{flex:1;background:var(--bg2);border-radius:16px;padding:16px 8px;text-align:center}
-  .stat-val{font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
-  .stat-lbl{font-size:11px;color:var(--t3);margin-top:4px;font-weight:500}
-  .stat-line{font-size:14px;color:var(--t3);margin-bottom:28px;font-weight:500}
+  .stat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 8px;text-align:center;transition:background .2s,border-color .2s}
+  .stat-val{font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.1;color:var(--t-100)}
+  .stat-lbl{font-size:11px;color:var(--t-40);margin-top:4px;font-weight:600;letter-spacing:.02em}
+  .stat-line{font-size:14px;color:var(--t-40);margin-bottom:28px;font-weight:600}
 
-  .profile-bio{font-size:16px;line-height:1.6;color:var(--t2);font-weight:400;margin-bottom:28px;max-width:56ch}
+  .profile-bio{font-size:16px;line-height:1.65;color:var(--t-70);font-weight:500;margin-bottom:28px;max-width:56ch}
 
-  .section-label{font-size:13px;font-weight:600;color:var(--t3);margin-bottom:16px}
+  .section-label{font-size:13px;font-weight:700;color:var(--t-40);letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+  .section-label-count{font-weight:600;color:var(--t-28)}
+
+  /* ── Barra de busca + filtro ─────────────────────── */
+  .search-row{display:flex;gap:8px;margin-bottom:16px}
+  .search-box{flex:1;display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:0 14px;transition:border-color .2s}
+  .search-box:focus-within{border-color:var(--purple-light)}
+  .search-box svg{width:16px;height:16px;color:var(--t-40);flex-shrink:0}
+  .search-box input{flex:1;background:none;border:none;outline:none;color:var(--t-100);font:inherit;font-size:14.5px;padding:12px 0;font-family:'Manrope',sans-serif}
+  .search-box input::placeholder{color:var(--t-28)}
+  .filter-toggle{
+    position:relative;display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+    padding:0 16px;color:var(--t-70);font-size:14px;font-weight:700;cursor:pointer;transition:border-color .2s,color .2s;flex-shrink:0;font-family:inherit;
+  }
+  .filter-toggle svg{width:15px;height:15px}
+  .filter-toggle.active{border-color:var(--purple-light);color:var(--t-100)}
+  .filter-toggle-badge{
+    position:absolute;top:-6px;right:-6px;background:var(--purple-light);color:#fff;font-size:10px;font-weight:800;
+    width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  }
+
+  .filter-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:39;opacity:0;visibility:hidden;transition:opacity .25s ease}
+  .filter-backdrop.open{opacity:1;visibility:visible}
+  .filter-panel{
+    position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);width:100%;max-width:480px;z-index:40;
+    background:var(--surface);border:1px solid var(--line-mid);border-bottom:none;border-radius:22px 22px 0 0;
+    padding:22px 22px calc(22px + env(safe-area-inset-bottom));transition:transform .35s var(--ease);
+    max-height:80vh;overflow-y:auto;box-shadow:0 -24px 60px -20px rgba(0,0,0,.6);
+  }
+  .filter-panel.open{transform:translate(-50%,0)}
+  .filter-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .filter-panel-head h3{font-size:16px;font-weight:800}
+  .filter-panel-close{width:30px;height:30px;border-radius:50%;background:var(--surface-2);border:none;color:var(--t-70);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .filter-field{margin-bottom:16px}
+  .filter-field label{display:block;font-size:12px;font-weight:700;color:var(--t-40);letter-spacing:.02em;margin-bottom:8px}
+  .filter-field select,.filter-field input{
+    width:100%;background:var(--surface-2);border:1px solid var(--line-mid);border-radius:var(--r-sm);color:var(--t-100);
+    font:inherit;font-size:14.5px;padding:11px 12px;outline:none;transition:border-color .2s;font-family:'Manrope',sans-serif;
+  }
+  .filter-field select:focus,.filter-field input:focus{border-color:var(--purple-light)}
+  .filter-field-row{display:flex;gap:10px}
+  .filter-field-row .filter-field{flex:1;margin-bottom:0}
+  .filter-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .filter-chip{
+    background:var(--surface-2);border:1px solid var(--line-mid);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;
+    color:var(--t-55);cursor:pointer;transition:background .18s,border-color .18s,color .18s;font-family:inherit;
+  }
+  .filter-chip.active{background:var(--purple);border-color:var(--purple);color:#fff}
+  .filter-actions{display:flex;gap:10px;margin-top:20px}
+  .filter-clear{flex:1;background:none;border:1px solid var(--line-mid);border-radius:var(--r-sm);color:var(--t-55);font:inherit;font-weight:700;font-size:14px;padding:13px;cursor:pointer;transition:border-color .18s,color .18s}
+  .filter-clear:hover{border-color:var(--line-strong);color:var(--t-100)}
+  .filter-apply{flex:1;background:var(--purple);border:none;border-radius:var(--r-sm);color:#fff;font:inherit;font-weight:800;font-size:14px;padding:13px;cursor:pointer;transition:background .18s}
+  .filter-apply:hover{background:var(--purple-light)}
 
   .im-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
-  .im-card{background:var(--bg2);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease}
-  .im-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4)}
-  .im-card-img{height:150px;display:flex;align-items:center;justify-content:center;font-size:34px;position:relative;overflow:hidden;background:var(--bg3)}
-  .im-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1}
+  .im-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .32s var(--ease),box-shadow .32s var(--ease),border-color .32s var(--ease)}
+  @media(hover:hover){
+    .im-card:hover{transform:translateY(-6px);box-shadow:0 26px 50px -18px rgba(0,0,0,.55);border-color:var(--line-strong)}
+    .im-card:hover .im-card-img img{transform:scale(1.06)}
+  }
+  .im-card:active{transform:translateY(-2px) scale(.99)}
+  .im-card-img{height:150px;display:flex;align-items:center;justify-content:center;font-size:34px;position:relative;overflow:hidden;background:var(--surface-2)}
+  .im-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;transition:transform .5s var(--ease)}
   .im-card-emoji{position:relative;z-index:1;opacity:.85}
-  .im-card-status{position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;letter-spacing:.02em;padding:4px 10px;border-radius:20px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:2}
-  .im-card-destaque{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;letter-spacing:.02em;padding:4px 10px;border-radius:20px;background:rgba(245,158,11,.92);color:#1a1200;z-index:2}
+  .im-card-status{position:absolute;top:10px;right:10px;font-size:10px;font-weight:800;letter-spacing:.03em;padding:5px 10px;border-radius:20px;background:rgba(0,0,0,.6);color:#fff;backdrop-filter:blur(8px);z-index:2}
+  .im-card-destaque{position:absolute;top:10px;left:10px;font-size:10px;font-weight:800;letter-spacing:.03em;padding:5px 10px;border-radius:20px;background:linear-gradient(135deg,#f5a623,#ef8f0f);color:#1a1200;z-index:2}
   .im-card-body{padding:16px}
-  .im-card-price{font-size:17px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
-  .im-card-addr{font-size:12.5px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:10px}
-  .im-card-specs{display:flex;gap:12px;font-size:11.5px;color:var(--t2);font-weight:500}
+  .im-card-price{font-size:17px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+  .im-card-addr{font-size:12.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:11px;font-weight:600}
+  .im-card-specs{display:flex;gap:12px;font-size:11.5px;color:var(--t-55);font-weight:700}
   .im-card-specs span{display:flex;align-items:center;gap:4px}
-  .im-card-specs svg{width:12px;height:12px;opacity:.6}
+  .im-card-specs svg{width:12px;height:12px;opacity:.7}
 
-  .empty-imoveis{text-align:center;padding:56px 20px;color:var(--t3);font-size:14px;background:var(--bg2);border-radius:18px}
+  .empty-imoveis{text-align:center;padding:56px 24px;color:var(--t-40);font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;line-height:1.6}
+  .empty-imoveis svg{width:28px;height:28px;opacity:.5;margin-bottom:14px}
+  .empty-clear-btn{margin-top:16px;background:var(--purple);border:none;border-radius:var(--r-sm);color:#fff;font:inherit;font-weight:700;font-size:13.5px;padding:10px 18px;cursor:pointer}
 
-  footer{text-align:center;padding:24px;font-size:12.5px;color:var(--t3)}
-  footer a{color:var(--t2);text-decoration:none;font-weight:600}
+  footer{text-align:center;padding:24px;font-size:12.5px;color:var(--t-40)}
+  footer a{color:var(--t-70);text-decoration:none;font-weight:700}
 
-  /* CTA fixo — prático pro cliente não precisar rolar de volta */
   .sticky-cta{
     position:fixed;bottom:0;left:0;right:0;z-index:20;
     padding:14px 20px calc(14px + env(safe-area-inset-bottom));
-    background:rgba(10,10,10,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border-top:1px solid var(--border);
+    background:color-mix(in srgb, var(--base) 84%, transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border-top:1px solid var(--line);
     display:flex;justify-content:center;
   }
-  body.light-mode .sticky-cta{background:rgba(255,255,255,.82)}
   .sticky-cta a{
     width:100%;max-width:600px;display:flex;align-items:center;justify-content:center;gap:9px;
-    background:#25d366;color:#fff;font-size:15px;font-weight:600;padding:14px;border-radius:14px;text-decoration:none;
+    background:#25d366;color:#fff;font-size:15px;font-weight:700;padding:14px;border-radius:14px;text-decoration:none;
+    transition:filter .18s,transform .18s var(--ease);
   }
+  .sticky-cta a:hover{filter:brightness(1.08)}
+  .sticky-cta a:active{transform:scale(.98)}
   .sticky-cta svg{width:19px;height:19px;flex-shrink:0}
 
   @media(max-width:600px){
-    .banner{height:140px}
-    .profile-name{font-size:27px}
+    .banner{height:150px}
+    .profile-name{font-size:26px}
     .stat-row{gap:8px}
   }
 </style>
@@ -136,9 +221,17 @@
 
   <main>
     <div class="wrap" id="content">
-      <div class="state-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <p>Carregando perfil…</p>
+      <div class="skel-wrap">
+        <div class="skel skel-banner"></div>
+        <div class="skel-head"><div class="skel skel-avatar"></div></div>
+        <div class="skel-pad">
+          <div class="skel skel-line" style="width:55%;height:26px;margin-top:22px"></div>
+          <div class="skel skel-line" style="width:38%"></div>
+        </div>
+        <div class="skel-stats"><div class="skel skel-stat"></div><div class="skel skel-stat"></div><div class="skel skel-stat"></div></div>
+        <div class="skel-grid">
+          <div class="skel skel-card"></div><div class="skel skel-card"></div><div class="skel skel-card"></div><div class="skel skel-card"></div>
+        </div>
       </div>
     </div>
   </main>
@@ -199,6 +292,23 @@ function formatAreaValor(v){
   return /^[\d.,]+$/.test(v)?v+' m²':v;
 }
 
+// im.preco é texto livre (ex: "R$ 850.000") — parseia pra número em reais
+// pra permitir filtro por faixa de preço, sem exigir mudança de schema.
+function parseMoneyBR(v){
+  if(v==null)return null;
+  const s=String(v).replace(/[^\d.,]/g,'').trim();
+  if(!s)return null;
+  let n;
+  if(s.includes('.')&&s.includes(',')) n=parseFloat(s.replace(/\./g,'').replace(',','.'));
+  else if(s.includes(',')) n=parseFloat(s.replace(',','.'));
+  else n=parseInt(s.replace(/\./g,''),10);
+  return Number.isFinite(n)?n:null;
+}
+
+function uniqueSorted(arr){
+  return Array.from(new Set(arr.filter(Boolean).map(v=>String(v).trim()).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+}
+
 function renderState(iconPath, msg){
   document.getElementById('content').innerHTML = `<div class="state-box">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${iconPath}</svg>
@@ -210,6 +320,10 @@ const ICON_INSTAGRAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColo
 const ICON_SITE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>';
 const ICON_WHATSAPP = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>';
 const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
+const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+const ICON_FILTER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>';
+const ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+const ICON_EMPTY = '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>';
 
 function instagramUrl(handle){
   handle=String(handle||'').trim();
@@ -221,6 +335,154 @@ function siteUrl(url){
   url=String(url||'').trim();
   if(!url)return'';
   return /^https?:\/\//i.test(url)?url:`https://${url}`;
+}
+
+// ── estado do filtro/busca — tudo client-side, a lista inteira já está em memória ──
+let _lista = [];
+let _filters = { q:'', tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null };
+
+function matchesFilters(im){
+  if(_filters.tipo && String(im.tipo||'').trim() !== _filters.tipo) return false;
+  if(_filters.status && String(im.status||'').trim() !== _filters.status) return false;
+  if(_filters.quartosMin && Number(im.quartos||0) < _filters.quartosMin) return false;
+  if(_filters.precoMin!=null || _filters.precoMax!=null){
+    const p = parseMoneyBR(im.preco);
+    if(p==null) return false;
+    if(_filters.precoMin!=null && p < _filters.precoMin) return false;
+    if(_filters.precoMax!=null && p > _filters.precoMax) return false;
+  }
+  if(_filters.q){
+    const hay = `${im.endereco||''} ${im.titulo||''} ${im.tipo||''}`.toLowerCase();
+    if(!hay.includes(_filters.q.toLowerCase())) return false;
+  }
+  return true;
+}
+
+function activeFilterCount(){
+  let n=0;
+  if(_filters.tipo)n++;
+  if(_filters.status)n++;
+  if(_filters.quartosMin)n++;
+  if(_filters.precoMin!=null||_filters.precoMax!=null)n++;
+  return n;
+}
+
+function imCardHtml(im, i){
+  const areaParts=[
+    im.quartos>0?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22V12h18v10M2 12V8a2 2 0 012-2h16a2 2 0 012 2v4"/></svg>${escHtml(String(im.quartos))} qts</span>`:'',
+    formatAreaValor(String(im.area||'').split(' / ')[0])?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>${escHtml(formatAreaValor(String(im.area||'').split(' / ')[0]))}</span>`:''
+  ].filter(Boolean).join('');
+  return `
+    <a class="im-card card-in" style="--i:${i}" href="/imovel-publico.html?id=${encodeURIComponent(im.id)}">
+      <div class="im-card-img">
+        ${im.status ? `<span class="im-card-status">${escHtml(im.status)}</span>` : ''}
+        ${im.destaque ? `<span class="im-card-destaque">⭐ Destaque</span>` : ''}
+        ${Array.isArray(im.fotos) && im.fotos.length
+          ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'im-card-emoji',textContent:this.dataset.fallbackEmoji}))"/>`
+          : `<span class="im-card-emoji">${escHtml(im.emoji || '🏠')}</span>`}
+      </div>
+      <div class="im-card-body">
+        <div class="im-card-price">${escHtml(im.preco || 'Sob consulta')}</div>
+        <div class="im-card-addr">${escHtml(im.endereco || '—')}</div>
+        ${areaParts ? `<div class="im-card-specs">${areaParts}</div>` : ''}
+      </div>
+    </a>
+  `;
+}
+
+function renderGrid(){
+  const grid = document.getElementById('im-grid');
+  // O container pode estar como grade (#im-grid) ou como estado vazio
+  // (#im-grid-empty) dependendo do filtro anterior — sempre pegar o que
+  // existir agora, senão uma mudança de filtro a partir do estado vazio
+  // não teria nenhum elemento pra substituir e ficaria travada sem atualizar.
+  const current = grid || document.getElementById('im-grid-empty');
+  const countEl = document.getElementById('result-count');
+  if(!current) return;
+  const filtered = _lista.filter(matchesFilters);
+  const hasActiveFilter = activeFilterCount() > 0 || !!_filters.q;
+  if(countEl) countEl.textContent = hasActiveFilter ? `${filtered.length} de ${_lista.length}` : `${_lista.length}`;
+
+  if(!filtered.length){
+    current.outerHTML = `<div class="empty-imoveis" id="im-grid-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICON_EMPTY}</svg>
+      ${_lista.length ? 'Nenhum imóvel encontrado com esses filtros.' : 'Nenhum imóvel compartilhado publicamente no momento.'}
+      ${_lista.length && hasActiveFilter ? `<div><button class="empty-clear-btn" onclick="clearAllFilters()">Limpar filtros</button></div>` : ''}
+    </div>`;
+    return;
+  }
+  current.outerHTML = `<div class="im-grid" id="im-grid">${filtered.map((im,i)=>imCardHtml(im,i)).join('')}</div>`;
+}
+
+function onFilterChange(){
+  const tipoEl = document.getElementById('f-tipo');
+  const statusEl = document.getElementById('f-status');
+  const minEl = document.getElementById('f-preco-min');
+  const maxEl = document.getElementById('f-preco-max');
+  _filters.tipo = tipoEl ? tipoEl.value : '';
+  _filters.status = statusEl ? statusEl.value : '';
+  _filters.precoMin = minEl && minEl.value ? Number(minEl.value) : null;
+  _filters.precoMax = maxEl && maxEl.value ? Number(maxEl.value) : null;
+  updateFilterChipsUI();
+  updateFilterToggleUI();
+  renderGrid();
+}
+
+function setQuartosMin(n){
+  _filters.quartosMin = _filters.quartosMin === n ? 0 : n;
+  updateFilterChipsUI();
+  updateFilterToggleUI();
+  renderGrid();
+}
+
+function updateFilterChipsUI(){
+  document.querySelectorAll('.filter-chip').forEach(chip=>{
+    chip.classList.toggle('active', Number(chip.dataset.val) === _filters.quartosMin);
+  });
+}
+
+function updateFilterToggleUI(){
+  const btn = document.getElementById('filter-toggle-btn');
+  const badge = document.getElementById('filter-badge');
+  const n = activeFilterCount();
+  if(btn) btn.classList.toggle('active', n > 0);
+  if(badge){ badge.style.display = n>0 ? 'flex' : 'none'; badge.textContent = n; }
+}
+
+function clearFilters(){
+  _filters = { q:_filters.q, tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null };
+  const tipoEl = document.getElementById('f-tipo'); if(tipoEl) tipoEl.value='';
+  const statusEl = document.getElementById('f-status'); if(statusEl) statusEl.value='';
+  const minEl = document.getElementById('f-preco-min'); if(minEl) minEl.value='';
+  const maxEl = document.getElementById('f-preco-max'); if(maxEl) maxEl.value='';
+  updateFilterChipsUI();
+  updateFilterToggleUI();
+  renderGrid();
+}
+
+function onSearchInput(v){
+  _filters.q = v;
+  renderGrid();
+}
+
+// Usado pelo botão do estado vazio — diferente de clearFilters() (do painel),
+// aqui zera também a busca por texto, já que "nenhum resultado" pode ter
+// vindo só da busca, sem nenhum filtro do painel ativo.
+function clearAllFilters(){
+  _filters.q = '';
+  const searchInput = document.querySelector('.search-box input');
+  if(searchInput) searchInput.value = '';
+  clearFilters();
+}
+
+function toggleFilterPanel(force){
+  const panel = document.getElementById('filter-panel');
+  const backdrop = document.getElementById('filter-backdrop');
+  if(!panel || !backdrop) return;
+  const open = typeof force === 'boolean' ? force : !panel.classList.contains('open');
+  panel.classList.toggle('open', open);
+  backdrop.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
 }
 
 async function load(){
@@ -253,15 +515,15 @@ async function load(){
   document.title = `${perfil.nome || 'Corretor'} — Grupo Captar`;
 
   if(perfil.cor_destaque){
-    document.documentElement.style.setProperty('--pl', perfil.cor_destaque);
-    document.documentElement.style.setProperty('--p', perfil.cor_destaque);
+    document.documentElement.style.setProperty('--purple-light', perfil.cor_destaque);
+    document.documentElement.style.setProperty('--purple', perfil.cor_destaque);
   }
 
   const {data: imoveisData} = await _sb.from('imoveis').select('*').eq('user_id', id).eq('publico', true).order('created_at', { ascending: false });
   // Imóveis marcados como destaque pelo corretor aparecem primeiro —
   // sort estável, então dentro de cada grupo (destaque / não-destaque)
   // a ordem por data mais recente já vinda do banco é preservada.
-  const lista = (imoveisData || []).slice().sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
+  _lista = (imoveisData || []).slice().sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
 
   const logoUrl = fotoPublicUrl('logos', `${id}/avatar.jpg`);
   const capaUrl = perfil.capa_path ? fotoPublicUrl('logos', `${id}/capa.jpg`) : '';
@@ -270,11 +532,15 @@ async function load(){
   const igUrl = instagramUrl(perfil.instagram);
   const siteHref = siteUrl(perfil.site_url);
 
+  const tipos = uniqueSorted(_lista.map(im=>im.tipo));
+  const statuses = uniqueSorted(_lista.map(im=>im.status));
+  const mostrarFiltro = _lista.length > 5;
+
   document.getElementById('content').innerHTML = `
-    <div class="banner">
-      ${capaUrl ? `<img src="${escHtml(capaUrl)}" alt="" onerror="this.remove()"/>` : ''}
+    <div class="banner fade-up">
+      ${capaUrl ? `<img src="${escHtml(capaUrl)}" alt="" onerror="this.parentElement.style.background='var(--surface)';this.remove()"/>` : ''}
     </div>
-    <div class="profile-head fade-up">
+    <div class="profile-head fade-up d1">
       <div class="profile-avatar-row">
         <img class="profile-logo" src="${escHtml(logoUrl)}" data-fallback-initials="${escHtml(initialsOf(perfil.nome))}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'profile-avatar-fallback',textContent:this.dataset.fallbackInitials}))"/>
         ${(igUrl || siteHref) ? `
@@ -285,47 +551,95 @@ async function load(){
       </div>
     </div>
     <div class="wrap-pad">
-      <div class="fade-up d1">
+      <div class="fade-up d2">
         <div class="verified-line">${ICON_CHECK} Corretor parceiro Grupo Captar</div>
         <div class="profile-name">${escHtml(perfil.nome || 'Corretor')}</div>
         ${perfil.tagline ? `<p class="profile-tagline">${escHtml(perfil.tagline)}</p>` : ''}
       </div>
 
       ${(perfil.creci || perfil.especialidade) ? `
-      <div class="stat-row fade-up d2">
-        <div class="stat"><div class="stat-val">${lista.length}</div><div class="stat-lbl">Imóve${lista.length===1?'l':'is'}</div></div>
+      <div class="stat-row fade-up d3">
+        <div class="stat"><div class="stat-val">${_lista.length}</div><div class="stat-lbl">Imóve${_lista.length===1?'l':'is'}</div></div>
         ${perfil.creci ? `<div class="stat"><div class="stat-val">${escHtml(perfil.creci)}</div><div class="stat-lbl">CRECI</div></div>` : ''}
         ${perfil.especialidade ? `<div class="stat"><div class="stat-val" style="font-size:13px;line-height:1.4;padding-top:2px">${escHtml(perfil.especialidade)}</div><div class="stat-lbl">Especialidade</div></div>` : ''}
       </div>
-      ` : `<div class="stat-line fade-up d2">${lista.length} imóve${lista.length===1?'l':'is'} disponíve${lista.length===1?'l':'is'} publicamente</div>`}
+      ` : `<div class="stat-line fade-up d3">${_lista.length} imóve${_lista.length===1?'l':'is'} disponíve${_lista.length===1?'l':'is'} publicamente</div>`}
 
-      ${perfil.bio ? `<p class="profile-bio fade-up d2" style="margin-bottom:36px">${escHtml(perfil.bio)}</p>` : ''}
+      ${perfil.bio ? `<p class="profile-bio fade-up d3" style="margin-bottom:36px">${escHtml(perfil.bio)}</p>` : ''}
 
-      <div class="section-label">Imóveis disponíveis${lista.length ? ' · ' + lista.length : ''}</div>
-      ${lista.length ? `
-        <div class="im-grid fade-up d3">
-          ${lista.map(im => {
-            const areaParts=[im.quartos>0?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22V12h18v10M2 12V8a2 2 0 012-2h16a2 2 0 012 2v4"/></svg>${escHtml(String(im.quartos))} qts</span>`:'', formatAreaValor(String(im.area||'').split(' / ')[0])?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>${escHtml(formatAreaValor(String(im.area||'').split(' / ')[0]))}</span>`:''].filter(Boolean).join('');
-            return `
-            <a class="im-card" href="/imovel-publico.html?id=${encodeURIComponent(im.id)}">
-              <div class="im-card-img">
-                ${im.status ? `<span class="im-card-status">${escHtml(im.status)}</span>` : ''}
-                ${im.destaque ? `<span class="im-card-destaque">⭐ Destaque</span>` : ''}
-                ${Array.isArray(im.fotos) && im.fotos.length
-                  ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'im-card-emoji',textContent:this.dataset.fallbackEmoji}))"/>`
-                  : `<span class="im-card-emoji">${escHtml(im.emoji || '🏠')}</span>`}
-              </div>
-              <div class="im-card-body">
-                <div class="im-card-price">${escHtml(im.preco || 'Sob consulta')}</div>
-                <div class="im-card-addr">${escHtml(im.endereco || '—')}</div>
-                ${areaParts ? `<div class="im-card-specs">${areaParts}</div>` : ''}
-              </div>
-            </a>
-          `}).join('')}
+      <div class="section-label">
+        <span>Imóveis disponíveis</span>
+        <span class="section-label-count" id="result-count">${_lista.length}</span>
+      </div>
+
+      ${mostrarFiltro ? `
+      <div class="search-row fade-up d4">
+        <div class="search-box">
+          ${ICON_SEARCH}
+          <input type="text" placeholder="Buscar por endereço, bairro…" oninput="onSearchInput(this.value)"/>
         </div>
-      ` : `<div class="empty-imoveis">Nenhum imóvel compartilhado publicamente no momento.</div>`}
+        <button class="filter-toggle" id="filter-toggle-btn" onclick="toggleFilterPanel()">
+          ${ICON_FILTER}<span>Filtrar</span>
+          <span class="filter-toggle-badge" id="filter-badge" style="display:none">0</span>
+        </button>
+      </div>
+      ` : ''}
+
+      ${_lista.length ? `
+        <div class="im-grid" id="im-grid">
+          ${_lista.map((im,i)=>imCardHtml(im,i)).join('')}
+        </div>
+      ` : `<div class="empty-imoveis" id="im-grid-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICON_EMPTY}</svg>Nenhum imóvel compartilhado publicamente no momento.</div>`}
     </div>
   `;
+
+  if(mostrarFiltro){
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="filter-backdrop" id="filter-backdrop" onclick="toggleFilterPanel(false)"></div>
+      <div class="filter-panel" id="filter-panel">
+        <div class="filter-panel-head">
+          <h3>Filtrar imóveis</h3>
+          <button class="filter-panel-close" onclick="toggleFilterPanel(false)">${ICON_X}</button>
+        </div>
+        ${tipos.length ? `
+        <div class="filter-field">
+          <label>Tipo</label>
+          <select id="f-tipo" onchange="onFilterChange()">
+            <option value="">Todos</option>
+            ${tipos.map(t=>`<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('')}
+          </select>
+        </div>` : ''}
+        ${statuses.length ? `
+        <div class="filter-field">
+          <label>Status</label>
+          <select id="f-status" onchange="onFilterChange()">
+            <option value="">Todos</option>
+            ${statuses.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('')}
+          </select>
+        </div>` : ''}
+        <div class="filter-field">
+          <label>Quartos (mínimo)</label>
+          <div class="filter-chips">
+            ${[1,2,3,4].map(n=>`<button type="button" class="filter-chip" data-val="${n}" onclick="setQuartosMin(${n})">${n}+</button>`).join('')}
+          </div>
+        </div>
+        <div class="filter-field-row">
+          <div class="filter-field">
+            <label>Preço mínimo</label>
+            <input type="number" id="f-preco-min" placeholder="R$ 0" oninput="onFilterChange()"/>
+          </div>
+          <div class="filter-field">
+            <label>Preço máximo</label>
+            <input type="number" id="f-preco-max" placeholder="Sem limite" oninput="onFilterChange()"/>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button class="filter-clear" onclick="clearFilters()">Limpar filtros</button>
+          <button class="filter-apply" onclick="toggleFilterPanel(false)">Ver resultados</button>
+        </div>
+      </div>
+    `);
+  }
 
   if(waPhone){
     document.body.insertAdjacentHTML('beforeend', `
