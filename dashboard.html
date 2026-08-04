@@ -343,7 +343,8 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 
 /* ══════════════════════ RELATÓRIOS PAGE ══════════════════════ */
 .relat-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
-.relat-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;text-align:center}
+.relat-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;text-align:center;transition:border-color .25s,transform .25s var(--ease,ease)}
+.relat-kpi:hover{border-color:var(--border2);transform:translateY(-2px)}
 .relat-kpi-value{font-size:28px;font-weight:800;letter-spacing:-.03em;color:var(--t1);margin-bottom:4px}
 .relat-kpi-label{font-size:12px;color:var(--t3)}
 .relat-charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
@@ -1840,7 +1841,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             Exportar CSV
           </button>
         </div>
-        <div class="relat-kpis">
+        <div class="relat-kpis dash-anim">
           <div class="relat-kpi">
             <div class="relat-kpi-value" id="rel-receita-total" style="color:#22c55e">R$ 0</div>
             <div class="relat-kpi-label">Receita Total (entradas)</div>
@@ -1854,7 +1855,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <div class="relat-kpi-label">Ticket Médio por Lead</div>
           </div>
         </div>
-        <div class="relat-charts">
+        <div class="relat-charts dash-anim d1">
           <div class="chart-card">
             <div class="chart-header">
               <div>
@@ -1899,7 +1900,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
       <!-- ══════ CONFIG PAGE ══════ -->
       <div class="page" id="page-config">
-        <div style="margin-bottom:16px">
+        <div class="dash-anim" style="margin-bottom:16px">
           <div class="plan-card">
             <div class="plan-name">Plano Alta Performance</div>
             <div class="plan-desc">Renovação em 15/06/2026 · Próxima cobrança: R$ 897,00</div>
@@ -1911,7 +1912,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             </ul>
           </div>
         </div>
-        <div class="config-grid">
+        <div class="config-grid dash-anim d1">
           <div class="config-card">
             <div class="config-card-title">Dados do Perfil</div>
             <div class="config-form-group">
@@ -2736,7 +2737,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
       <div class="page" id="page-financiamento">
 
         <!-- Hero da calculadora -->
-        <div style="background:linear-gradient(135deg,#1a0118 0%,#3d0138 50%,#850277 100%);border-radius:var(--r2);padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden">
+        <div class="dash-anim" style="background:linear-gradient(135deg,#1a0118 0%,#3d0138 50%,#850277 100%);border-radius:var(--r2);padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden">
           <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none"></div>
           <div style="position:absolute;bottom:-60px;left:40%;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none"></div>
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
@@ -2751,7 +2752,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- Grid principal -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+        <div class="dash-anim d1" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
 
           <!-- Formulário -->
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:28px">
