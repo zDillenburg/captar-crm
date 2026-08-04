@@ -226,15 +226,17 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 
 /* Recent leads table — .data-table é o nome genérico do componente pra
    páginas futuras (contratos, pagamentos, corretores etc.); .leads-table
-   continua funcionando como alias, sem precisar tocar no HTML que já usa
-   esse nome hoje. */
-.leads-table,.data-table{width:100%;border-collapse:collapse}
-.leads-table th,.data-table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:0 12px 10px 0;text-align:left;border-bottom:1px solid var(--border)}
-.leads-table td,.data-table td{padding:12px 12px 12px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--t2);vertical-align:middle}
-.leads-table tr:last-child td,.data-table tr:last-child td{border-bottom:none}
-.leads-table tr,.data-table tr{transition:background .15s}
-.leads-table tr:hover td,.data-table tr:hover td{color:var(--t1)}
-.leads-table tr:hover,.data-table tr:hover{background:var(--bg3)}
+   e .loc-table continuam funcionando como aliases, sem precisar tocar no
+   HTML que já usa esses nomes hoje. .loc-table tinha sua própria cópia
+   quase idêntica, com um hover levemente diferente (rgba branco solto em
+   vez de var(--bg3)) — unificada aqui. */
+.leads-table,.loc-table,.data-table{width:100%;border-collapse:collapse}
+.leads-table th,.loc-table th,.data-table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:0 12px 10px 0;text-align:left;border-bottom:1px solid var(--border)}
+.leads-table td,.loc-table td,.data-table td{padding:12px 12px 12px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--t2);vertical-align:middle}
+.leads-table tr:last-child td,.loc-table tr:last-child td,.data-table tr:last-child td{border-bottom:none}
+.leads-table tr,.loc-table tr,.data-table tr{transition:background .15s}
+.leads-table tr:hover td,.loc-table tr:hover td,.data-table tr:hover td{color:var(--t1)}
+.leads-table tr:hover,.loc-table tr:hover,.data-table tr:hover{background:var(--bg3)}
 
 /* ── Estado vazio — componente genérico (ícone + título + descrição +
    ação), pronto pra ser usado conforme cada página for migrada. Nenhum
@@ -610,18 +612,15 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 
 /* ══════════════════════ LOCAÇÃO PAGE ══════════════════════ */
 .loc-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
-.loc-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;position:relative;overflow:hidden}
+.loc-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;position:relative;overflow:hidden;transition:border-color .25s,transform .25s var(--ease,ease)}
+.loc-kpi:hover{border-color:var(--border2);transform:translateY(-2px)}
 .loc-kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r2) var(--r2) 0 0}
 .loc-kpi-icon{width:36px;height:36px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
 .loc-kpi-val{font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--t1);margin-bottom:4px}
 .loc-kpi-lbl{font-size:12px;color:var(--t3)}
 .loc-filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
 .loc-table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px}
-.loc-table{width:100%;border-collapse:collapse}
-.loc-table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:0 14px 12px 0;text-align:left;border-bottom:1px solid var(--border)}
-.loc-table td{padding:13px 14px 13px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--t2);vertical-align:middle}
-.loc-table tr:last-child td{border-bottom:none}
-.loc-table tr:hover td{color:var(--t1);background:rgba(255,255,255,.015)}
+/* .loc-table agora é alias de .data-table — ver definição unificada acima */
 .pmt-badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
 .pmt-pago{background:rgba(34,197,94,.12);color:#4ade80}
 .pmt-pendente{background:rgba(245,158,11,.12);color:#fbbf24}
@@ -1981,7 +1980,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
       <!-- ══════ LOCAÇÃO PAGE ══════ -->
       <div class="page" id="page-locacao">
         <!-- KPI Summary -->
-        <div class="loc-summary">
+        <div class="loc-summary dash-anim">
           <div class="loc-kpi">
             <div class="loc-kpi-accent" style="background:var(--p)"></div>
             <div class="loc-kpi-icon" style="background:rgba(133,2,119,.15)">
@@ -2017,7 +2016,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </div>
 
         <!-- Table Card -->
-        <div class="loc-table-wrap">
+        <div class="loc-table-wrap dash-anim d1">
           <div class="loc-filter-bar">
             <div class="search-wrap">
               <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
