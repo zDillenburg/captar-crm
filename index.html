@@ -3316,12 +3316,13 @@
       return m;
     }
 
-    function addBeacon(x, y, z, color){
+    function addBeacon(x, y, z, color, scale){
       const s = new THREE.Sprite(new THREE.SpriteMaterial({
         map: GLOW, color: color, blending: THREE.AdditiveBlending,
         depthWrite: false, transparent: true, opacity: 0.9, fog: false
       }));
-      s.scale.set(11, 11, 1);
+      const sc = scale || 11;
+      s.scale.set(sc, sc, 1);
       s.position.set(x, y, z);
       scene.add(s);
       beacons.push({ s: s, ph: rand() * Math.PI * 2, sp: rr(0.55, 1.6), base: rr(0.45, 0.95) });
@@ -3331,7 +3332,7 @@
     // alternam de lado e ficam a distâncias diferentes ao longo do Z,
     // então cada uma chega perto da lente num ponto distinto do scroll.
     // É daí que vem o "zoom em cada prédio".
-    const NEAR_N = MOBILE ? 15 : 23;
+    const NEAR_N = MOBILE ? 24 : 34;
     let z = 26;
     for (let i = 0; i < NEAR_N; i++){
       const side = (i % 2 === 0) ? -1 : 1;
@@ -3353,11 +3354,21 @@
         crown.castShadow = SHADOWS;
         scene.add(crown);
       }
-      z -= rr(15, 25);
+      // segunda torre mais baixa colada atrás de ~35% das principais —
+      // preenche os vãos entre elas e engrossa a massa construída
+      if (rand() < 0.35){
+        const w2 = w * rr(0.5, 0.85);
+        addTower(
+          side * (19 + w2 / 2 + rr(2, 10)), z - rr(6, 12),
+          w2, h * rr(0.35, 0.65), w2 * rr(0.8, 1.2),
+          { tex: i + 5, em: rr(0.4, 1.0), rot: rr(-0.2, 0.2), caster: false }
+        );
+      }
+      z -= rr(9, 16);
     }
 
     // Segunda fileira: silhuetas mais afastadas, dão a massa da cidade.
-    const FAR_N = MOBILE ? 10 : 17;
+    const FAR_N = MOBILE ? 16 : 26;
     for (let i = 0; i < FAR_N; i++){
       const side = rand() < 0.5 ? -1 : 1;
       const w = rr(10, 24);
@@ -3369,7 +3380,7 @@
     }
 
     // Cacho do horizonte: fecha o ponto de fuga no fim do scroll.
-    const HZ_N = MOBILE ? 7 : 12;
+    const HZ_N = MOBILE ? 11 : 18;
     for (let i = 0; i < HZ_N; i++){
       const w = rr(12, 30);
       addTower(
@@ -3394,6 +3405,98 @@
       s.position.set(rr(-80, 80), rr(3, 52), 12 - i * rr(40, 62));
       scene.add(s);
     }
+
+    /* ── RUA: pista com faixa central, corre por baixo de todo o
+       corredor onde a câmera voa ── */
+    function roadTexture(){
+      const c = document.createElement('canvas');
+      c.width = 64; c.height = 256;
+      const g = c.getContext('2d');
+      g.fillStyle = '#0a0710'; g.fillRect(0, 0, 64, 256);
+      for (let i = 0; i < 260; i++){
+        g.fillStyle = 'rgba(255,255,255,' + (rand() * 0.025).toFixed(3) + ')';
+        g.fillRect(rand() * 64, rand() * 256, 1, 1);
+      }
+      g.fillStyle = 'rgba(255,176,120,.82)';
+      const dash = 44, gap = 36, dw = 3.2;
+      for (let y = -gap; y < 256; y += dash + gap) g.fillRect(32 - dw / 2, y, dw, dash);
+      g.fillStyle = 'rgba(217,107,208,.4)';
+      g.fillRect(2, 0, 1.6, 256);
+      g.fillRect(64 - 2 - 1.6, 0, 1.6, 256);
+      const t = new THREE.CanvasTexture(c);
+      t.wrapS = THREE.ClampToEdgeWrapping;
+      t.wrapT = THREE.RepeatWrapping;
+      t.colorSpace = THREE.SRGBColorSpace;
+      return t;
+    }
+    const ROAD_LEN = 400, ROAD_Z0 = 74;
+    const roadTex = roadTexture();
+    roadTex.repeat.set(1, ROAD_LEN / 11);
+    const road = new THREE.Mesh(
+      new THREE.PlaneGeometry(27, ROAD_LEN),
+      new THREE.MeshStandardMaterial({ map: roadTex, roughness: 0.5, metalness: 0.4 })
+    );
+    road.rotation.x = -Math.PI / 2;
+    road.position.set(0, -0.24, ROAD_Z0 - ROAD_LEN / 2);
+    road.receiveShadow = SHADOWS;
+    scene.add(road);
+
+    /* ── ÁRVORES: instanced (2 draw calls no total, não importa a
+       quantidade) nas duas calçadas ao longo de todo o corredor ── */
+    const TREE_N = MOBILE ? 30 : 52;
+    const trunkH = 2.1, coneH = 3.2;
+    const trunkGeo = new THREE.CylinderGeometry(0.16, 0.22, trunkH, 6);
+    const foliageGeo = new THREE.ConeGeometry(1.5, coneH, 7);
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x120c10, roughness: 0.92, metalness: 0.05 });
+    const foliageMat = new THREE.MeshStandardMaterial({ color: 0x0c1a12, roughness: 0.88, metalness: 0.05, emissive: 0x2e0f3a, emissiveIntensity: 0.22 });
+    const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, TREE_N);
+    const foliage = new THREE.InstancedMesh(foliageGeo, foliageMat, TREE_N);
+    trunks.castShadow = foliage.castShadow = SHADOWS;
+    trunks.receiveShadow = foliage.receiveShadow = SHADOWS;
+    const m4 = new THREE.Matrix4();
+    let tz = ROAD_Z0 - 4;
+    for (let i = 0; i < TREE_N; i++){
+      const side = rand() < 0.5 ? -1 : 1;
+      const x = side * rr(13.5, 18);
+      const s = rr(0.75, 1.55);
+      m4.makeScale(s, s, s);
+      m4.setPosition(x, trunkH * 0.5 * s, tz);
+      trunks.setMatrixAt(i, m4);
+      m4.makeScale(s, s, s);
+      m4.setPosition(x, (trunkH + coneH * 0.5) * s, tz);
+      foliage.setMatrixAt(i, m4);
+      tz -= rr(8, 14);
+    }
+    trunks.instanceMatrix.needsUpdate = true;
+    foliage.instanceMatrix.needsUpdate = true;
+    scene.add(trunks, foliage);
+
+    /* ── POSTES: poste + luminária instanced, glow em sprite pequeno
+       reaproveitando addBeacon (mesma textura, escala menor) ── */
+    const LAMP_N = MOBILE ? 16 : 26;
+    const poleH = 6.2;
+    const poleGeo = new THREE.CylinderGeometry(0.085, 0.13, poleH, 6);
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x0b0810, roughness: 0.55, metalness: 0.75 });
+    const headGeo = new THREE.SphereGeometry(0.3, 8, 6);
+    const headMat = new THREE.MeshStandardMaterial({ color: 0x241206, roughness: 0.4, metalness: 0.3, emissive: 0xffb066, emissiveIntensity: 2.4 });
+    const poles = new THREE.InstancedMesh(poleGeo, poleMat, LAMP_N);
+    const heads = new THREE.InstancedMesh(headGeo, headMat, LAMP_N);
+    poles.castShadow = SHADOWS;
+    let lz = ROAD_Z0 - 8;
+    for (let i = 0; i < LAMP_N; i++){
+      const side = i % 2 === 0 ? -1 : 1;
+      const x = side * rr(10.8, 12.4);
+      m4.identity();
+      m4.setPosition(x, poleH * 0.5, lz);
+      poles.setMatrixAt(i, m4);
+      m4.setPosition(x, poleH + 0.15, lz);
+      heads.setMatrixAt(i, m4);
+      addBeacon(x, poleH + 0.15, lz, 0xffb066, 2.4);
+      lz -= rr(14, 21);
+    }
+    poles.instanceMatrix.needsUpdate = true;
+    heads.instanceMatrix.needsUpdate = true;
+    scene.add(poles, heads);
 
     /* ── ESQUEMA DE LUZ E SOMBRA EM ROXO ──────────────────────────
        Materiais quase pretos: tudo que se vê nas faces é luz roxa.
