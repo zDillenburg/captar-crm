@@ -632,14 +632,15 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 
 /* ══════════════════════ VISITAS PAGE ══════════════════════ */
 .vis-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
-.vis-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;align-items:center;gap:16px}
+.vis-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;align-items:center;gap:16px;transition:border-color .25s,transform .25s var(--ease,ease)}
+.vis-kpi:hover{border-color:var(--border2);transform:translateY(-2px)}
 .vis-kpi-icon{width:44px;height:44px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
 .vis-kpi-val{font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--t1);margin-bottom:2px}
 .vis-kpi-lbl{font-size:12px;color:var(--t3)}
 .vis-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
 .vis-list{display:flex;flex-direction:column;gap:10px}
-.vis-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;display:flex;align-items:center;gap:16px;transition:border-color .2s,box-shadow .2s}
-.vis-card:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.vis-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;display:flex;align-items:center;gap:16px;transition:border-color .25s,box-shadow .25s,transform .25s var(--ease,ease)}
+.vis-card:hover{border-color:var(--border2);box-shadow:0 14px 32px -14px rgba(0,0,0,.5);transform:translateY(-2px)}
 .vis-card-img{width:58px;height:58px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .vis-card-info{flex:1;min-width:0}
 .vis-card-prop{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1211,8 +1212,8 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 .chip.active{background:var(--p);color:#fff;border-color:var(--p)}
 
 /* ═══ CONTRATOS ═══ */
-.contrato-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r2);padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s}
-.contrato-card:hover,.contrato-card.selected{border-color:var(--p);background:rgba(133,2,119,.07);transform:translateY(-2px)}
+.contrato-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r2);padding:24px 16px;text-align:center;cursor:pointer;transition:border-color .25s,background .25s,transform .25s var(--ease,ease),box-shadow .25s}
+.contrato-card:hover,.contrato-card.selected{border-color:var(--p);background:rgba(133,2,119,.07);transform:translateY(-4px);box-shadow:0 14px 28px -14px rgba(133,2,119,.35)}
 .contrato-card.selected{box-shadow:0 0 0 2px var(--p)}
 </style>
 </head>
@@ -2056,7 +2057,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
       <!-- ══════ VISITAS PAGE ══════ -->
       <div class="page" id="page-visitas">
-        <div class="vis-summary">
+        <div class="vis-summary dash-anim">
           <div class="vis-kpi">
             <div class="vis-kpi-icon" style="background:rgba(59,130,246,.12)">📅</div>
             <div><div class="vis-kpi-val" style="color:#60a5fa" id="vis-count-agendadas">0</div><div class="vis-kpi-lbl">Agendadas</div></div>
@@ -2075,7 +2076,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </div>
         </div>
 
-        <div class="vis-toolbar">
+        <div class="vis-toolbar dash-anim d1">
           <div class="search-wrap">
             <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input class="search-input" type="text" placeholder="Buscar por imóvel ou cliente…" oninput="filterVisitas(this.value)"/>
@@ -2092,7 +2093,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           </button>
         </div>
 
-        <div class="vis-list" id="vis-list"></div>
+        <div class="vis-list dash-anim d2" id="vis-list"></div>
       </div>
 
       <!-- ══════ CALENDÁRIO PAGE ══════ -->
@@ -2690,9 +2691,9 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
       <!-- ══════ CONTRATOS ══════ -->
       <div class="page" id="page-contratos">
-        <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">📋 Gerar Contratos Pré-Prontos</div>
-        <div style="font-size:12px;color:var(--t3);margin-bottom:20px">Selecione um modelo, preencha os dados e imprima ou salve como PDF</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:28px" id="contratos-cards">
+        <div class="dash-anim" style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">📋 Gerar Contratos Pré-Prontos</div>
+        <div class="dash-anim" style="font-size:12px;color:var(--t3);margin-bottom:20px">Selecione um modelo, preencha os dados e imprima ou salve como PDF</div>
+        <div class="dash-anim d1" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:28px" id="contratos-cards">
           <div class="contrato-card" onclick="selecionarContrato('locacao_res',this)"><div style="font-size:28px;margin-bottom:8px">🏠</div><div style="font-size:13px;font-weight:700">Locação Residencial</div></div>
           <div class="contrato-card" onclick="selecionarContrato('locacao_com',this)"><div style="font-size:28px;margin-bottom:8px">🏢</div><div style="font-size:13px;font-weight:700">Locação Comercial</div></div>
           <div class="contrato-card" onclick="selecionarContrato('compra_venda',this)"><div style="font-size:28px;margin-bottom:8px">🤝</div><div style="font-size:13px;font-weight:700">Compra e Venda</div></div>
@@ -5294,7 +5295,7 @@ function renderVisitas(filter){
   const labelMap={agendada:'Agendada',realizada:'Realizada',cancelada:'Cancelada'};
   let data=VISITAS;
   if(filter&&filter!=='todos') data=VISITAS.filter(v=>v.status===filter);
-  if(!data.length){list.innerHTML='<div style="text-align:center;padding:40px;color:var(--t3)">Nenhuma visita encontrada.</div>';return;}
+  if(!data.length){list.innerHTML='<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-title">Nenhuma visita encontrada</div><div class="empty-state-desc">Agende a primeira visita pra começar a acompanhar aqui.</div></div>';return;}
   list.innerHTML=data.map(v=>`
     <div class="vis-card" data-status="${escHTML(v.status)}" data-id="${escHTML(String(v.id))}">
       <div class="vis-card-img" style="background:${escHTML(v.grad||'linear-gradient(135deg,#1e1b4b,#312e81)')}">${escHTML(v.emoji||'🏠')}</div>
