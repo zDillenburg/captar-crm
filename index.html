@@ -77,8 +77,8 @@
       --t-100: #fffdea;
       --t-70:  rgba(255,253,234,.70);
       --t-55:  rgba(255,253,234,.55);
-      --t-40:  rgba(255,253,234,.40);
-      --t-28:  rgba(255,253,234,.28);
+      --t-40:  rgba(255,253,234,.52); /* era .40 (contraste 3.75:1) — subiu pra passar WCAG AA (4.5:1) */
+      --t-28:  rgba(255,253,234,.46); /* era .28 (contraste 2.42:1) — idem */
       --text-muted: rgba(255,253,234,.55);
       --gray-dark: #17140f;
       --gray-mid: #1d1916;
@@ -1674,18 +1674,18 @@
       <div class="hero-actions hero-fade hero-fade-3">
         <a href="#captar-ia" class="btn btn-primary">
           Conhecer a Captar IA
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <a href="#servicos" class="btn btn-ghost">Ver planos</a>
       </div>
       <div class="hero-trust hero-fade hero-fade-4">
-        <span class="hero-trust-chip"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>380+ corretores ativos</span>
-        <span class="hero-trust-chip"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v2.5"/><rect x="5" y="8.5" width="14" height="10.5" rx="4"/><circle cx="9.5" cy="13.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.5" r="1" fill="currentColor" stroke="none"/></svg>Captar IA própria</span>
-        <span class="hero-trust-chip"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>27 estados atendidos</span>
+        <span class="hero-trust-chip"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>380+ corretores ativos</span>
+        <span class="hero-trust-chip"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v2.5"/><rect x="5" y="8.5" width="14" height="10.5" rx="4"/><circle cx="9.5" cy="13.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.5" r="1" fill="currentColor" stroke="none"/></svg>Captar IA própria</span>
+        <span class="hero-trust-chip"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>27 estados atendidos</span>
       </div>
     </div>
     <button class="hero-arrow" aria-label="Rolar para a próxima seção" onclick="window.scrollTo({top: document.getElementById('captar-ia').offsetTop - 72, behavior: 'smooth'})">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 12 15 18 9"/>
       </svg>
     </button>
@@ -1742,7 +1742,7 @@
           <div class="ia-panes">
             <div class="ia-pane">
               <span class="ia-pane-label">
-                <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
                 Chat especialista
               </span>
               <div class="ia-bubble ia-bubble-user">Escreva uma descrição pro apartamento de 2 quartos no centro</div>
@@ -1750,7 +1750,7 @@
             </div>
             <div class="ia-pane">
               <span class="ia-pane-label">
-                <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
                 Gerar imagem
               </span>
               <div class="ia-image-frame"></div>
@@ -1765,7 +1765,7 @@
 
         <div class="card anim-up" style="--d:0ms">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
           </div>
           <div class="card-title">Chat Especialista 24h</div>
           <p class="card-desc">Financiamento, documentação, negociação e tendências do mercado — respondido na hora, a qualquer momento do dia.</p>
@@ -1774,7 +1774,7 @@
 
         <div class="card anim-up" style="--d:60ms">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
           </div>
           <div class="card-title">Descrições que Vendem</div>
           <p class="card-desc">Peça uma descrição pra qualquer imóvel e receba um texto pronto pra publicar, sem gastar meia hora escrevendo.</p>
@@ -1783,7 +1783,7 @@
 
         <div class="card anim-up" style="--d:120ms">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           </div>
           <div class="card-title">Geração de Imagens</div>
           <p class="card-desc">Crie fachadas, interiores e banners de anúncio profissionais a partir de uma simples descrição em texto.</p>
@@ -1792,7 +1792,7 @@
 
         <div class="card anim-up" style="--d:0ms">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
           </div>
           <div class="card-title">Edição de Fotos Reais</div>
           <p class="card-desc">Envie uma foto do imóvel e peça ajustes — iluminação, mobília virtual, remoção de objetos — sem precisar de um editor.</p>
@@ -1801,7 +1801,7 @@
 
         <div class="card anim-up" style="--d:60ms">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
           </div>
           <div class="card-title">Sua Marca, Automática</div>
           <p class="card-desc">Salve o logo da sua imobiliária uma vez e inclua automaticamente em toda imagem gerada.</p>
@@ -1810,7 +1810,7 @@
 
         <div class="card anim-up" style="--d:120ms">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           </div>
           <div class="card-title">Direto no Painel</div>
           <p class="card-desc">Sem instalar nada, sem outra assinatura. A Captar IA já está dentro da sua Área do Cliente, incluída no seu plano.</p>
@@ -1834,25 +1834,25 @@
           </p>
           <ul class="pp-bullets" style="margin-top:32px">
             <li>
-              <span class="pp-bullet-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></span>
+              <span class="pp-bullet-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></span>
               <span><b>Link com o seu nome</b> — grupocaptar.com.br/c/seu-nome, fácil de lembrar e divulgar</span>
             </li>
             <li>
-              <span class="pp-bullet-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+              <span class="pp-bullet-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
               <span><b>Imóveis em destaque</b> — escolha o que aparece primeiro pro cliente que abrir o link</span>
             </li>
             <li>
-              <span class="pp-bullet-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.062 0-.874.727-1.625 1.625-1.625H16c3.312 0 6-2.688 6-6 0-4.813-4.5-8.5-10-8.5z"/></svg></span>
+              <span class="pp-bullet-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.062 0-.874.727-1.625 1.625-1.625H16c3.312 0 6-2.688 6-6 0-4.813-4.5-8.5-10-8.5z"/></svg></span>
               <span><b>Cor de destaque personalizável</b> — escolha entre 12 tons ou defina a sua própria em hexadecimal</span>
             </li>
             <li>
-              <span class="pp-bullet-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12.05 22a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374A9.86 9.86 0 012.17 12C2.17 6.55 6.604 2.116 12.057 2.116c2.64 0 5.122 1.03 6.988 2.898A9.825 9.825 0 0121.938 12c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg></span>
+              <span class="pp-bullet-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12.05 22a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374A9.86 9.86 0 012.17 12C2.17 6.55 6.604 2.116 12.057 2.116c2.64 0 5.122 1.03 6.988 2.898A9.825 9.825 0 0121.938 12c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg></span>
               <span><b>Botão de WhatsApp direto</b> — o cliente fala com você sem precisar procurar seu contato</span>
             </li>
           </ul>
           <div class="pp-link-demo" id="pp-link-demo" onclick="ppCopyDemoLink(this)" title="Clique para copiar (exemplo)">
             <span class="domain">grupocaptar.com.br/c/</span><span class="slug">seu-nome</span>
-            <svg class="copy-icon" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg aria-hidden="true" class="copy-icon" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
           </div>
           <div class="pp-link-demo-label">↑ é só clicar — seu link fica pronto assim que você ativa o perfil</div>
         </div>
@@ -1865,7 +1865,7 @@
               <div class="pp-mock-body">
                 <div class="pp-mock-avatar">FR</div>
                 <div class="pp-mock-verified">
-                  <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
                   Corretor parceiro Grupo Captar
                 </div>
                 <div class="pp-mock-name">Fernando Ramos</div>
@@ -1887,7 +1887,7 @@
                 </div>
               </div>
               <div class="pp-mock-cta">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
                 Falar no WhatsApp
               </div>
             </div>
@@ -1962,7 +1962,7 @@
       <div class="spec-grid" style="margin-top:clamp(40px,5vw,64px)">
 
         <div class="spec-item anim-up" style="--d:0ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">01</span><span class="spec-title">CRM de Leads</span></div>
             <p class="spec-desc">Pipeline Kanban com drag-and-drop, histórico de cada contato e abertura direta no WhatsApp com um clique.</p>
@@ -1971,7 +1971,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:60ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">02</span><span class="spec-title">Portfólio de Imóveis</span></div>
             <p class="spec-desc">Cadastro completo de imóveis urbanos, rurais e comerciais com status, área, quartos e endereço completo.</p>
@@ -1980,7 +1980,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:0ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">03</span><span class="spec-title">Gestão Financeira</span></div>
             <p class="spec-desc">Controle de receitas, despesas e comissões com balanço mensal e gráficos animados em tempo real.</p>
@@ -1989,7 +1989,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:60ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">04</span><span class="spec-title">Calendário &amp; Visitas</span></div>
             <p class="spec-desc">Agendamento de visitas, vencimentos de contratos, reuniões e follow-ups em um calendário unificado.</p>
@@ -1998,7 +1998,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:0ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">05</span><span class="spec-title">Locação &amp; Contratos</span></div>
             <p class="spec-desc">Controle de inquilinos, status de pagamentos, inadimplência e renovação de contratos em um painel dedicado.</p>
@@ -2007,7 +2007,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:60ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">06</span><span class="spec-title">Relatórios &amp; Exportação</span></div>
             <p class="spec-desc">Gráficos de performance, funil de conversão por etapa e exportação de todos os dados em CSV.</p>
@@ -2016,7 +2016,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:0ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">07</span><span class="spec-title">Tarefas &amp; Produtividade</span></div>
             <p class="spec-desc">Lista de tarefas diárias com metas, horários e marcação de concluído. Organize a rotina do seu time.</p>
@@ -2025,7 +2025,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:60ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">08</span><span class="spec-title">Notificações Inteligentes</span></div>
             <p class="spec-desc">Alertas automáticos de vencimentos de locações, leads sem resposta e compromissos próximos do calendário.</p>
@@ -2034,7 +2034,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:0ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">09</span><span class="spec-title">Vistoria Digital</span></div>
             <p class="spec-desc">Checklist de vistoria de entrada e saída do imóvel, item por item, salvo na nuvem — pronto pra qualquer disputa de caução.</p>
@@ -2043,7 +2043,7 @@
         </div>
 
         <div class="spec-item anim-up" style="--d:60ms">
-          <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+          <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
           <div class="spec-body">
             <div class="spec-head-row"><span class="spec-num">10</span><span class="spec-title">Checklist de Documentos</span></div>
             <p class="spec-desc">Nunca mais esqueça um documento de compra, venda ou locação — checklist completo, salvo por imóvel, sempre acessível.</p>
@@ -2091,35 +2091,35 @@
 
         <div class="pillars">
           <div class="pillar anim-up" style="--d:0ms">
-            <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2.5"/><rect x="5" y="8.5" width="14" height="10.5" rx="4"/><circle cx="9.5" cy="13.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.5" r="1" fill="currentColor" stroke="none"/></svg></div>
+            <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2.5"/><rect x="5" y="8.5" width="14" height="10.5" rx="4"/><circle cx="9.5" cy="13.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13.5" r="1" fill="currentColor" stroke="none"/></svg></div>
             <div>
               <p class="pillar-title">Inteligência Artificial Exclusiva</p>
               <p class="pillar-desc">A Captar IA é a nossa inteligência artificial própria, treinada especificamente para o mercado imobiliário brasileiro — a mais completa do setor, incluída em todos os planos.</p>
             </div>
           </div>
           <div class="pillar anim-up" style="--d:60ms">
-            <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
             <div>
               <p class="pillar-title">Terceirização Total</p>
               <p class="pillar-desc">Você não perde um minuto com marketing. Cuidamos de toda a demanda, do digital ao físico.</p>
             </div>
           </div>
           <div class="pillar anim-up" style="--d:120ms">
-            <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+            <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
             <div>
               <p class="pillar-title">Identidade Forte</p>
               <p class="pillar-desc">Criamos um padrão estético que transmite credibilidade instantânea e diferencia você da concorrência.</p>
             </div>
           </div>
           <div class="pillar anim-up" style="--d:180ms">
-            <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
             <div>
               <p class="pillar-title">Resultados Reais</p>
               <p class="pillar-desc">Conteúdo estratégico e tráfego pago para colocar os seus imóveis na frente de compradores qualificados.</p>
             </div>
           </div>
           <div class="pillar anim-up" style="--d:240ms">
-            <div class="pillar-icon"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+            <div class="pillar-icon"><svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
             <div>
               <p class="pillar-title">Suporte Diário</p>
               <p class="pillar-desc">Nossa equipe está sempre disponível para resolver qualquer necessidade imediata da sua operação.</p>
@@ -2156,49 +2156,49 @@
           <p class="plan-tagline">Domine a atenção do seu cliente todos os dias com uma presença profissional.</p>
           <ul class="plan-features">
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Terceirização Total</span> — do digital ao físico (placas, outdoors)</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Identidade Visual Impecável</span> — padrão estético forte para a sua marca</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Cronograma Estratégico</span> — calendário exato do que vai ao ar e quando</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Postagens Diárias</span> — Feed, Stories ou Reels</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Textos Diretos</span> — legendas focadas em gerar desejo e conversão</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Organização de Perfil</span> — biografia e destaques do Instagram otimizados</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Gestão de Anúncios</span> — tráfego pago direcionado a compradores qualificados</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Painel de Gestão Imobiliária</span> — CRM de leads, controle de locações, financeiro, contratos e calendário em um só lugar</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Captar IA</span> — chat especialista e gerador de imagens com inteligência artificial, direto no painel</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Suporte Diário</span> — acompanhamento constante da nossa equipe</span>
             </li>
           </ul>
           <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Plano%20de%20Conte%C3%BAdo%20Di%C3%A1rio." target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-block">
             Quero este plano
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
         </div>
 
@@ -2211,27 +2211,27 @@
           <span class="plan-includes">Tudo do Plano 01, mais:</span>
           <ul class="plan-features">
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Site Exclusivo</span> — plataforma própria, rápida e blindada da concorrência</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Painel de Gestão Imobiliária</span> — CRM de leads, controle de locações, financeiro, contratos e calendário em um só lugar</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Captar IA</span> — chat especialista e gerador de imagens com inteligência artificial, direto no painel</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Gestão de Imóveis</span> — portfólio cadastrado e atualizado com a melhor apresentação visual</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">Tecnologia e Manutenção</span> — hospedagem, suporte técnico e atualizações incluídas</span>
             </li>
             <li>
-              <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="check"><svg aria-hidden="true" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span><span class="feature-bold">WhatsApp Integrado</span> — botões diretos para conversão imediata</span>
             </li>
           </ul>
@@ -2252,7 +2252,7 @@
           </div>
           <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Plano%20Alta%20Performance." target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">
             Quero este plano
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
         </div>
 
@@ -2280,7 +2280,7 @@
           <button class="faq-question" onclick="toggleFaq(this)">
             <span class="faq-question-text">Como funciona o Grupo Captar?</span>
             <div class="faq-arrow">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
           </button>
           <div class="faq-answer">
@@ -2292,7 +2292,7 @@
           <button class="faq-question" onclick="toggleFaq(this)">
             <span class="faq-question-text">O que é a Captar IA?</span>
             <div class="faq-arrow">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
           </button>
           <div class="faq-answer">
@@ -2304,7 +2304,7 @@
           <button class="faq-question" onclick="toggleFaq(this)">
             <span class="faq-question-text">Preciso ter experiência com tecnologia?</span>
             <div class="faq-arrow">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
           </button>
           <div class="faq-answer">
@@ -2316,7 +2316,7 @@
           <button class="faq-question" onclick="toggleFaq(this)">
             <span class="faq-question-text">Quanto tempo leva para ver resultados?</span>
             <div class="faq-arrow">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
           </button>
           <div class="faq-answer">
@@ -2328,7 +2328,7 @@
           <button class="faq-question" onclick="toggleFaq(this)">
             <span class="faq-question-text">O painel de gestão está incluso nos dois planos?</span>
             <div class="faq-arrow">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
           </button>
           <div class="faq-answer">
@@ -2340,7 +2340,7 @@
           <button class="faq-question" onclick="toggleFaq(this)">
             <span class="faq-question-text">Posso cancelar quando quiser?</span>
             <div class="faq-arrow">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
           </button>
           <div class="faq-answer">
@@ -2352,7 +2352,7 @@
           <button class="faq-question" onclick="toggleFaq(this)">
             <span class="faq-question-text">Como funciona o suporte?</span>
             <div class="faq-arrow">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
           </button>
           <div class="faq-answer">
@@ -2373,7 +2373,7 @@
         <p class="cta-desc">Fale com a nossa equipe agora mesmo e dê o próximo passo para construir a sua autoridade imobiliária com o poder da Captar IA.</p>
         <div class="cta-actions">
           <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Grupo%20Captar." target="_blank" rel="noopener noreferrer" class="btn btn-wa">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             Falar pelo WhatsApp
           </a>
           <a href="#servicos" class="btn btn-ghost">Rever os planos</a>
@@ -2399,7 +2399,7 @@
 
             <a href="https://wa.me/5554996473047" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
               <div class="footer-contact-icon">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               </div>
               <div class="footer-contact-info">
                 <span class="footer-contact-label">WhatsApp</span>
@@ -2409,7 +2409,7 @@
 
             <a href="mailto:diretoria@grupocaptar.com" class="footer-contact-item">
               <div class="footer-contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               </div>
               <div class="footer-contact-info">
                 <span class="footer-contact-label">E-mail</span>
@@ -2419,7 +2419,7 @@
 
             <a href="https://instagram.com/grupocaptar" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
               <div class="footer-contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
               </div>
               <div class="footer-contact-info">
                 <span class="footer-contact-label">Instagram</span>
@@ -2429,7 +2429,7 @@
 
             <a href="https://linkedin.com/company/grupocaptar" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
               <div class="footer-contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
               </div>
               <div class="footer-contact-info">
                 <span class="footer-contact-label">LinkedIn</span>
@@ -2682,18 +2682,18 @@
   <!-- Mobile CTA Bar (mobile only) -->
   <div class="mobile-cta-bar" aria-label="Ações rápidas">
     <a href="dashboard.html" class="mobile-cta-btn mobile-cta-enter">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       Entrar no Painel
     </a>
     <a href="https://wa.me/5554996473047?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Grupo%20Captar." target="_blank" rel="noopener noreferrer" class="mobile-cta-btn mobile-cta-whatsapp">
-      <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm7.27 20.13c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm7.27 20.13c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>
       WhatsApp
     </a>
   </div>
 
   <!-- Back to top button -->
   <button id="back-to-top" aria-label="Voltar ao topo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+    <svg aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
   </button>
 
   <!-- LGPD / Cookies banner -->
@@ -2713,33 +2713,33 @@
     class="whatsapp-fab"
     aria-label="Falar pelo WhatsApp"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="28" height="28" fill="currentColor">
+    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="28" height="28" fill="currentColor">
       <path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 0 1-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 0 1 2.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/>
     </svg>
   </a>
 
   <!-- Captar IA — chat de vendas da landing page -->
   <button class="landing-ia-fab" id="landing-ia-fab" onclick="toggleLandingIaChat()" aria-label="Falar com a Captar IA" aria-expanded="false">
-    <svg viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg>
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg>
   </button>
 
   <div class="landing-ia-panel" id="landing-ia-panel" role="dialog" aria-label="Chat da Captar IA" aria-hidden="true">
     <div class="landing-ia-header">
       <div class="landing-ia-header-info">
-        <div class="landing-ia-orb"><svg viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>
+        <div class="landing-ia-orb"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>
         <div>
           <div class="landing-ia-title">Captar IA</div>
           <div class="landing-ia-subtitle">Tire suas dúvidas</div>
         </div>
       </div>
       <button class="landing-ia-close" onclick="toggleLandingIaChat(false)" aria-label="Fechar chat">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
     <div class="landing-ia-log" id="landing-ia-log">
       <div class="landing-ia-empty" id="landing-ia-empty">
-        <div class="landing-ia-orb landing-ia-orb-lg"><svg viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>
+        <div class="landing-ia-orb landing-ia-orb-lg"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>
         <p>Olá! Sou a Captar IA. Posso te ajudar a entender nossos planos, como funciona a Captar IA e como começar.</p>
         <div class="landing-ia-chips">
           <button type="button" onclick="landingIaSendPreset(this,'Quais planos vocês têm?')">Quais planos vocês têm?</button>
@@ -2750,7 +2750,7 @@
     </div>
 
     <div class="landing-ia-typing" id="landing-ia-typing" style="display:none">
-      <div class="landing-ia-orb landing-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>
+      <div class="landing-ia-orb landing-ia-orb-sm"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>
       <span class="landing-ia-typing-dots"><span></span><span></span><span></span></span>
     </div>
 
@@ -2760,14 +2760,14 @@
       rel="noopener noreferrer"
       class="landing-ia-whatsapp-cta"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 0 1-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 0 1 2.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 0 1-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 0 1 2.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>
       Falar agora no WhatsApp
     </a>
 
     <div class="landing-ia-inputbar">
       <textarea id="landing-ia-input" rows="1" placeholder="Digite sua pergunta…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();landingIaSend();}"></textarea>
       <button type="button" id="landing-ia-send-btn" onclick="landingIaSend()" aria-label="Enviar">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
@@ -3058,7 +3058,7 @@
           const cls = m.role === 'user' ? 'landing-ia-msg-user' : (m.error ? 'landing-ia-msg-error' : 'landing-ia-msg-ai');
           const body = (m.role === 'assistant' && !m.error) ? formatMsg(m.content) : escHtml(m.content);
           return `<div class="landing-ia-msg-row ${m.role === 'user' ? 'landing-ia-msg-row-user' : ''}">
-            ${m.role === 'assistant' ? '<div class="landing-ia-orb landing-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>' : ''}
+            ${m.role === 'assistant' ? '<div class="landing-ia-orb landing-ia-orb-sm"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>' : ''}
             <div class="landing-ia-msg ${cls}">${body}</div>
           </div>`;
         }).join('');
