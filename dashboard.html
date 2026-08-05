@@ -2115,7 +2115,8 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
               <button class="chip loc-status-chip" onclick="setLocFilter('atrasado',this)">Atrasados</button>
               <button class="chip loc-status-chip" onclick="setLocFilter('avencer',this)">A Vencer</button>
             </div>
-            <button class="btn-add" style="margin-left:auto" onclick="document.getElementById('modal-contrato').classList.add('open')">
+            <button class="ia-help-btn" style="margin-left:auto" onclick="perguntarIAsobreLocacao()"><svg viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="currentColor"/></svg> Verificar com IA</button>
+            <button class="btn-add" onclick="document.getElementById('modal-contrato').classList.add('open')">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Novo Contrato
             </button>
@@ -7047,7 +7048,13 @@ function runSearch(q){
   // Visitas
   VISITAS.filter(v=>(v.cliente||'').toLowerCase().includes(ql)||(v.imovel||'').toLowerCase().includes(ql)).slice(0,2).forEach(v=>results.push({type:'Visita',icon:'📍',label:v.cliente||'—',sub:(v.imovel||'—')+' · '+(v.data||''),page:'visitas',action:()=>navigate('visitas',document.querySelector('.nav-item[onclick*="navigate(\'visitas\'"]'))}));
 
-  if(!results.length){el.innerHTML='<div class="gs-empty">Nenhum resultado para "<strong>'+escHTML(q)+'</strong>"</div>';return;}
+  if(!results.length){
+    el.innerHTML=`<div class="gs-empty">Nenhum resultado para "<strong>${escHTML(q)}</strong>"</div>
+      <div style="padding:0 20px 16px;text-align:center">
+        <button class="ia-help-btn" data-q="${escHTML(q)}" onclick="_closeSearch();perguntarIA(this.dataset.q)">🤖 Perguntar isso pra Captar IA</button>
+      </div>`;
+    return;
+  }
   el.innerHTML=results.map((r,i)=>`
     <div class="gs-item" onclick="selectSearchResult(${i})" data-idx="${i}">
       <div class="gs-item-icon" style="${r.icon.startsWith('#')?'background:'+escHTML(r.icon):'background:var(--bg4)'}">
@@ -10937,6 +10944,24 @@ function perguntarIAsobreMetas(){
   perguntarIA(`Analisa como eu estou indo nas minhas metas de ${mesLabel}: ${resumo}. O que eu deveria priorizar até o fim do mês pra bater as metas que estão mais atrasadas?`);
 }
 
+function perguntarIAsobreLocacao(){
+  const atrasados=LOCACOES.filter(l=>l.status==='atrasado');
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const avencer=LOCACOES.filter(l=>{
+    if(l.status==='pago'||l.status==='atrasado')return false;
+    const dv=new Date(hoje.getFullYear(),hoje.getMonth(),parseInt(l.dia)||1);
+    const diff=Math.round((dv-hoje)/(1000*60*60*24));
+    return diff>=0&&diff<=7;
+  });
+  if(!atrasados.length&&!avencer.length){
+    perguntarIA('Como está a situação das minhas locações? Nenhum contrato está atrasado ou vencendo nos próximos 7 dias — tem alguma boa prática que eu deveria adotar mesmo assim?');
+    return;
+  }
+  const listaAtrasados=atrasados.map(l=>`${l.inquilino} (R$ ${Number(l.valor||0).toLocaleString('pt-BR')}, imóvel ${l.imovel||'—'})`).join('; ');
+  const listaAvencer=avencer.map(l=>`${l.inquilino} (vence dia ${l.dia})`).join('; ');
+  perguntarIA(`Analisa a situação das minhas locações: ${atrasados.length?`inadimplentes: ${listaAtrasados}.`:''} ${avencer.length?`vencendo nos próximos 7 dias: ${listaAvencer}.`:''} Me ajuda a priorizar quem cobrar primeiro e sugere uma mensagem de cobrança educada pro caso mais urgente.`);
+}
+
 function perguntarIAsobrePerfilPublico(){
   const faltando=Array.from(document.querySelectorAll('#pp-checklist-items .pp-checklist-item:not(.done)')).map(el=>el.textContent.trim());
   const pct=document.getElementById('pp-checklist-pct')?.textContent||'0%';
@@ -11012,27 +11037,37 @@ function renderAiChatLog(){
 function renderAcaoIABubble(m,idx){
   const orb=`<div class="captar-ia-orb captar-ia-orb-sm">${CAPTAR_IA_SPARK_SVG}</div>`;
   const a=m._action;
-  if(a.name!=='mover_lead_estagio'){
-    return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-error">Ação não reconhecida.</div></div>`;
+  const wrap=(inner)=>`<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action">${inner}<div class="ai-action-buttons"><button class="ai-action-confirm" onclick="confirmarAcaoIA(${idx})">Confirmar</button><button class="ai-action-cancel" onclick="cancelarAcaoIA(${idx})">Cancelar</button></div></div></div>`;
+
+  if(a.name==='mover_lead_estagio'){
+    const lead=LEADS_DATA.find(l=>String(l.id)===String(a.args.lead_id));
+    const col=COLUMNS.find(c=>c.key===a.args.novo_estagio);
+    if(!lead||!col)return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-error">Não encontrei esse lead ou etapa pra mover — tente pedir de novo especificando o nome do lead.</div></div>`;
+    if(a.status==='done')return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-done">✅ <strong>${escHTML(lead.nome)}</strong> movido para <strong>${escHTML(col.label)}</strong>.</div></div>`;
+    if(a.status==='cancelled')return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-cancelled">Ação cancelada.</div></div>`;
+    return wrap(`🤖 Sugestão: mover <strong>${escHTML(lead.nome)}</strong> para <strong>${escHTML(col.label)}</strong>`);
   }
-  const lead=LEADS_DATA.find(l=>String(l.id)===String(a.args.lead_id));
-  const col=COLUMNS.find(c=>c.key===a.args.novo_estagio);
-  if(!lead||!col){
-    return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-error">Não encontrei esse lead ou etapa pra mover — tente pedir de novo especificando o nome do lead.</div></div>`;
+
+  if(a.name==='criar_lead'){
+    const nome=(a.args.nome||'').trim();
+    if(!nome)return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-error">Faltou o nome do lead — peça de novo informando o nome.</div></div>`;
+    if(a.status==='done')return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-done">✅ Lead <strong>${escHTML(nome)}</strong> criado.</div></div>`;
+    if(a.status==='cancelled')return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-cancelled">Ação cancelada.</div></div>`;
+    const detalhes=[a.args.tel,a.args.tipo,a.args.valor].filter(Boolean).map(escHTML).join(' · ');
+    return wrap(`🤖 Sugestão: criar lead <strong>${escHTML(nome)}</strong>${detalhes?`<br><span style="font-size:12px;color:var(--t3)">${detalhes}</span>`:''}`);
   }
-  if(a.status==='done'){
-    return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-done">✅ <strong>${escHTML(lead.nome)}</strong> movido para <strong>${escHTML(col.label)}</strong>.</div></div>`;
+
+  if(a.name==='agendar_visita'){
+    const cliente=(a.args.cliente||'').trim();
+    if(!cliente||!a.args.data||!a.args.hora)return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-error">Faltou cliente, data ou hora — peça de novo com esses detalhes.</div></div>`;
+    const [y,mo,d]=a.args.data.split('-');
+    const dataFmt=`${d}/${mo}/${y}`;
+    if(a.status==='done')return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-done">✅ Visita com <strong>${escHTML(cliente)}</strong> agendada pra ${dataFmt} às ${escHTML(a.args.hora)}.</div></div>`;
+    if(a.status==='cancelled')return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-cancelled">Ação cancelada.</div></div>`;
+    return wrap(`🤖 Sugestão: agendar visita com <strong>${escHTML(cliente)}</strong>${a.args.imovel?` em <strong>${escHTML(a.args.imovel)}</strong>`:''} pra ${dataFmt} às ${escHTML(a.args.hora)}`);
   }
-  if(a.status==='cancelled'){
-    return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action-cancelled">Ação cancelada.</div></div>`;
-  }
-  return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-action">
-    🤖 Sugestão: mover <strong>${escHTML(lead.nome)}</strong> para <strong>${escHTML(col.label)}</strong>
-    <div class="ai-action-buttons">
-      <button class="ai-action-confirm" onclick="confirmarAcaoIA(${idx})">Confirmar</button>
-      <button class="ai-action-cancel" onclick="cancelarAcaoIA(${idx})">Cancelar</button>
-    </div>
-  </div></div>`;
+
+  return `<div class="ai-msg-row">${orb}<div class="ai-msg ai-msg-error">Ação não reconhecida.</div></div>`;
 }
 
 async function confirmarAcaoIA(idx){
@@ -11050,6 +11085,48 @@ async function confirmarAcaoIA(idx){
     renderAiChatLog();
     if(document.getElementById('page-crm')?.classList.contains('active')){inited['crm']=false;renderKanban();}
     showToast(`${lead.nome} movido para ${col.label}`,'success');
+  }else if(a.name==='criar_lead'){
+    const payload={
+      user_id:_currentUser?.id,
+      nome:a.args.nome,
+      tel:a.args.tel||'—',
+      email:'—',
+      tipo:a.args.tipo||'',
+      valor:a.args.valor||'A definir',
+      origem:'Captar IA',
+      coluna:'novo',dias:0,
+      cor:'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0')
+    };
+    const {data:saved,error}=await _sb.from('leads').insert([payload]).select().single();
+    if(error){showToast('Erro ao criar lead: '+error.message,'error');return;}
+    LEADS_DATA.unshift(saved||{...payload,id:Date.now()});
+    a.status='done';
+    renderAiChatLog();
+    if(document.getElementById('page-crm')?.classList.contains('active')){inited['crm']=false;renderKanban();}
+    showToast(`Lead ${a.args.nome} criado`,'success');
+  }else if(a.name==='agendar_visita'){
+    const [y,mo,d]=a.args.data.split('-');
+    const payload={
+      user_id:_currentUser?.id,
+      imovel:a.args.imovel||'',
+      cliente:a.args.cliente,
+      data:`${d}/${mo}/${y}`,
+      hora:a.args.hora,
+      status:'agendada',
+      corretor:'',obs:'',
+      emoji:'🏠',
+      grad:'linear-gradient(135deg,#1e1b4b,#312e81)'
+    };
+    const {data:saved,error}=await _sb.from('visitas').insert([payload]).select().single();
+    if(error){showToast('Erro ao agendar visita: '+error.message,'error');return;}
+    const newV=saved||{...payload,id:Date.now()};
+    VISITAS.unshift(newV);
+    const evPayload={user_id:_currentUser?.id,date:a.args.data,title:`Visita — ${a.args.cliente}`,time:newV.hora,type:'visita',color:'#3b82f6',visita_id:newV.id};
+    _sb.from('cal_events').insert([evPayload]).then(()=>{},()=>{});
+    a.status='done';
+    renderAiChatLog();
+    if(document.getElementById('page-visitas')?.classList.contains('active')){inited['visitas']=false;renderVisitas();}
+    showToast(`Visita com ${a.args.cliente} agendada`,'success');
   }
 }
 
@@ -11091,8 +11168,12 @@ function buildAiCrmContext(){
   const visitasAgendadas=VISITAS.filter(v=>v.status==='agendada').length;
   const locInadimplentes=LOCACOES.filter(l=>l.status==='atrasado').length;
   const nome=_currentUser?.user_metadata?.nome||_currentUser?.email?.split('@')[0]||'';
+  const hoje=new Date();
+  const hojeIso=hoje.toISOString().slice(0,10);
+  const diasSemana=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
   return `[RESUMO ATUAL DO CRM]
 Corretor: ${nome||'—'}
+Hoje é ${diasSemana[hoje.getDay()]}, ${hojeIso} (use essa data como referência pra "hoje"/"amanhã"/dias da semana ao agendar algo).
 Leads por etapa: ${porEtapa}${perdidos?`, Perdido: ${perdidos}`:''} — total ${LEADS_DATA.length}
 Imóveis por status: ${porStatusIm} — total ${IMOVEIS.length}
 Visitas agendadas: ${visitasAgendadas}
