@@ -1177,13 +1177,19 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 .captar-ia-card-hero{padding:26px 28px 24px;border-width:1.5px;box-shadow:0 24px 60px -30px rgba(163,3,154,.45)}
 .captar-ia-card-hero .captar-ia-orb svg{width:20px;height:20px}
 .captar-ia-card-hero .captar-ia-title{font-size:17px}
-.captar-ia-card-hero .ai-chat-log-mini{min-height:120px;max-height:280px}
 .captar-ia-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative;z-index:1}
 .captar-ia-title{font-size:15px;font-weight:800;color:var(--t1)}
 .captar-ia-subtitle{font-size:11px;color:var(--t3);margin-top:1px}
 .captar-ia-expand{margin-left:auto;background:none;border:1px solid var(--border);color:var(--t2);font-size:11px;font-weight:600;padding:6px 12px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap}
 .captar-ia-expand:hover{border-color:var(--p);color:#e6b3df}
-.ai-chat-log-mini{max-height:230px;position:relative;z-index:1}
+/* Corpo estático do card da home — de propósito SEM histórico de chat
+   embutido (isso já existia e usava o mesmo empty-state gigante da
+   página completa dentro de uma caixinha pequena, o que quebrava o
+   layout). Aqui é sempre um teaser fixo + atalhos; a conversa de
+   verdade acontece só na página completa (Abrir completo / Enviar). */
+.captar-ia-hero-body{position:relative;z-index:1;margin-bottom:14px}
+.captar-ia-hero-teaser{font-size:12.5px;color:var(--t2);line-height:1.5;margin-bottom:10px}
+.captar-ia-hero-body .ai-suggestion-chips{justify-content:flex-start;margin-top:0;max-width:none}
 
 /* ═══ METAS MENSAIS ═══ */
 .metas-section{margin-bottom:24px}
@@ -1501,14 +1507,17 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             </div>
             <button class="captar-ia-expand" onclick="navigate('assistente',document.getElementById('nav-assistente-btn'))">Abrir completo →</button>
           </div>
-          <div class="ai-chat-log ai-chat-log-mini" id="ai-chat-log-mini"></div>
-          <div class="ai-chat-typing" id="ai-chat-typing-mini" style="display:none">
-            <div class="captar-ia-orb captar-ia-orb-sm"><svg viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h2v2.09A7 7 0 0119 12v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6a7 7 0 016-6.91V3zM8 9a5 5 0 00-2 4v6a1 1 0 001 1h10a1 1 0 001-1v-6a5 5 0 00-5-5H9a5 5 0 00-1 .09V9zm1.5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.5 1.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" fill="white"/></svg></div>
-            <span class="typing-dots"><span></span><span></span><span></span></span>
+          <div class="captar-ia-hero-body">
+            <p class="captar-ia-hero-teaser">Pergunte sobre o mercado, peça uma descrição de imóvel ou tire dúvidas do dia a dia.</p>
+            <div class="ai-suggestion-chips">
+              <button type="button" class="ai-suggestion-chip" onclick="perguntarIA('Escreva uma descrição atrativa para um imóvel')">📝 Descrição de imóvel</button>
+              <button type="button" class="ai-suggestion-chip" onclick="perguntarIA('Me dê dicas de negociação com um cliente indeciso')">🤝 Dicas de negociação</button>
+              <button type="button" class="ai-suggestion-chip" onclick="perguntarIA('Como atrair mais leads qualificados?')">📈 Atrair leads</button>
+            </div>
           </div>
           <div class="ai-chat-inputbar">
-            <textarea class="form-input" id="ai-chat-input-mini" rows="1" placeholder="Pergunte algo pra Captar IA…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat('mini');}"></textarea>
-            <button class="btn-add" id="ai-chat-send-btn-mini" onclick="sendAiChat('mini')">Enviar</button>
+            <textarea class="form-input" id="ai-chat-input-mini" rows="1" placeholder="Pergunte algo pra Captar IA…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarIaMini();}"></textarea>
+            <button class="btn-add" id="ai-chat-send-btn-mini" onclick="enviarIaMini()">Enviar</button>
           </div>
         </div>
         <div class="dash-stat-tiles dash-anim d2" id="dash-stat-tiles">
@@ -4522,7 +4531,6 @@ function initPage(page){
     renderSparklines();
     renderMetas();
     setTimeout(()=>{initLeadsChart();initSourcesChart();},100);
-    ensureAiChatLoaded();
   }
   if(page==='crm') renderKanban();
   if(page==='imoveis') renderImoveis();
@@ -6981,7 +6989,14 @@ async function addContrato(){
     valor,dia,status:'pendente',
     inicio:fmtDate(inicioRaw),fim:fmtDate(fimRaw),cor,foto
   };
-  const {data:saved,error}=await _sb.from('locacoes').insert([payload]).select().single();
+  let {data:saved,error}=await _sb.from('locacoes').insert([payload]).select().single();
+  if(error&&/foto/i.test(error.message||'')){
+    // A coluna locacoes.foto ainda não existe nesse banco (migration não
+    // rodada ou schema cache do PostgREST desatualizado) — não pode travar
+    // a criação do contrato por causa de um campo opcional. Tenta de novo sem ele.
+    delete payload.foto;
+    ({data:saved,error}=await _sb.from('locacoes').insert([payload]).select().single());
+  }
   if(error){showToast('Erro ao criar contrato: '+error.message,'error');return;}
   LOCACOES.unshift(saved||{...payload,id:Date.now()});
   inited['locacao']=false;
@@ -10891,6 +10906,14 @@ async function initAssistente(){
 // (metas, perfil público etc.) — leva pro chat completo já com a pergunta
 // pronta no campo, mas sem enviar sozinho: o corretor decide se manda
 // (evita gastar cota diária de IA sem o usuário perceber).
+function enviarIaMini(){
+  const input=document.getElementById('ai-chat-input-mini');
+  const texto=(input?.value||'').trim();
+  if(!texto)return;
+  if(input)input.value='';
+  perguntarIA(texto);
+}
+
 function perguntarIA(pergunta){
   navigate('assistente',document.getElementById('nav-assistente-btn'));
   setTimeout(()=>{
