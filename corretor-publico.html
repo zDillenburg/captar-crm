@@ -104,7 +104,7 @@
   .verified-line{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--t-40);font-weight:600;margin-bottom:9px;letter-spacing:.01em}
   .verified-line svg{width:13px;height:13px;color:var(--purple-light);flex-shrink:0}
   .profile-name{font-size:clamp(26px,5vw,34px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin-bottom:9px}
-  .profile-tagline{font-size:16px;color:var(--t-70);line-height:1.55;margin-bottom:24px;max-width:48ch;font-weight:500}
+  .profile-tagline{font-size:16px;color:var(--t-70);line-height:1.55;margin-bottom:24px;max-width:48ch;font-weight:500;overflow-wrap:anywhere;word-break:break-word}
 
   .stat-row{display:flex;gap:10px;margin-bottom:28px}
   .stat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 8px;text-align:center;transition:background .2s,border-color .2s}
@@ -112,7 +112,7 @@
   .stat-lbl{font-size:11px;color:var(--t-40);margin-top:4px;font-weight:600;letter-spacing:.02em}
   .stat-line{font-size:14px;color:var(--t-40);margin-bottom:28px;font-weight:600}
 
-  .profile-bio{font-size:16px;line-height:1.65;color:var(--t-70);font-weight:500;margin-bottom:28px;max-width:56ch}
+  .profile-bio{font-size:16px;line-height:1.65;color:var(--t-70);font-weight:500;margin-bottom:28px;max-width:56ch;overflow-wrap:anywhere;word-break:break-word}
 
   .section-label{font-size:13px;font-weight:700;color:var(--t-40);letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
   .section-label-count{font-weight:600;color:var(--t-28)}
@@ -198,7 +198,7 @@
   .depoimentos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
   .depoimento-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
   .depoimento-stars{font-size:12px;color:#f5a623;margin-bottom:8px}
-  .depoimento-texto{font-size:13.5px;color:var(--t-70);line-height:1.55;margin-bottom:12px}
+  .depoimento-texto{font-size:13.5px;color:var(--t-70);line-height:1.55;margin-bottom:12px;overflow-wrap:anywhere;word-break:break-word}
   .depoimento-nome{font-size:12.5px;font-weight:700;color:var(--t-100)}
 
   .im-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
@@ -619,7 +619,7 @@ async function load(){
 
   const tipos = uniqueSorted(_lista.map(im=>im.tipo));
   const statuses = uniqueSorted(_lista.map(im=>im.status));
-  const mostrarFiltro = _lista.length > 5;
+  const mostrarFiltro = _lista.length > 1;
 
   document.getElementById('content').innerHTML = `
     <div class="banner fade-up">

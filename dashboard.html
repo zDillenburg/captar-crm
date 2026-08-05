@@ -3824,6 +3824,14 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         <label class="form-label">Banheiros</label>
         <input class="form-input" id="im-banheiros" type="number" min="1" placeholder="1"/>
       </div>
+      <div class="form-group">
+        <label class="form-label">Suítes</label>
+        <input class="form-input" id="im-suites" type="number" min="0" placeholder="0"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Vagas de garagem</label>
+        <input class="form-input" id="im-vagas" type="number" min="0" placeholder="0"/>
+      </div>
       <div class="full form-group">
         <label class="form-label">Características / Diferenciais</label>
         <input class="form-input" id="im-features" type="text" placeholder="Ex: Piscina, Nascente, Pomar, Galpão, Energia solar…"/>
@@ -3848,10 +3856,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <option value="">Selecione um corretor…</option>
         </select>
       </div>
-      <div class="full form-group">
-        <label class="form-label">🌐 Link no site (opcional)</label>
-        <input class="form-input" id="im-url-site" type="url" placeholder="Ex: https://grupocaptar.com.br/imovel/apartamento-caxias"/>
-      </div>
+      <input type="hidden" id="im-url-site" value=""/>
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="fecharModalImovel()">Cancelar</button>
@@ -6442,7 +6447,9 @@ async function removerImovelFoto(i){
   if(error)console.error('Erro ao remover foto do Storage:',error);
 }
 
+let _salvandoImovel=false;
 function fecharModalImovel(){
+  if(_salvandoImovel){showToast('Aguarda o imóvel terminar de salvar…','error');return;}
   document.getElementById('modal-imovel-add').classList.remove('open');
   if(_imovelFotosNovasSessao.length){
     _sb.storage.from('imoveis-fotos').remove(_imovelFotosNovasSessao).then(()=>{},()=>{});
@@ -6506,6 +6513,36 @@ async function gerarDescricaoImovelIA(){
   }
 }
 
+// Salva um imóvel de forma resiliente a dois problemas reais que já
+// aconteceram: (1) coluna nova ainda não migrada nesse banco — tenta de
+// novo sem o campo faltando, um de cada vez; (2) erro de rede transitório
+// ("TypeError: Load failed" no Safari, comum em conexão instável) —
+// tenta de novo do zero até 2x antes de desistir, já que muitas vezes a
+// escrita funciona na hora, só a resposta que falha em chegar de volta.
+async function salvarImovelComFallback(queryFn,payloadOriginal,camposOpcionais){
+  let payload={...payloadOriginal};
+  for(let tentativa=0;tentativa<=camposOpcionais.length;tentativa++){
+    let resultado=await tentarComRetryDeRede(()=>queryFn(payload));
+    if(!resultado.error)return resultado;
+    const campoFaltando=camposOpcionais.find(c=>(c in payload)&&new RegExp(c,'i').test(resultado.error.message||''));
+    if(!campoFaltando)return resultado;
+    delete payload[campoFaltando];
+  }
+}
+
+async function tentarComRetryDeRede(fn,maxTentativas=2){
+  let ultimoResultado;
+  for(let i=0;i<maxTentativas;i++){
+    ultimoResultado=await fn();
+    if(!ultimoResultado.error)return ultimoResultado;
+    const msg=String(ultimoResultado.error.message||ultimoResultado.error);
+    const ehErroDeRede=/load failed|failed to fetch|network|typeerror/i.test(msg);
+    if(!ehErroDeRede)return ultimoResultado;
+    if(i<maxTentativas-1)await new Promise(r=>setTimeout(r,600));
+  }
+  return ultimoResultado;
+}
+
 async function addImovel(){
   const titulo=document.getElementById('im-titulo').value.trim();
   if(!titulo){showToast('Informe o título do imóvel','error');return;}
@@ -6546,6 +6583,8 @@ async function addImovel(){
     preco:'R$ '+(parsePrecoInput(document.getElementById('im-preco').value)||'0').replace(/\B(?=(\d{3})+(?!\d))/g,'.'),
     quartos:parseInt(document.getElementById('im-quartos').value)||0,
     banheiros:parseInt(document.getElementById('im-banheiros').value)||1,
+    suites:parseInt(document.getElementById('im-suites')?.value)||0,
+    vagas:parseInt(document.getElementById('im-vagas')?.value)||0,
     area:areaDisplay,
     status:st,
     statusClass:statusMap[st]||'status-novo',
@@ -6561,17 +6600,19 @@ async function addImovel(){
     corretor_tel:(_currentUser?.user_metadata?.tel||'').trim(),
     fotos:_imovelFotos
   };
+  const btnSalvar=document.getElementById('imovel-add-btn');
+  const textoOriginalBtn=btnSalvar.textContent;
+  btnSalvar.disabled=true;
+  btnSalvar.textContent='Salvando…';
+  _salvandoImovel=true;
+  const camposOpcionais=['finalidade','suites','vagas'];
   if(_editingImovelId){
     // UPDATE mode
-    let {error}=await _sb.from('imoveis').update(payload).eq('id',_editingImovelId);
-    if(error&&/finalidade/i.test(error.message||'')){
-      // A coluna imoveis.finalidade ainda não existe nesse banco (migration
-      // não rodada ou schema cache do PostgREST desatualizado) — não pode
-      // travar o salvamento do imóvel por causa de um campo novo. Tenta de
-      // novo sem ele.
-      const {finalidade,...payloadSemFinalidade}=payload;
-      ({error}=await _sb.from('imoveis').update(payloadSemFinalidade).eq('id',_editingImovelId));
-    }
+    const {error}=await salvarImovelComFallback(
+      p=>_sb.from('imoveis').update(p).eq('id',_editingImovelId),
+      payload,camposOpcionais
+    );
+    btnSalvar.disabled=false;btnSalvar.textContent=textoOriginalBtn;_salvandoImovel=false;
     if(error){showToast('Erro ao atualizar imóvel: '+error.message,'error');return;}
     [IMOVEIS,IMOVEIS_EXTRA].forEach(arr=>{
       const ix=arr.findIndex(i=>String(i.id)===String(_editingImovelId));
@@ -6582,11 +6623,11 @@ async function addImovel(){
   } else {
     // INSERT mode — usa o id já gerado no cliente (abrirModalNovoImovel),
     // que é o mesmo usado no path das fotos já enviadas pra esse imóvel.
-    let {data:saved,error}=await _sb.from('imoveis').insert([{...payload,id:_novoImovelId}]).select().single();
-    if(error&&/finalidade/i.test(error.message||'')){
-      const {finalidade,...payloadSemFinalidade}=payload;
-      ({data:saved,error}=await _sb.from('imoveis').insert([{...payloadSemFinalidade,id:_novoImovelId}]).select().single());
-    }
+    const {data:saved,error}=await salvarImovelComFallback(
+      p=>_sb.from('imoveis').insert([{...p,id:_novoImovelId}]).select().single(),
+      payload,camposOpcionais
+    );
+    btnSalvar.disabled=false;btnSalvar.textContent=textoOriginalBtn;_salvandoImovel=false;
     if(error){showToast('Erro ao salvar imóvel: '+error.message,'error');return;}
     const newIm=saved||{...payload,id:_novoImovelId};
     IMOVEIS.push(newIm);
@@ -7391,7 +7432,11 @@ document.getElementById('modal-pix').addEventListener('click',e=>{if(e.target===
 // Click-outside-to-close for remaining modals
 ['modal-imovel-detail','modal-imovel-add','modal-contrato','modal','modal-visita'].forEach(id=>{
   const el=document.getElementById(id);
-  if(el) el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
+  if(el) el.addEventListener('click',e=>{
+    if(e.target!==el)return;
+    if(id==='modal-imovel-add'&&_salvandoImovel){showToast('Aguarda o imóvel terminar de salvar…','error');return;}
+    el.classList.remove('open');
+  });
 });
 
 function copyPixKey(){
