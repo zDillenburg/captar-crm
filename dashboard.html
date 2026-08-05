@@ -1873,6 +1873,29 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
               </div>
             </div>
 
+            <div class="config-card">
+              <div class="config-card-title"><span class="pp-section-num">5</span>Depoimentos</div>
+              <div style="font-size:11.5px;color:var(--t3);margin-bottom:14px">Cole aqui um recado de um cliente satisfeito (por WhatsApp, por exemplo) — aparece na sua página pública como prova social.</div>
+              <div id="pp-depoimentos-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+              <div class="config-form-group">
+                <label class="config-label">Nome do cliente</label>
+                <input class="config-input" type="text" id="pp-dep-nome" maxlength="80" placeholder="Ex: Marcos R."/>
+              </div>
+              <div class="config-form-group">
+                <label class="config-label">Nota</label>
+                <select class="config-select" id="pp-dep-nota">
+                  <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                  <option value="4">⭐⭐⭐⭐ (4)</option>
+                  <option value="3">⭐⭐⭐ (3)</option>
+                </select>
+              </div>
+              <div class="config-form-group" style="margin-bottom:12px">
+                <label class="config-label">Depoimento</label>
+                <textarea class="config-input" id="pp-dep-texto" rows="3" maxlength="400" placeholder="Ex: Atendimento excelente, me ajudou a encontrar o apartamento ideal em poucos dias." style="resize:vertical;font-family:inherit"></textarea>
+              </div>
+              <button type="button" class="config-save" onclick="adicionarDepoimento(this)" style="width:100%">+ Adicionar depoimento</button>
+            </div>
+
           </div>
 
           <div class="pp-preview-col dash-anim d1">
@@ -8172,6 +8195,63 @@ async function loadPerfilPublico(){
   loadCapaPreview();
   atualizarPreviewPerfilPublico();
   atualizarTracaoPerfilPublico();
+  loadDepoimentos();
+}
+
+// ─────────────────────────────────────────
+// DEPOIMENTOS (prova social no perfil público)
+// ─────────────────────────────────────────
+let DEPOIMENTOS=[];
+async function loadDepoimentos(){
+  if(!_currentUser?.id)return;
+  const {data,error}=await _sb.from('depoimentos_publicos').select('*').eq('user_id',_currentUser.id).order('created_at',{ascending:false});
+  if(error){console.warn('loadDepoimentos:',error.message);return;}
+  DEPOIMENTOS=data||[];
+  renderDepoimentosList();
+}
+
+function renderDepoimentosList(){
+  const el=document.getElementById('pp-depoimentos-list');
+  if(!el)return;
+  if(!DEPOIMENTOS.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--t3);padding:8px 0">Nenhum depoimento cadastrado ainda.</div>';
+    return;
+  }
+  el.innerHTML=DEPOIMENTOS.map(d=>`
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;display:flex;gap:10px;align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700;color:var(--t1)">${escHTML(d.nome_cliente)} <span style="color:#f59e0b;font-weight:400">${'⭐'.repeat(d.nota)}</span></div>
+        <div style="font-size:12px;color:var(--t2);margin-top:3px;line-height:1.4">${escHTML(d.texto)}</div>
+      </div>
+      <button type="button" onclick="removerDepoimento('${escHTML(String(d.id))}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:0;flex-shrink:0" title="Remover">×</button>
+    </div>
+  `).join('');
+}
+
+async function adicionarDepoimento(btn){
+  const nome=document.getElementById('pp-dep-nome').value.trim();
+  const nota=parseInt(document.getElementById('pp-dep-nota').value)||5;
+  const texto=document.getElementById('pp-dep-texto').value.trim();
+  if(!nome||!texto){showToast('Preenche o nome e o depoimento','error');return;}
+  if(!_currentUser?.id){showToast('Sessão expirada, faça login novamente.','error');return;}
+  btn.disabled=true;
+  const payload={user_id:_currentUser.id,nome_cliente:nome,texto,nota};
+  const {data,error}=await _sb.from('depoimentos_publicos').insert([payload]).select().single();
+  btn.disabled=false;
+  if(error){showToast('Erro ao salvar depoimento: '+error.message,'error');return;}
+  DEPOIMENTOS.unshift(data||{...payload,id:Date.now()});
+  renderDepoimentosList();
+  document.getElementById('pp-dep-nome').value='';
+  document.getElementById('pp-dep-texto').value='';
+  document.getElementById('pp-dep-nota').value='5';
+  showToast('Depoimento adicionado!','success');
+}
+
+async function removerDepoimento(id){
+  const {error}=await _sb.from('depoimentos_publicos').delete().eq('id',id);
+  if(error){showToast('Erro ao remover: '+error.message,'error');return;}
+  DEPOIMENTOS=DEPOIMENTOS.filter(d=>String(d.id)!==String(id));
+  renderDepoimentosList();
 }
 
 // Soma visualizações/cliques já rastreados por imóvel (mesmo dado que

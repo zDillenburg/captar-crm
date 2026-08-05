@@ -175,6 +175,25 @@
   .vender-feedback.ok{display:block;background:rgba(34,197,94,.12);color:#4ade80}
   .vender-feedback.err{display:block;background:rgba(239,68,68,.12);color:#f87171}
 
+  .vendidos-section{margin-bottom:28px}
+  .vendidos-title{font-size:13px;font-weight:800;color:var(--t-70);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .vendidos-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .vendido-card{flex:0 0 auto;width:150px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .vendido-card-img{height:90px;position:relative;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:22px}
+  .vendido-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+  .vendido-tag{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;letter-spacing:.03em;padding:3px 7px;border-radius:20px;background:rgba(34,197,94,.92);color:#0a1f0f;z-index:1}
+  .vendido-card-body{padding:10px 12px}
+  .vendido-card-price{font-size:12.5px;font-weight:800;color:var(--t-100)}
+  .vendido-card-addr{font-size:10.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+
+  .depoimentos-section{margin-top:36px}
+  .depoimentos-title{font-size:13px;font-weight:800;color:var(--t-70);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
+  .depoimentos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .depoimento-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .depoimento-stars{font-size:12px;color:#f5a623;margin-bottom:8px}
+  .depoimento-texto{font-size:13.5px;color:var(--t-70);line-height:1.55;margin-bottom:12px}
+  .depoimento-nome{font-size:12.5px;font-weight:700;color:var(--t-100)}
+
   .im-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
   .im-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .32s var(--ease),box-shadow .32s var(--ease),border-color .32s var(--ease)}
   @media(hover:hover){
@@ -573,10 +592,16 @@ async function load(){
   }
 
   const {data: imoveisData} = await _sb.from('imoveis').select('*').eq('user_id', id).eq('publico', true).order('created_at', { ascending: false });
+  const {data: depoimentosData} = await _sb.from('depoimentos_publicos').select('*').eq('user_id', id).order('created_at', { ascending: false });
+  const depoimentos = depoimentosData || [];
   // Imóveis marcados como destaque pelo corretor aparecem primeiro —
   // sort estável, então dentro de cada grupo (destaque / não-destaque)
   // a ordem por data mais recente já vinda do banco é preservada.
   _lista = (imoveisData || []).slice().sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
+  // "Selo" e vitrine de vendidos — só com números reais (nunca inventa
+  // título tipo "Top Corretor"; mostra a contagem de verdade e deixa o
+  // visitante tirar a própria conclusão).
+  const vendidos = (imoveisData || []).filter(im => im.status === 'Vendido');
 
   const logoUrl = fotoPublicUrl('logos', `${id}/avatar.jpg`);
   const capaUrl = perfil.capa_path ? fotoPublicUrl('logos', `${id}/capa.jpg`) : '';
@@ -610,9 +635,10 @@ async function load(){
         ${perfil.tagline ? `<p class="profile-tagline">${escHtml(perfil.tagline)}</p>` : ''}
       </div>
 
-      ${(perfil.creci || perfil.especialidade) ? `
+      ${(perfil.creci || perfil.especialidade || vendidos.length>0) ? `
       <div class="stat-row fade-up d3">
         <div class="stat"><div class="stat-val">${_lista.length}</div><div class="stat-lbl">Imóve${_lista.length===1?'l':'is'}</div></div>
+        ${vendidos.length>0 ? `<div class="stat"><div class="stat-val" style="color:#f5a623">🏆 ${vendidos.length}</div><div class="stat-lbl">Vendido${vendidos.length===1?'':'s'}</div></div>` : ''}
         ${perfil.creci ? `<div class="stat"><div class="stat-val">${escHtml(perfil.creci)}</div><div class="stat-lbl">CRECI</div></div>` : ''}
         ${perfil.especialidade ? `<div class="stat"><div class="stat-val" style="font-size:13px;line-height:1.4;padding-top:2px">${escHtml(perfil.especialidade)}</div><div class="stat-lbl">Especialidade</div></div>` : ''}
       </div>
@@ -627,6 +653,28 @@ async function load(){
           <div class="vender-cta-sub">Deixe seus dados e ${escHtml((perfil.nome||'o corretor').split(' ')[0])} te procura direto.</div>
         </div>
       </button>
+
+      ${vendidos.length>=2 ? `
+      <div class="vendidos-section fade-up d3">
+        <div class="vendidos-title">🏆 Já vendemos</div>
+        <div class="vendidos-scroll">
+          ${vendidos.slice(0,8).map(im=>`
+            <div class="vendido-card">
+              <div class="vendido-card-img">
+                <span class="vendido-tag">Vendido</span>
+                ${Array.isArray(im.fotos)&&im.fotos.length
+                  ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" alt="" onerror="this.remove()"/>`
+                  : `<span>${escHtml(im.emoji||'🏠')}</span>`}
+              </div>
+              <div class="vendido-card-body">
+                <div class="vendido-card-price">${escHtml(im.preco||'—')}</div>
+                <div class="vendido-card-addr">${escHtml(im.endereco||'—')}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
 
       <div class="section-label">
         <span>Imóveis disponíveis</span>
@@ -651,6 +699,21 @@ async function load(){
           ${_lista.map((im,i)=>imCardHtml(im,i)).join('')}
         </div>
       ` : `<div class="empty-imoveis" id="im-grid-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICON_EMPTY}</svg>Nenhum imóvel compartilhado publicamente no momento.</div>`}
+
+      ${depoimentos.length ? `
+      <div class="depoimentos-section fade-up">
+        <div class="depoimentos-title">O que meus clientes dizem</div>
+        <div class="depoimentos-grid">
+          ${depoimentos.slice(0,6).map(d=>`
+            <div class="depoimento-card">
+              <div class="depoimento-stars">${'⭐'.repeat(Math.max(1,Math.min(5,d.nota||5)))}</div>
+              <p class="depoimento-texto">"${escHtml(d.texto)}"</p>
+              <div class="depoimento-nome">${escHtml(d.nome_cliente)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
     </div>
   `;
 
