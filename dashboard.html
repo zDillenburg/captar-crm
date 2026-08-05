@@ -11503,6 +11503,18 @@ function buildAiCrmContext(){
   const hoje=new Date();
   const hojeIso=hoje.toISOString().slice(0,10);
   const diasSemana=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+
+  // Financeiro e metas do mês — dado real, mesmo cálculo já usado nas
+  // páginas de Gestão Financeira/Dashboard, pra IA poder responder "como
+  // estou indo esse mês" com números de verdade em vez de resposta genérica.
+  const isThisMonth=dv=>{if(!dv)return false;const d=new Date(dv);return d.getFullYear()===hoje.getFullYear()&&d.getMonth()===hoje.getMonth();};
+  const receitaMes=(TRANSACOES.entradas||[]).filter(t=>isThisMonth(t.created_at)).reduce((s,t)=>s+(t.val||0),0);
+  const despesaMes=(TRANSACOES.saidas||[]).filter(t=>isThisMonth(t.created_at)).reduce((s,t)=>s+(t.val||0),0);
+  const metas=getMetas();
+  const leadsMes=LEADS_DATA.filter(l=>isThisMonth(l.created_at)).length;
+  const visitasMes=VISITAS.filter(v=>v.status==='realizada'&&isThisMonth(v.created_at)).length;
+  const fechadosMes=LEADS_DATA.filter(l=>l.coluna==='fechado'&&isThisMonth(l.created_at)).length;
+
   return `[RESUMO ATUAL DO CRM]
 Corretor: ${nome||'—'}
 Hoje é ${diasSemana[hoje.getDay()]}, ${hojeIso} (use essa data como referência pra "hoje"/"amanhã"/dias da semana ao agendar algo).
@@ -11510,6 +11522,8 @@ Leads por etapa: ${porEtapa}${perdidos?`, Perdido: ${perdidos}`:''} — total ${
 Imóveis por status: ${porStatusIm} — total ${IMOVEIS.length}
 Visitas agendadas: ${visitasAgendadas}
 Locações inadimplentes: ${locInadimplentes}
+Financeiro do mês: receita R$ ${receitaMes.toLocaleString('pt-BR')}, despesas R$ ${despesaMes.toLocaleString('pt-BR')}, saldo R$ ${(receitaMes-despesaMes).toLocaleString('pt-BR')}
+Metas do mês: leads ${leadsMes}/${metas.leads}, visitas realizadas ${visitasMes}/${metas.visitas}, negócios fechados ${fechadosMes}/${metas.vendas}, comissão meta R$ ${Number(metas.comissao).toLocaleString('pt-BR')}
 [FIM DO RESUMO]`;
 }
 
