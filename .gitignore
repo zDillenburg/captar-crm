@@ -23,6 +23,7 @@ supabase-lead-anotacoes-contatos.sql
 supabase-checklist-nuvem.sql
 supabase-propostas-publicas.sql
 supabase-imoveis-aluguel-locacao-foto.sql
+supabase-depoimentos-publicos.sql
 .claude/
 .DS_Store
 *.env
