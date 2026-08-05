@@ -1175,7 +1175,7 @@ body.light-mode .ai-logo-link-btn:hover{color:var(--p)}
 .ai-img-reset-link{background:none;border:none;color:#e6b3df;font-size:11px;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
 
 /* Card "Captar IA" no Dashboard — chat embutido */
-.captar-ia-card{position:relative;background:linear-gradient(160deg,rgba(133,2,119,.12),rgba(20,18,16,.35) 65%);border:1px solid rgba(163,3,154,.3);border-radius:var(--r2);padding:20px 22px;margin-bottom:20px;overflow:hidden;animation:captarIaFadeUp .5s cubic-bezier(.16,1,.3,1)}
+.captar-ia-card{position:relative;background:linear-gradient(160deg,rgba(133,2,119,.12),rgba(20,18,16,.35) 65%);border:1px solid rgba(163,3,154,.3);border-radius:var(--r2);padding:20px 22px;margin-bottom:20px;overflow:hidden}
 body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119,.08),rgba(255,255,255,.5) 65%);border-color:rgba(163,3,154,.25)}
 .captar-ia-card::before{content:'';position:absolute;top:-70%;right:-15%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(163,3,154,.2),transparent 70%);pointer-events:none}
 .captar-ia-card-hero{padding:26px 28px 24px;border-width:1.5px;box-shadow:0 24px 60px -30px rgba(163,3,154,.45)}
@@ -2239,10 +2239,6 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
       <div class="page" id="page-financeiro">
         <!-- Toolbar -->
         <div style="display:flex;justify-content:flex-end;margin-bottom:16px;gap:10px">
-          <button class="btn-add" style="gap:6px;background:rgba(133,2,119,.15);color:#c453bb;border:1px solid rgba(133,2,119,.3)" onclick="openCalcFinanciamento()">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-            Calculadora de Financiamento
-          </button>
           <button class="btn-add" onclick="addTransacao('entrada')" style="gap:6px">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nova Transação
@@ -5371,9 +5367,10 @@ function renderLocacao(){populateImovelSelects();
   }
   tbody.innerHTML=LOCACOES.map(l=>{
     const s=statusMap[l.status]||{label:l.status||'—',cls:'pmt-pendente'};
+    const fotoPath=_locacaoFotoPath(l);
     return `<tr data-status="${escHTML(l.status||'pendente')}" data-inquilino="${escHTML((l.inquilino||'').toLowerCase())}" data-imovel="${escHTML((l.imovel||'').toLowerCase())}">
       <td><div class="lead-name-cell"><div class="mini-avatar" style="background:${escHTML(l.cor||'#850277')}">${initials(l.inquilino)}</div>${escHTML(l.inquilino)}</div></td>
-      <td style="max-width:220px;font-size:12px"><div class="loc-imovel-cell">${l.foto?`<img class="loc-imovel-thumb" src="${escHTML(imovelFotoPublicUrl(l.foto))}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'loc-imovel-thumb-empty',textContent:'🏠'}))" alt=""/>`:`<div class="loc-imovel-thumb-empty">🏠</div>`}<span>${escHTML(l.imovel)}</span></div></td>
+      <td style="max-width:220px;font-size:12px"><div class="loc-imovel-cell">${fotoPath?`<img class="loc-imovel-thumb" src="${escHTML(imovelFotoPublicUrl(fotoPath))}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'loc-imovel-thumb-empty',textContent:'🏠'}))" alt=""/>`:`<div class="loc-imovel-thumb-empty">🏠</div>`}<span>${escHTML(l.imovel)}</span></div></td>
       <td style="font-weight:700;color:#c453bb">R$&nbsp;${Number(l.valor).toLocaleString('pt-BR')}</td>
       <td>Dia ${escHTML(String(l.dia))}</td>
       <td class="loc-vigor">${escHTML(l.inicio)} → ${escHTML(l.fim)}</td>
@@ -6757,14 +6754,21 @@ function _applyLocFilter(){
 // ─────────────────────────────────────────
 function _getLocById(id){return LOCACOES.find(l=>String(l.id)===String(id));}
 
+// Contratos criados antes da coluna locacoes.foto existir não têm foto
+// salva — busca pelo título do imóvel como fallback.
+function _locacaoFotoPath(l){
+  return l.foto||IMOVEIS.find(im=>im.titulo===l.imovel&&Array.isArray(im.fotos)&&im.fotos.length)?.fotos[0]||'';
+}
+
 function verContrato(id){
   const l=_getLocById(id);
   if(!l){showToast('Contrato não encontrado','error');return;}
   const statusMap={pago:'Pago',pendente:'Pendente',atrasado:'Atrasado',avencer:'A Vencer'};
   const statusCls={pago:'pmt-pago',pendente:'pmt-pendente',atrasado:'pmt-atrasado',avencer:'pmt-avencer'};
   const tel=l.tel||'';
+  const fotoPath=_locacaoFotoPath(l);
   document.getElementById('loc-detail-body').innerHTML=`
-    ${l.foto?`<img src="${escHTML(imovelFotoPublicUrl(l.foto))}" onerror="this.remove()" style="width:100%;height:150px;object-fit:cover;border-radius:12px;margin-bottom:16px" alt=""/>`:''}
+    ${fotoPath?`<img src="${escHTML(imovelFotoPublicUrl(fotoPath))}" onerror="this.remove()" style="width:100%;height:150px;object-fit:cover;border-radius:12px;margin-bottom:16px" alt=""/>`:''}
     <div style="display:flex;align-items:center;gap:14px;padding:0 0 18px;border-bottom:1px solid var(--border);margin-bottom:18px">
       <div style="width:52px;height:52px;border-radius:50%;background:${escHTML(l.cor||'#850277')};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0">${initials(l.inquilino)}</div>
       <div>
@@ -7183,11 +7187,14 @@ async function renderPagamentos(){
   const diffDias = Math.round((dataVenc - hoje)/(1000*60*60*24));
   const vencStr = dataVenc.toLocaleDateString('pt-BR');
 
-  // Preenche card do plano
-  document.getElementById('pag-plano-nome').textContent = p.nome;
-  document.getElementById('pag-plano-desc').textContent = p.desc;
-  document.getElementById('pag-valor').textContent      = fmtBRL(p.valor);
-  document.getElementById('pag-vencimento').textContent = vencStr;
+  // Preenche card do plano. Cada write é guardada com `if(el)` — antes uma
+  // única id ausente (ex: troca rápida de página no meio da carga) travava
+  // a função inteira e deixava o resto de Pagamentos em branco.
+  const setText=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  setText('pag-plano-nome',p.nome);
+  setText('pag-plano-desc',p.desc);
+  setText('pag-valor',fmtBRL(p.valor));
+  setText('pag-vencimento',vencStr);
 
   const statusMap = {
     pago:     {cls:'pmt-pago',     lbl:'Em dia'},
@@ -7195,7 +7202,8 @@ async function renderPagamentos(){
     atrasado: {cls:'pmt-atrasado', lbl:'Atrasado'}
   };
   const s = statusMap[p.status]||{cls:'pmt-pendente',lbl:p.status};
-  document.getElementById('pag-status-badge').innerHTML = `<span class="pmt-badge ${s.cls}">${s.lbl}</span>`;
+  const badgeEl=document.getElementById('pag-status-badge');
+  if(badgeEl)badgeEl.innerHTML = `<span class="pmt-badge ${s.cls}">${s.lbl}</span>`;
 
   // Alerta de vencimento
   const alertEl = document.getElementById('pag-alert-plano');
@@ -7207,13 +7215,15 @@ async function renderPagamentos(){
   } else if(p.status === 'pago'){
     alertHtml = `<div class="pag-alert info"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>Plano em dia! Próximo vencimento em ${diffDias} dia${diffDias!==1?'s':''} (${vencStr}).</div>`;
   }
-  alertEl.innerHTML = alertHtml;
+  if(alertEl)alertEl.innerHTML = alertHtml;
 
   // Badge nav (só aparece se atrasado ou vencendo em ≤3 dias)
   const badge = document.getElementById('nav-badge-pag');
   const urgent = p.status === 'atrasado' || (p.status !== 'pago' && diffDias <= 3);
-  badge.textContent = '!';
-  badge.style.display = urgent ? '' : 'none';
+  if(badge){
+    badge.textContent = '!';
+    badge.style.display = urgent ? '' : 'none';
+  }
 
   // QR inline (Pix de valor fixo do plano)
   makeQR('pix-qr-inline', buildPixPayload(p.valor), 160);
@@ -7233,7 +7243,7 @@ async function renderPagamentos(){
     status: p.status
   }];
   const hStatusMap = {pago:{cls:'pmt-pago',lbl:'Pago'},pendente:{cls:'pmt-pendente',lbl:'Pendente'},atrasado:{cls:'pmt-atrasado',lbl:'Atrasado'}};
-  tbody.innerHTML = hist.map(h=>{
+  if(tbody)tbody.innerHTML = hist.map(h=>{
     const hs = hStatusMap[h.status]||{cls:'pmt-pendente',lbl:h.status};
     return `<tr>
       <td style="font-weight:600">${escHTML(h.mes)}</td>
