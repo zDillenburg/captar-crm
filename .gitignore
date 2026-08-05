@@ -24,6 +24,7 @@ supabase-checklist-nuvem.sql
 supabase-propostas-publicas.sql
 supabase-imoveis-aluguel-locacao-foto.sql
 supabase-depoimentos-publicos.sql
+supabase-imovel-suites-vagas.sql
 .claude/
 .DS_Store
 *.env
