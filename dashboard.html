@@ -145,8 +145,18 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 /* ══════════════════════ DASHBOARD — SAUDAÇÃO E VISÃO GERAL ══════════════════════ */
 /* ── Entrada em camadas — mesmo padrão fade-up já usado na landing e no
    link público do corretor, aplicado aqui pra unificar a sensação de
-   "produto único" entre as três partes do site. ── */
-.dash-anim{opacity:0;animation:fadeUp .6s var(--ease,cubic-bezier(.16,1,.3,1)) forwards}
+   "produto único" entre as três partes do site.
+   IMPORTANTE: usa uma keyframe própria que anima só `transform`, nunca
+   `opacity` — a versão anterior (opacity:0 + keyframe fadeUp) dependia
+   da animação CSS terminar de verdade pra ficar visível, e ela pode
+   nunca terminar (aba em segundo plano, navegador suspendendo a
+   animação) — nesse caso o conteúdo inteiro sumia até um F5, ou parecia
+   "lento" enquanto a rede de segurança (ver JS) aguardava pra forçar a
+   visibilidade. Sem opacity aqui, o elemento SEMPRE está visível desde
+   o primeiro frame — na pior das hipóteses ele só não desliza suavemente
+   pro lugar, o que é cosmético e inofensivo. */
+@keyframes dashAnimSlideUp{from{transform:translateY(12px)}to{transform:translateY(0)}}
+.dash-anim{animation:dashAnimSlideUp .6s var(--ease,cubic-bezier(.16,1,.3,1)) forwards}
 .dash-anim.d1{animation-delay:.06s}
 .dash-anim.d2{animation-delay:.12s}
 .dash-anim.d3{animation-delay:.18s}
@@ -3776,6 +3786,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         <select class="form-input" id="im-status">
           <option>Ativo</option><option>Captado</option><option>Negociação</option><option>Vendido</option>
         </select>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px">Marcar como "Vendido" (com o imóvel como Público) faz ele entrar na vitrine "Já vendemos" e no selo de vendidos do seu Perfil Público.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Finalidade</label>
@@ -4536,11 +4547,9 @@ const pageMeta={
   assistente:{title:'Captar IA',sub:'Assistente exclusivo do Grupo Captar — converse e gere/edite imagens em alta qualidade'},
 };
 
-let _pageActiveSince=Date.now();
 function navigate(page, btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
-  _pageActiveSince=Date.now();
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(btn) btn.classList.add('active');
   document.getElementById('page-title').textContent=pageMeta[page].title;
@@ -4558,36 +4567,6 @@ function toggleSidebar(){
   const open=s.classList.toggle('open');
   o.style.display=open?'block':'none';
 }
-
-// Rede de segurança contra a animação de entrada (.dash-anim) travando em
-// opacity:0 pra sempre — já vimos isso acontecer com um card específico
-// (conflito de `animation` no CSS, corrigido à parte) e com PÁGINAS
-// INTEIRAS sumindo (relatado pelo usuário: Imóveis e Dashboard em branco
-// ao trocar de aba). Navegador pode nunca terminar/disparar a animação
-// (aba em segundo plano, throttle, etc.) e, sem isso, só um F5 resolvia.
-// Roda em intervalo porque o app troca de página trocando `display`, então
-// elementos "aparecem" a qualquer momento, não só no load inicial.
-setInterval(()=>{
-  // Baseado em tempo real (Date.now()), não no playState da Web Animations
-  // API — confirmado que uma animação travada (aba em segundo plano etc.)
-  // continua se reportando como "running" pra sempre, mesmo sem nunca
-  // progredir visualmente, então checar o playState não pega esse caso.
-  // A maior janela possível de delay+duração no CSS é ~0.9s (d5 = .3s
-  // delay + .6s), 1.5s dá margem confortável sem arriscar interromper
-  // uma animação que só está demorando um pouco.
-  if(Date.now()-_pageActiveSince<1500)return;
-  document.querySelectorAll('.page.active .dash-anim').forEach(el=>{
-    if(getComputedStyle(el).opacity!=='0')return;
-    // Setar style.opacity direto NÃO adianta aqui: enquanto a animação
-    // CSS segue "rodando" (mesmo travada/paralisada em segundo plano),
-    // o valor computado da animação sempre vence o inline style. Preciso
-    // terminar a animação de verdade — .finish() pula pro fim dela
-    // (opacity:1, já que usa fill-mode forwards), daí sim o elemento fica
-    // visível de fato.
-    el.getAnimations().forEach(a=>{try{a.finish();}catch(e){}});
-    el.style.opacity='1';
-  });
-},1000);
 
 // ─────────────────────────────────────────
 // PAGE INIT

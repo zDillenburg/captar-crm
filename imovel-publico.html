@@ -42,13 +42,17 @@
   .wrap{width:100%;max-width:620px}
 
   @media(prefers-reduced-motion:no-preference){
-    .fade-up{opacity:0;transform:translateY(14px);animation:fadeUp .6s var(--ease) forwards}
+    /* SEM opacity aqui de propósito — ver corretor-publico.html pro motivo:
+       só animar `transform` garante que o conteúdo esteja sempre visível
+       desde o primeiro frame, mesmo se a animação nunca terminar de
+       verdade (aba em segundo plano, navegador suspendendo a animação). */
+    .fade-up{transform:translateY(14px);animation:fadeUp .6s var(--ease) forwards}
     .fade-up.d1{animation-delay:.07s}
     .fade-up.d2{animation-delay:.14s}
     .fade-up.d3{animation-delay:.2s}
-    @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-    .chip-in{opacity:0;transform:translateY(8px);animation:chipIn .4s var(--ease) forwards;animation-delay:calc(var(--i,0) * 35ms)}
-    @keyframes chipIn{to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeUp{to{transform:translateY(0)}}
+    .chip-in{transform:translateY(8px);animation:chipIn .4s var(--ease) forwards;animation-delay:calc(var(--i,0) * 35ms)}
+    @keyframes chipIn{to{transform:translateY(0)}}
   }
   @media(prefers-reduced-motion:reduce){
     .fade-up,.chip-in{opacity:1!important;transform:none!important;animation:none!important}

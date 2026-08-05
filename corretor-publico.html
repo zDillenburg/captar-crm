@@ -44,14 +44,21 @@
   .wrap{width:100%;max-width:680px;padding-bottom:130px}
 
   @media(prefers-reduced-motion:no-preference){
-    .fade-up{opacity:0;transform:translateY(14px);animation:fadeUp .6s var(--ease) forwards}
+    /* SEM opacity aqui de propósito — uma versão anterior desse padrão
+       (opacity:0 + animação com fill-mode forwards) podia deixar a
+       página inteira invisível pra sempre se a animação nunca
+       terminasse de verdade (aba em segundo plano, navegador suspendendo
+       a animação). Só animar `transform` garante que o conteúdo esteja
+       sempre visível desde o primeiro frame, não importa o que aconteça
+       com a animação. */
+    .fade-up{transform:translateY(14px);animation:fadeUp .6s var(--ease) forwards}
     .fade-up.d1{animation-delay:.06s}
     .fade-up.d2{animation-delay:.12s}
     .fade-up.d3{animation-delay:.18s}
     .fade-up.d4{animation-delay:.24s}
-    @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-    .card-in{opacity:0;transform:translateY(16px) scale(.98);animation:cardIn .55s var(--ease) forwards;animation-delay:calc(var(--i, 0) * 45ms)}
-    @keyframes cardIn{to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes fadeUp{to{transform:translateY(0)}}
+    .card-in{transform:translateY(16px) scale(.98);animation:cardIn .55s var(--ease) forwards;animation-delay:calc(var(--i, 0) * 45ms)}
+    @keyframes cardIn{to{transform:translateY(0) scale(1)}}
   }
   @media(prefers-reduced-motion:reduce){
     .fade-up,.card-in{opacity:1!important;transform:none!important;animation:none!important}
