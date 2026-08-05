@@ -5269,6 +5269,8 @@ async function dropCard(e,colKey){
         lead.coluna=colunaAnterior;
         renderKanban();
         showToast('Erro ao mover lead: '+error.message,'error');
+      }else{
+        registrarEventoLead(id,`Movido para "${stageLabel[colKey]||colKey}"`,'🔀');
       }
     },()=>{
       lead.coluna=colunaAnterior;
@@ -5390,6 +5392,7 @@ async function addLead(){
   if(error){showToast('Erro ao salvar lead: '+error.message,'error');return;}
   const lead=saved||{...newLead,id:Date.now()};
   LEADS_DATA.unshift(lead);
+  registrarEventoLead(lead.id,'Lead criado','✨');
   // Adiciona ao kanban se já iniciado
   const col=document.getElementById('kcards-novo');
   if(col){
@@ -5674,6 +5677,7 @@ async function salvarNotaLead(leadId){
   if(error){showToast('Erro ao salvar anotação: '+error.message,'error');return;}
   const lead=LEADS_DATA.find(l=>String(l.id)===String(leadId));
   if(lead)lead.anotacoes=ta.value;
+  registrarEventoLead(leadId,'Anotação atualizada','📝');
   showToast('Anotação salva!','success');
 }
 // Também popula ao abrir modal de contrato
@@ -6124,6 +6128,7 @@ function openLeadDetail(id){
   const l=LEADS_DATA.find(x=>String(x.id)===String(id));
   if(!l)return;
   const body=document.getElementById('lead-detail-body');
+  if(!body)return;
   const timeline=[
     {icon:'👤',text:'Lead cadastrado via '+l.origem,date:l.dias+'d atrás'},
     {icon:'💬',text:'Primeiro contato realizado',date:Math.max(0,l.dias-2)+'d atrás'},
@@ -6222,6 +6227,7 @@ function openLeadDetail(id){
   const telClean = (l.tel||'').replace(/\D/g,'');
   const emailSafe = escHTML(l.email||'');
   const actions=document.getElementById('lead-detail-actions');
+  if(!actions)return;
   actions.innerHTML=`
     <a class="so-action primary" href="https://wa.me/${waPhone}" target="_blank">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413z"/></svg>
@@ -6279,9 +6285,12 @@ function openImovelDetail(idx){
   const im=IMOVEIS[idx];
   if(!im)return;
   const corretorTel=(_currentUser?.user_metadata?.tel||'').trim();
-  document.getElementById('imovel-detail-title').textContent=im.titulo;
+  const tituloEl=document.getElementById('imovel-detail-title');
+  const bodyEl=document.getElementById('imovel-detail-body');
+  if(!tituloEl||!bodyEl)return;
+  tituloEl.textContent=im.titulo;
   const temFotos=Array.isArray(im.fotos)&&im.fotos.length>0;
-  document.getElementById('imovel-detail-body').innerHTML=`
+  bodyEl.innerHTML=`
     <div class="imovel-detail-hero" style="background:${escHTML(im.grad||'linear-gradient(135deg,#1e3a5f,#1e40af)')}">
       ${temFotos?`<img src="${escHTML(imovelFotoPublicUrl(im.fotos[0]))}" style="width:100%;height:100%;object-fit:cover" onerror="this.remove()"/>`:escHTML(im.emoji||'🏠')}
       ${temFotos&&im.fotos.length>1?`<span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px">📷 ${im.fotos.length} fotos</span>`:''}
@@ -6577,6 +6586,22 @@ async function salvarImovelComFallback(queryFn,payloadOriginal,camposOpcionais){
     const campoFaltando=camposOpcionais.find(c=>(c in payload)&&new RegExp(c,'i').test(resultado.error.message||''));
     if(!campoFaltando)return resultado;
     delete payload[campoFaltando];
+  }
+}
+
+// Mesma ideia de salvarImovelComFallback, mas pra insert em lote (array de
+// linhas, ex: importação de CSV) — se uma coluna do payload ainda não
+// existe nesse banco, antes o LOTE INTEIRO falhava de uma vez (import de
+// 50 leads, um campo novo faltando, as 50 linhas eram descartadas). Agora
+// remove o campo de cada linha e tenta de novo, um campo por vez.
+async function salvarLoteComFallback(queryFn,linhasOriginais,camposOpcionais){
+  let linhas=linhasOriginais.map(r=>({...r}));
+  for(let tentativa=0;tentativa<=camposOpcionais.length;tentativa++){
+    let resultado=await tentarComRetryDeRede(()=>queryFn(linhas));
+    if(!resultado.error)return resultado;
+    const campoFaltando=camposOpcionais.find(c=>linhas.some(r=>c in r)&&new RegExp(c,'i').test(resultado.error.message||''));
+    if(!campoFaltando)return resultado;
+    linhas=linhas.map(r=>{const{[campoFaltando]:_omit,...resto}=r;return resto;});
   }
 }
 
@@ -10254,7 +10279,7 @@ async function confirmarImportCSV(){
         coluna:'novo',dias:0,
         cor:'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0')
       }));
-      const {data,error}=await _sb.from('leads').insert(payload).select();
+      const {data,error}=await salvarLoteComFallback(rows=>_sb.from('leads').insert(rows).select(),payload,['obs']);
       if(error)throw error;
       LEADS_DATA.unshift(...(data||[]));
       inited['crm']=false;
@@ -10281,10 +10306,12 @@ async function confirmarImportCSV(){
           statusClass:statusMap[status]||'status-novo',
           emoji:emojis[r.tipo]||'🏠',
           grad:grads[r.tipo]||defaultGrad,
-          features:r.features||''
+          features:r.features||'',
+          finalidade:r.finalidade==='aluguel'?'aluguel':'venda',
+          publico:true
         };
       });
-      const {data,error}=await _sb.from('imoveis').insert(payload).select();
+      const {data,error}=await salvarLoteComFallback(rows=>_sb.from('imoveis').insert(rows).select(),payload,['finalidade','publico']);
       if(error)throw error;
       IMOVEIS.push(...(data||[]));
       IMOVEIS_EXTRA.push(...(data||[]));
