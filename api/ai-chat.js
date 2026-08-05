@@ -1,4 +1,4 @@
-const { verifyUserAndUsage } = require('./_ai-shared');
+const { verifyUserAndUsage, isAllowedOrigin } = require('./_ai-shared');
 
 const CHAT_DAILY_LIMIT = parseInt(process.env.AI_CHAT_DAILY_LIMIT || '50', 10);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -100,6 +100,7 @@ Responda sempre em português do Brasil, de forma direta, prática e com a confi
 module.exports = async (req, res) => {
   if (req.method !== 'POST') { res.status(405).json({ error: 'method_not_allowed' }); return; }
   if (!GEMINI_API_KEY) { res.status(500).json({ error: 'server_misconfigured' }); return; }
+  if (!isAllowedOrigin(req)) { res.status(403).json({ error: 'forbidden_origin' }); return; }
 
   const auth = await verifyUserAndUsage(req, 'chat', CHAT_DAILY_LIMIT);
   if (auth.error) {

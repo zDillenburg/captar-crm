@@ -1,6 +1,22 @@
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
+// Defesa em profundidade: o Bearer token já garante que só um usuário
+// logado pode chamar essas funções, mas isso sozinho não impede que o
+// token (se vazado por outro bug, extensão maliciosa, etc.) seja
+// reaproveitado a partir de uma página completamente diferente. Checar a
+// origem da requisição reduz essa superfície sem custar nada em uso
+// legítimo — navegador não deixa uma página de outro domínio forjar o
+// header Origin numa requisição fetch/XHR real.
+const ALLOWED_ORIGIN_HOSTS = [/^(www\.)?grupocaptar\.com\.br$/i, /\.vercel\.app$/i];
+function isAllowedOrigin(req) {
+  const originHeader = req.headers['origin'] || req.headers['referer'] || '';
+  if (!originHeader) return true; // sem header Origin (chamada same-origin em alguns navegadores/ambientes) — não quebra uso legítimo
+  let host;
+  try { host = new URL(originHeader).hostname; } catch (e) { return false; }
+  return ALLOWED_ORIGIN_HOSTS.some((re) => re.test(host));
+}
+
 // Verifica o token do usuário (Bearer) direto contra o Supabase Auth, e checa/incrementa
 // o limite diário via RPC — sem nenhuma service-role key, só o token do próprio usuário.
 // Isso garante que o mesmo RLS que protege leads/imoveis/etc protege o uso da IA.
@@ -55,4 +71,4 @@ async function verifyUserAndUsage(req, kind, dailyLimit) {
   }
 }
 
-module.exports = { verifyUserAndUsage };
+module.exports = { verifyUserAndUsage, isAllowedOrigin };
