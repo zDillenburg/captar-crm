@@ -6550,7 +6550,15 @@ async function addImovel(){
   };
   if(_editingImovelId){
     // UPDATE mode
-    const {error}=await _sb.from('imoveis').update(payload).eq('id',_editingImovelId);
+    let {error}=await _sb.from('imoveis').update(payload).eq('id',_editingImovelId);
+    if(error&&/finalidade/i.test(error.message||'')){
+      // A coluna imoveis.finalidade ainda não existe nesse banco (migration
+      // não rodada ou schema cache do PostgREST desatualizado) — não pode
+      // travar o salvamento do imóvel por causa de um campo novo. Tenta de
+      // novo sem ele.
+      const {finalidade,...payloadSemFinalidade}=payload;
+      ({error}=await _sb.from('imoveis').update(payloadSemFinalidade).eq('id',_editingImovelId));
+    }
     if(error){showToast('Erro ao atualizar imóvel: '+error.message,'error');return;}
     [IMOVEIS,IMOVEIS_EXTRA].forEach(arr=>{
       const ix=arr.findIndex(i=>String(i.id)===String(_editingImovelId));
@@ -6561,7 +6569,11 @@ async function addImovel(){
   } else {
     // INSERT mode — usa o id já gerado no cliente (abrirModalNovoImovel),
     // que é o mesmo usado no path das fotos já enviadas pra esse imóvel.
-    const {data:saved,error}=await _sb.from('imoveis').insert([{...payload,id:_novoImovelId}]).select().single();
+    let {data:saved,error}=await _sb.from('imoveis').insert([{...payload,id:_novoImovelId}]).select().single();
+    if(error&&/finalidade/i.test(error.message||'')){
+      const {finalidade,...payloadSemFinalidade}=payload;
+      ({data:saved,error}=await _sb.from('imoveis').insert([{...payloadSemFinalidade,id:_novoImovelId}]).select().single());
+    }
     if(error){showToast('Erro ao salvar imóvel: '+error.message,'error');return;}
     const newIm=saved||{...payload,id:_novoImovelId};
     IMOVEIS.push(newIm);
