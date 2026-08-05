@@ -161,6 +161,20 @@
   .filter-apply{flex:1;background:var(--purple);border:none;border-radius:var(--r-sm);color:#fff;font:inherit;font-weight:800;font-size:14px;padding:13px;cursor:pointer;transition:background .18s}
   .filter-apply:hover{background:var(--purple-light)}
 
+  .vender-cta{
+    display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(133,2,119,.14),rgba(163,3,154,.06));
+    border:1px solid var(--purple-light);border-radius:18px;padding:18px 20px;margin-bottom:28px;text-align:left;width:100%;
+    cursor:pointer;font-family:inherit;transition:border-color .2s,transform .2s var(--ease);
+  }
+  .vender-cta:hover{border-color:var(--purple);transform:translateY(-2px)}
+  .vender-cta-icon{width:42px;height:42px;border-radius:12px;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .vender-cta-icon svg{width:20px;height:20px;color:#fff}
+  .vender-cta-title{font-size:15px;font-weight:800;color:var(--t-100);margin-bottom:2px}
+  .vender-cta-sub{font-size:13px;color:var(--t-55)}
+  .vender-feedback{font-size:13px;margin-top:14px;padding:10px 12px;border-radius:10px;display:none}
+  .vender-feedback.ok{display:block;background:rgba(34,197,94,.12);color:#4ade80}
+  .vender-feedback.err{display:block;background:rgba(239,68,68,.12);color:#f87171}
+
   .im-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
   .im-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .32s var(--ease),box-shadow .32s var(--ease),border-color .32s var(--ease)}
   @media(hover:hover){
@@ -352,6 +366,7 @@ function siteUrl(url){
 // ── estado do filtro/busca — tudo client-side, a lista inteira já está em memória ──
 let _lista = [];
 let _filters = { q:'', tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null };
+let _venderUserId = null;
 
 function matchesFilters(im){
   if(_filters.tipo && String(im.tipo||'').trim() !== _filters.tipo) return false;
@@ -543,6 +558,7 @@ async function load(){
     : _sb.from('perfil_publico').select('*').eq('user_id', id);
   const {data: perfil, error} = await query.eq('ativo', true).maybeSingle();
   if(perfil)id = perfil.user_id;
+  _venderUserId = id;
 
   if(error || !perfil){
     renderState('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', 'Esse perfil não está disponível publicamente, ou o link está incorreto.');
@@ -602,7 +618,15 @@ async function load(){
       </div>
       ` : `<div class="stat-line fade-up d3">${_lista.length} imóve${_lista.length===1?'l':'is'} disponíve${_lista.length===1?'l':'is'} publicamente</div>`}
 
-      ${perfil.bio ? `<p class="profile-bio fade-up d3" style="margin-bottom:36px">${escHtml(perfil.bio)}</p>` : ''}
+      ${perfil.bio ? `<p class="profile-bio fade-up d3" style="margin-bottom:28px">${escHtml(perfil.bio)}</p>` : ''}
+
+      <button type="button" class="vender-cta fade-up d3" onclick="abrirVenderPanel()">
+        <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+        <div>
+          <div class="vender-cta-title">Quer vender ou alugar seu imóvel?</div>
+          <div class="vender-cta-sub">Deixe seus dados e ${escHtml((perfil.nome||'o corretor').split(' ')[0])} te procura direto.</div>
+        </div>
+      </button>
 
       <div class="section-label">
         <span>Imóveis disponíveis</span>
@@ -685,6 +709,85 @@ async function load(){
       </div>
     `);
   }
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="filter-backdrop" id="vender-backdrop" onclick="if(event.target===this)fecharVenderPanel()"></div>
+    <div class="filter-panel" id="vender-panel">
+      <div class="filter-panel-head">
+        <h3>Quer vender ou alugar seu imóvel?</h3>
+        <button class="filter-panel-close" onclick="fecharVenderPanel()">${ICON_X}</button>
+      </div>
+      <p style="font-size:13.5px;color:var(--t-55);line-height:1.55;margin-bottom:18px">Deixe seus dados que ${escHtml((perfil.nome||'o corretor').split(' ')[0])} entra em contato pra avaliar seu imóvel.</p>
+      <form id="vender-form" onsubmit="return enviarVenda(event)">
+        <div class="filter-field">
+          <label>Seu nome</label>
+          <input type="text" id="vender-nome" maxlength="120" required autocomplete="name"/>
+        </div>
+        <div class="filter-field">
+          <label>Telefone / WhatsApp</label>
+          <input type="text" id="vender-tel" maxlength="30" required autocomplete="tel" placeholder="(54) 99999-9999"/>
+        </div>
+        <div class="filter-field" style="margin-bottom:0">
+          <label>Sobre o imóvel (endereço, tipo, valor esperado…)</label>
+          <input type="text" id="vender-msg" maxlength="300" placeholder="Ex: apartamento 2 quartos no centro, quero alugar"/>
+        </div>
+        <div class="filter-actions">
+          <button type="submit" class="filter-apply" id="vender-submit-btn" style="flex:1">Enviar</button>
+        </div>
+        <div class="vender-feedback" id="vender-feedback"></div>
+      </form>
+    </div>
+  `);
+}
+
+function abrirVenderPanel(){
+  const backdrop=document.getElementById('vender-backdrop'), panel=document.getElementById('vender-panel');
+  if(!backdrop||!panel)return;
+  backdrop.classList.add('open');
+  panel.classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('vender-nome')?.focus(),300);
+}
+
+function fecharVenderPanel(){
+  const backdrop=document.getElementById('vender-backdrop'), panel=document.getElementById('vender-panel');
+  if(backdrop)backdrop.classList.remove('open');
+  if(panel)panel.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+async function enviarVenda(event){
+  event.preventDefault();
+  const nome=document.getElementById('vender-nome').value.trim();
+  const tel=document.getElementById('vender-tel').value.trim();
+  const msg=document.getElementById('vender-msg').value.trim();
+  const btn=document.getElementById('vender-submit-btn');
+  const feedback=document.getElementById('vender-feedback');
+  if(!nome||!tel){
+    feedback.className='vender-feedback err';
+    feedback.textContent='Preenche nome e telefone pra gente conseguir te retornar.';
+    return false;
+  }
+  btn.disabled=true;
+  feedback.className='vender-feedback';
+  feedback.textContent='';
+  try{
+    const {error}=await _sb.rpc('enviar_proposta_publica',{
+      p_user_id:_venderUserId, p_nome:nome, p_tel:tel, p_mensagem:msg,
+      p_imovel_titulo:'Quer vender/alugar imóvel'
+    });
+    if(error)throw error;
+    feedback.className='vender-feedback ok';
+    feedback.textContent='Recebido! O corretor vai entrar em contato em breve.';
+    document.getElementById('vender-form').reset();
+    setTimeout(fecharVenderPanel,1800);
+  }catch(e){
+    feedback.className='vender-feedback err';
+    feedback.textContent='Não deu pra enviar agora. Tenta de novo em instantes, ou fala direto pelo WhatsApp.';
+  }finally{
+    btn.disabled=false;
+  }
+  return false;
 }
 
 load();
