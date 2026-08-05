@@ -69,6 +69,7 @@
 
   .hero{border-radius:20px;padding:60px 24px;text-align:center;font-size:52px;margin-bottom:24px;position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
   .status-pill{position:absolute;top:14px;right:14px;font-size:11px;font-weight:700;letter-spacing:.02em;padding:6px 13px;border-radius:20px;background:rgba(0,0,0,.55);color:#fff;backdrop-filter:blur(10px)}
+  .finalidade-pill{position:absolute;top:14px;left:14px;font-size:11px;font-weight:700;letter-spacing:.02em;padding:6px 13px;border-radius:20px;background:rgba(59,130,246,.92);color:#0a1526}
 
   .gallery-main{width:100%;aspect-ratio:4/3;border-radius:20px;overflow:hidden;margin-bottom:10px;background:var(--surface);position:relative;cursor:zoom-in;border:1px solid var(--line)}
   .gallery-main img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease)}
@@ -112,10 +113,59 @@
   .corretor-card:hover .corretor-cta{background:var(--purple);color:#fff}
   .corretor-cta svg{width:13px;height:13px}
 
+  .price-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
   .price{font-size:clamp(28px,6vw,36px);font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
   .title{font-size:15.5px;color:var(--t-55);margin-bottom:6px;font-weight:600}
   .address{font-size:13.5px;color:var(--t-40);margin-bottom:24px;display:flex;align-items:center;gap:6px;font-weight:600}
   .address svg{width:13px;height:13px;flex-shrink:0}
+
+  /* ── Curtir ─────────────────────────────── */
+  .like-btn{
+    display:flex;align-items:center;gap:6px;flex-shrink:0;margin-top:4px;
+    background:var(--surface);border:1px solid var(--line);border-radius:20px;
+    padding:9px 14px;color:var(--t-55);font:inherit;font-size:13px;font-weight:700;cursor:pointer;
+    transition:border-color .2s,background .2s,color .2s,transform .2s var(--ease);
+  }
+  .like-btn svg{width:16px;height:16px;transition:transform .25s var(--ease)}
+  .like-btn:hover{border-color:var(--line-strong)}
+  .like-btn.liked{border-color:#e0245e;background:rgba(224,36,94,.1);color:#e0245e}
+  .like-btn.liked svg{fill:#e0245e;stroke:#e0245e;transform:scale(1.15)}
+  .like-btn:disabled{cursor:default}
+
+  /* ── Fazer proposta ─────────────────────── */
+  .proposta-btn{
+    display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+    background:var(--surface);border:1.5px solid var(--purple-light);color:var(--t-100);
+    font-size:15px;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;margin-bottom:12px;
+    transition:background .2s,transform .18s var(--ease);font-family:inherit;
+  }
+  .proposta-btn:hover{background:rgba(163,3,154,.12)}
+  .proposta-btn:active{transform:scale(.98)}
+  .proposta-btn svg{width:18px;height:18px;flex-shrink:0}
+
+  .proposta-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:60;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s ease}
+  .proposta-overlay.open{opacity:1;visibility:visible}
+  @media(min-width:640px){.proposta-overlay{align-items:center}}
+  .proposta-card{background:var(--surface);border:1px solid var(--line-mid);border-radius:22px 22px 0 0;padding:26px 24px calc(26px + env(safe-area-inset-bottom));width:100%;max-width:440px;transform:translateY(100%);transition:transform .35s var(--ease)}
+  .proposta-overlay.open .proposta-card{transform:translateY(0)}
+  @media(min-width:640px){.proposta-card{border-radius:22px}}
+  .proposta-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .proposta-title{font-size:18px;font-weight:800;letter-spacing:-.01em}
+  .proposta-close{width:30px;height:30px;border-radius:50%;background:var(--surface-2);border:none;color:var(--t-70);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .proposta-sub{font-size:13px;color:var(--t-40);margin-bottom:20px;line-height:1.5}
+  .proposta-field{margin-bottom:14px}
+  .proposta-field label{display:block;font-size:12px;font-weight:700;color:var(--t-40);letter-spacing:.02em;margin-bottom:7px}
+  .proposta-field input,.proposta-field textarea{
+    width:100%;background:var(--surface-2);border:1px solid var(--line-mid);border-radius:12px;color:var(--t-100);
+    font:inherit;font-size:14.5px;padding:12px 14px;outline:none;transition:border-color .2s;resize:vertical;
+  }
+  .proposta-field input:focus,.proposta-field textarea:focus{border-color:var(--purple-light)}
+  .proposta-submit{width:100%;background:var(--purple);border:none;border-radius:12px;color:#fff;font:inherit;font-weight:800;font-size:15px;padding:14px;cursor:pointer;transition:background .18s;margin-top:6px}
+  .proposta-submit:hover{background:var(--purple-light)}
+  .proposta-submit:disabled{opacity:.6;cursor:default}
+  .proposta-feedback{font-size:13px;text-align:center;margin-top:12px;line-height:1.5}
+  .proposta-feedback.ok{color:#4ade80}
+  .proposta-feedback.err{color:#f87171}
 
   .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:10px;margin-bottom:28px}
   .description{font-size:15px;color:var(--t-70);line-height:1.7;margin-bottom:28px;white-space:pre-wrap;font-weight:500}
@@ -203,6 +253,34 @@
     <div class="lightbox-counter" id="lightbox-counter"></div>
   </div>
 
+  <div class="proposta-overlay" id="proposta-overlay" onclick="if(event.target===this)fecharProposta()">
+    <div class="proposta-card">
+      <div class="proposta-head">
+        <div class="proposta-title">Fazer uma proposta</div>
+        <button class="proposta-close" onclick="fecharProposta()" title="Fechar">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="proposta-sub" id="proposta-sub">Deixe seu nome e telefone que o corretor te procura direto.</div>
+      <form id="proposta-form" onsubmit="return enviarProposta(event)">
+        <div class="proposta-field">
+          <label for="proposta-nome">Seu nome</label>
+          <input type="text" id="proposta-nome" maxlength="120" required autocomplete="name"/>
+        </div>
+        <div class="proposta-field">
+          <label for="proposta-tel">Telefone / WhatsApp</label>
+          <input type="text" id="proposta-tel" maxlength="30" required autocomplete="tel" placeholder="(54) 99999-9999"/>
+        </div>
+        <div class="proposta-field">
+          <label for="proposta-msg">Mensagem (opcional)</label>
+          <textarea id="proposta-msg" rows="3" maxlength="500" placeholder="Ex: tenho interesse, gostaria de agendar uma visita…"></textarea>
+        </div>
+        <button type="submit" class="proposta-submit" id="proposta-submit-btn">Enviar proposta</button>
+        <div class="proposta-feedback" id="proposta-feedback"></div>
+      </form>
+    </div>
+  </div>
+
 <script>
 const SUPABASE_URL = 'https://ntebllysafkushvhubos.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50ZWJsbHlzYWZrdXNodmh1Ym9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MjUyNjEsImV4cCI6MjA5NDEwMTI2MX0.2Zxqc5oISDGWlSOhi6Zse0uVdY5pateMcMw9wLxYESY';
@@ -241,6 +319,7 @@ function waPhoneBR(tel){
 }
 
 let _fotosAtual = [];
+let _propostaCtx = { userId: null, titulo: '' };
 function fotoPublicUrl(bucket, path){
   return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 }
@@ -312,6 +391,7 @@ function renderState(iconPath, msg){
 }
 
 const ICON_WHATSAPP = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>';
+const ICON_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
 
 async function load(){
   const params = new URLSearchParams(location.search);
@@ -355,23 +435,30 @@ async function load(){
   _fotosAtual = Array.isArray(im.fotos) ? im.fotos : [];
   const temFotos = _fotosAtual.length > 0;
   const corretorLogoUrl = im.user_id ? fotoPublicUrl('logos', `${im.user_id}/avatar.jpg`) : '';
+  const _jaCurtiu = localStorage.getItem('captar_curtiu_' + id) === '1';
+  _propostaCtx = { userId: im.user_id, titulo: im.titulo || 'este imóvel' };
 
   document.getElementById('content').innerHTML = `
     ${temFotos ? `
     <div class="gallery-main fade-up" onclick="abrirLightbox(_fotoAtualIdx)">
       <img id="gallery-main-img" src="${escHtml(fotoPublicUrl('imoveis-fotos', _fotosAtual[0]))}" alt="${escHtml(im.titulo || 'Imóvel')}"/>
       ${im.status ? `<span class="status-pill">${escHtml(im.status)}</span>` : ''}
+      ${im.finalidade === 'aluguel' ? `<span class="finalidade-pill">🔑 Aluguel</span>` : ''}
       <div class="gallery-zoom-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
     </div>
     ${_fotosAtual.length > 1 ? `<div class="gallery-thumbs fade-up d1">${_fotosAtual.map((p, i) => `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', p))}" class="${i === 0 ? 'active' : ''}" onclick="trocarFotoGaleria(${i})" alt=""/>`).join('')}</div>` : ''}
     ` : `
     <div class="hero fade-up">
       ${im.status ? `<span class="status-pill">${escHtml(im.status)}</span>` : ''}
+      ${im.finalidade === 'aluguel' ? `<span class="finalidade-pill">🔑 Aluguel</span>` : ''}
       ${escHtml(im.emoji || '🏠')}
     </div>
     `}
     <div class="fade-up d1">
-    <div class="price">${escHtml(im.preco || 'Sob consulta')}</div>
+    <div class="price-row">
+      <div class="price">${escHtml(im.preco || 'Sob consulta')}</div>
+      <button class="like-btn ${_jaCurtiu ? 'liked' : ''}" id="like-btn" onclick="curtirImovel('${escHtml(String(id))}')" ${_jaCurtiu ? 'disabled' : ''}>${ICON_HEART}<span id="like-count">${Number(im.curtidas || 0)}</span></button>
+    </div>
     <div class="title">${escHtml(im.titulo || 'Imóvel')}${im.tipo ? ' · ' + escHtml(im.tipo) : ''}</div>
     <div class="address">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -404,6 +491,10 @@ async function load(){
       <div class="section-label fade-up d3">Diferenciais</div>
       <ul class="features">${featuresList.map((f,i) => `<li class="chip-in" style="--i:${i}">${escHtml(f)}</li>`).join('')}</ul>
     ` : ''}
+    <button type="button" class="proposta-btn fade-up d3" onclick="abrirProposta()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Fazer uma proposta
+    </button>
     ${corretorWaPhone ? `
     <p class="disclaimer fade-up d3">Anúncio compartilhado por um corretor parceiro do Grupo Captar. Fale direto pelo WhatsApp pra mais fotos, condições e visita.</p>
     ` : `
@@ -423,6 +514,85 @@ async function load(){
 function registrarCliqueWhatsapp(id){
   _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'whatsapp' }).then(() => {}, () => {});
 }
+
+// Curtir — um clique por imóvel por navegador (guardado no localStorage,
+// não é à prova de tudo, mas evita o caso óbvio de recarregar a página
+// pra inflar o número).
+function curtirImovel(id){
+  const btn = document.getElementById('like-btn');
+  const countEl = document.getElementById('like-count');
+  if(!btn || btn.disabled) return;
+  btn.disabled = true;
+  btn.classList.add('liked');
+  countEl.textContent = String(Number(countEl.textContent || 0) + 1);
+  localStorage.setItem('captar_curtiu_' + id, '1');
+  const desfazer = () => {
+    btn.disabled = false;
+    btn.classList.remove('liked');
+    countEl.textContent = String(Math.max(0, Number(countEl.textContent || 1) - 1));
+    localStorage.removeItem('captar_curtiu_' + id);
+  };
+  // O client do Supabase RESOLVE a promise mesmo quando a function do
+  // Postgres deu raise exception — o erro vem dentro de { error }, não
+  // por rejeição da promise. .then(ok, fail) sozinho nunca pegaria isso.
+  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'like' })
+    .then(({ error }) => { if(error) desfazer(); }, desfazer);
+}
+
+// Proposta — vira um lead de verdade no CRM do corretor (ver
+// supabase-propostas-publicas.sql / enviar_proposta_publica).
+function abrirProposta(){
+  const sub = document.getElementById('proposta-sub');
+  if(sub) sub.textContent = `Deixe seu nome e telefone que o corretor te procura sobre "${_propostaCtx.titulo}".`;
+  document.getElementById('proposta-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('proposta-nome')?.focus(), 260);
+}
+function fecharProposta(){
+  document.getElementById('proposta-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+async function enviarProposta(event){
+  event.preventDefault();
+  if(!_propostaCtx.userId){
+    document.getElementById('proposta-feedback').textContent = 'Não foi possível identificar o corretor deste anúncio.';
+    document.getElementById('proposta-feedback').className = 'proposta-feedback err';
+    return false;
+  }
+  const nome = document.getElementById('proposta-nome').value.trim();
+  const tel = document.getElementById('proposta-tel').value.trim();
+  const msg = document.getElementById('proposta-msg').value.trim();
+  const btn = document.getElementById('proposta-submit-btn');
+  const feedback = document.getElementById('proposta-feedback');
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+  feedback.textContent = '';
+  feedback.className = 'proposta-feedback';
+  try {
+    const { error } = await _sb.rpc('enviar_proposta_publica', {
+      p_user_id: _propostaCtx.userId,
+      p_nome: nome,
+      p_tel: tel,
+      p_mensagem: msg,
+      p_imovel_titulo: _propostaCtx.titulo
+    });
+    if(error) throw error;
+    feedback.textContent = 'Proposta enviada! O corretor vai te procurar em breve.';
+    feedback.className = 'proposta-feedback ok';
+    document.getElementById('proposta-form').reset();
+    setTimeout(fecharProposta, 1800);
+  } catch(e) {
+    feedback.textContent = 'Não deu pra enviar agora. Tenta de novo em instantes, ou fala direto pelo WhatsApp.';
+    feedback.className = 'proposta-feedback err';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enviar proposta';
+  }
+  return false;
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && document.getElementById('proposta-overlay')?.classList.contains('open')) fecharProposta();
+});
 
 load();
 </script>

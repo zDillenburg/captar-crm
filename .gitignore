@@ -21,6 +21,8 @@ supabase-vistoria-cloud.sql
 supabase-comissao-configuravel.sql
 supabase-lead-anotacoes-contatos.sql
 supabase-checklist-nuvem.sql
+supabase-propostas-publicas.sql
+supabase-imoveis-aluguel-locacao-foto.sql
 .claude/
 .DS_Store
 *.env
