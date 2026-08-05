@@ -3795,6 +3795,15 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <option value="aluguel">Aluguel</option>
         </select>
       </div>
+      <div class="full form-group">
+        <div class="toggle-row" style="padding:12px 14px;background:var(--bg3);border-radius:var(--r);margin:0">
+          <div class="toggle-info">
+            <div class="toggle-name">Visível no Perfil Público</div>
+            <div class="toggle-desc">Aparece no seu link público e entra na vitrine/selo de vendidos quando marcado como "Vendido". Desligado = só você vê esse imóvel.</div>
+          </div>
+          <button type="button" class="toggle on" id="im-publico-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+        </div>
+      </div>
       <div class="form-group">
         <label class="form-label">Preço (R$)</label>
         <input class="form-input" id="im-preco" type="text" placeholder="Ex: 480.000"/>
@@ -6325,6 +6334,8 @@ function resetImovelForm(){
   const tipoSel=document.getElementById('im-tipo');if(tipoSel)tipoSel.selectedIndex=0;
   const statusSel=document.getElementById('im-status');if(statusSel)statusSel.value='Ativo';
   const finalidadeSel=document.getElementById('im-finalidade');if(finalidadeSel)finalidadeSel.value='venda';
+  const publicoToggle=document.getElementById('im-publico-toggle');
+  if(publicoToggle){publicoToggle.classList.add('on');publicoToggle.classList.remove('off');}
   const estadoSel=document.getElementById('im-estado');if(estadoSel)estadoSel.value='RS';
   const qEl=document.getElementById('im-quartos');if(qEl)qEl.value='';
   const bEl=document.getElementById('im-banheiros');if(bEl)bEl.value='';
@@ -6334,6 +6345,7 @@ function resetImovelForm(){
 
 function abrirModalNovoImovel(){
   resetImovelForm();
+  populateImovelSelects();
   _novoImovelId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
   document.getElementById('modal-imovel-add').classList.add('open');
 }
@@ -6543,6 +6555,7 @@ async function addImovel(){
     url_site:(document.getElementById('im-url-site')?.value||'').trim(),
     tipo,
     finalidade:document.getElementById('im-finalidade')?.value||'venda',
+    publico:document.getElementById('im-publico-toggle')?.classList.contains('on')??true,
     features,
     descricao:document.getElementById('im-descricao')?.value.trim()||'',
     corretor_tel:(_currentUser?.user_metadata?.tel||'').trim(),
@@ -6593,6 +6606,7 @@ function editarImovel(id){
   const im=IMOVEIS.find(i=>String(i.id)===String(id));
   if(!im)return;
   _editingImovelId=id;
+  populateImovelSelects();
   // Pre-fill form
   const setVal=(elId,val)=>{const el=document.getElementById(elId);if(el)el.value=val||'';};
   setVal('im-titulo',im.titulo);
@@ -6621,6 +6635,12 @@ function editarImovel(id){
   if(statusSel)statusSel.value=im.status||'Ativo';
   const finalidadeSel=document.getElementById('im-finalidade');
   if(finalidadeSel)finalidadeSel.value=im.finalidade||'venda';
+  const publicoToggle=document.getElementById('im-publico-toggle');
+  if(publicoToggle){
+    const ehPublico=!!im.publico;
+    publicoToggle.classList.toggle('on',ehPublico);
+    publicoToggle.classList.toggle('off',!ehPublico);
+  }
   // Update modal title + button
   document.getElementById('imovel-add-title').textContent='Editar Imóvel';
   document.getElementById('imovel-add-btn').textContent='Salvar Alterações';
