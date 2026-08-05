@@ -4125,6 +4125,18 @@ function parseLocalDate(dateStr){
   return new Date(y,m-1,d);
 }
 
+// Próxima ocorrência de um "dia de vencimento" (1-28) a partir de hoje.
+// As 3 checagens de "locação vencendo em N dias" espalhadas pelo
+// arquivo só olhavam pro dia dentro do MÊS ATUAL — um vencimento dia 2
+// enquanto hoje já é dia 26 calculava uma data no passado (2 deste mês,
+// já passou) em vez de virar o mês (2 do mês que vem), fazendo o
+// contrato sumir dos alertas de "a vencer" na última semana de cada mês.
+function proximoVencimento(diaVenc,hoje){
+  let dv=new Date(hoje.getFullYear(),hoje.getMonth(),diaVenc||1);
+  if(dv<hoje)dv=new Date(hoje.getFullYear(),hoje.getMonth()+1,diaVenc||1);
+  return dv;
+}
+
 function escHTML(s){
   if(s==null)return'';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -5105,11 +5117,21 @@ function renderDashboardGreeting(){
 
 function toggleTask(i,el){
   const task=TASKS[i];
+  const anterior=task.done;
   task.done=!task.done;
-  // Persiste no Supabase (não bloqueia a UI)
-  if(task.id) _sb.from('tarefas').update({done:task.done}).eq('id',task.id);
   renderTasks();
   renderDashboardGreeting();
+  // Persiste no Supabase (não bloqueia a UI) — mas reverte se falhar,
+  // senão a tarefa (e o % de "Continuidade" na home) ficava mostrando
+  // um estado que nunca foi salvo de verdade, só corrigindo num F5.
+  if(task.id)_sb.from('tarefas').update({done:task.done}).eq('id',task.id).then(({error})=>{
+    if(error){
+      task.done=anterior;
+      renderTasks();
+      renderDashboardGreeting();
+      showToast('Erro ao salvar tarefa: '+error.message,'error');
+    }
+  },()=>{});
 }
 
 // ─────────────────────────────────────────
@@ -5236,10 +5258,22 @@ async function dropCard(e,colKey){
   const id=leadsDrag.dataset.id;
   const lead=LEADS_DATA.find(l=>String(l.id)===String(id));
   if(lead){
+    const colunaAnterior=lead.coluna;
     lead.coluna=colKey;
-    // Persiste no Supabase
+    // Persiste no Supabase — reverte a mudança otimista se falhar, senão
+    // o card ficava na coluna nova na tela (e lead.coluna errado em
+    // memória) mesmo quando a escrita no banco não aconteceu de verdade,
+    // só voltando ao normal (sem aviso) num F5.
     _sb.from('leads').update({coluna:colKey}).eq('id',id).then(({error})=>{
-      if(error)showToast('Erro ao mover lead: '+error.message,'error');
+      if(error){
+        lead.coluna=colunaAnterior;
+        renderKanban();
+        showToast('Erro ao mover lead: '+error.message,'error');
+      }
+    },()=>{
+      lead.coluna=colunaAnterior;
+      renderKanban();
+      showToast('Erro ao mover lead.','error');
     });
   }
   document.getElementById('kcards-'+colKey).appendChild(leadsDrag);
@@ -5254,26 +5288,33 @@ function updateCounts(){
   });
 }
 
-function filterLeads(q){
+// Antes, buscar por texto e clicar um chip de origem se anulavam: cada
+// um reaplicava display:'' em tudo que combinava só com o critério
+// dele, descartando o filtro que o outro já tinha aplicado. Agora os
+// dois critérios ficam num estado compartilhado e são combinados com E
+// (mesmo padrão já usado em _applyImFilter, na página de Imóveis).
+let _crmFiltro={q:'',origem:'todos'};
+function _applyCrmFilter(){
+  const q=_crmFiltro.q.toLowerCase();
   document.querySelectorAll('.lead-card').forEach(card=>{
     const id=card.dataset.id;
     const l=LEADS_DATA.find(x=>String(x.id)===String(id));
     if(!l)return;
-    const match=!q||(l.nome||'').toLowerCase().includes(q.toLowerCase())||(l.tel||'').includes(q);
-    card.style.display=match?'':'none';
+    const matchQ=!q||(l.nome||'').toLowerCase().includes(q)||(l.tel||'').includes(_crmFiltro.q);
+    const matchOrigem=_crmFiltro.origem==='todos'||(l.origem||'').toLowerCase()===_crmFiltro.origem.toLowerCase();
+    card.style.display=(matchQ&&matchOrigem)?'':'none';
   });
+}
+function filterLeads(q){
+  _crmFiltro.q=q||'';
+  _applyCrmFilter();
 }
 
 function setLeadFilter(source,btn){
   document.querySelectorAll('.crm-toolbar .chip').forEach(c=>c.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.lead-card').forEach(card=>{
-    const id=card.dataset.id;
-    const l=LEADS_DATA.find(x=>String(x.id)===String(id));
-    if(!l)return;
-    const match=source==='todos'||(l.origem||'').toLowerCase()===source.toLowerCase();
-    card.style.display=match?'':'none';
-  });
+  _crmFiltro.origem=source;
+  _applyCrmFilter();
 }
 
 // ─────────────────────────────────────────
@@ -5397,7 +5438,7 @@ function renderLocacao(){populateImovelSelects();
     const hoje=new Date();hoje.setHours(0,0,0,0);
     const avencer=LOCACOES.filter(l=>{
       if(l.status==='pago')return false;
-      const dv=new Date(hoje.getFullYear(),hoje.getMonth(),parseInt(l.dia)||1);
+      const dv=proximoVencimento(parseInt(l.dia)||1,hoje);
       const diff=Math.round((dv-hoje)/(1000*60*60*24));
       return diff>=0&&diff<=7;
     }).length;
@@ -5664,12 +5705,23 @@ async function addVisita(){
   // DELETE CASCADE) — assim excluir a visita remove o evento junto, sem
   // deixar fantasma no calendário.
   const evPayload={user_id:_currentUser?.id,date:dataVal,title:`Visita — ${cliente}`,time:newV.hora,type:'visita',color:'#3b82f6',visita_id:newV.id};
-  const {data:savedEv}=await _sb.from('cal_events').insert([evPayload]).select().single();
-  CAL_EVENTS.push({id:savedEv?.id,date:dataVal,title:evPayload.title,time:newV.hora,type:'visita',color:'#3b82f6',visita_id:newV.id});
+  const {data:savedEv,error:errEv}=await _sb.from('cal_events').insert([evPayload]).select().single();
+  // A visita em si já salvou (é o que importa) — um erro aqui só afeta o
+  // evento no calendário, então nunca bloqueia o fluxo. Mas antes esse
+  // erro era completamente ignorado (nem capturado) e um evento fantasma
+  // (id:undefined) era sempre empurrado pro array local, sumindo sem
+  // aviso no próximo reload. Agora só adiciona se realmente salvou, e
+  // avisa (sem alarmar) se não salvou.
+  if(errEv){
+    console.warn('addVisita: evento no calendário não salvou:',errEv.message);
+    showToast(`Visita agendada, mas não deu pra sincronizar com o calendário.`,'error');
+  }else{
+    CAL_EVENTS.push({id:savedEv?.id,date:dataVal,title:evPayload.title,time:newV.hora,type:'visita',color:'#3b82f6',visita_id:newV.id});
+  }
   inited['calendario']=false;
   renderVisitas();
   closeVisitaModal();
-  showToast(`Visita agendada para ${cliente}!`,'success');
+  if(!errEv)showToast(`Visita agendada para ${cliente}!`,'success');
   const vbadge=document.querySelector('.nav-item [style*="background:#3b82f6"]');
   if(vbadge)vbadge.textContent=VISITAS.filter(v=>v.status==='agendada').length;
   ['v-cliente','v-obs'].forEach(id=>{document.getElementById(id).value='';});
@@ -5856,14 +5908,12 @@ function initFinChart(){
     }
   });
 
-  // Animate balance bar from real data
-  setTimeout(()=>{
-    const totalR=TRANSACOES.entradas.reduce((s,t)=>s+(t.val||0),0);
-    const totalD=TRANSACOES.saidas.reduce((s,t)=>s+(t.val||0),0);
-    const pct=totalR>0?Math.min(100,(totalD/totalR*100)):0;
-    const b=document.getElementById('fin-bar');
-    if(b)b.style.width=pct.toFixed(1)+'%';
-  },400);
+  // A barra #fin-bar é preenchida por renderFinKpis() (que também escreve
+  // o texto "X% das receitas vão pra despesas" ao lado, usando só o mês
+  // corrente) — esse setTimeout aqui escrevia por cima com um % calculado
+  // sobre o total desde sempre, então a barra e o texto mostravam dois
+  // números diferentes ao mesmo tempo. Removido; renderFinKpis() já é a
+  // única fonte da verdade pra esse elemento.
 }
 
 function renderFinTables(){
@@ -5991,7 +6041,7 @@ function gerarAlertsFollowup(){
   });
   // Locações vencendo em ≤3 dias
   LOCACOES.filter(l=>l.status!=='pago').forEach(l=>{
-    const dv=new Date(hoje.getFullYear(),hoje.getMonth(),parseInt(l.dia)||1);
+    const dv=proximoVencimento(parseInt(l.dia)||1,hoje);
     const diff=Math.round((dv-hoje)/(864e5));
     if(diff>=0&&diff<=3){
       const existe=NOTIFICATIONS.some(n=>n._locId===l.id);
@@ -6168,7 +6218,7 @@ function openLeadDetail(id){
       <textarea class="notes-input" id="nota-lead-${l.id}" placeholder="Adicione observações sobre este lead…">${escHTML(l.anotacoes||'')}</textarea>
       <button class="btn-submit" style="margin-top:8px;font-size:12px;padding:8px 16px" onclick="salvarNotaLead('${escHTML(String(l.id))}')">Salvar</button>
     </div>`;
-  const waPhone = '55'+(l.tel||'').replace(/\D/g,'');
+  const waPhone = waPhoneBR(l.tel);
   const telClean = (l.tel||'').replace(/\D/g,'');
   const emailSafe = escHTML(l.email||'');
   const actions=document.getElementById('lead-detail-actions');
@@ -6893,9 +6943,9 @@ function verContrato(id){
   // WhatsApp button
   const waBtn=document.getElementById('loc-detail-wa-btn');
   if(tel){
-    const num=tel.replace(/\D/g,'');
+    const num=waPhoneBR(tel);
     const msg=encodeURIComponent(`Olá ${l.inquilino}! Passando para lembrar que o aluguel do imóvel *${l.imovel}* no valor de *R$ ${Number(l.valor||0).toLocaleString('pt-BR')}* vence todo dia *${l.dia}*. Por favor, efetue o pagamento. Obrigado!`);
-    waBtn.onclick=()=>window.open(`https://wa.me/55${num}?text=${msg}`,'_blank');
+    waBtn.onclick=()=>window.open(`https://wa.me/${num}?text=${msg}`,'_blank');
     waBtn.style.display='';
   } else {
     waBtn.style.display='none';
@@ -6908,9 +6958,9 @@ function cobrarInquilino(id){
   if(!l){showToast('Contrato não encontrado','error');return;}
   const tel=l.tel||'';
   if(tel){
-    const num=tel.replace(/\D/g,'');
+    const num=waPhoneBR(tel);
     const msg=encodeURIComponent(`Olá ${l.inquilino}! Passando para lembrar que o aluguel do imóvel *${l.imovel}* no valor de *R$ ${Number(l.valor||0).toLocaleString('pt-BR')}* vence todo dia *${l.dia}*. Por favor, efetue o pagamento. Obrigado!`);
-    window.open(`https://wa.me/55${num}?text=${msg}`,'_blank');
+    window.open(`https://wa.me/${num}?text=${msg}`,'_blank');
   } else {
     showToast('Telefone não cadastrado neste contrato. Edite o contrato para adicionar.','error');
   }
@@ -6941,7 +6991,13 @@ async function salvarEdicaoContrato(){
   if(!inquilino){showToast('Informe o nome do inquilino','error');return;}
   const tel=document.getElementById('edit-loc-tel').value.trim();
   const imovel=document.getElementById('edit-loc-imovel').value.trim();
-  const valor=parseInt(document.getElementById('edit-loc-valor').value.replace(/\D/g,''))||0;
+  // parseInt(...replace(/\D/g,'')) sozinho quebrava aqui: o campo vem
+  // pré-preenchido como "1.800,00" (ponto de milhar + vírgula decimal),
+  // e strip-all-non-digits vira "180000" em vez de 1800 — o valor do
+  // aluguel inflava ~100x em toda edição de contrato. parsePrecoInput já
+  // existe e trata isso certo (corta a partir da vírgula decimal antes
+  // de remover o ponto de milhar).
+  const valor=parseInt(parsePrecoInput(document.getElementById('edit-loc-valor').value))||0;
   const dia=parseInt(document.getElementById('edit-loc-dia').value)||l.dia;
   const inicio=document.getElementById('edit-loc-inicio').value.trim();
   const fim=document.getElementById('edit-loc-fim').value.trim();
@@ -6986,7 +7042,7 @@ async function renderCorretores(){
   }
   grid.innerHTML=CORRETORES.map(c=>{
     const num=(c.tel||'').replace(/\D/g,'');
-    const waLink=num?`https://wa.me/55${num}`:'#';
+    const waLink=num?`https://wa.me/${waPhoneBR(c.tel)}`:'#';
     const avatarColor=['#850277','#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6'][Math.abs(hashStr(c.nome||''))%6];
     return `<div class="corretor-card">
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px">
@@ -7115,7 +7171,7 @@ async function toggleDestaqueImovel(id,btn){
 async function addContrato(){
   const inquilino=document.getElementById('ct-inquilino').value.trim();
   if(!inquilino){showToast('Informe o nome do inquilino','error');return;}
-  const valor=parseInt(document.getElementById('ct-valor').value.replace(/\D/g,''))||0;
+  const valor=parseInt(parsePrecoInput(document.getElementById('ct-valor').value))||0;
   const dia=parseInt(document.getElementById('ct-dia').value)||10;
   const inicioRaw=document.getElementById('ct-inicio').value;
   const fimRaw=document.getElementById('ct-fim').value;
@@ -7564,6 +7620,15 @@ function renderAdminImoveisGrouped(){
 }
 
 async function renderAdmin(){
+  // Antes só o botão do menu ficava escondido pra quem não é admin — a
+  // função em si (e as ações de escrita que ela expõe: editar/apagar
+  // assinatura, bloquear usuário, confirmar pagamento) rodava igual se
+  // chamada direto (ex: console do navegador). A escrita real ainda
+  // depende da RLS do banco, mas isso é defesa em profundidade: sem
+  // esse guard, a área administrativa inteira (dados de todos os
+  // clientes) carregava e renderizava no client-side pra qualquer
+  // usuário logado, mesmo que os botões não aparecessem na tela.
+  if(!isAdmin()){showToast('Acesso restrito a administradores.','error');return;}
   await loadAssinaturas();
   await loadAdminImoveis();
   await loadAdminPerfisPublicos();
@@ -7578,10 +7643,11 @@ async function renderAdmin(){
   const atrasados = ASSINATURAS.filter(a=>a.status==='atrasado'||a.status==='pendente').length;
   const receita   = ASSINATURAS.filter(a=>a.status==='pago').reduce((s,a)=>s+(Number(a.valor)||0),0);
 
-  document.getElementById('adm-total').textContent     = total;
-  document.getElementById('adm-em-dia').textContent    = emDia;
-  document.getElementById('adm-atrasados').textContent = atrasados;
-  document.getElementById('adm-receita').textContent   = fmtBRL(receita);
+  const setAdmTxt=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  setAdmTxt('adm-total',total);
+  setAdmTxt('adm-em-dia',emDia);
+  setAdmTxt('adm-atrasados',atrasados);
+  setAdmTxt('adm-receita',fmtBRL(receita));
 
   // Alertas
   const alertWrap = document.getElementById('adm-alert-wrap');
@@ -7597,7 +7663,7 @@ async function renderAdmin(){
   if(vencendoHoje.length){
     alertHtml += `<div class="pag-alert warn" style="margin-bottom:16px"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>${vencendoHoje.length} vencimento${vencendoHoje.length>1?'s':''} hoje.</div>`;
   }
-  alertWrap.innerHTML = alertHtml;
+  if(alertWrap)alertWrap.innerHTML = alertHtml;
 
   // Tabela
   _admFilteredRows = [...ASSINATURAS];
@@ -7609,6 +7675,7 @@ async function renderAdmin(){
 function renderAdmTabela(){
   const fmtBRL = v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
   const tbody = document.getElementById('adm-ass-tbody');
+  if(!tbody)return;
   if(!_admFilteredRows.length){
     tbody.innerHTML=`<tr><td colspan="7" class="admin-empty">Nenhuma assinatura cadastrada. Clique em "Novo Cliente" para adicionar.</td></tr>`;
     return;
@@ -7645,6 +7712,7 @@ function renderAdmTabela(){
 }
 
 async function marcarPendenteAdmin(id){
+  if(!isAdmin())return;
   const {error} = await _sb.from('assinaturas')
     .update({status:'pendente', ultimo_pagamento: null})
     .eq('id', id);
@@ -7654,6 +7722,7 @@ async function marcarPendenteAdmin(id){
 }
 
 async function confirmarPagamentoAdmin(id){
+  if(!isAdmin())return;
   const hoje = new Date().toISOString().slice(0,10);
   const {error} = await _sb.from('assinaturas')
     .update({status:'pago', ultimo_pagamento: hoje})
@@ -7705,6 +7774,7 @@ function closeAdmModal(){
 }
 
 async function saveAssinatura(){
+  if(!isAdmin())return;
   const nome   = document.getElementById('adm-f-nome').value.trim();
   const email  = document.getElementById('adm-f-email').value.trim();
   const plano  = document.getElementById('adm-f-plano').value;
@@ -7747,6 +7817,7 @@ function confirmDeleteAss(id){
 }
 
 async function deleteAssinatura(id, nome){
+  if(!isAdmin())return;
   document.getElementById('confirm-delete').classList.remove('open');
   const {error} = await _sb.from('assinaturas').delete().eq('id',id);
   if(error){ showToast('Erro: '+error.message,'error'); return; }
@@ -7755,10 +7826,11 @@ async function deleteAssinatura(id, nome){
   renderAdmTabela();
   // Recalcula KPIs
   const fmtBRL = v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
-  document.getElementById('adm-total').textContent     = ASSINATURAS.length;
-  document.getElementById('adm-em-dia').textContent    = ASSINATURAS.filter(a=>a.status==='pago').length;
-  document.getElementById('adm-atrasados').textContent = ASSINATURAS.filter(a=>a.status!=='pago').length;
-  document.getElementById('adm-receita').textContent   = fmtBRL(ASSINATURAS.filter(a=>a.status==='pago').reduce((s,a)=>s+(Number(a.valor)||0),0));
+  const setAdmTxt2=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  setAdmTxt2('adm-total',ASSINATURAS.length);
+  setAdmTxt2('adm-em-dia',ASSINATURAS.filter(a=>a.status==='pago').length);
+  setAdmTxt2('adm-atrasados',ASSINATURAS.filter(a=>a.status!=='pago').length);
+  setAdmTxt2('adm-receita',fmtBRL(ASSINATURAS.filter(a=>a.status==='pago').reduce((s,a)=>s+(Number(a.valor)||0),0)));
   showToast('Assinatura de '+nome+' removida.','success');
 }
 
@@ -7798,14 +7870,19 @@ function renderAdminGeral(){
   const mesAtual=hoje.getMonth(), anoAtual=hoje.getFullYear();
   const receitaConfirmada=ASSINATURAS.filter(a=>{
     if(!a.ultimo_pagamento) return false;
-    const d=new Date(a.ultimo_pagamento);
+    // new Date('YYYY-MM-DD') parseia como UTC meia-noite — no fuso do
+    // Brasil isso volta um dia (e às vezes um mês) pro passado. Mesma
+    // classe de bug já corrigida em data de nascimento; usa parseLocalDate.
+    const d=parseLocalDate(a.ultimo_pagamento);
+    if(!d)return false;
     return d.getMonth()===mesAtual && d.getFullYear()===anoAtual;
   }).reduce((s,a)=>s+(Number(a.valor)||0),0);
   // KPIs principais
-  document.getElementById('adm-total').textContent     =ASSINATURAS.length;
-  document.getElementById('adm-em-dia').textContent    =emDia.length;
-  document.getElementById('adm-atrasados').textContent =atrasados.length;
-  document.getElementById('adm-receita').textContent   =fmtBRL(receita);
+  const setAdmTxt3=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  setAdmTxt3('adm-total',ASSINATURAS.length);
+  setAdmTxt3('adm-em-dia',emDia.length);
+  setAdmTxt3('adm-atrasados',atrasados.length);
+  setAdmTxt3('adm-receita',fmtBRL(receita));
   // KPIs extras
   const blEl=document.getElementById('adm-bloqueados');
   if(blEl) blEl.textContent=bloqueados.length;
@@ -7894,6 +7971,7 @@ function renderUserTabela(){
   }).join('');
 }
 async function toggleBlockUser(id,currently_blocked){
+  if(!isAdmin())return;
   const rec = ASSINATURAS.find(a=>String(a.id)===String(id));
   const nome = rec ? rec.nome : '';
   const novo=!currently_blocked;
@@ -9565,7 +9643,7 @@ function abrirWaTemplates(leadId){
   const l=LEADS_DATA.find(x=>String(x.id)===String(leadId));
   if(!l){showToast('Lead não encontrado','error');return;}
   document.getElementById('wa-tpl-nome').textContent=l.nome||'—';
-  const waPhone='55'+(l.tel||'').replace(/\D/g,'');
+  const waPhone=waPhoneBR(l.tel);
   const templates=WA_TEMPLATES[l.coluna]||WA_TEMPLATES.novo;
   const list=document.getElementById('wa-tpl-list');
   list.innerHTML=templates.map((tpl,i)=>`
@@ -9583,7 +9661,7 @@ function abrirWaTemplates(leadId){
 function enviarWaTemplate(leadId,idx){
   const l=LEADS_DATA.find(x=>String(x.id)===String(leadId));
   if(!l)return;
-  const phone='55'+(l.tel||'').replace(/\D/g,'');
+  const phone=waPhoneBR(l.tel);
   const templates=WA_TEMPLATES[l.coluna]||WA_TEMPLATES.novo;
   const tpl=templates[idx];
   if(!tpl)return;
@@ -9888,11 +9966,16 @@ async function addTransacao(tipo){
   const payload={user_id:_currentUser?.id,tipo,descricao:desc,valor:val,categoria:cat,data:dataStr};
   const {data:saved,error}=await _sb.from('transacoes').insert([payload]).select().single();
   if(error){showToast('Erro ao salvar: '+error.message,'error');return;}
-  const mapped={id:saved?.id,desc,val,data:dataStr,cat};
+  // renderFinTables()/renderFinKpis() filtram "é desse mês?" pelo
+  // created_at — sem ele aqui, a transação recém-criada não aparecia em
+  // lugar nenhum até um F5 recarregar do banco (onde created_at já vem
+  // preenchido). saved.created_at é o valor real gerado pelo Postgres.
+  const mapped={id:saved?.id,desc,val,data:dataStr,cat,created_at:saved?.created_at||new Date().toISOString()};
   if(tipo==='entrada') TRANSACOES.entradas.unshift(mapped);
   else TRANSACOES.saidas.unshift(mapped);
   inited['financeiro']=false;
   renderFinTables();
+  renderFinKpis();
   showToast(`${tipo==='entrada'?'Entrada':'Saída'} registrada com sucesso!`,'success');
 }
 
@@ -9916,7 +9999,15 @@ function initFerramentas(){
 
 // ── Export CSV ──────────────────────────────────────
 function exportCSV(tipo){
-  const esc=s=>'"'+(s==null?'':String(s).replace(/"/g,'""'))+'"';
+  // Neutraliza injeção de fórmula: um nome/telefone/observação vindo de
+  // formulário público (lead, proposta) começando com =, +, -, @ vira uma
+  // fórmula executável quando o CSV é aberto no Excel/Sheets — um "'" na
+  // frente força interpretação como texto puro, sem mudar o valor visível.
+  const esc=s=>{
+    let v=s==null?'':String(s);
+    if(/^[=+\-@]/.test(v))v="'"+v;
+    return '"'+v.replace(/"/g,'""')+'"';
+  };
   let headers=[],rows=[],filename='';
   if(tipo==='leads'){
     headers=['Nome','Telefone','E-mail','Tipo','Valor','Origem','Status','Dias','Data Nasc'];
@@ -10413,8 +10504,8 @@ function gerarLinksWA(){
   el.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:10px">${selecionados.length} links gerados:</div>`+
     selecionados.map(p=>{
       const mensagem=msg.replace(/\{nome\}/gi,p.nome);
-      const tel=(p.tel||'').replace(/\D/g,'');
-      const url=`https://wa.me/55${tel}?text=${encodeURIComponent(mensagem)}`;
+      const tel=waPhoneBR(p.tel);
+      const url=`https://wa.me/${tel}?text=${encodeURIComponent(mensagem)}`;
       return `<a href="${url}" target="_blank" style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);text-decoration:none;margin-bottom:6px;font-size:12px;color:var(--t1)">
         <svg width="14" height="14" fill="#25d366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         <span style="font-weight:600">${escHTML(p.nome)}</span>
@@ -10440,12 +10531,12 @@ function renderAniversarios(){
     const d=l.dias_ate_aniv;
     const tag=d===0?'🎉 Hoje!':d===1?'Amanhã':`Em ${d} dias`;
     const cor=d===0?'#f59e0b':d<=7?'#34d399':'var(--t3)';
-    const tel=(l.tel||'').replace(/\D/g,'');
+    const tel=l.tel?waPhoneBR(l.tel):'';
     return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
       <div class="mini-avatar" style="background:${escHTML(l.cor||'#850277')}">${initials(l.nome)}</div>
       <div style="flex:1"><div style="font-weight:600;font-size:13px">${escHTML(l.nome)}</div><div style="font-size:11px;color:var(--t3)">${parseLocalDate(l.data_nasc).toLocaleDateString('pt-BR',{day:'2-digit',month:'long'})}</div></div>
       <div style="font-size:12px;font-weight:700;color:${cor}">${tag}</div>
-      ${tel?`<a href="https://wa.me/55${tel}?text=${encodeURIComponent('Olá '+l.nome+'! Feliz aniversário! 🎉')}" target="_blank" class="btn-add" style="padding:5px 10px;font-size:11px;gap:5px">
+      ${tel?`<a href="https://wa.me/${tel}?text=${encodeURIComponent('Olá '+l.nome+'! Feliz aniversário! 🎉')}" target="_blank" class="btn-add" style="padding:5px 10px;font-size:11px;gap:5px">
         <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         Parabenizar
       </a>`:''}
@@ -11163,7 +11254,7 @@ function perguntarIAsobreLocacao(){
   const hoje=new Date();hoje.setHours(0,0,0,0);
   const avencer=LOCACOES.filter(l=>{
     if(l.status==='pago'||l.status==='atrasado')return false;
-    const dv=new Date(hoje.getFullYear(),hoje.getMonth(),parseInt(l.dia)||1);
+    const dv=proximoVencimento(parseInt(l.dia)||1,hoje);
     const diff=Math.round((dv-hoje)/(1000*60*60*24));
     return diff>=0&&diff<=7;
   });
