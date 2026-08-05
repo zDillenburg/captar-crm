@@ -249,6 +249,9 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .empty-state-action{margin-top:18px}
 .lead-name-cell{display:flex;align-items:center;gap:10px}
 .mini-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.loc-imovel-cell{display:flex;align-items:center;gap:10px}
+.loc-imovel-thumb{width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--bg3)}
+.loc-imovel-thumb-empty{width:34px;height:34px;border-radius:8px;flex-shrink:0;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:14px;opacity:.5}
 .status-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.04em}
 .status-novo{background:rgba(59,130,246,.15);color:#60a5fa}
 .status-contato{background:rgba(245,158,11,.15);color:#fbbf24}
@@ -272,7 +275,18 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .search-input{width:100%;padding:10px 16px 10px 38px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--t1);font-family:inherit;outline:none;transition:border-color .2s}
 .search-input:focus{border-color:var(--p)}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
-.filter-chips{display:flex;gap:8px;flex-wrap:wrap}
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Grupo com rótulo — antes eram dois .filter-chips lado a lado sem
+   nenhuma distinção visual (tipo e status se misturavam numa fileira só
+   de 11 pills). Agora cada grupo tem um rótulo curto antes dele. */
+.filter-group-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-right:2px;flex-shrink:0}
+.filter-select{
+  padding:8px 30px 8px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+  font-size:12px;font-weight:600;color:var(--t2);font-family:inherit;outline:none;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238a8070' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;transition:border-color .2s;
+}
+.filter-select:hover,.filter-select:focus{border-color:var(--border2)}
 .btn-add{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--p);color:#fff;font-size:13px;font-weight:600;border:none;border-radius:var(--r);cursor:pointer;transition:background .2s,transform .15s;margin-left:auto}
 .btn-add:hover{background:var(--pl);transform:translateY(-1px)}
 /* Antes era repetido como style= inline em cada botão da toolbar do CRM
@@ -327,6 +341,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .imovel-fav:hover{color:#f43f5e}
 .imovel-fav.active{color:#f43f5e;background:rgba(244,63,94,.18)}
 .imovel-destaque-badge{position:absolute;top:10px;left:10px;margin-top:24px;padding:3px 9px;border-radius:20px;font-size:9.5px;font-weight:700;letter-spacing:.03em;background:rgba(245,158,11,.9);color:#1a1200}
+.imovel-finalidade-badge{position:absolute;bottom:10px;left:10px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.03em;background:rgba(59,130,246,.92);color:#0a1526}
 .imovel-body{padding:16px}
 .imovel-price{font-size:18px;font-weight:800;color:var(--t1);letter-spacing:-.02em;margin-bottom:4px}
 .imovel-address{font-size:12px;color:var(--t3);margin-bottom:12px}
@@ -1635,6 +1650,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <button class="chip" onclick="setLeadFilter('instagram',this)">Instagram</button>
             <button class="chip" onclick="setLeadFilter('site',this)">Site</button>
             <button class="chip" onclick="setLeadFilter('indicacao',this)">Indicação</button>
+            <button class="chip" onclick="setLeadFilter('proposta',this)">✨ Propostas</button>
           </div>
           <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos por transação">
             📋 Checklist
@@ -1664,19 +1680,23 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <input class="search-input" type="text" placeholder="Buscar por endereço ou tipo…" oninput="_applyImFilter()"/>
           </div>
           <div class="filter-chips">
+            <span class="filter-group-label">Tipo</span>
             <button class="chip im-tipo-chip active" onclick="setImTipoFilter('todos',this)">Todos</button>
             <button class="chip im-tipo-chip" onclick="setImTipoFilter('apartamento',this)">Apartamento</button>
             <button class="chip im-tipo-chip" onclick="setImTipoFilter('casa',this)">Casa</button>
-            <button class="chip im-tipo-chip" onclick="setImTipoFilter('rural',this)">🌿 Rural</button>
+            <button class="chip im-tipo-chip" onclick="setImTipoFilter('rural',this)">Rural</button>
             <button class="chip im-tipo-chip" onclick="setImTipoFilter('comercial',this)">Comercial</button>
             <button class="chip im-tipo-chip" onclick="setImTipoFilter('terreno',this)">Terreno</button>
           </div>
           <div class="filter-chips" style="margin-left:auto">
-            <button class="chip im-status-chip active" onclick="setImStatusFilter('todos',this)">Todos</button>
-            <button class="chip im-status-chip" onclick="setImStatusFilter('ativo',this)">Ativo</button>
-            <button class="chip im-status-chip" onclick="setImStatusFilter('captado',this)">Captado</button>
-            <button class="chip im-status-chip" onclick="setImStatusFilter('negociação',this)">Negociação</button>
-            <button class="chip im-status-chip" onclick="setImStatusFilter('vendido',this)">Vendido</button>
+            <span class="filter-group-label">Status</span>
+            <select class="filter-select" onchange="setImStatusFilter(this.value)">
+              <option value="todos">Todos</option>
+              <option value="ativo">Ativo</option>
+              <option value="captado">Captado</option>
+              <option value="negociação">Negociação</option>
+              <option value="vendido">Vendido</option>
+            </select>
           </div>
           <button class="btn-secondary" onclick="abrirChecklist()" title="Checklist de documentos">
             📋 Docs
@@ -3682,6 +3702,13 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
         </select>
       </div>
       <div class="form-group">
+        <label class="form-label">Finalidade</label>
+        <select class="form-input" id="im-finalidade">
+          <option value="venda">Venda</option>
+          <option value="aluguel">Aluguel</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label class="form-label">Preço (R$)</label>
         <input class="form-input" id="im-preco" type="text" placeholder="Ex: 480.000"/>
       </div>
@@ -5148,6 +5175,7 @@ function renderImoveis(){
           <svg width="14" height="14" fill="${im.destaque?'currentColor':'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
         </button>
         ${im.destaque?'<span class="imovel-destaque-badge">⭐ Destaque</span>':''}
+        ${im.finalidade==='aluguel'?'<span class="imovel-finalidade-badge">🔑 Aluguel</span>':''}
       </div>
       <div class="imovel-body">
         <div class="imovel-price">${escHTML(im.preco)}</div>
@@ -5269,7 +5297,7 @@ function renderLocacao(){populateImovelSelects();
     const s=statusMap[l.status]||{label:l.status||'—',cls:'pmt-pendente'};
     return `<tr data-status="${escHTML(l.status||'pendente')}" data-inquilino="${escHTML((l.inquilino||'').toLowerCase())}" data-imovel="${escHTML((l.imovel||'').toLowerCase())}">
       <td><div class="lead-name-cell"><div class="mini-avatar" style="background:${escHTML(l.cor||'#850277')}">${initials(l.inquilino)}</div>${escHTML(l.inquilino)}</div></td>
-      <td style="max-width:220px;font-size:12px">${escHTML(l.imovel)}</td>
+      <td style="max-width:220px;font-size:12px"><div class="loc-imovel-cell">${l.foto?`<img class="loc-imovel-thumb" src="${escHTML(imovelFotoPublicUrl(l.foto))}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'loc-imovel-thumb-empty',textContent:'🏠'}))" alt=""/>`:`<div class="loc-imovel-thumb-empty">🏠</div>`}<span>${escHTML(l.imovel)}</span></div></td>
       <td style="font-weight:700;color:#c453bb">R$&nbsp;${Number(l.valor).toLocaleString('pt-BR')}</td>
       <td>Dia ${escHTML(String(l.dia))}</td>
       <td class="loc-vigor">${escHTML(l.inicio)} → ${escHTML(l.fim)}</td>
@@ -6189,6 +6217,7 @@ function resetImovelForm(){
   ['im-titulo','im-cidade','im-endereco','im-preco','im-area','im-area-total','im-features','im-corretor','im-url-site','im-descricao'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const tipoSel=document.getElementById('im-tipo');if(tipoSel)tipoSel.selectedIndex=0;
   const statusSel=document.getElementById('im-status');if(statusSel)statusSel.value='Ativo';
+  const finalidadeSel=document.getElementById('im-finalidade');if(finalidadeSel)finalidadeSel.value='venda';
   const estadoSel=document.getElementById('im-estado');if(estadoSel)estadoSel.value='RS';
   const qEl=document.getElementById('im-quartos');if(qEl)qEl.value='';
   const bEl=document.getElementById('im-banheiros');if(bEl)bEl.value='';
@@ -6406,6 +6435,7 @@ async function addImovel(){
     corretor:document.getElementById('im-corretor')?.value||'',
     url_site:(document.getElementById('im-url-site')?.value||'').trim(),
     tipo,
+    finalidade:document.getElementById('im-finalidade')?.value||'venda',
     features,
     descricao:document.getElementById('im-descricao')?.value.trim()||'',
     corretor_tel:(_currentUser?.user_metadata?.tel||'').trim(),
@@ -6470,6 +6500,8 @@ function editarImovel(id){
   // Status
   const statusSel=document.getElementById('im-status');
   if(statusSel)statusSel.value=im.status||'Ativo';
+  const finalidadeSel=document.getElementById('im-finalidade');
+  if(finalidadeSel)finalidadeSel.value=im.finalidade||'venda';
   // Update modal title + button
   document.getElementById('imovel-add-title').textContent='Editar Imóvel';
   document.getElementById('imovel-add-btn').textContent='Salvar Alterações';
@@ -6656,6 +6688,7 @@ function verContrato(id){
   const statusCls={pago:'pmt-pago',pendente:'pmt-pendente',atrasado:'pmt-atrasado',avencer:'pmt-avencer'};
   const tel=l.tel||'';
   document.getElementById('loc-detail-body').innerHTML=`
+    ${l.foto?`<img src="${escHTML(imovelFotoPublicUrl(l.foto))}" onerror="this.remove()" style="width:100%;height:150px;object-fit:cover;border-radius:12px;margin-bottom:16px" alt=""/>`:''}
     <div style="display:flex;align-items:center;gap:14px;padding:0 0 18px;border-bottom:1px solid var(--border);margin-bottom:18px">
       <div style="width:52px;height:52px;border-radius:50%;background:${escHTML(l.cor||'#850277')};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0">${initials(l.inquilino)}</div>
       <div>
@@ -6902,11 +6935,14 @@ async function addContrato(){
   const fmtDate=d=>{if(!d)return'—';const[y,m]=d.split('-');const ms=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];return ms[parseInt(m)-1]+'/'+y;};
   const cor='#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');
   const tel=(document.getElementById('ct-tel')?.value||'').trim();
+  const imovelTitulo=document.getElementById('ct-imovel').value;
+  const imMatch=IMOVEIS.find(im=>im.titulo===imovelTitulo);
+  const foto=(imMatch&&Array.isArray(imMatch.fotos)&&imMatch.fotos.length)?imMatch.fotos[0]:'';
   const payload={
     user_id:_currentUser?.id,
-    inquilino,tel,imovel:document.getElementById('ct-imovel').value,
+    inquilino,tel,imovel:imovelTitulo,
     valor,dia,status:'pendente',
-    inicio:fmtDate(inicioRaw),fim:fmtDate(fimRaw),cor
+    inicio:fmtDate(inicioRaw),fim:fmtDate(fimRaw),cor,foto
   };
   const {data:saved,error}=await _sb.from('locacoes').insert([payload]).select().single();
   if(error){showToast('Erro ao criar contrato: '+error.message,'error');return;}

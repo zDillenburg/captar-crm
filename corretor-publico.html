@@ -173,6 +173,17 @@
   .im-card-emoji{position:relative;z-index:1;opacity:.85}
   .im-card-status{position:absolute;top:10px;right:10px;font-size:10px;font-weight:800;letter-spacing:.03em;padding:5px 10px;border-radius:20px;background:rgba(0,0,0,.6);color:#fff;backdrop-filter:blur(8px);z-index:2}
   .im-card-destaque{position:absolute;top:10px;left:10px;font-size:10px;font-weight:800;letter-spacing:.03em;padding:5px 10px;border-radius:20px;background:linear-gradient(135deg,#f5a623,#ef8f0f);color:#1a1200;z-index:2}
+  .im-card-aluguel{position:absolute;bottom:10px;left:10px;font-size:10px;font-weight:800;letter-spacing:.03em;padding:5px 10px;border-radius:20px;background:rgba(59,130,246,.92);color:#0a1526;z-index:2}
+  .im-card-like{
+    position:absolute;bottom:10px;right:10px;z-index:2;display:flex;align-items:center;gap:5px;
+    background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border:none;border-radius:20px;
+    padding:6px 10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;
+    transition:background .18s,transform .18s var(--ease);
+  }
+  .im-card-like svg{width:13px;height:13px;transition:transform .25s var(--ease)}
+  .im-card-like:hover{background:rgba(0,0,0,.75)}
+  .im-card-like.liked{color:#ff5c8a}
+  .im-card-like.liked svg{fill:#ff5c8a;stroke:#ff5c8a;transform:scale(1.15)}
   .im-card-body{padding:16px}
   .im-card-price{font-size:17px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
   .im-card-addr{font-size:12.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:11px;font-weight:600}
@@ -324,6 +335,7 @@ const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
 const ICON_FILTER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>';
 const ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 const ICON_EMPTY = '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>';
+const ICON_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
 
 function instagramUrl(handle){
   handle=String(handle||'').trim();
@@ -372,14 +384,17 @@ function imCardHtml(im, i){
     im.quartos>0?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22V12h18v10M2 12V8a2 2 0 012-2h16a2 2 0 012 2v4"/></svg>${escHtml(String(im.quartos))} qts</span>`:'',
     formatAreaValor(String(im.area||'').split(' / ')[0])?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>${escHtml(formatAreaValor(String(im.area||'').split(' / ')[0]))}</span>`:''
   ].filter(Boolean).join('');
+  const jaCurtiu = localStorage.getItem('captar_curtiu_' + im.id) === '1';
   return `
     <a class="im-card card-in" style="--i:${i}" href="/imovel-publico.html?id=${encodeURIComponent(im.id)}">
       <div class="im-card-img">
         ${im.status ? `<span class="im-card-status">${escHtml(im.status)}</span>` : ''}
         ${im.destaque ? `<span class="im-card-destaque">⭐ Destaque</span>` : ''}
+        ${im.finalidade === 'aluguel' ? `<span class="im-card-aluguel">🔑 Aluguel</span>` : ''}
         ${Array.isArray(im.fotos) && im.fotos.length
           ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'im-card-emoji',textContent:this.dataset.fallbackEmoji}))"/>`
           : `<span class="im-card-emoji">${escHtml(im.emoji || '🏠')}</span>`}
+        <button type="button" class="im-card-like ${jaCurtiu ? 'liked' : ''}" onclick="event.preventDefault();event.stopPropagation();curtirImovelCard('${escHtml(String(im.id))}',this)" ${jaCurtiu ? 'disabled' : ''}>${ICON_HEART}<span>${Number(im.curtidas || 0)}</span></button>
       </div>
       <div class="im-card-body">
         <div class="im-card-price">${escHtml(im.preco || 'Sob consulta')}</div>
@@ -483,6 +498,28 @@ function toggleFilterPanel(force){
   panel.classList.toggle('open', open);
   backdrop.classList.toggle('open', open);
   document.body.style.overflow = open ? 'hidden' : '';
+}
+
+// Curtir direto no card da grade — mesmo evento 'like' usado na página
+// de detalhe do imóvel (ver supabase-propostas-publicas.sql).
+function curtirImovelCard(id, btn){
+  if(!btn || btn.disabled) return;
+  btn.disabled = true;
+  btn.classList.add('liked');
+  const countEl = btn.querySelector('span');
+  countEl.textContent = String(Number(countEl.textContent || 0) + 1);
+  localStorage.setItem('captar_curtiu_' + id, '1');
+  const desfazer = () => {
+    btn.disabled = false;
+    btn.classList.remove('liked');
+    countEl.textContent = String(Math.max(0, Number(countEl.textContent || 1) - 1));
+    localStorage.removeItem('captar_curtiu_' + id);
+  };
+  // .then(ok,fail) sozinho não pega erro do Postgres — o client do
+  // Supabase resolve a promise normalmente e devolve { error } dentro
+  // dela, não rejeita (mesmo detalhe corrigido em imovel-publico.html).
+  _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'like' })
+    .then(({ error }) => { if(error) desfazer(); }, desfazer);
 }
 
 async function load(){
