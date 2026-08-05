@@ -4513,9 +4513,11 @@ const pageMeta={
   assistente:{title:'Captar IA',sub:'Assistente exclusivo do Grupo Captar — converse e gere/edite imagens em alta qualidade'},
 };
 
+let _pageActiveSince=Date.now();
 function navigate(page, btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
+  _pageActiveSince=Date.now();
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(btn) btn.classList.add('active');
   document.getElementById('page-title').textContent=pageMeta[page].title;
@@ -4533,6 +4535,36 @@ function toggleSidebar(){
   const open=s.classList.toggle('open');
   o.style.display=open?'block':'none';
 }
+
+// Rede de segurança contra a animação de entrada (.dash-anim) travando em
+// opacity:0 pra sempre — já vimos isso acontecer com um card específico
+// (conflito de `animation` no CSS, corrigido à parte) e com PÁGINAS
+// INTEIRAS sumindo (relatado pelo usuário: Imóveis e Dashboard em branco
+// ao trocar de aba). Navegador pode nunca terminar/disparar a animação
+// (aba em segundo plano, throttle, etc.) e, sem isso, só um F5 resolvia.
+// Roda em intervalo porque o app troca de página trocando `display`, então
+// elementos "aparecem" a qualquer momento, não só no load inicial.
+setInterval(()=>{
+  // Baseado em tempo real (Date.now()), não no playState da Web Animations
+  // API — confirmado que uma animação travada (aba em segundo plano etc.)
+  // continua se reportando como "running" pra sempre, mesmo sem nunca
+  // progredir visualmente, então checar o playState não pega esse caso.
+  // A maior janela possível de delay+duração no CSS é ~0.9s (d5 = .3s
+  // delay + .6s), 1.5s dá margem confortável sem arriscar interromper
+  // uma animação que só está demorando um pouco.
+  if(Date.now()-_pageActiveSince<1500)return;
+  document.querySelectorAll('.page.active .dash-anim').forEach(el=>{
+    if(getComputedStyle(el).opacity!=='0')return;
+    // Setar style.opacity direto NÃO adianta aqui: enquanto a animação
+    // CSS segue "rodando" (mesmo travada/paralisada em segundo plano),
+    // o valor computado da animação sempre vence o inline style. Preciso
+    // terminar a animação de verdade — .finish() pula pro fim dela
+    // (opacity:1, já que usa fill-mode forwards), daí sim o elemento fica
+    // visível de fato.
+    el.getAnimations().forEach(a=>{try{a.finish();}catch(e){}});
+    el.style.opacity='1';
+  });
+},1000);
 
 // ─────────────────────────────────────────
 // PAGE INIT
