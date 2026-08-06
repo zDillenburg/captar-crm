@@ -169,15 +169,21 @@
   .filter-apply:hover{background:var(--purple-light)}
 
   .vender-cta{
-    display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(133,2,119,.14),rgba(163,3,154,.06));
-    border:1px solid var(--purple-light);border-radius:18px;padding:18px 20px;margin-bottom:28px;text-align:left;width:100%;
-    cursor:pointer;font-family:inherit;transition:border-color .2s,transform .2s var(--ease);
+    display:flex;align-items:center;gap:10px;background:var(--surface);
+    border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0 28px;text-align:left;width:100%;
+    cursor:pointer;font-family:inherit;transition:border-color .2s,background .2s;
   }
-  .vender-cta:hover{border-color:var(--purple);transform:translateY(-2px)}
-  .vender-cta-icon{width:42px;height:42px;border-radius:12px;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .vender-cta-icon svg{width:20px;height:20px;color:#fff}
-  .vender-cta-title{font-size:15px;font-weight:800;color:var(--t-100);margin-bottom:2px}
-  .vender-cta-sub{font-size:13px;color:var(--t-55)}
+  .vender-cta:hover{border-color:var(--line-strong);background:var(--surface-2)}
+  .vender-cta-icon{width:30px;height:30px;border-radius:9px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .vender-cta-icon svg{width:15px;height:15px;color:var(--t-55)}
+  .vender-cta-title{font-size:12.5px;font-weight:700;color:var(--t-70);margin-bottom:1px}
+  .vender-cta-sub{font-size:11.5px;color:var(--t-40)}
+
+  /* ── Tabs Venda/Locação ─────────────────── */
+  .finalidade-tabs{display:flex;gap:8px;margin-bottom:16px}
+  .finalidade-tab{background:var(--surface);border:1px solid var(--line);color:var(--t-55);font:inherit;font-size:13px;font-weight:700;padding:9px 16px;border-radius:20px;cursor:pointer;transition:border-color .18s,background .18s,color .18s}
+  .finalidade-tab:hover{border-color:var(--line-strong)}
+  .finalidade-tab.active{background:var(--purple);border-color:var(--purple);color:#fff}
   .vender-feedback{font-size:13px;margin-top:14px;padding:10px 12px;border-radius:10px;display:none}
   .vender-feedback.ok{display:block;background:rgba(34,197,94,.12);color:#4ade80}
   .vender-feedback.err{display:block;background:rgba(239,68,68,.12);color:#f87171}
@@ -391,10 +397,11 @@ function siteUrl(url){
 
 // ── estado do filtro/busca — tudo client-side, a lista inteira já está em memória ──
 let _lista = [];
-let _filters = { q:'', tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null };
+let _filters = { q:'', tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null, finalidade:'', ordenar:'' };
 let _venderUserId = null;
 
 function matchesFilters(im){
+  if(_filters.finalidade && (im.finalidade==='aluguel'?'aluguel':'venda') !== _filters.finalidade) return false;
   if(_filters.tipo && String(im.tipo||'').trim() !== _filters.tipo) return false;
   if(_filters.status && String(im.status||'').trim() !== _filters.status) return false;
   if(_filters.quartosMin && Number(im.quartos||0) < _filters.quartosMin) return false;
@@ -456,6 +463,8 @@ function renderGrid(){
   const countEl = document.getElementById('result-count');
   if(!current) return;
   const filtered = _lista.filter(matchesFilters);
+  if(_filters.ordenar==='menor-preco') filtered.sort((a,b)=>(parseMoneyBR(a.preco)??Infinity)-(parseMoneyBR(b.preco)??Infinity));
+  else if(_filters.ordenar==='maior-preco') filtered.sort((a,b)=>(parseMoneyBR(b.preco)??-Infinity)-(parseMoneyBR(a.preco)??-Infinity));
   const hasActiveFilter = activeFilterCount() > 0 || !!_filters.q;
   if(countEl) countEl.textContent = hasActiveFilter ? `${filtered.length} de ${_lista.length}` : `${_lista.length}`;
 
@@ -475,12 +484,22 @@ function onFilterChange(){
   const statusEl = document.getElementById('f-status');
   const minEl = document.getElementById('f-preco-min');
   const maxEl = document.getElementById('f-preco-max');
+  const ordenarEl = document.getElementById('f-ordenar');
   _filters.tipo = tipoEl ? tipoEl.value : '';
   _filters.status = statusEl ? statusEl.value : '';
   _filters.precoMin = minEl && minEl.value ? Number(minEl.value) : null;
   _filters.precoMax = maxEl && maxEl.value ? Number(maxEl.value) : null;
+  _filters.ordenar = ordenarEl ? ordenarEl.value : '';
   updateFilterChipsUI();
   updateFilterToggleUI();
+  renderGrid();
+}
+
+function setFinalidade(val){
+  _filters.finalidade = val;
+  document.querySelectorAll('.finalidade-tab').forEach(tab=>{
+    tab.classList.toggle('active', tab.dataset.val === val);
+  });
   renderGrid();
 }
 
@@ -506,11 +525,12 @@ function updateFilterToggleUI(){
 }
 
 function clearFilters(){
-  _filters = { q:_filters.q, tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null };
+  _filters = { q:_filters.q, tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null, finalidade:_filters.finalidade, ordenar:'' };
   const tipoEl = document.getElementById('f-tipo'); if(tipoEl) tipoEl.value='';
   const statusEl = document.getElementById('f-status'); if(statusEl) statusEl.value='';
   const minEl = document.getElementById('f-preco-min'); if(minEl) minEl.value='';
   const maxEl = document.getElementById('f-preco-max'); if(maxEl) maxEl.value='';
+  const ordenarEl = document.getElementById('f-ordenar'); if(ordenarEl) ordenarEl.value='';
   updateFilterChipsUI();
   updateFilterToggleUI();
   renderGrid();
@@ -620,6 +640,7 @@ async function load(){
   const tipos = uniqueSorted(_lista.map(im=>im.tipo));
   const statuses = uniqueSorted(_lista.map(im=>im.status));
   const mostrarFiltro = _lista.length > 1;
+  const temAmbasFinalidades = _lista.some(im=>im.finalidade==='aluguel') && _lista.some(im=>im.finalidade!=='aluguel');
 
   document.getElementById('content').innerHTML = `
     <div class="banner fade-up">
@@ -653,14 +674,6 @@ async function load(){
 
       ${perfil.bio ? `<p class="profile-bio fade-up d3" style="margin-bottom:28px">${escHtml(perfil.bio)}</p>` : ''}
 
-      <button type="button" class="vender-cta fade-up d3" onclick="abrirVenderPanel()">
-        <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
-        <div>
-          <div class="vender-cta-title">Quer vender ou alugar seu imóvel?</div>
-          <div class="vender-cta-sub">Deixe seus dados e ${escHtml((perfil.nome||'o corretor').split(' ')[0])} te procura direto.</div>
-        </div>
-      </button>
-
       ${vendidos.length>=2 ? `
       <div class="vendidos-section fade-up d3">
         <div class="vendidos-title">🏆 Já vendemos</div>
@@ -688,6 +701,14 @@ async function load(){
         <span class="section-label-count" id="result-count">${_lista.length}</span>
       </div>
 
+      ${temAmbasFinalidades ? `
+      <div class="finalidade-tabs fade-up d4">
+        <button type="button" class="finalidade-tab active" data-val="" onclick="setFinalidade('')">Todos</button>
+        <button type="button" class="finalidade-tab" data-val="venda" onclick="setFinalidade('venda')">Venda</button>
+        <button type="button" class="finalidade-tab" data-val="aluguel" onclick="setFinalidade('aluguel')">Locação</button>
+      </div>
+      ` : ''}
+
       ${mostrarFiltro ? `
       <div class="search-row fade-up d4">
         <div class="search-box">
@@ -706,6 +727,14 @@ async function load(){
           ${_lista.map((im,i)=>imCardHtml(im,i)).join('')}
         </div>
       ` : `<div class="empty-imoveis" id="im-grid-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICON_EMPTY}</svg>Nenhum imóvel compartilhado publicamente no momento.</div>`}
+
+      <button type="button" class="vender-cta fade-up" onclick="abrirVenderPanel()">
+        <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+        <div>
+          <div class="vender-cta-title">Quer vender ou alugar seu imóvel?</div>
+          <div class="vender-cta-sub">Deixe seus dados e ${escHtml((perfil.nome||'o corretor').split(' ')[0])} te procura direto.</div>
+        </div>
+      </button>
 
       ${depoimentos.length ? `
       <div class="depoimentos-section fade-up">
@@ -748,6 +777,14 @@ async function load(){
             ${statuses.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('')}
           </select>
         </div>` : ''}
+        <div class="filter-field">
+          <label>Ordenar por</label>
+          <select id="f-ordenar" onchange="onFilterChange()">
+            <option value="">Mais recentes</option>
+            <option value="menor-preco">Menor preço</option>
+            <option value="maior-preco">Maior preço</option>
+          </select>
+        </div>
         <div class="filter-field">
           <label>Quartos (mínimo)</label>
           <div class="filter-chips">

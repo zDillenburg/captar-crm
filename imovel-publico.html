@@ -139,11 +139,12 @@
   /* ── Fazer proposta ─────────────────────── */
   .proposta-btn{
     display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
-    background:var(--surface);border:1.5px solid var(--purple-light);color:var(--t-100);
-    font-size:15px;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;margin-bottom:12px;
-    transition:background .2s,transform .18s var(--ease);font-family:inherit;
+    background:var(--purple);border:none;color:#fff;
+    font-size:15.5px;font-weight:800;padding:16px;border-radius:14px;cursor:pointer;margin-bottom:24px;
+    box-shadow:0 10px 24px -8px rgba(163,3,154,.5);
+    transition:filter .2s,transform .18s var(--ease);font-family:inherit;
   }
-  .proposta-btn:hover{background:rgba(163,3,154,.12)}
+  .proposta-btn:hover{filter:brightness(1.08)}
   .proposta-btn:active{transform:scale(.98)}
   .proposta-btn svg{width:18px;height:18px;flex-shrink:0}
 
@@ -201,14 +202,17 @@
     border-top:1px solid var(--line);
     display:flex;justify-content:center;
   }
-  .sticky-cta a{
-    width:100%;max-width:560px;display:flex;align-items:center;justify-content:center;gap:9px;
+  .sticky-cta-row{width:100%;max-width:560px;display:flex;gap:10px}
+  .sticky-cta a,.sticky-cta button{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:9px;
     background:#25d366;color:#fff;font-size:15px;font-weight:700;padding:14px;border-radius:14px;text-decoration:none;
+    border:none;font-family:inherit;cursor:pointer;
     transition:filter .18s,transform .18s var(--ease);
   }
-  .sticky-cta a:hover{filter:brightness(1.08)}
-  .sticky-cta a:active{transform:scale(.98)}
+  .sticky-cta a:hover,.sticky-cta button:hover{filter:brightness(1.08)}
+  .sticky-cta a:active,.sticky-cta button:active{transform:scale(.98)}
   .sticky-cta svg{width:19px;height:19px;flex-shrink:0}
+  .sticky-proposta-btn{background:var(--purple)!important}
 
   @media(max-width:480px){
     .hero{font-size:42px;padding:48px 20px}
@@ -274,6 +278,10 @@
         <div class="proposta-field">
           <label for="proposta-tel">Telefone / WhatsApp</label>
           <input type="text" id="proposta-tel" maxlength="30" required autocomplete="tel" placeholder="(54) 99999-9999"/>
+        </div>
+        <div class="proposta-field">
+          <label for="proposta-valor">Valor da proposta (opcional)</label>
+          <input type="text" id="proposta-valor" maxlength="40" placeholder="Ex: R$ 250.000"/>
         </div>
         <div class="proposta-field">
           <label for="proposta-msg">Mensagem (opcional)</label>
@@ -443,6 +451,17 @@ async function load(){
   _propostaCtx = { userId: im.user_id, titulo: im.titulo || 'este imóvel' };
 
   document.getElementById('content').innerHTML = `
+    ${im.corretor ? `
+    <a class="corretor-card fade-up" href="${escHtml(corretorPerfilUrl)}" style="text-decoration:none;cursor:pointer">
+      <img class="corretor-logo" src="${escHtml(corretorLogoUrl)}" data-fallback-initials="${escHtml(initialsOf(im.corretor))}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'corretor-avatar-fallback',textContent:this.dataset.fallbackInitials}))"/>
+      <div class="corretor-info">
+        <div class="corretor-label">Anunciado por</div>
+        <div class="corretor-name">${escHtml(im.corretor)}</div>
+        ${corretorCreci ? `<div class="corretor-creci">CRECI ${escHtml(corretorCreci)}</div>` : ''}
+      </div>
+      <span class="corretor-cta"><span>Ver perfil</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg></span>
+    </a>
+    ` : ''}
     ${temFotos ? `
     <div class="gallery-main fade-up" onclick="abrirLightbox(_fotoAtualIdx)">
       <img id="gallery-main-img" src="${escHtml(fotoPublicUrl('imoveis-fotos', _fotosAtual[0]))}" alt="${escHtml(im.titulo || 'Imóvel')}"/>
@@ -469,17 +488,10 @@ async function load(){
       ${escHtml(im.endereco || 'Localização a combinar')}
     </div>
     </div>
-    ${im.corretor ? `
-    <a class="corretor-card fade-up d1" href="${escHtml(corretorPerfilUrl)}" style="text-decoration:none;cursor:pointer">
-      <img class="corretor-logo" src="${escHtml(corretorLogoUrl)}" data-fallback-initials="${escHtml(initialsOf(im.corretor))}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'corretor-avatar-fallback',textContent:this.dataset.fallbackInitials}))"/>
-      <div class="corretor-info">
-        <div class="corretor-label">Anunciado por</div>
-        <div class="corretor-name">${escHtml(im.corretor)}</div>
-        ${corretorCreci ? `<div class="corretor-creci">CRECI ${escHtml(corretorCreci)}</div>` : ''}
-      </div>
-      <span class="corretor-cta"><span>Ver perfil</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg></span>
-    </a>
-    ` : ''}
+    <button type="button" class="proposta-btn fade-up d1" onclick="abrirProposta()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Fazer uma proposta
+    </button>
     <div class="specs fade-up d2">
       ${Number(im.quartos) > 0 ? `<div class="spec"><div class="spec-val">${escHtml(String(im.quartos))}</div><div class="spec-lbl">Quartos</div></div>` : ''}
       <div class="spec"><div class="spec-val">${escHtml(String(im.banheiros || 1))}</div><div class="spec-lbl">Banheiros</div></div>
@@ -495,10 +507,6 @@ async function load(){
       <div class="section-label fade-up d3">Diferenciais</div>
       <ul class="features">${featuresList.map((f,i) => `<li class="chip-in" style="--i:${i}">${escHtml(f)}</li>`).join('')}</ul>
     ` : ''}
-    <button type="button" class="proposta-btn fade-up d3" onclick="abrirProposta()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Fazer uma proposta
-    </button>
     ${corretorWaPhone ? `
     <p class="disclaimer fade-up d3">Anúncio compartilhado por um corretor parceiro do Grupo Captar. Fale direto pelo WhatsApp pra mais fotos, condições e visita.</p>
     ` : `
@@ -506,13 +514,12 @@ async function load(){
     `}
   `;
 
-  if(corretorWaPhone){
-    document.body.insertAdjacentHTML('beforeend', `
-      <div class="sticky-cta">
-        <a href="https://wa.me/${corretorWaPhone}?text=${waText}" target="_blank" rel="noopener noreferrer" onclick="registrarCliqueWhatsapp('${escHtml(String(id))}')">${ICON_WHATSAPP} Falar sobre este imóvel</a>
-      </div>
-    `);
-  }
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="sticky-cta"><div class="sticky-cta-row">
+      ${corretorWaPhone ? `<a href="https://wa.me/${corretorWaPhone}?text=${waText}" target="_blank" rel="noopener noreferrer" onclick="registrarCliqueWhatsapp('${escHtml(String(id))}')">${ICON_WHATSAPP} WhatsApp</a>` : ''}
+      <button type="button" class="sticky-proposta-btn" onclick="abrirProposta()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Proposta</button>
+    </div></div>
+  `);
 }
 
 function registrarCliqueWhatsapp(id){
@@ -565,6 +572,7 @@ async function enviarProposta(event){
   }
   const nome = document.getElementById('proposta-nome').value.trim();
   const tel = document.getElementById('proposta-tel').value.trim();
+  const valor = document.getElementById('proposta-valor').value.trim();
   const msg = document.getElementById('proposta-msg').value.trim();
   const btn = document.getElementById('proposta-submit-btn');
   const feedback = document.getElementById('proposta-feedback');
@@ -578,7 +586,8 @@ async function enviarProposta(event){
       p_nome: nome,
       p_tel: tel,
       p_mensagem: msg,
-      p_imovel_titulo: _propostaCtx.titulo
+      p_imovel_titulo: _propostaCtx.titulo,
+      p_valor_oferta: valor
     });
     if(error) throw error;
     feedback.textContent = 'Proposta enviada! O corretor vai te procurar em breve.';
