@@ -173,16 +173,18 @@
   .filter-apply{flex:1;background:var(--purple);border:none;border-radius:var(--r-sm);color:#fff;font:inherit;font-weight:800;font-size:14px;padding:13px;cursor:pointer;transition:background .18s}
   .filter-apply:hover{background:var(--purple-light)}
 
+  .mini-ctas-row{display:flex;gap:10px;margin:8px 0 28px}
+  @media(max-width:520px){.mini-ctas-row{flex-direction:column}}
   .vender-cta{
-    display:flex;align-items:center;gap:10px;background:var(--surface);
-    border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0 28px;text-align:left;width:100%;
+    display:flex;align-items:center;gap:10px;background:var(--surface);flex:1;min-width:0;
+    border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;width:100%;
     cursor:pointer;font-family:inherit;transition:border-color .2s,background .2s;
   }
   .vender-cta:hover{border-color:var(--line-strong);background:var(--surface-2)}
   .vender-cta-icon{width:30px;height:30px;border-radius:9px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .vender-cta-icon svg{width:15px;height:15px;color:var(--t-55)}
-  .vender-cta-title{font-size:12.5px;font-weight:700;color:var(--t-70);margin-bottom:1px}
-  .vender-cta-sub{font-size:11.5px;color:var(--t-40)}
+  .vender-cta-title{font-size:12.5px;font-weight:700;color:var(--t-70);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vender-cta-sub{font-size:11.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
   /* ── Tabs Venda/Locação ─────────────────── */
   .finalidade-tabs{display:flex;gap:8px;margin-bottom:16px}
@@ -222,6 +224,14 @@
   .favorito-item-addr{font-size:11.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .favorito-item-remove{width:28px;height:28px;border-radius:50%;background:var(--surface);border:1px solid var(--line-mid);color:var(--t-55);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .favoritos-empty{font-size:13px;color:var(--t-40);text-align:center;padding:24px 0}
+  .favoritos-compare-toggle{background:var(--surface-2);border:1px solid var(--line-mid);border-radius:20px;padding:7px 13px;font:inherit;font-size:12px;font-weight:700;color:var(--t-70);cursor:pointer;transition:border-color .18s,color .18s}
+  .favoritos-compare-toggle:hover{border-color:var(--purple-light);color:var(--t-100)}
+  .comparador-wrap{overflow-x:auto;margin-bottom:16px;-webkit-overflow-scrolling:touch}
+  .comparador-table{border-collapse:collapse;width:100%}
+  .comparador-table td{padding:9px 12px;font-size:12.5px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--t-70)}
+  .comparador-table td:first-child{color:var(--t-40);font-weight:700;position:sticky;left:0;background:var(--surface-2);z-index:1}
+  .comp-img{width:64px;height:48px;object-fit:cover;border-radius:8px;background:var(--surface-2)}
+  .comp-price{font-weight:800;color:var(--t-100)}
 
   .depoimentos-section{margin-top:36px}
   .depoimentos-title{font-size:13px;font-weight:800;color:var(--t-70);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
@@ -635,6 +645,8 @@ function getFavoritos(){
   return _lista.filter(im => localStorage.getItem('captar_curtiu_' + im.id) === '1');
 }
 
+let _favoritosViewMode = 'lista'; // 'lista' | 'comparar'
+
 function atualizarFavoritosUI(){
   const fab = document.getElementById('favoritos-fab');
   if(!fab) return;
@@ -644,13 +656,27 @@ function atualizarFavoritosUI(){
   const pluralEl = document.getElementById('favoritos-fab-plural');
   if(countEl) countEl.textContent = n;
   if(pluralEl) pluralEl.textContent = n === 1 ? '' : 's';
-  if(document.getElementById('favoritos-panel')?.classList.contains('open')) renderFavoritosList();
+  if(document.getElementById('favoritos-panel')?.classList.contains('open')) renderFavoritosBody();
 }
 
-function renderFavoritosList(){
+function renderFavoritosBody(){
+  const favoritos = getFavoritos();
+  const compareBtn = document.getElementById('favoritos-compare-btn');
+  if(compareBtn) compareBtn.style.display = favoritos.length >= 2 ? 'flex' : 'none';
+  if(_favoritosViewMode === 'comparar' && favoritos.length >= 2) renderComparadorTable(favoritos);
+  else renderFavoritosList(favoritos);
+}
+
+function toggleFavoritosCompare(){
+  _favoritosViewMode = _favoritosViewMode === 'comparar' ? 'lista' : 'comparar';
+  const btn = document.getElementById('favoritos-compare-btn');
+  if(btn) btn.textContent = _favoritosViewMode === 'comparar' ? '← Ver lista' : 'Comparar';
+  renderFavoritosBody();
+}
+
+function renderFavoritosList(favoritos){
   const listEl = document.getElementById('favoritos-list');
   if(!listEl) return;
-  const favoritos = getFavoritos();
   if(!favoritos.length){
     listEl.innerHTML = `<div class="favoritos-empty">Você ainda não curtiu nenhum imóvel. Toque no coração de um card pra adicionar aqui.</div>`;
     return;
@@ -669,6 +695,44 @@ function renderFavoritosList(){
   `).join('');
 }
 
+// Comparador — mesma lista de favoritos, só que lado a lado. Sem CTA
+// próprio: o formulário de contato já fica logo abaixo no mesmo painel,
+// então comparar e mandar o interesse é a mesma jornada, sem modal extra.
+function renderComparadorTable(favoritos){
+  const listEl = document.getElementById('favoritos-list');
+  if(!listEl) return;
+  const linhas = [
+    { label: 'Preço', val: im => `<span class="comp-price">${escHtml(im.preco || 'Sob consulta')}</span>` },
+    { label: 'Tipo', val: im => escHtml(im.tipo || '—') },
+    { label: 'Quartos', val: im => escHtml(String(im.quartos || '—')) },
+    { label: 'Banheiros', val: im => escHtml(String(im.banheiros || '—')) },
+    { label: 'Área', val: im => escHtml(formatAreaValor(String(im.area||'').split(' / ')[0]) || '—') },
+    { label: 'Endereço', val: im => escHtml(im.endereco || '—') }
+  ];
+  listEl.innerHTML = `
+    <div class="comparador-wrap">
+      <table class="comparador-table">
+        <tr>
+          <td></td>
+          ${favoritos.map(im => `<td>${Array.isArray(im.fotos)&&im.fotos.length
+            ? `<img class="comp-img" src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" loading="lazy" alt=""/>`
+            : `<div class="comp-img" style="display:flex;align-items:center;justify-content:center;font-size:18px">${escHtml(im.emoji||'🏠')}</div>`}</td>`).join('')}
+        </tr>
+        ${linhas.map(l => `
+        <tr>
+          <td>${l.label}</td>
+          ${favoritos.map(im => `<td>${l.val(im)}</td>`).join('')}
+        </tr>
+        `).join('')}
+        <tr>
+          <td></td>
+          ${favoritos.map(im => `<td><button type="button" class="favorito-item-remove" onclick="removerFavorito('${escHtml(String(im.id))}')" title="Remover">${ICON_X}</button></td>`).join('')}
+        </tr>
+      </table>
+    </div>
+  `;
+}
+
 function removerFavorito(id){
   localStorage.removeItem('captar_curtiu_' + id);
   document.querySelectorAll(`.im-card-like[onclick*="'${id}'"]`).forEach(btn=>{
@@ -677,7 +741,7 @@ function removerFavorito(id){
     const countEl = btn.querySelector('span');
     if(countEl) countEl.textContent = String(Math.max(0, Number(countEl.textContent||1) - 1));
   });
-  renderFavoritosList();
+  renderFavoritosBody();
   atualizarFavoritosUI();
 }
 
@@ -689,7 +753,12 @@ function toggleFavoritosPanel(force){
   panel.classList.toggle('open', open);
   backdrop.classList.toggle('open', open);
   document.body.style.overflow = open ? 'hidden' : '';
-  if(open) renderFavoritosList();
+  if(open){
+    _favoritosViewMode = 'lista';
+    const compareBtn = document.getElementById('favoritos-compare-btn');
+    if(compareBtn) compareBtn.textContent = 'Comparar';
+    renderFavoritosBody();
+  }
 }
 
 async function enviarFavoritosInteresse(event){
@@ -877,13 +946,22 @@ async function load(){
         </div>
       ` : `<div class="empty-imoveis" id="im-grid-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICON_EMPTY}</svg>Nenhum imóvel compartilhado publicamente no momento.</div>`}
 
-      <button type="button" class="vender-cta fade-up" onclick="abrirVenderPanel()">
-        <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
-        <div>
-          <div class="vender-cta-title">Quer vender ou alugar seu imóvel?</div>
-          <div class="vender-cta-sub">Deixe seus dados e ${escHtml((perfil.nome||'o corretor').split(' ')[0])} te procura direto.</div>
-        </div>
-      </button>
+      <div class="mini-ctas-row fade-up">
+        <button type="button" class="vender-cta" onclick="abrirVenderPanel()">
+          <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+          <div>
+            <div class="vender-cta-title">Quer vender ou alugar?</div>
+            <div class="vender-cta-sub">${escHtml((perfil.nome||'o corretor').split(' ')[0])} te procura direto.</div>
+          </div>
+        </button>
+        <button type="button" class="vender-cta" onclick="abrirAlertaPanel()">
+          <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+          <div>
+            <div class="vender-cta-title">Avise-me de novidades</div>
+            <div class="vender-cta-sub">Receba quando algo do seu perfil surgir.</div>
+          </div>
+        </button>
+      </div>
 
       ${depoimentos.length ? `
       <div class="depoimentos-section fade-up">
@@ -985,7 +1063,10 @@ async function load(){
     <div class="filter-panel" id="favoritos-panel">
       <div class="filter-panel-head">
         <h3>Seus favoritos</h3>
-        <button class="filter-panel-close" onclick="toggleFavoritosPanel(false)">${ICON_X}</button>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button type="button" class="favoritos-compare-toggle" id="favoritos-compare-btn" onclick="toggleFavoritosCompare()" style="display:none">Comparar</button>
+          <button class="filter-panel-close" onclick="toggleFavoritosPanel(false)">${ICON_X}</button>
+        </div>
       </div>
       <div id="favoritos-list"></div>
       <form id="favoritos-form" onsubmit="return enviarFavoritosInteresse(event)">
@@ -1031,6 +1112,60 @@ async function load(){
           <button type="submit" class="filter-apply" id="vender-submit-btn" style="flex:1">Enviar</button>
         </div>
         <div class="vender-feedback" id="vender-feedback"></div>
+      </form>
+    </div>
+  `);
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="filter-backdrop" id="alerta-backdrop" onclick="if(event.target===this)fecharAlertaPanel()"></div>
+    <div class="filter-panel" id="alerta-panel">
+      <div class="filter-panel-head">
+        <h3>Avise-me de novidades</h3>
+        <button class="filter-panel-close" onclick="fecharAlertaPanel()">${ICON_X}</button>
+      </div>
+      <p style="font-size:13.5px;color:var(--t-55);line-height:1.55;margin-bottom:18px">Deixe seu contato e o que você procura — ${escHtml((perfil.nome||'o corretor').split(' ')[0])} avisa assim que tiver algo assim disponível.</p>
+      <form id="alerta-form" onsubmit="return enviarAlerta(event)">
+        <div class="filter-field">
+          <label>Seu nome</label>
+          <input type="text" id="alerta-nome" maxlength="120" required autocomplete="name"/>
+        </div>
+        <div class="filter-field">
+          <label>Telefone / WhatsApp</label>
+          <input type="text" id="alerta-tel" maxlength="30" required autocomplete="tel" placeholder="(54) 99999-9999"/>
+        </div>
+        ${(tipos.length || cidades.length) ? `
+        <div class="filter-field-row">
+          ${tipos.length ? `
+          <div class="filter-field">
+            <label>Tipo desejado</label>
+            <select id="alerta-tipo">
+              <option value="">Qualquer</option>
+              ${tipos.map(t=>`<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('')}
+            </select>
+          </div>` : ''}
+          ${cidades.length > 1 ? `
+          <div class="filter-field">
+            <label>Cidade</label>
+            <select id="alerta-cidade">
+              <option value="">Qualquer</option>
+              ${cidades.map(c=>`<option value="${escHtml(c)}">${escHtml(c)}</option>`).join('')}
+            </select>
+          </div>` : ''}
+        </div>` : ''}
+        <div class="filter-field-row" style="margin-bottom:0">
+          <div class="filter-field">
+            <label>Preço mínimo</label>
+            <input type="number" id="alerta-preco-min" placeholder="R$ 0"/>
+          </div>
+          <div class="filter-field">
+            <label>Preço máximo</label>
+            <input type="number" id="alerta-preco-max" placeholder="Sem limite"/>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button type="submit" class="filter-apply" id="alerta-submit-btn" style="flex:1">Quero ser avisado</button>
+        </div>
+        <div class="vender-feedback" id="alerta-feedback"></div>
       </form>
     </div>
   `);
@@ -1080,6 +1215,69 @@ async function enviarVenda(event){
   }catch(e){
     feedback.className='vender-feedback err';
     feedback.textContent='Não deu pra enviar agora. Tenta de novo em instantes, ou fala direto pelo WhatsApp.';
+  }finally{
+    btn.disabled=false;
+  }
+  return false;
+}
+
+// Alerta de novo imóvel — não existe disparo automático nesse projeto
+// (precisaria de integração de e-mail/WhatsApp que não temos), então
+// isso vira um lead com o critério do cliente pro corretor acompanhar
+// manualmente. A cópia da tela é honesta sobre isso: "avisa" implica o
+// corretor, nunca promete um sistema automático que não existe.
+function abrirAlertaPanel(){
+  const backdrop=document.getElementById('alerta-backdrop'), panel=document.getElementById('alerta-panel');
+  if(!backdrop||!panel)return;
+  backdrop.classList.add('open');
+  panel.classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('alerta-nome')?.focus(),300);
+}
+
+function fecharAlertaPanel(){
+  const backdrop=document.getElementById('alerta-backdrop'), panel=document.getElementById('alerta-panel');
+  if(backdrop)backdrop.classList.remove('open');
+  if(panel)panel.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+async function enviarAlerta(event){
+  event.preventDefault();
+  const nome=document.getElementById('alerta-nome').value.trim();
+  const tel=document.getElementById('alerta-tel').value.trim();
+  const tipo=document.getElementById('alerta-tipo')?.value||'';
+  const cidade=document.getElementById('alerta-cidade')?.value||'';
+  const precoMin=document.getElementById('alerta-preco-min').value;
+  const precoMax=document.getElementById('alerta-preco-max').value;
+  const btn=document.getElementById('alerta-submit-btn');
+  const feedback=document.getElementById('alerta-feedback');
+  if(!nome||!tel){
+    feedback.className='vender-feedback err';
+    feedback.textContent='Preenche nome e telefone pra gente conseguir te avisar.';
+    return false;
+  }
+  const criterios=[tipo, cidade].filter(Boolean).join(' em ');
+  const faixa=(precoMin||precoMax) ? `entre R$ ${Number(precoMin||0).toLocaleString('pt-BR')} e ${precoMax?('R$ '+Number(precoMax).toLocaleString('pt-BR')):'sem limite'}` : '';
+  const resumo=[criterios, faixa].filter(Boolean).join(', ') || 'qualquer imóvel novo';
+  btn.disabled=true;
+  feedback.className='vender-feedback';
+  feedback.textContent='';
+  try{
+    const {error}=await _sb.rpc('enviar_proposta_publica',{
+      p_user_id:_venderUserId, p_nome:nome, p_tel:tel,
+      p_mensagem:`Quer ser avisado quando surgir: ${resumo}`,
+      p_imovel_titulo:'Alerta de novo imóvel',
+      p_valor_oferta: faixa || ''
+    });
+    if(error)throw error;
+    feedback.className='vender-feedback ok';
+    feedback.textContent='Recebido! O corretor te avisa assim que tiver algo assim.';
+    document.getElementById('alerta-form').reset();
+    setTimeout(fecharAlertaPanel,1800);
+  }catch(e){
+    feedback.className='vender-feedback err';
+    feedback.textContent='Não deu pra enviar agora. Tenta de novo em instantes.';
   }finally{
     btn.disabled=false;
   }
