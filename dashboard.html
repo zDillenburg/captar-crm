@@ -3805,6 +3805,15 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <button type="button" class="toggle on" id="im-publico-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
         </div>
       </div>
+      <div class="full form-group">
+        <div class="toggle-row" style="padding:12px 14px;background:var(--bg3);border-radius:var(--r);margin:0">
+          <div class="toggle-info">
+            <div class="toggle-name">Mostrar mapa no anúncio</div>
+            <div class="toggle-desc">Mostra um link "Ver localização no mapa" na página pública do imóvel. Desligue se preferir não indicar o endereço exato.</div>
+          </div>
+          <button type="button" class="toggle on" id="im-mapa-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+        </div>
+      </div>
       <div class="form-group">
         <label class="form-label">Preço (R$)</label>
         <input class="form-input" id="im-preco" type="text" placeholder="Ex: 480.000"/>
@@ -6441,6 +6450,8 @@ function resetImovelForm(){
   const finalidadeSel=document.getElementById('im-finalidade');if(finalidadeSel)finalidadeSel.value='venda';
   const publicoToggle=document.getElementById('im-publico-toggle');
   if(publicoToggle){publicoToggle.classList.add('on');publicoToggle.classList.remove('off');}
+  const mapaToggle=document.getElementById('im-mapa-toggle');
+  if(mapaToggle){mapaToggle.classList.add('on');mapaToggle.classList.remove('off');}
   const estadoSel=document.getElementById('im-estado');if(estadoSel)estadoSel.value='RS';
   const qEl=document.getElementById('im-quartos');if(qEl)qEl.value='';
   const bEl=document.getElementById('im-banheiros');if(bEl)bEl.value='';
@@ -6711,6 +6722,7 @@ async function addImovel(){
     tipo,
     finalidade:document.getElementById('im-finalidade')?.value||'venda',
     publico:document.getElementById('im-publico-toggle')?.classList.contains('on')??true,
+    mostrar_mapa:document.getElementById('im-mapa-toggle')?.classList.contains('on')??true,
     features,
     descricao:document.getElementById('im-descricao')?.value.trim()||'',
     corretor_tel:(_currentUser?.user_metadata?.tel||'').trim(),
@@ -6721,7 +6733,7 @@ async function addImovel(){
   btnSalvar.disabled=true;
   btnSalvar.textContent='Salvando…';
   _salvandoImovel=true;
-  const camposOpcionais=['finalidade','suites','vagas'];
+  const camposOpcionais=['finalidade','suites','vagas','mostrar_mapa'];
   if(_editingImovelId){
     // UPDATE mode
     const {error}=await salvarImovelComFallback(
@@ -6797,6 +6809,15 @@ function editarImovel(id){
     const ehPublico=!!im.publico;
     publicoToggle.classList.toggle('on',ehPublico);
     publicoToggle.classList.toggle('off',!ehPublico);
+  }
+  const mapaToggle=document.getElementById('im-mapa-toggle');
+  if(mapaToggle){
+    // Coluna nova — imóvel salvo antes dela existir vem sem o campo
+    // (undefined), e nesse caso o padrão é mostrar (mesmo comportamento
+    // de antes dessa opção existir).
+    const mostraMapa=im.mostrar_mapa!==false;
+    mapaToggle.classList.toggle('on',mostraMapa);
+    mapaToggle.classList.toggle('off',!mostraMapa);
   }
   // Update modal title + button
   document.getElementById('imovel-add-title').textContent='Editar Imóvel';
