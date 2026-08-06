@@ -27,6 +27,7 @@ supabase-depoimentos-publicos.sql
 supabase-imovel-suites-vagas.sql
 supabase-proposta-valor.sql
 supabase-agendar-visita-publica.sql
+supabase-leads-realtime.sql
 .claude/
 .DS_Store
 *.env
