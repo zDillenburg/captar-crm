@@ -819,7 +819,9 @@ async function enviarVisita(event){
     document.getElementById('visita-form').reset();
     setTimeout(fecharVisita, 1800);
   } catch(e) {
-    feedback.textContent = 'Não deu pra agendar agora. Tenta de novo em instantes, ou fala direto pelo WhatsApp.';
+    feedback.textContent = String(e?.message||'').includes('horario_ocupado')
+      ? 'Esse horário já está ocupado. Escolhe outro dia ou horário.'
+      : 'Não deu pra agendar agora. Tenta de novo em instantes, ou fala direto pelo WhatsApp.';
     feedback.className = 'proposta-feedback err';
   } finally {
     btn.disabled = false;

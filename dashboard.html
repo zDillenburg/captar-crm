@@ -8434,19 +8434,47 @@ async function loadDepoimentos(){
 function renderDepoimentosList(){
   const el=document.getElementById('pp-depoimentos-list');
   if(!el)return;
-  if(!DEPOIMENTOS.length){
-    el.innerHTML='<div style="font-size:12px;color:var(--t3);padding:8px 0">Nenhum depoimento cadastrado ainda.</div>';
-    return;
-  }
-  el.innerHTML=DEPOIMENTOS.map(d=>`
-    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;display:flex;gap:10px;align-items:flex-start">
-      <div style="flex:1;min-width:0">
+  // aprovado pode nem existir ainda (coluna nova) — trata como
+  // publicado nesse caso, mesmo comportamento de antes dela existir.
+  const pendentes=DEPOIMENTOS.filter(d=>d.aprovado===false);
+  const publicados=DEPOIMENTOS.filter(d=>d.aprovado!==false);
+  let html='';
+  if(pendentes.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Pendentes de aprovação — enviados por clientes pelo link público</div>`;
+    html+=pendentes.map(d=>`
+      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:var(--r);padding:10px 12px;margin-bottom:8px">
         <div style="font-size:12px;font-weight:700;color:var(--t1)">${escHTML(d.nome_cliente)} <span style="color:#f59e0b;font-weight:400">${'⭐'.repeat(d.nota)}</span></div>
-        <div style="font-size:12px;color:var(--t2);margin-top:3px;line-height:1.4">${escHTML(d.texto)}</div>
+        <div style="font-size:12px;color:var(--t2);margin:3px 0 8px;line-height:1.4">${escHTML(d.texto)}</div>
+        <div style="display:flex;gap:8px">
+          <button type="button" onclick="aprovarDepoimento('${escHTML(String(d.id))}')" style="flex:1;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#4ade80;border-radius:var(--r-sm);padding:7px;font-size:11.5px;font-weight:700;cursor:pointer">Aprovar e publicar</button>
+          <button type="button" onclick="removerDepoimento('${escHTML(String(d.id))}')" style="flex:1;background:none;border:1px solid var(--border);color:var(--t2);border-radius:var(--r-sm);padding:7px;font-size:11.5px;font-weight:700;cursor:pointer">Recusar</button>
+        </div>
       </div>
-      <button type="button" onclick="removerDepoimento('${escHTML(String(d.id))}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:0;flex-shrink:0" title="Remover">×</button>
-    </div>
-  `).join('');
+    `).join('');
+  }
+  if(!publicados.length&&!pendentes.length){
+    html+='<div style="font-size:12px;color:var(--t3);padding:8px 0">Nenhum depoimento cadastrado ainda.</div>';
+  }else if(publicados.length){
+    html+=publicados.map(d=>`
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:700;color:var(--t1)">${escHTML(d.nome_cliente)} <span style="color:#f59e0b;font-weight:400">${'⭐'.repeat(d.nota)}</span></div>
+          <div style="font-size:12px;color:var(--t2);margin-top:3px;line-height:1.4">${escHTML(d.texto)}</div>
+        </div>
+        <button type="button" onclick="removerDepoimento('${escHTML(String(d.id))}')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:0;flex-shrink:0" title="Remover">×</button>
+      </div>
+    `).join('');
+  }
+  el.innerHTML=html;
+}
+
+async function aprovarDepoimento(id){
+  const {error}=await _sb.from('depoimentos_publicos').update({aprovado:true}).eq('id',id);
+  if(error){showToast('Erro ao aprovar: '+error.message,'error');return;}
+  const d=DEPOIMENTOS.find(x=>String(x.id)===String(id));
+  if(d)d.aprovado=true;
+  renderDepoimentosList();
+  showToast('Depoimento publicado!','success');
 }
 
 async function adicionarDepoimento(btn){
