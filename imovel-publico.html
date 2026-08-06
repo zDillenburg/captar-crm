@@ -681,7 +681,7 @@ async function load(){
       <div class="section-label fade-up d3">Diferenciais</div>
       <ul class="features">${featuresList.map((f,i) => `<li class="chip-in" style="--i:${i}">${escHtml(f)}</li>`).join('')}</ul>
     ` : ''}
-    ${im.endereco && im.endereco !== 'Localização a combinar' ? `
+    ${im.endereco && im.endereco !== 'Localização a combinar' && im.mostrar_mapa !== false ? `
       <a class="map-link fade-up d3" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(im.endereco)}" target="_blank" rel="noopener noreferrer">
         <div class="map-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         <div class="map-link-body">
