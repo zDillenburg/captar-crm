@@ -26,6 +26,7 @@ supabase-imoveis-aluguel-locacao-foto.sql
 supabase-depoimentos-publicos.sql
 supabase-imovel-suites-vagas.sql
 supabase-proposta-valor.sql
+supabase-agendar-visita-publica.sql
 .claude/
 .DS_Store
 *.env
