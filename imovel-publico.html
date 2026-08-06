@@ -124,8 +124,10 @@
   .price-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
   .price{font-size:clamp(28px,6vw,36px);font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
   .title{font-size:15.5px;color:var(--t-55);margin-bottom:6px;font-weight:600}
-  .address{font-size:13.5px;color:var(--t-40);margin-bottom:24px;display:flex;align-items:center;gap:6px;font-weight:600}
+  .address{font-size:13.5px;color:var(--t-40);margin-bottom:12px;display:flex;align-items:center;gap:6px;font-weight:600}
   .address svg{width:13px;height:13px;flex-shrink:0}
+  .social-proof{font-size:12px;color:#f59e0b;margin-bottom:24px;display:flex;align-items:center;gap:6px;font-weight:700}
+  .social-proof svg{width:13px;height:13px;flex-shrink:0}
 
   /* ── Curtir ─────────────────────────────── */
   .like-btn{
@@ -194,9 +196,13 @@
     font:inherit;font-size:13.5px;padding:10px 11px;outline:none;transition:border-color .2s;
   }
   .simulador-field input:focus,.simulador-field select:focus{border-color:var(--purple-light)}
-  .simulador-result{background:var(--surface-2);border-radius:12px;padding:14px;text-align:center;margin-bottom:10px}
-  .simulador-result .val{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--purple-light)}
-  .simulador-result .lbl{font-size:11.5px;color:var(--t-40);font-weight:600;margin-top:2px}
+  .simulador-btn{
+    width:100%;background:var(--purple);border:none;border-radius:12px;color:#fff;
+    font:inherit;font-weight:800;font-size:14.5px;padding:13px;cursor:pointer;
+    transition:filter .18s,transform .18s var(--ease);margin-bottom:10px;
+  }
+  .simulador-btn:hover{filter:brightness(1.08)}
+  .simulador-btn:active{transform:scale(.98)}
   .simulador-disclaimer{font-size:11px;color:var(--t-40);line-height:1.5;text-align:center}
   .description{font-size:15px;color:var(--t-70);line-height:1.7;margin-bottom:28px;white-space:pre-wrap;font-weight:500;overflow-wrap:anywhere;word-break:break-word}
   .spec{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 8px;text-align:center;transition:border-color .2s}
@@ -205,6 +211,14 @@
 
   .section-label{font-size:13px;font-weight:700;color:var(--t-40);letter-spacing:.02em;margin-bottom:14px}
   .features{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+
+  .wa-quick-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+  .wa-quick-chip{
+    background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:9px 14px;
+    font-size:12.5px;color:var(--t-70);font-weight:600;text-decoration:none;
+    transition:border-color .2s,background .2s;
+  }
+  .wa-quick-chip:hover{border-color:#25d366;background:rgba(37,211,102,.08)}
   .features li{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:8px 14px;font-size:13px;color:var(--t-70);font-weight:600;transition:border-color .2s,background .2s}
   .features li:hover{border-color:var(--line-strong);background:var(--surface-2)}
 
@@ -348,6 +362,30 @@
         </div>
         <button type="submit" class="proposta-submit" id="visita-submit-btn">Confirmar visita</button>
         <div class="proposta-feedback" id="visita-feedback"></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="proposta-overlay" id="simulacao-overlay" onclick="if(event.target===this)fecharSimulacao()">
+    <div class="proposta-card">
+      <div class="proposta-head">
+        <div class="proposta-title">Simular financiamento</div>
+        <button class="proposta-close" onclick="fecharSimulacao()" title="Fechar">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="proposta-sub">Deixe seu contato que o corretor calcula a parcela certinha pra você e te manda pelo WhatsApp.</div>
+      <form id="simulacao-form" onsubmit="return enviarSimulacao(event)">
+        <div class="proposta-field">
+          <label for="simulacao-nome">Seu nome</label>
+          <input type="text" id="simulacao-nome" maxlength="120" required autocomplete="name"/>
+        </div>
+        <div class="proposta-field">
+          <label for="simulacao-tel">Telefone / WhatsApp</label>
+          <input type="text" id="simulacao-tel" maxlength="30" required autocomplete="tel" placeholder="(54) 99999-9999"/>
+        </div>
+        <button type="submit" class="proposta-submit" id="simulacao-submit-btn">Enviar</button>
+        <div class="proposta-feedback" id="simulacao-feedback"></div>
       </form>
     </div>
   </div>
@@ -554,6 +592,11 @@ async function load(){
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
       ${escHtml(im.endereco || 'Localização a combinar')}
     </div>
+    ${Number(im.visualizacoes || 0) >= 5 ? `
+    <div class="social-proof">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      ${Number(im.visualizacoes).toLocaleString('pt-BR')} pessoas já viram este imóvel
+    </div>` : ''}
     </div>
     <div class="specs fade-up d2">
       ${Number(im.quartos) > 0 ? `<div class="spec"><div class="spec-val">${escHtml(String(im.quartos))}</div><div class="spec-lbl">Quartos</div></div>` : ''}
@@ -582,21 +625,21 @@ async function load(){
         </div>
         <div class="simulador-row">
           <div class="simulador-field">
-            <label for="sim-entrada">Entrada</label>
-            <input type="number" id="sim-entrada" min="0" max="${Math.round(precoNum)}" step="1000" value="${Math.round(precoNum * 0.2)}" oninput="atualizarSimulacao(${precoNum})"/>
+            <label for="sim-entrada">Entrada que você tem</label>
+            <input type="number" id="sim-entrada" min="0" max="${Math.round(precoNum)}" step="1000" value="${Math.round(precoNum * 0.2)}"/>
           </div>
           <div class="simulador-field">
-            <label for="sim-prazo">Prazo</label>
-            <select id="sim-prazo" onchange="atualizarSimulacao(${precoNum})">
-              <option value="120">10 anos</option>
-              <option value="180">15 anos</option>
-              <option value="240">20 anos</option>
-              <option value="360" selected>30 anos</option>
+            <label for="sim-prazo">Prazo desejado</label>
+            <select id="sim-prazo">
+              <option value="10 anos">10 anos</option>
+              <option value="15 anos">15 anos</option>
+              <option value="20 anos">20 anos</option>
+              <option value="30 anos" selected>30 anos</option>
             </select>
           </div>
         </div>
-        <div class="simulador-result" id="simulador-result"></div>
-        <div class="simulador-disclaimer">Estimativa ilustrativa (taxa de referência ~9,9% a.a.), não é uma oferta de crédito. Consulte seu banco para condições reais.</div>
+        <button type="button" class="simulador-btn" onclick="abrirSimulacao(${precoNum})">Receber simulação personalizada</button>
+        <div class="simulador-disclaimer">${escHtml((im.corretor||'O corretor').split(' ')[0]||'O corretor')} calcula certinho pra sua entrada e prazo e te manda pelo WhatsApp.</div>
       </div>
       `;
     })()}
@@ -606,6 +649,14 @@ async function load(){
       <ul class="features">${featuresList.map((f,i) => `<li class="chip-in" style="--i:${i}">${escHtml(f)}</li>`).join('')}</ul>
     ` : ''}
     ${corretorWaPhone ? `
+    <div class="section-label fade-up d3">Perguntas rápidas</div>
+    <div class="wa-quick-chips fade-up d3">
+      ${[
+        'Esse imóvel ainda está disponível?',
+        'Aceita financiamento?',
+        'Posso agendar uma visita essa semana?'
+      ].map(q => `<a class="wa-quick-chip" href="https://wa.me/${corretorWaPhone}?text=${encodeURIComponent(`Olá! Sobre o imóvel "${im.titulo || ''}": ${q}`)}" target="_blank" rel="noopener noreferrer" onclick="registrarCliqueWhatsapp('${escHtml(String(id))}')">${escHtml(q)}</a>`).join('')}
+    </div>
     <p class="disclaimer fade-up d3">Anúncio compartilhado por um corretor parceiro do Grupo Captar. Fale direto pelo WhatsApp pra mais fotos, condições e visita.</p>
     ` : `
     <p class="disclaimer fade-up d3">Esse corretor ainda não configurou um WhatsApp de contato pra esse anúncio.</p>
@@ -618,29 +669,66 @@ async function load(){
       <button type="button" class="sticky-proposta-btn" onclick="abrirProposta()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Proposta</button>
     </div></div>
   `);
-
-  const precoParaSimular = parseMoneyBR(im.preco);
-  if(precoParaSimular) atualizarSimulacao(precoParaSimular);
 }
 
-// Financiamento — cálculo padrão de amortização (Tabela Price), com uma
-// taxa de referência fixa só pra dar uma ideia de valor — deixamos bem
-// claro no disclaimer que não é uma oferta de crédito real.
-const TAXA_MENSAL_REFERENCIA = 0.0079; // ~9,9% a.a.
-function atualizarSimulacao(preco){
+// Simular financiamento — de propósito NÃO calcula nada no cliente. O
+// visitante escolhe entrada/prazo mas só recebe o número real depois de
+// deixar contato: o corretor calcula e manda pelo WhatsApp. Um resultado
+// pronto na tela satisfaz a curiosidade e não gera lead nenhum — o ponto
+// dessas páginas é gerar contato, não responder tudo sozinho.
+let _simulacaoCtx = { preco: 0, entrada: 0, prazo: '' };
+function abrirSimulacao(preco){
   const entradaEl = document.getElementById('sim-entrada');
   const prazoEl = document.getElementById('sim-prazo');
-  const resultEl = document.getElementById('simulador-result');
-  if(!entradaEl || !prazoEl || !resultEl) return;
-  const entrada = Math.min(Math.max(Number(entradaEl.value) || 0, 0), preco);
-  const prazo = Number(prazoEl.value) || 360;
-  const principal = preco - entrada;
-  const i = TAXA_MENSAL_REFERENCIA;
-  const parcela = principal > 0 ? (principal * i * Math.pow(1 + i, prazo)) / (Math.pow(1 + i, prazo) - 1) : 0;
-  resultEl.innerHTML = `
-    <div class="val">R$ ${parcela.toLocaleString('pt-BR', {maximumFractionDigits: 0})}</div>
-    <div class="lbl">por mês, em até ${prazo} parcelas</div>
-  `;
+  _simulacaoCtx = {
+    preco,
+    entrada: Math.min(Math.max(Number(entradaEl?.value) || 0, 0), preco),
+    prazo: prazoEl?.value || '30 anos'
+  };
+  document.getElementById('simulacao-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('simulacao-nome')?.focus(), 260);
+}
+function fecharSimulacao(){
+  document.getElementById('simulacao-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+async function enviarSimulacao(event){
+  event.preventDefault();
+  if(!_propostaCtx.userId){
+    document.getElementById('simulacao-feedback').textContent = 'Não foi possível identificar o corretor deste anúncio.';
+    document.getElementById('simulacao-feedback').className = 'proposta-feedback err';
+    return false;
+  }
+  const nome = document.getElementById('simulacao-nome').value.trim();
+  const tel = document.getElementById('simulacao-tel').value.trim();
+  const btn = document.getElementById('simulacao-submit-btn');
+  const feedback = document.getElementById('simulacao-feedback');
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+  feedback.textContent = '';
+  feedback.className = 'proposta-feedback';
+  try {
+    const { error } = await _sb.rpc('enviar_proposta_publica', {
+      p_user_id: _propostaCtx.userId,
+      p_nome: nome,
+      p_tel: tel,
+      p_mensagem: `Quer simulação de financiamento: entrada R$ ${_simulacaoCtx.entrada.toLocaleString('pt-BR')}, prazo ${_simulacaoCtx.prazo}`,
+      p_imovel_titulo: _propostaCtx.titulo
+    });
+    if(error) throw error;
+    feedback.textContent = 'Recebido! O corretor te manda a simulação em breve.';
+    feedback.className = 'proposta-feedback ok';
+    document.getElementById('simulacao-form').reset();
+    setTimeout(fecharSimulacao, 1800);
+  } catch(e) {
+    feedback.textContent = 'Não deu pra enviar agora. Tenta de novo em instantes, ou fala direto pelo WhatsApp.';
+    feedback.className = 'proposta-feedback err';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enviar';
+  }
+  return false;
 }
 
 // Agendar visita — cria visita + evento no calendário + lead do corretor
@@ -781,6 +869,7 @@ async function enviarProposta(event){
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && document.getElementById('proposta-overlay')?.classList.contains('open')) fecharProposta();
   if(e.key === 'Escape' && document.getElementById('visita-overlay')?.classList.contains('open')) fecharVisita();
+  if(e.key === 'Escape' && document.getElementById('simulacao-overlay')?.classList.contains('open')) fecharSimulacao();
 });
 
 load();
