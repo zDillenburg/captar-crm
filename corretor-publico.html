@@ -97,11 +97,12 @@
   .profile-logo{object-fit:contain;background:#fff}
   .profile-avatar-fallback{background:linear-gradient(160deg,var(--purple-light),var(--purple-dark));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff}
   .profile-social{display:flex;gap:8px;margin-bottom:4px}
-  .profile-social a{
+  .profile-social a,.profile-social button{
     width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--line);
     display:flex;align-items:center;justify-content:center;color:var(--t-70);transition:background .18s,color .18s,transform .18s var(--ease);
+    cursor:pointer;font:inherit;
   }
-  .profile-social a:hover{background:var(--purple);color:#fff;transform:translateY(-2px)}
+  .profile-social a:hover,.profile-social button:hover{background:var(--purple);color:#fff;transform:translateY(-2px)}
   .profile-social svg{width:15px;height:15px}
 
   .wrap-pad{padding:0 28px}
@@ -278,6 +279,14 @@
   footer{text-align:center;padding:24px;font-size:12.5px;color:var(--t-40)}
   footer a{color:var(--t-70);text-decoration:none;font-weight:700}
 
+  .mini-toast{
+    position:fixed;bottom:100px;left:50%;transform:translate(-50%,10px);z-index:70;
+    background:var(--surface-2);border:1px solid var(--line-mid);border-radius:12px;padding:11px 18px;
+    font-size:13px;font-weight:700;color:var(--t-100);box-shadow:0 12px 30px -8px rgba(0,0,0,.4);
+    opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;
+  }
+  .mini-toast.show{opacity:1;transform:translate(-50%,0)}
+
   .sticky-cta{
     position:fixed;bottom:0;left:0;right:0;z-index:20;
     padding:14px 20px calc(14px + env(safe-area-inset-bottom));
@@ -409,6 +418,27 @@ function renderState(iconPath, msg){
 
 const ICON_INSTAGRAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>';
 const ICON_SITE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>';
+const ICON_SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+
+function mostrarToast(msg){
+  const t = document.createElement('div');
+  t.className = 'mini-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2200);
+}
+
+function compartilharPerfil(nome){
+  const url = location.href;
+  if(navigator.share){
+    navigator.share({ title: `${nome} — Grupo Captar`, url }).catch(() => {});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(() => mostrarToast('Link copiado!')).catch(() => mostrarToast('Não deu pra copiar — copie o link da barra de endereço.'));
+  } else {
+    mostrarToast('Copie o link da barra de endereço pra compartilhar.');
+  }
+}
 const ICON_WHATSAPP = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>';
 const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
 const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
@@ -867,11 +897,11 @@ async function load(){
     <div class="profile-head fade-up d1">
       <div class="profile-avatar-row">
         <img class="profile-logo" src="${escHtml(logoUrl)}" data-fallback-initials="${escHtml(initialsOf(perfil.nome))}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'profile-avatar-fallback',textContent:this.dataset.fallbackInitials}))"/>
-        ${(igUrl || siteHref) ? `
         <div class="profile-social">
           ${igUrl ? `<a href="${escHtml(igUrl)}" target="_blank" rel="noopener noreferrer" title="Instagram">${ICON_INSTAGRAM}</a>` : ''}
           ${siteHref ? `<a href="${escHtml(siteHref)}" target="_blank" rel="noopener noreferrer" title="Site">${ICON_SITE}</a>` : ''}
-        </div>` : ''}
+          <button type="button" onclick="compartilharPerfil('${escHtml(perfil.nome||'Corretor')}')" title="Compartilhar">${ICON_SHARE}</button>
+        </div>
       </div>
     </div>
     <div class="wrap-pad">
@@ -891,6 +921,23 @@ async function load(){
       ` : `<div class="stat-line fade-up d3">${_lista.length} imóve${_lista.length===1?'l':'is'} disponíve${_lista.length===1?'l':'is'} publicamente</div>`}
 
       ${perfil.bio ? `<p class="profile-bio fade-up d3" style="margin-bottom:28px">${escHtml(perfil.bio)}</p>` : ''}
+
+      <div class="mini-ctas-row fade-up d3">
+        <button type="button" class="vender-cta" onclick="abrirVenderPanel()">
+          <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+          <div>
+            <div class="vender-cta-title">Quer vender ou alugar?</div>
+            <div class="vender-cta-sub">${escHtml((perfil.nome||'o corretor').split(' ')[0])} te procura direto.</div>
+          </div>
+        </button>
+        <button type="button" class="vender-cta" onclick="abrirAlertaPanel()">
+          <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+          <div>
+            <div class="vender-cta-title">Avise-me de novidades</div>
+            <div class="vender-cta-sub">Receba quando algo do seu perfil surgir.</div>
+          </div>
+        </button>
+      </div>
 
       ${vendidos.length>=2 ? `
       <div class="vendidos-section fade-up d3">
@@ -945,23 +992,6 @@ async function load(){
           ${_lista.map((im,i)=>imCardHtml(im,i)).join('')}
         </div>
       ` : `<div class="empty-imoveis" id="im-grid-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICON_EMPTY}</svg>Nenhum imóvel compartilhado publicamente no momento.</div>`}
-
-      <div class="mini-ctas-row fade-up">
-        <button type="button" class="vender-cta" onclick="abrirVenderPanel()">
-          <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
-          <div>
-            <div class="vender-cta-title">Quer vender ou alugar?</div>
-            <div class="vender-cta-sub">${escHtml((perfil.nome||'o corretor').split(' ')[0])} te procura direto.</div>
-          </div>
-        </button>
-        <button type="button" class="vender-cta" onclick="abrirAlertaPanel()">
-          <div class="vender-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-          <div>
-            <div class="vender-cta-title">Avise-me de novidades</div>
-            <div class="vender-cta-sub">Receba quando algo do seu perfil surgir.</div>
-          </div>
-        </button>
-      </div>
 
       ${depoimentos.length ? `
       <div class="depoimentos-section fade-up">

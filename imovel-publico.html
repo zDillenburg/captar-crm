@@ -129,9 +129,17 @@
   .social-proof{font-size:12px;color:#f59e0b;margin-bottom:24px;display:flex;align-items:center;gap:6px;font-weight:700}
   .social-proof svg{width:13px;height:13px;flex-shrink:0}
 
-  /* ── Curtir ─────────────────────────────── */
+  /* ── Curtir / Compartilhar ────────────────── */
+  .price-row-actions{display:flex;gap:8px;flex-shrink:0;margin-top:4px}
+  .share-btn{
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    background:var(--surface);border:1px solid var(--line);border-radius:20px;
+    width:38px;height:38px;color:var(--t-55);cursor:pointer;transition:border-color .2s,background .2s;
+  }
+  .share-btn:hover{border-color:var(--line-strong)}
+  .share-btn svg{width:16px;height:16px}
   .like-btn{
-    display:flex;align-items:center;gap:6px;flex-shrink:0;margin-top:4px;
+    display:flex;align-items:center;gap:6px;flex-shrink:0;
     background:var(--surface);border:1px solid var(--line);border-radius:20px;
     padding:9px 14px;color:var(--t-55);font:inherit;font-size:13px;font-weight:700;cursor:pointer;
     transition:border-color .2s,background .2s,color .2s,transform .2s var(--ease);
@@ -222,6 +230,19 @@
   .features li{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:8px 14px;font-size:13px;color:var(--t-70);font-weight:600;transition:border-color .2s,background .2s}
   .features li:hover{border-color:var(--line-strong);background:var(--surface-2)}
 
+  .map-link{
+    display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);
+    border-radius:16px;padding:16px;margin-bottom:28px;text-decoration:none;color:inherit;
+    transition:border-color .2s,transform .2s var(--ease);
+  }
+  .map-link:hover{border-color:var(--purple-light);transform:translateY(-2px)}
+  .map-link-icon{width:42px;height:42px;border-radius:12px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--purple-light)}
+  .map-link-icon svg{width:20px;height:20px}
+  .map-link-body{flex:1;min-width:0}
+  .map-link-title{font-size:14px;font-weight:800;color:var(--t-100);margin-bottom:2px}
+  .map-link-sub{font-size:12.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .map-link-arrow{width:16px;height:16px;color:var(--t-40);flex-shrink:0}
+
   .cta{
     display:flex;align-items:center;justify-content:center;gap:10px;
     background:#25d366;color:#fff;font-size:15px;font-weight:700;
@@ -233,6 +254,14 @@
 
   footer{text-align:center;padding:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--t-40)}
   footer a{color:var(--t-70);text-decoration:none;font-weight:700}
+
+  .mini-toast{
+    position:fixed;bottom:100px;left:50%;transform:translate(-50%,10px);z-index:70;
+    background:var(--surface-2);border:1px solid var(--line-mid);border-radius:12px;padding:11px 18px;
+    font-size:13px;font-weight:700;color:var(--t-100);box-shadow:0 12px 30px -8px rgba(0,0,0,.4);
+    opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;
+  }
+  .mini-toast.show{opacity:1;transform:translate(-50%,0)}
 
   .sticky-cta{
     position:fixed;bottom:0;left:0;right:0;z-index:20;
@@ -509,6 +538,7 @@ function renderState(iconPath, msg){
 
 const ICON_WHATSAPP = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.736 5.469 2.027 7.77L0 32l8.43-2.007A15.934 15.934 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.848l-.485-.287-5.005 1.192 1.215-4.872-.317-.5A13.27 13.27 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.87c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.631-.199-.897.199-.265.398-1.03 1.295-1.263 1.56-.232.266-.465.299-.863.1-.398-.199-1.681-.62-3.203-1.977-1.184-1.057-1.983-2.362-2.215-2.76-.232-.398-.025-.613.174-.811.179-.178.398-.465.598-.698.199-.232.265-.398.398-.664.133-.265.066-.498-.033-.697-.1-.199-.897-2.163-1.23-2.96-.324-.778-.652-.673-.897-.685l-.764-.013c-.265 0-.697.1-1.063.498-.365.398-1.396 1.363-1.396 3.327s1.43 3.86 1.63 4.126c.198.265 2.814 4.297 6.82 6.026.954.412 1.698.658 2.279.842.957.305 1.829.262 2.517.159.768-.115 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.099-.166-.365-.265-.763-.464z"/></svg>';
 const ICON_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
+const ICON_SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
 
 async function load(){
   const params = new URLSearchParams(location.search);
@@ -585,7 +615,10 @@ async function load(){
     <div class="fade-up d1">
     <div class="price-row">
       <div class="price">${escHtml(im.preco || 'Sob consulta')}</div>
-      <button class="like-btn ${_jaCurtiu ? 'liked' : ''}" id="like-btn" onclick="curtirImovel('${escHtml(String(id))}')" ${_jaCurtiu ? 'disabled' : ''}>${ICON_HEART}<span id="like-count">${Number(im.curtidas || 0)}</span></button>
+      <div class="price-row-actions">
+        <button class="share-btn" onclick="compartilharImovel('${escHtml(String(im.titulo||'Imóvel'))}')" title="Compartilhar">${ICON_SHARE}</button>
+        <button class="like-btn ${_jaCurtiu ? 'liked' : ''}" id="like-btn" onclick="curtirImovel('${escHtml(String(id))}')" ${_jaCurtiu ? 'disabled' : ''}>${ICON_HEART}<span id="like-count">${Number(im.curtidas || 0)}</span></button>
+      </div>
     </div>
     <div class="title">${escHtml(im.titulo || 'Imóvel')}${im.tipo ? ' · ' + escHtml(im.tipo) : ''}</div>
     <div class="address">
@@ -647,6 +680,16 @@ async function load(){
     ${featuresList.length ? `
       <div class="section-label fade-up d3">Diferenciais</div>
       <ul class="features">${featuresList.map((f,i) => `<li class="chip-in" style="--i:${i}">${escHtml(f)}</li>`).join('')}</ul>
+    ` : ''}
+    ${im.endereco && im.endereco !== 'Localização a combinar' ? `
+      <a class="map-link fade-up d3" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(im.endereco)}" target="_blank" rel="noopener noreferrer">
+        <div class="map-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="map-link-body">
+          <div class="map-link-title">Ver localização no mapa</div>
+          <div class="map-link-sub">${escHtml(im.endereco)}</div>
+        </div>
+        <svg class="map-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
     ` : ''}
     ${corretorWaPhone ? `
     <div class="section-label fade-up d3">Perguntas rápidas</div>
@@ -792,6 +835,28 @@ function registrarCliqueWhatsapp(id){
 // Curtir — um clique por imóvel por navegador (guardado no localStorage,
 // não é à prova de tudo, mas evita o caso óbvio de recarregar a página
 // pra inflar o número).
+function mostrarToast(msg){
+  const t = document.createElement('div');
+  t.className = 'mini-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2200);
+}
+
+// Compartilhar — usa o share nativo no celular (WhatsApp/Instagram/etc
+// aparecem direto no menu do sistema); no desktop cai pra copiar o link.
+function compartilharImovel(titulo){
+  const url = location.href;
+  if(navigator.share){
+    navigator.share({ title: titulo, url }).catch(() => {});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(() => mostrarToast('Link copiado!')).catch(() => mostrarToast('Não deu pra copiar — copie o link da barra de endereço.'));
+  } else {
+    mostrarToast('Copie o link da barra de endereço pra compartilhar.');
+  }
+}
+
 function curtirImovel(id){
   const btn = document.getElementById('like-btn');
   const countEl = document.getElementById('like-count');

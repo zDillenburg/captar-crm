@@ -1800,6 +1800,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
               <div id="perfil-pub-link-row" style="display:none" class="pp-link-row">
                 <a href="#" id="perfil-pub-link" target="_blank" class="pp-link-url"></a>
                 <button type="button" class="link-btn" onclick="copiarLinkPerfilPublico()">Copiar</button>
+                <button type="button" class="link-btn" onclick="baixarQRCodePerfil()">QR Code</button>
               </div>
               <div id="perfil-pub-link-empty" class="pp-link-inactive">Ative o perfil aqui em cima pra gerar o link — depois é só copiar e mandar pro cliente.</div>
               <div id="pp-traction-row" class="pp-traction-row" style="display:none">
@@ -4439,6 +4440,43 @@ async function showApp(){
   checkUserAvisos();
   initDemoMode();
   setTimeout(()=>checkLembretes(),1000);
+  iniciarNotificacoesRealtime();
+}
+
+// Lead chegando pelo link público (proposta, visita, alerta, "quer
+// vender") aparece na hora, sem precisar recarregar o dashboard — em
+// imóveis, responder rápido é o que fecha negócio. Usa Supabase
+// Realtime (Postgres logical replication), então precisa que a tabela
+// leads esteja na publication supabase_realtime — ver
+// supabase-leads-realtime.sql.
+let _realtimeLeadsChannel=null;
+function iniciarNotificacoesRealtime(){
+  if(!_currentUser||_realtimeLeadsChannel)return;
+  _realtimeLeadsChannel=_sb.channel('leads-realtime-'+_currentUser.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'leads',filter:'user_id=eq.'+_currentUser.id},(payload)=>{
+      const lead=payload.new;
+      // Se o id já está em LEADS_DATA, essa sessão já sabe desse lead
+      // (o próprio corretor acabou de criar pelo dashboard) — não duplica.
+      if(!lead||LEADS_DATA.some(l=>l.id===lead.id))return;
+      LEADS_DATA.unshift(lead);
+      NOTIFICATIONS.unshift({
+        id:Date.now()+Math.random(),
+        emoji:'🔥',
+        msg:`Novo lead: <strong>${escHTML(lead.nome||'—')}</strong>${lead.origem?` (${escHTML(lead.origem)})`:''}`,
+        time:'Agora',
+        page:'crm',
+        read:false,
+        _type:'novo-lead'
+      });
+      renderNotifications();
+      showToast(`Novo lead: ${lead.nome||'—'}${lead.origem?' — '+lead.origem:''}`,'success');
+      const crmBadge=document.getElementById('nav-badge-crm');
+      if(crmBadge){crmBadge.textContent=LEADS_DATA.length;crmBadge.style.display='';}
+      const mbnBadgeCrm=document.getElementById('mbn-badge-crm');
+      if(mbnBadgeCrm){mbnBadgeCrm.textContent=LEADS_DATA.length;mbnBadgeCrm.style.display='';}
+      if(document.getElementById('page-crm')?.classList.contains('active'))renderKanban();
+    })
+    .subscribe();
 }
 
 async function doLogout(){
@@ -6333,6 +6371,9 @@ function openImovelDetail(idx){
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         ${im.publico?'Compartilhado ✓':'Compartilhar'}
       </button>
+      ${im.publico?`<button class="btn-cancel" onclick="baixarQRCode('${escHTML(`${location.origin}/imovel-publico.html?id=${im.id}`)}','qrcode-${escHTML(String(im.id))}.png')" title="Baixar QR code deste imóvel — bom pra placa e material impresso">
+        📱 QR Code
+      </button>`:''}
     </div>
     ${im.publico?`<div style="display:flex;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--t3)">
       <span>👁️ ${Number(im.visualizacoes||0).toLocaleString('pt-BR')} visualizaç${Number(im.visualizacoes||0)===1?'ão':'ões'} no link público</span>
@@ -8533,6 +8574,33 @@ async function copiarLinkPerfilPublico(){
   }catch(e){
     showToast('Link: '+link.href,'success');
   }
+}
+
+// QR Code — útil pra placa física, cartão de visita, vitrine. Usa a API
+// pública gratuita do goqr.me (sem chave, sem custo) só pra desenhar o
+// PNG; baixa como blob pra virar um download de verdade em vez de só
+// abrir a imagem numa aba nova.
+async function baixarQRCode(url,filename){
+  if(!url){showToast('Link indisponível.','error');return;}
+  try{
+    const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&data=${encodeURIComponent(url)}`;
+    const resp=await fetch(qrUrl);
+    if(!resp.ok)throw new Error('qr_falhou');
+    const blob=await resp.blob();
+    const objUrl=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=objUrl;a.download=filename;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(objUrl),2000);
+  }catch(e){
+    showToast('Não deu pra gerar o QR code agora. Tenta de novo.','error');
+  }
+}
+
+function baixarQRCodePerfil(){
+  const link=document.getElementById('perfil-pub-link');
+  if(!link||!link.href){showToast('Ative o perfil público primeiro.','error');return;}
+  baixarQRCode(link.href,'qrcode-perfil-captar.png');
 }
 
 // Acesso rápido ao perfil público a partir da página de Imóveis — se já
