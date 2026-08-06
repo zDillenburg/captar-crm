@@ -29,6 +29,8 @@ supabase-proposta-valor.sql
 supabase-agendar-visita-publica.sql
 supabase-leads-realtime.sql
 supabase-imovel-mostrar-mapa.sql
+supabase-tempo-resposta.sql
+supabase-depoimento-cliente-publico.sql
 .claude/
 .DS_Store
 *.env

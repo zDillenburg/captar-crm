@@ -107,6 +107,7 @@
 
   .wrap-pad{padding:0 28px}
   .verified-line{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--t-40);font-weight:600;margin-bottom:9px;letter-spacing:.01em}
+  .resposta-badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:20px;padding:5px 11px;margin-bottom:14px}
   .verified-line svg{width:13px;height:13px;color:var(--purple-light);flex-shrink:0}
   .profile-name{font-size:clamp(26px,5vw,34px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin-bottom:9px}
   .profile-tagline{font-size:16px;color:var(--t-70);line-height:1.55;margin-bottom:24px;max-width:48ch;font-weight:500;overflow-wrap:anywhere;word-break:break-word}
@@ -235,7 +236,14 @@
   .comp-price{font-weight:800;color:var(--t-100)}
 
   .depoimentos-section{margin-top:36px}
-  .depoimentos-title{font-size:13px;font-weight:800;color:var(--t-70);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
+  .depoimentos-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .depoimentos-title{font-size:13px;font-weight:800;color:var(--t-70);text-transform:uppercase;letter-spacing:.05em}
+  .depoimento-add-btn{background:var(--surface-2);border:1px solid var(--line-mid);border-radius:20px;padding:7px 14px;font:inherit;font-size:12px;font-weight:700;color:var(--t-70);cursor:pointer;transition:border-color .18s,color .18s}
+  .depoimento-add-btn:hover{border-color:var(--purple-light);color:var(--t-100)}
+  .depoimento-stars-picker{display:flex;gap:6px;margin-bottom:14px}
+  .depoimento-star{font-size:26px;cursor:pointer;color:var(--line-strong);background:none;border:none;padding:0;line-height:1;transition:transform .15s var(--ease)}
+  .depoimento-star.on{color:#f59e0b}
+  .depoimento-star:hover{transform:scale(1.15)}
   .depoimentos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
   .depoimento-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
   .depoimento-stars{font-size:12px;color:#f5a623;margin-bottom:8px}
@@ -828,6 +836,18 @@ async function enviarFavoritosInteresse(event){
   return false;
 }
 
+// depoimentos_publicos.aprovado é uma coluna nova — se a migration
+// ainda não rodou nesse projeto, o filtro por ela quebra a query
+// inteira. Nesse caso cai pra mostrar todos (mesmo comportamento de
+// antes dessa coluna existir, sem moderação).
+async function fetchDepoimentosAprovados(id){
+  let {data, error} = await _sb.from('depoimentos_publicos').select('*').eq('user_id', id).eq('aprovado', true).order('created_at', { ascending: false });
+  if(error){
+    ({data, error} = await _sb.from('depoimentos_publicos').select('*').eq('user_id', id).order('created_at', { ascending: false }));
+  }
+  return data || [];
+}
+
 async function load(){
   const params = new URLSearchParams(location.search);
   // O rewrite do Vercel (/c/:slug -> /corretor-publico.html?u=:slug) é
@@ -863,8 +883,11 @@ async function load(){
     document.documentElement.style.setProperty('--purple', perfil.cor_destaque);
   }
 
-  const {data: imoveisData} = await _sb.from('imoveis').select('*').eq('user_id', id).eq('publico', true).order('created_at', { ascending: false });
-  const {data: depoimentosData} = await _sb.from('depoimentos_publicos').select('*').eq('user_id', id).order('created_at', { ascending: false });
+  const [{data: imoveisData}, depoimentosData, {data: tempoRespostaMin}] = await Promise.all([
+    _sb.from('imoveis').select('*').eq('user_id', id).eq('publico', true).order('created_at', { ascending: false }),
+    fetchDepoimentosAprovados(id),
+    _sb.rpc('obter_tempo_resposta_publico', { p_user_id: id })
+  ]);
   const depoimentos = depoimentosData || [];
   // Imóveis marcados como destaque pelo corretor aparecem primeiro —
   // sort estável, então dentro de cada grupo (destaque / não-destaque)
@@ -877,6 +900,11 @@ async function load(){
   // título tipo "Top Corretor"; mostra a contagem de verdade e deixa o
   // visitante tirar a própria conclusão).
   const vendidos = (imoveisData || []).filter(im => im.status === 'Vendido');
+  // Selo "Responde rápido" — só aparece com amostra real suficiente
+  // (a function já garante isso), nunca é um número inventado.
+  const tempoRespostaTxt = tempoRespostaMin
+    ? (tempoRespostaMin < 60 ? `${tempoRespostaMin} min` : `${Math.round(tempoRespostaMin/60)}h`)
+    : null;
 
   const logoUrl = fotoPublicUrl('logos', `${id}/avatar.jpg`);
   const capaUrl = perfil.capa_path ? fotoPublicUrl('logos', `${id}/capa.jpg`) : '';
@@ -907,6 +935,7 @@ async function load(){
     <div class="wrap-pad">
       <div class="fade-up d2">
         <div class="verified-line">${ICON_CHECK} Corretor parceiro Grupo Captar</div>
+        ${tempoRespostaTxt ? `<div class="resposta-badge">⚡ Responde em média em ${tempoRespostaTxt}</div>` : ''}
         <div class="profile-name">${escHtml(perfil.nome || 'Corretor')}</div>
         ${perfil.tagline ? `<p class="profile-tagline">${escHtml(perfil.tagline)}</p>` : ''}
       </div>
@@ -993,9 +1022,12 @@ async function load(){
         </div>
       ` : `<div class="empty-imoveis" id="im-grid-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICON_EMPTY}</svg>Nenhum imóvel compartilhado publicamente no momento.</div>`}
 
-      ${depoimentos.length ? `
       <div class="depoimentos-section fade-up">
-        <div class="depoimentos-title">O que meus clientes dizem</div>
+        <div class="depoimentos-head">
+          <div class="depoimentos-title">O que meus clientes dizem</div>
+          <button type="button" class="depoimento-add-btn" onclick="abrirDepoimentoPanel()">Deixar um depoimento</button>
+        </div>
+        ${depoimentos.length ? `
         <div class="depoimentos-grid">
           ${depoimentos.slice(0,6).map(d=>`
             <div class="depoimento-card">
@@ -1005,8 +1037,8 @@ async function load(){
             </div>
           `).join('')}
         </div>
+        ` : `<div class="favoritos-empty">Ainda não há depoimentos publicados. Seja o primeiro a deixar um!</div>`}
       </div>
-      ` : ''}
     </div>
   `;
 
@@ -1199,6 +1231,37 @@ async function load(){
       </form>
     </div>
   `);
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="filter-backdrop" id="depoimento-backdrop" onclick="if(event.target===this)fecharDepoimentoPanel()"></div>
+    <div class="filter-panel" id="depoimento-panel">
+      <div class="filter-panel-head">
+        <h3>Deixar um depoimento</h3>
+        <button class="filter-panel-close" onclick="fecharDepoimentoPanel()">${ICON_X}</button>
+      </div>
+      <p style="font-size:13.5px;color:var(--t-55);line-height:1.55;margin-bottom:18px">Já é cliente de ${escHtml((perfil.nome||'o corretor').split(' ')[0])}? Conta como foi — seu depoimento aparece aqui depois de aprovado.</p>
+      <form id="depoimento-form" onsubmit="return enviarDepoimentoPublico(event)">
+        <div class="filter-field">
+          <label>Sua nota</label>
+          <div class="depoimento-stars-picker" id="depoimento-stars-picker">
+            ${[1,2,3,4,5].map(n=>`<button type="button" class="depoimento-star ${n<=5?'on':''}" data-val="${n}" onclick="setDepoimentoNota(${n})">★</button>`).join('')}
+          </div>
+        </div>
+        <div class="filter-field">
+          <label>Seu nome</label>
+          <input type="text" id="depoimento-nome" maxlength="120" required autocomplete="name"/>
+        </div>
+        <div class="filter-field" style="margin-bottom:0">
+          <label>Seu depoimento</label>
+          <textarea id="depoimento-texto" rows="4" maxlength="600" required placeholder="Conta como foi a experiência…" style="width:100%;background:var(--surface-2);border:1px solid var(--line-mid);border-radius:var(--r-sm);color:var(--t-100);font:inherit;font-size:14.5px;padding:11px 12px;outline:none;resize:vertical"></textarea>
+        </div>
+        <div class="filter-actions">
+          <button type="submit" class="filter-apply" id="depoimento-submit-btn" style="flex:1">Enviar depoimento</button>
+        </div>
+        <div class="vender-feedback" id="depoimento-feedback"></div>
+      </form>
+    </div>
+  `);
 }
 
 function abrirVenderPanel(){
@@ -1305,6 +1368,66 @@ async function enviarAlerta(event){
     feedback.textContent='Recebido! O corretor te avisa assim que tiver algo assim.';
     document.getElementById('alerta-form').reset();
     setTimeout(fecharAlertaPanel,1800);
+  }catch(e){
+    feedback.className='vender-feedback err';
+    feedback.textContent='Não deu pra enviar agora. Tenta de novo em instantes.';
+  }finally{
+    btn.disabled=false;
+  }
+  return false;
+}
+
+// Depoimento enviado direto pelo cliente — fica pendente até o
+// corretor aprovar no dashboard (ver supabase-depoimento-cliente-publico.sql).
+let _depoimentoNota=5;
+function setDepoimentoNota(n){
+  _depoimentoNota=n;
+  document.querySelectorAll('.depoimento-star').forEach(btn=>{
+    btn.classList.toggle('on', Number(btn.dataset.val)<=n);
+  });
+}
+
+function abrirDepoimentoPanel(){
+  const backdrop=document.getElementById('depoimento-backdrop'), panel=document.getElementById('depoimento-panel');
+  if(!backdrop||!panel)return;
+  _depoimentoNota=5;
+  setDepoimentoNota(5);
+  backdrop.classList.add('open');
+  panel.classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('depoimento-nome')?.focus(),300);
+}
+
+function fecharDepoimentoPanel(){
+  const backdrop=document.getElementById('depoimento-backdrop'), panel=document.getElementById('depoimento-panel');
+  if(backdrop)backdrop.classList.remove('open');
+  if(panel)panel.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+async function enviarDepoimentoPublico(event){
+  event.preventDefault();
+  const nome=document.getElementById('depoimento-nome').value.trim();
+  const texto=document.getElementById('depoimento-texto').value.trim();
+  const btn=document.getElementById('depoimento-submit-btn');
+  const feedback=document.getElementById('depoimento-feedback');
+  if(!nome||!texto){
+    feedback.className='vender-feedback err';
+    feedback.textContent='Preenche seu nome e o depoimento.';
+    return false;
+  }
+  btn.disabled=true;
+  feedback.className='vender-feedback';
+  feedback.textContent='';
+  try{
+    const {error}=await _sb.rpc('enviar_depoimento_publico',{
+      p_user_id:_venderUserId, p_nome_cliente:nome, p_texto:texto, p_nota:_depoimentoNota
+    });
+    if(error)throw error;
+    feedback.className='vender-feedback ok';
+    feedback.textContent='Recebido! Aparece aqui assim que o corretor aprovar.';
+    document.getElementById('depoimento-form').reset();
+    setTimeout(fecharDepoimentoPanel,1800);
   }catch(e){
     feedback.className='vender-feedback err';
     feedback.textContent='Não deu pra enviar agora. Tenta de novo em instantes.';
