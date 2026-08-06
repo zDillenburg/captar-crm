@@ -1,5 +1,20 @@
 {
   "rewrites": [
+    {
+      "source": "/c/:slug",
+      "has": [{ "type": "header", "key": "user-agent", "value": "(.*facebookexternalhit.*|.*WhatsApp.*|.*Twitterbot.*|.*LinkedInBot.*|.*Slackbot.*|.*TelegramBot.*|.*Discordbot.*|.*Pinterest.*|.*redditbot.*)" }],
+      "destination": "/api/og-corretor?slug=:slug"
+    },
+    {
+      "source": "/corretor-publico.html",
+      "has": [{ "type": "header", "key": "user-agent", "value": "(.*facebookexternalhit.*|.*WhatsApp.*|.*Twitterbot.*|.*LinkedInBot.*|.*Slackbot.*|.*TelegramBot.*|.*Discordbot.*|.*Pinterest.*|.*redditbot.*)" }],
+      "destination": "/api/og-corretor"
+    },
+    {
+      "source": "/imovel-publico.html",
+      "has": [{ "type": "header", "key": "user-agent", "value": "(.*facebookexternalhit.*|.*WhatsApp.*|.*Twitterbot.*|.*LinkedInBot.*|.*Slackbot.*|.*TelegramBot.*|.*Discordbot.*|.*Pinterest.*|.*redditbot.*)" }],
+      "destination": "/api/og-imovel"
+    },
     { "source": "/c/:slug", "destination": "/corretor-publico.html?u=:slug" }
   ]
 }

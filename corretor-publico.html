@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex"/>
 <title>Corretor — Grupo Captar</title>
+<meta property="og:type" content="profile"/>
+<meta property="og:site_name" content="Grupo Captar"/>
+<meta property="og:title" content="Corretor — Grupo Captar"/>
+<meta property="og:description" content="Corretor parceiro Grupo Captar — veja os imóveis disponíveis."/>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -199,6 +203,25 @@
   .vendido-card-body{padding:10px 12px}
   .vendido-card-price{font-size:12.5px;font-weight:800;color:var(--t-100)}
   .vendido-card-addr{font-size:10.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+
+  /* ── Favoritos ───────────────────────────── */
+  .favoritos-fab{
+    position:fixed;right:16px;z-index:19;display:none;align-items:center;gap:7px;
+    background:var(--purple);color:#fff;border:none;border-radius:999px;
+    padding:12px 16px;font:inherit;font-size:13.5px;font-weight:800;cursor:pointer;
+    box-shadow:0 10px 24px -6px rgba(0,0,0,.4);transition:transform .18s var(--ease),filter .18s;
+  }
+  .favoritos-fab.show{display:flex}
+  .favoritos-fab:hover{filter:brightness(1.08)}
+  .favoritos-fab:active{transform:scale(.96)}
+  .favoritos-fab svg{width:16px;height:16px}
+  .favorito-item{display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface-2);border-radius:14px;margin-bottom:10px}
+  .favorito-item-img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--surface)}
+  .favorito-item-body{flex:1;min-width:0}
+  .favorito-item-price{font-size:13px;font-weight:800}
+  .favorito-item-addr{font-size:11.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .favorito-item-remove{width:28px;height:28px;border-radius:50%;background:var(--surface);border:1px solid var(--line-mid);color:var(--t-55);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .favoritos-empty{font-size:13px;color:var(--t-40);text-align:center;padding:24px 0}
 
   .depoimentos-section{margin-top:36px}
   .depoimentos-title{font-size:13px;font-weight:800;color:var(--t-70);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
@@ -451,7 +474,7 @@ function imCardHtml(im, i){
         ${im.destaque ? `<span class="im-card-destaque">⭐ Destaque</span>` : ''}
         ${im.finalidade === 'aluguel' ? `<span class="im-card-aluguel">🔑 Aluguel</span>` : ''}
         ${Array.isArray(im.fotos) && im.fotos.length
-          ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'im-card-emoji',textContent:this.dataset.fallbackEmoji}))"/>`
+          ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" loading="lazy" data-fallback-emoji="${escHtml(im.emoji||'🏠')}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'im-card-emoji',textContent:this.dataset.fallbackEmoji}))"/>`
           : `<span class="im-card-emoji">${escHtml(im.emoji || '🏠')}</span>`}
         <button type="button" class="im-card-like ${jaCurtiu ? 'liked' : ''}" onclick="event.preventDefault();event.stopPropagation();curtirImovelCard('${escHtml(String(im.id))}',this)" ${jaCurtiu ? 'disabled' : ''}>${ICON_HEART}<span>${Number(im.curtidas || 0)}</span></button>
       </div>
@@ -602,6 +625,108 @@ function curtirImovelCard(id, btn){
   // dela, não rejeita (mesmo detalhe corrigido em imovel-publico.html).
   _sb.rpc('registrar_evento_imovel_publico', { p_id: String(id), p_evento: 'like' })
     .then(({ error }) => { if(error) desfazer(); }, desfazer);
+  atualizarFavoritosUI();
+}
+
+// Favoritos — reaproveita o mesmo localStorage do curtir (não precisa de
+// login nem de tabela nova). Deixa o cliente juntar vários imóveis do
+// corretor e mandar o interesse em todos de uma vez, num lead só.
+function getFavoritos(){
+  return _lista.filter(im => localStorage.getItem('captar_curtiu_' + im.id) === '1');
+}
+
+function atualizarFavoritosUI(){
+  const fab = document.getElementById('favoritos-fab');
+  if(!fab) return;
+  const n = getFavoritos().length;
+  fab.classList.toggle('show', n > 0);
+  const countEl = document.getElementById('favoritos-fab-count');
+  const pluralEl = document.getElementById('favoritos-fab-plural');
+  if(countEl) countEl.textContent = n;
+  if(pluralEl) pluralEl.textContent = n === 1 ? '' : 's';
+  if(document.getElementById('favoritos-panel')?.classList.contains('open')) renderFavoritosList();
+}
+
+function renderFavoritosList(){
+  const listEl = document.getElementById('favoritos-list');
+  if(!listEl) return;
+  const favoritos = getFavoritos();
+  if(!favoritos.length){
+    listEl.innerHTML = `<div class="favoritos-empty">Você ainda não curtiu nenhum imóvel. Toque no coração de um card pra adicionar aqui.</div>`;
+    return;
+  }
+  listEl.innerHTML = favoritos.map(im => `
+    <div class="favorito-item">
+      ${Array.isArray(im.fotos) && im.fotos.length
+        ? `<img class="favorito-item-img" src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" loading="lazy" alt=""/>`
+        : `<div class="favorito-item-img" style="display:flex;align-items:center;justify-content:center;font-size:20px">${escHtml(im.emoji||'🏠')}</div>`}
+      <div class="favorito-item-body">
+        <div class="favorito-item-price">${escHtml(im.preco || 'Sob consulta')}</div>
+        <div class="favorito-item-addr">${escHtml(im.endereco || '—')}</div>
+      </div>
+      <button type="button" class="favorito-item-remove" onclick="removerFavorito('${escHtml(String(im.id))}')" title="Remover">${ICON_X}</button>
+    </div>
+  `).join('');
+}
+
+function removerFavorito(id){
+  localStorage.removeItem('captar_curtiu_' + id);
+  document.querySelectorAll(`.im-card-like[onclick*="'${id}'"]`).forEach(btn=>{
+    btn.disabled = false;
+    btn.classList.remove('liked');
+    const countEl = btn.querySelector('span');
+    if(countEl) countEl.textContent = String(Math.max(0, Number(countEl.textContent||1) - 1));
+  });
+  renderFavoritosList();
+  atualizarFavoritosUI();
+}
+
+function toggleFavoritosPanel(force){
+  const panel = document.getElementById('favoritos-panel');
+  const backdrop = document.getElementById('favoritos-backdrop');
+  if(!panel || !backdrop) return;
+  const open = typeof force === 'boolean' ? force : !panel.classList.contains('open');
+  panel.classList.toggle('open', open);
+  backdrop.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+  if(open) renderFavoritosList();
+}
+
+async function enviarFavoritosInteresse(event){
+  event.preventDefault();
+  const favoritos = getFavoritos();
+  if(!favoritos.length) return false;
+  const nome = document.getElementById('favoritos-nome').value.trim();
+  const tel = document.getElementById('favoritos-tel').value.trim();
+  const btn = document.getElementById('favoritos-submit-btn');
+  const feedback = document.getElementById('favoritos-feedback');
+  const titulos = favoritos.map(im => im.titulo || im.tipo || 'Imóvel');
+  const resumo = titulos.length > 4
+    ? `${titulos.slice(0,4).join(', ')} e mais ${titulos.length-4}`
+    : titulos.join(', ');
+  btn.disabled = true;
+  feedback.className = 'vender-feedback';
+  feedback.textContent = '';
+  try{
+    const { error } = await _sb.rpc('enviar_proposta_publica', {
+      p_user_id: _venderUserId,
+      p_nome: nome,
+      p_tel: tel,
+      p_mensagem: `Interesse em ${favoritos.length} imóve${favoritos.length===1?'l':'is'} favoritado${favoritos.length===1?'':'s'}`,
+      p_imovel_titulo: resumo
+    });
+    if(error) throw error;
+    feedback.className = 'vender-feedback ok';
+    feedback.textContent = 'Recebido! O corretor vai entrar em contato em breve.';
+    document.getElementById('favoritos-form').reset();
+    setTimeout(() => toggleFavoritosPanel(false), 1800);
+  }catch(e){
+    feedback.className = 'vender-feedback err';
+    feedback.textContent = 'Não deu pra enviar agora. Tenta de novo em instantes.';
+  }finally{
+    btn.disabled = false;
+  }
+  return false;
 }
 
 async function load(){
@@ -707,7 +832,7 @@ async function load(){
               <div class="vendido-card-img">
                 <span class="vendido-tag">Vendido</span>
                 ${Array.isArray(im.fotos)&&im.fotos.length
-                  ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" alt="" onerror="this.remove()"/>`
+                  ? `<img src="${escHtml(fotoPublicUrl('imoveis-fotos', im.fotos[0]))}" loading="lazy" alt="" onerror="this.remove()"/>`
                   : `<span>${escHtml(im.emoji||'🏠')}</span>`}
               </div>
               <div class="vendido-card-body">
@@ -851,6 +976,35 @@ async function load(){
       </div>
     `);
   }
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <button type="button" class="favoritos-fab" id="favoritos-fab" style="bottom:${waPhone ? 'calc(92px + env(safe-area-inset-bottom))' : '20px'}" onclick="toggleFavoritosPanel(true)">
+      ${ICON_HEART}<span id="favoritos-fab-count">0</span> favorito<span id="favoritos-fab-plural"></span>
+    </button>
+    <div class="filter-backdrop" id="favoritos-backdrop" onclick="if(event.target===this)toggleFavoritosPanel(false)"></div>
+    <div class="filter-panel" id="favoritos-panel">
+      <div class="filter-panel-head">
+        <h3>Seus favoritos</h3>
+        <button class="filter-panel-close" onclick="toggleFavoritosPanel(false)">${ICON_X}</button>
+      </div>
+      <div id="favoritos-list"></div>
+      <form id="favoritos-form" onsubmit="return enviarFavoritosInteresse(event)">
+        <div class="filter-field">
+          <label>Seu nome</label>
+          <input type="text" id="favoritos-nome" maxlength="120" required autocomplete="name"/>
+        </div>
+        <div class="filter-field" style="margin-bottom:0">
+          <label>Telefone / WhatsApp</label>
+          <input type="text" id="favoritos-tel" maxlength="30" required autocomplete="tel" placeholder="(54) 99999-9999"/>
+        </div>
+        <div class="filter-actions">
+          <button type="submit" class="filter-apply" id="favoritos-submit-btn" style="flex:1">Enviar interesse</button>
+        </div>
+        <div class="vender-feedback" id="favoritos-feedback"></div>
+      </form>
+    </div>
+  `);
+  atualizarFavoritosUI();
 
   document.body.insertAdjacentHTML('beforeend', `
     <div class="filter-backdrop" id="vender-backdrop" onclick="if(event.target===this)fecharVenderPanel()"></div>
