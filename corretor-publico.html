@@ -156,6 +156,7 @@
   .filter-field select:focus,.filter-field input:focus{border-color:var(--purple-light)}
   .filter-field-row{display:flex;gap:10px}
   .filter-field-row .filter-field{flex:1;margin-bottom:0}
+  .filter-divider{height:1px;background:var(--line);margin:4px 0 16px}
   .filter-chips{display:flex;flex-wrap:wrap;gap:8px}
   .filter-chip{
     background:var(--surface-2);border:1px solid var(--line-mid);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;
@@ -397,14 +398,23 @@ function siteUrl(url){
 
 // ── estado do filtro/busca — tudo client-side, a lista inteira já está em memória ──
 let _lista = [];
-let _filters = { q:'', tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null, finalidade:'', ordenar:'' };
+let _filters = { q:'', tipo:'', cidade:'', quartosMin:0, banheirosMin:0, precoMin:null, precoMax:null, finalidade:'', ordenar:'' };
 let _venderUserId = null;
+
+// endereco vem sempre como "bairro — cidade — UF" (com algum segmento
+// podendo faltar) — a cidade é sempre o penúltimo pedaço, então esse
+// heurístico funciona mesmo quando o bairro não foi preenchido.
+function cidadeFromEndereco(endereco){
+  const parts = String(endereco||'').split(' — ').map(p=>p.trim()).filter(Boolean);
+  return parts.length >= 2 ? parts[parts.length - 2] : '';
+}
 
 function matchesFilters(im){
   if(_filters.finalidade && (im.finalidade==='aluguel'?'aluguel':'venda') !== _filters.finalidade) return false;
   if(_filters.tipo && String(im.tipo||'').trim() !== _filters.tipo) return false;
-  if(_filters.status && String(im.status||'').trim() !== _filters.status) return false;
+  if(_filters.cidade && cidadeFromEndereco(im.endereco) !== _filters.cidade) return false;
   if(_filters.quartosMin && Number(im.quartos||0) < _filters.quartosMin) return false;
+  if(_filters.banheirosMin && Number(im.banheiros||0) < _filters.banheirosMin) return false;
   if(_filters.precoMin!=null || _filters.precoMax!=null){
     const p = parseMoneyBR(im.preco);
     if(p==null) return false;
@@ -421,8 +431,9 @@ function matchesFilters(im){
 function activeFilterCount(){
   let n=0;
   if(_filters.tipo)n++;
-  if(_filters.status)n++;
+  if(_filters.cidade)n++;
   if(_filters.quartosMin)n++;
+  if(_filters.banheirosMin)n++;
   if(_filters.precoMin!=null||_filters.precoMax!=null)n++;
   return n;
 }
@@ -481,12 +492,12 @@ function renderGrid(){
 
 function onFilterChange(){
   const tipoEl = document.getElementById('f-tipo');
-  const statusEl = document.getElementById('f-status');
+  const cidadeEl = document.getElementById('f-cidade');
   const minEl = document.getElementById('f-preco-min');
   const maxEl = document.getElementById('f-preco-max');
   const ordenarEl = document.getElementById('f-ordenar');
   _filters.tipo = tipoEl ? tipoEl.value : '';
-  _filters.status = statusEl ? statusEl.value : '';
+  _filters.cidade = cidadeEl ? cidadeEl.value : '';
   _filters.precoMin = minEl && minEl.value ? Number(minEl.value) : null;
   _filters.precoMax = maxEl && maxEl.value ? Number(maxEl.value) : null;
   _filters.ordenar = ordenarEl ? ordenarEl.value : '';
@@ -510,9 +521,19 @@ function setQuartosMin(n){
   renderGrid();
 }
 
+function setBanheirosMin(n){
+  _filters.banheirosMin = _filters.banheirosMin === n ? 0 : n;
+  updateFilterChipsUI();
+  updateFilterToggleUI();
+  renderGrid();
+}
+
 function updateFilterChipsUI(){
-  document.querySelectorAll('.filter-chip').forEach(chip=>{
+  document.querySelectorAll('.filter-chip[data-group="quartos"]').forEach(chip=>{
     chip.classList.toggle('active', Number(chip.dataset.val) === _filters.quartosMin);
+  });
+  document.querySelectorAll('.filter-chip[data-group="banheiros"]').forEach(chip=>{
+    chip.classList.toggle('active', Number(chip.dataset.val) === _filters.banheirosMin);
   });
 }
 
@@ -525,9 +546,9 @@ function updateFilterToggleUI(){
 }
 
 function clearFilters(){
-  _filters = { q:_filters.q, tipo:'', status:'', quartosMin:0, precoMin:null, precoMax:null, finalidade:_filters.finalidade, ordenar:'' };
+  _filters = { q:_filters.q, tipo:'', cidade:'', quartosMin:0, banheirosMin:0, precoMin:null, precoMax:null, finalidade:_filters.finalidade, ordenar:'' };
   const tipoEl = document.getElementById('f-tipo'); if(tipoEl) tipoEl.value='';
-  const statusEl = document.getElementById('f-status'); if(statusEl) statusEl.value='';
+  const cidadeEl = document.getElementById('f-cidade'); if(cidadeEl) cidadeEl.value='';
   const minEl = document.getElementById('f-preco-min'); if(minEl) minEl.value='';
   const maxEl = document.getElementById('f-preco-max'); if(maxEl) maxEl.value='';
   const ordenarEl = document.getElementById('f-ordenar'); if(ordenarEl) ordenarEl.value='';
@@ -624,7 +645,10 @@ async function load(){
   // Imóveis marcados como destaque pelo corretor aparecem primeiro —
   // sort estável, então dentro de cada grupo (destaque / não-destaque)
   // a ordem por data mais recente já vinda do banco é preservada.
-  _lista = (imoveisData || []).slice().sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
+  // Vendidos saem da grade principal (que é "imóveis disponíveis") e
+  // ficam só na vitrine "Já vendemos" abaixo — mistura confunde o
+  // cliente que está procurando algo pra comprar/alugar agora.
+  _lista = (imoveisData || []).filter(im => im.status !== 'Vendido').sort((a, b) => (b.destaque ? 1 : 0) - (a.destaque ? 1 : 0));
   // "Selo" e vitrine de vendidos — só com números reais (nunca inventa
   // título tipo "Top Corretor"; mostra a contagem de verdade e deixa o
   // visitante tirar a própria conclusão).
@@ -638,7 +662,7 @@ async function load(){
   const siteHref = siteUrl(perfil.site_url);
 
   const tipos = uniqueSorted(_lista.map(im=>im.tipo));
-  const statuses = uniqueSorted(_lista.map(im=>im.status));
+  const cidades = uniqueSorted(_lista.map(im=>cidadeFromEndereco(im.endereco)));
   const mostrarFiltro = _lista.length > 1;
   const temAmbasFinalidades = _lista.some(im=>im.finalidade==='aluguel') && _lista.some(im=>im.finalidade!=='aluguel');
 
@@ -761,22 +785,6 @@ async function load(){
           <h3>Filtrar imóveis</h3>
           <button class="filter-panel-close" onclick="toggleFilterPanel(false)">${ICON_X}</button>
         </div>
-        ${tipos.length ? `
-        <div class="filter-field">
-          <label>Tipo</label>
-          <select id="f-tipo" onchange="onFilterChange()">
-            <option value="">Todos</option>
-            ${tipos.map(t=>`<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('')}
-          </select>
-        </div>` : ''}
-        ${statuses.length ? `
-        <div class="filter-field">
-          <label>Status</label>
-          <select id="f-status" onchange="onFilterChange()">
-            <option value="">Todos</option>
-            ${statuses.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('')}
-          </select>
-        </div>` : ''}
         <div class="filter-field">
           <label>Ordenar por</label>
           <select id="f-ordenar" onchange="onFilterChange()">
@@ -785,12 +793,39 @@ async function load(){
             <option value="maior-preco">Maior preço</option>
           </select>
         </div>
+        ${(tipos.length || cidades.length) ? `
+        <div class="filter-field-row">
+          ${tipos.length ? `
+          <div class="filter-field">
+            <label>Tipo</label>
+            <select id="f-tipo" onchange="onFilterChange()">
+              <option value="">Todos</option>
+              ${tipos.map(t=>`<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('')}
+            </select>
+          </div>` : ''}
+          ${cidades.length > 1 ? `
+          <div class="filter-field">
+            <label>Cidade</label>
+            <select id="f-cidade" onchange="onFilterChange()">
+              <option value="">Todas</option>
+              ${cidades.map(c=>`<option value="${escHtml(c)}">${escHtml(c)}</option>`).join('')}
+            </select>
+          </div>` : ''}
+        </div>` : ''}
+        <div class="filter-divider"></div>
         <div class="filter-field">
           <label>Quartos (mínimo)</label>
           <div class="filter-chips">
-            ${[1,2,3,4].map(n=>`<button type="button" class="filter-chip" data-val="${n}" onclick="setQuartosMin(${n})">${n}+</button>`).join('')}
+            ${[1,2,3,4].map(n=>`<button type="button" class="filter-chip" data-group="quartos" data-val="${n}" onclick="setQuartosMin(${n})">${n}+</button>`).join('')}
           </div>
         </div>
+        <div class="filter-field">
+          <label>Banheiros (mínimo)</label>
+          <div class="filter-chips">
+            ${[1,2,3,4].map(n=>`<button type="button" class="filter-chip" data-group="banheiros" data-val="${n}" onclick="setBanheirosMin(${n})">${n}+</button>`).join('')}
+          </div>
+        </div>
+        <div class="filter-divider"></div>
         <div class="filter-field-row">
           <div class="filter-field">
             <label>Preço mínimo</label>

@@ -137,17 +137,6 @@
   .like-btn:disabled{cursor:default}
 
   /* ── Fazer proposta ─────────────────────── */
-  .proposta-btn{
-    display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
-    background:var(--purple);border:none;color:#fff;
-    font-size:15.5px;font-weight:800;padding:16px;border-radius:14px;cursor:pointer;margin-bottom:24px;
-    box-shadow:0 10px 24px -8px rgba(163,3,154,.5);
-    transition:filter .2s,transform .18s var(--ease);font-family:inherit;
-  }
-  .proposta-btn:hover{filter:brightness(1.08)}
-  .proposta-btn:active{transform:scale(.98)}
-  .proposta-btn svg{width:18px;height:18px;flex-shrink:0}
-
   .proposta-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:60;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s ease}
   .proposta-overlay.open{opacity:1;visibility:visible}
   @media(min-width:640px){.proposta-overlay{align-items:center}}
@@ -488,10 +477,6 @@ async function load(){
       ${escHtml(im.endereco || 'Localização a combinar')}
     </div>
     </div>
-    <button type="button" class="proposta-btn fade-up d1" onclick="abrirProposta()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Fazer uma proposta
-    </button>
     <div class="specs fade-up d2">
       ${Number(im.quartos) > 0 ? `<div class="spec"><div class="spec-val">${escHtml(String(im.quartos))}</div><div class="spec-lbl">Quartos</div></div>` : ''}
       <div class="spec"><div class="spec-val">${escHtml(String(im.banheiros || 1))}</div><div class="spec-lbl">Banheiros</div></div>
