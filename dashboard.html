@@ -68,6 +68,9 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 /* ══════════════════════ LOGIN ══════════════════════ */
 #login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200;transition:opacity .5s,visibility .5s}
 #login.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#blocked-screen{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:250;overflow-y:auto;padding:20px 0}
+#blocked-screen.open{display:flex}
+#blocked-screen .login-card{max-height:calc(100vh - 40px);overflow-y:auto}
 .login-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 0%,rgba(133,2,119,.25) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 80% 100%,rgba(133,2,119,.12) 0%,transparent 60%)}
 .login-card{position:relative;z-index:2;width:100%;max-width:420px;padding:48px 40px;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;box-shadow:0 32px 80px rgba(0,0,0,.6)}
 .login-logo{display:flex;justify-content:center;margin-bottom:36px}
@@ -968,6 +971,8 @@ body.light-mode .pp-preview{
 .toggle-switch input:checked + .toggle-slider:before{transform:translateX(20px)}
 .geral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 @media(max-width:768px){.geral-grid{grid-template-columns:1fr 1fr}}
+.adm-charts-row{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:900px){.adm-charts-row{grid-template-columns:1fr}}
 @media(max-width:1200px){.pag-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.pag-kpis{grid-template-columns:1fr 1fr}.admin-grid{grid-template-columns:1fr}}
 @media(max-width:900px){#page-pagamentos>div[style*="grid-template-columns"]{grid-template-columns:1fr!important}}
@@ -1394,6 +1399,33 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
 
     <button class="login-btn" id="auth-btn" onclick="doLogin()">Entrar na plataforma</button>
     <a href="#" class="login-forgot" id="forgot-link" onclick="doForgot(event)">Esqueci minha senha</a>
+  </div>
+</div>
+
+<!-- ══════════ CONTA BLOQUEADA ══════════ -->
+<div id="blocked-screen">
+  <div class="login-bg"></div>
+  <div class="login-card" style="max-width:440px">
+    <div class="login-logo"><img src="logo.svg" alt="Grupo Captar"/></div>
+    <div style="text-align:center;font-size:38px;margin-bottom:8px">🔒</div>
+    <h1 class="login-title">Acesso suspenso</h1>
+    <p class="login-sub">Sua assinatura está em aberto — regularize pra voltar a usar a plataforma.</p>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:18px;margin-bottom:20px;text-align:center">
+      <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Valor em aberto</div>
+      <div style="font-size:26px;font-weight:800;color:var(--t1)" id="blocked-valor">—</div>
+      <div style="font-size:11.5px;color:var(--t3);margin-top:4px" id="blocked-plano">—</div>
+    </div>
+    <div class="pix-qr-wrap">
+      <div id="blocked-pix-qr" style="width:180px;height:180px;display:flex;align-items:center;justify-content:center;margin:0 auto"></div>
+    </div>
+    <div class="pix-amount-info" style="text-align:center;margin:12px 0">Escaneie com o app do seu banco ou copie a chave Pix</div>
+    <div class="pix-key-box">
+      <div class="pix-key-val" id="blocked-pix-key">—</div>
+      <button class="pix-copy-btn" onclick="copyPixKey()">Copiar chave</button>
+    </div>
+    <div style="font-size:11px;color:var(--t3);text-align:center;margin:10px 0 20px">Chave Pix CNPJ · Grupo Captar Gestão Imobiliária</div>
+    <button class="login-btn" style="background:#25d366;margin-bottom:10px" onclick="window.open('https://wa.me/'+CAPTAR_WA+'?text='+encodeURIComponent('Olá! Minha conta foi suspensa e quero regularizar o pagamento.'),'_blank')">💬 Já paguei / falar com o Grupo Captar</button>
+    <a href="#" class="login-forgot" onclick="event.preventDefault();doLogout()">Sair da conta</a>
   </div>
 </div>
 
@@ -2576,7 +2608,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
               <div class="admin-stat-lbl">Receita Mensal</div>
             </div>
           </div>
-          <div class="geral-grid">
+          <div class="geral-grid" style="grid-template-columns:repeat(4,1fr)">
             <div class="admin-stat">
               <div class="admin-stat-val" id="adm-bloqueados" style="color:#ef4444">0</div>
               <div class="admin-stat-lbl">Contas Bloqueadas</div>
@@ -2589,13 +2621,31 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
               <div class="admin-stat-val" id="adm-receita-total" style="color:#f59e0b">R$ 0</div>
               <div class="admin-stat-lbl">Receita Confirmada</div>
             </div>
+            <div class="admin-stat">
+              <div class="admin-stat-val" id="adm-total-imoveis" style="color:#22c55e">0</div>
+              <div class="admin-stat-lbl">Imóveis na Plataforma</div>
+            </div>
           </div>
           <div id="adm-alert-wrap"></div>
+          <div class="adm-charts-row">
+            <div class="admin-section" style="margin-bottom:0">
+              <div class="admin-section-hdr">
+                <div class="admin-section-title">🏠 Imóveis por cliente</div>
+              </div>
+              <div class="chart-canvas-wrap" style="height:260px;padding:16px"><canvas id="chart-adm-imoveis-cliente"></canvas></div>
+            </div>
+            <div class="admin-section" style="margin-bottom:0">
+              <div class="admin-section-hdr">
+                <div class="admin-section-title">🔗 Perfil Público</div>
+              </div>
+              <div class="chart-canvas-wrap" style="height:260px;padding:16px"><canvas id="chart-adm-perfil-publico"></canvas></div>
+            </div>
+          </div>
           <div class="admin-section">
             <div class="admin-section-hdr">
               <div class="admin-section-title">📈 Distribuição por Status</div>
             </div>
-            <div style="padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="adm-status-dist"></div>
+            <div class="chart-canvas-wrap" style="height:220px;padding:20px"><canvas id="chart-adm-status"></canvas></div>
           </div>
         </div>
 
@@ -2617,6 +2667,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                     <th>Plano</th>
                     <th>Status Assinatura</th>
                     <th>Acesso</th>
+                    <th>Imóveis</th>
                     <th>Perfil Público</th>
                     <th style="text-align:center">Ações</th>
                   </tr>
@@ -7474,6 +7525,12 @@ const CAPTAR_WA = '5554996473047';
 
 // Plano do cliente — carregado do Supabase (tabela assinaturas)
 let _assinaturaCliente = null;
+// Valor do último QR Pix gerado (modal ou inline) — copyPixKey() usa
+// isso pra copiar o payload com o MESMO valor mostrado no QR. Antes
+// copiava sempre buildPixPayload(null) (sem valor), então quem colava
+// no app do banco via "copiar chave" via um Pix de valor livre em vez
+// do valor certo mostrado na tela.
+let _pixValorAtual = null;
 
 async function renderPagamentos(){
   // Carrega assinatura do usuário atual
@@ -7549,6 +7606,7 @@ async function renderPagamentos(){
   }
 
   // QR inline (Pix de valor fixo do plano)
+  _pixValorAtual = p.valor;
   makeQR('pix-qr-inline', buildPixPayload(p.valor), 160);
 
   // Histórico — o sistema hoje só guarda o status ATUAL e a última data de
@@ -7624,6 +7682,7 @@ function openPixModal(nome,valor){
   // Se chamado sem argumentos, usa dados do plano do cliente
   const destNome  = nome  || PIX_NAME;
   const destValor = valor != null ? valor : (_assinaturaCliente ? Number(_assinaturaCliente.valor)||897 : 897);
+  _pixValorAtual = destValor;
   document.getElementById('pix-nome-dest').textContent    = destNome;
   document.getElementById('pix-amount-display').textContent = destValor!=null
     ? 'R$ '+Number(destValor).toLocaleString('pt-BR',{minimumFractionDigits:2})
@@ -7656,7 +7715,7 @@ document.getElementById('modal-pix').addEventListener('click',e=>{if(e.target===
 });
 
 function copyPixKey(){
-  const payload=buildPixPayload(null);
+  const payload=buildPixPayload(_pixValorAtual);
   navigator.clipboard.writeText(payload).then(()=>showToast('Chave Pix copiada!','success')).catch(()=>{
     // fallback
     const el=document.createElement('textarea');
@@ -8050,6 +8109,8 @@ function renderAdminGeral(){
   if(avEl) avEl.textContent=AVISOS.filter(a=>a.ativo).length;
   const rtEl=document.getElementById('adm-receita-total');
   if(rtEl) rtEl.textContent=fmtBRL(receitaConfirmada);
+  const tiEl=document.getElementById('adm-total-imoveis');
+  if(tiEl) tiEl.textContent=ADMIN_IMOVEIS.length;
   // Alertas
   const alertWrap=document.getElementById('adm-alert-wrap');
   if(alertWrap){
@@ -8060,32 +8121,65 @@ function renderAdminGeral(){
     if(bloqueados.length) html+=`<div class="pag-alert warn" style="margin-bottom:16px"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><div>${bloqueados.length} conta${bloqueados.length>1?'s':''} bloqueada${bloqueados.length>1?'s':''}: ${bloqueados.map(a=>escHTML(a.nome)).join(', ')}</div></div>`;
     alertWrap.innerHTML=html;
   }
-  // Distribuição
-  const distEl=document.getElementById('adm-status-dist');
-  if(distEl){
-    const total=ASSINATURAS.length||1;
-    const pago=emDia.length;
-    const pend=ASSINATURAS.filter(a=>a.status==='pendente').length;
-    const atras=ASSINATURAS.filter(a=>a.status==='atrasado').length;
-    distEl.innerHTML=`
-      <div style="text-align:center;padding:16px">
-        <div style="font-size:32px;font-weight:800;color:#22c55e">${pago}</div>
-        <div style="font-size:12px;color:var(--t3);margin:4px 0">✅ Em Dia</div>
-        <div style="height:6px;background:var(--bg4);border-radius:3px;margin-top:8px"><div style="height:6px;background:#22c55e;border-radius:3px;width:${(pago/total*100).toFixed(0)}%"></div></div>
-        <div style="font-size:11px;color:#4ade80;margin-top:4px">${(pago/total*100).toFixed(0)}%</div>
-      </div>
-      <div style="text-align:center;padding:16px;border-left:1px solid var(--border);border-right:1px solid var(--border)">
-        <div style="font-size:32px;font-weight:800;color:#f59e0b">${pend}</div>
-        <div style="font-size:12px;color:var(--t3);margin:4px 0">⏳ Pendentes</div>
-        <div style="height:6px;background:var(--bg4);border-radius:3px;margin-top:8px"><div style="height:6px;background:#f59e0b;border-radius:3px;width:${(pend/total*100).toFixed(0)}%"></div></div>
-        <div style="font-size:11px;color:#fbbf24;margin-top:4px">${(pend/total*100).toFixed(0)}%</div>
-      </div>
-      <div style="text-align:center;padding:16px">
-        <div style="font-size:32px;font-weight:800;color:#ef4444">${atras}</div>
-        <div style="font-size:12px;color:var(--t3);margin:4px 0">🔴 Atrasados</div>
-        <div style="height:6px;background:var(--bg4);border-radius:3px;margin-top:8px"><div style="height:6px;background:#ef4444;border-radius:3px;width:${(atras/total*100).toFixed(0)}%"></div></div>
-        <div style="font-size:11px;color:#f87171;margin-top:4px">${(atras/total*100).toFixed(0)}%</div>
-      </div>`;
+  // Distribuição por status (doughnut)
+  const pend=ASSINATURAS.filter(a=>a.status==='pendente').length;
+  const atras=ASSINATURAS.filter(a=>a.status==='atrasado').length;
+  if(document.getElementById('chart-adm-status')){
+    mkChart('chart-adm-status',{
+      type:'doughnut',
+      data:{
+        labels:['Em dia','Pendente','Atrasado'],
+        datasets:[{data:[emDia.length,pend,atras],backgroundColor:['#22c55e','#f59e0b','#ef4444'],borderWidth:0}]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,cutout:'68%',
+        plugins:{legend:{position:'bottom',labels:{color:'#8a8070',boxWidth:10,padding:14,font:{size:11}}},
+          tooltip:{backgroundColor:'#221e1b',titleColor:'#fffdea',bodyColor:'#8a8070',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,padding:10}}
+      }
+    });
+  }
+  // Imóveis por cliente — top 8, real (ADMIN_IMOVEIS já carregado em renderAdmin())
+  if(document.getElementById('chart-adm-imoveis-cliente')){
+    const porCliente=new Map();
+    ADMIN_IMOVEIS.forEach(im=>{
+      const uid=im.user_id||'—';
+      porCliente.set(uid,(porCliente.get(uid)||0)+1);
+    });
+    const top=[...porCliente.entries()]
+      .map(([uid,n])=>({nome:clienteLabelPorUserId(uid).nome,n}))
+      .sort((a,b)=>b.n-a.n).slice(0,8);
+    mkChart('chart-adm-imoveis-cliente',{
+      type:'bar',
+      data:{
+        labels:top.length?top.map(t=>t.nome.length>18?t.nome.slice(0,17)+'…':t.nome):['Sem imóveis ainda'],
+        datasets:[{label:'Imóveis',data:top.length?top.map(t=>t.n):[0],backgroundColor:'#a3039a',borderRadius:6}]
+      },
+      options:{
+        indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:'#221e1b',titleColor:'#fffdea',bodyColor:'#8a8070',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,padding:10}},
+        scales:{x:{ticks:{color:'#8a8070',stepSize:1,precision:0},grid:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#8a8070',font:{size:11}},grid:{display:false}}}
+      }
+    });
+  }
+  // Perfil público — ativos vs nunca ativados (ADMIN_PERFIS_PUBLICOS só
+  // tem os ativos=true, então o resto é "inativo/nunca configurou").
+  if(document.getElementById('chart-adm-perfil-publico')){
+    const ativosSet=new Set(ADMIN_PERFIS_PUBLICOS.map(p=>p.user_id));
+    const totalClientes=ASSINATURAS.length;
+    const ativos=ASSINATURAS.filter(a=>ativosSet.has(a.user_id)).length;
+    const inativos=Math.max(0,totalClientes-ativos);
+    mkChart('chart-adm-perfil-publico',{
+      type:'doughnut',
+      data:{
+        labels:['Ativado','Não ativado'],
+        datasets:[{data:[ativos,inativos],backgroundColor:['#3b82f6','#3d3730'],borderWidth:0}]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,cutout:'68%',
+        plugins:{legend:{position:'bottom',labels:{color:'#8a8070',boxWidth:10,padding:14,font:{size:11}}},
+          tooltip:{backgroundColor:'#221e1b',titleColor:'#fffdea',bodyColor:'#8a8070',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,padding:10}}
+      }
+    });
   }
 }
 
@@ -8104,7 +8198,7 @@ function renderUserTabela(){
   const tbody=document.getElementById('adm-user-tbody');
   if(!tbody) return;
   if(!_userFilteredRows.length){
-    tbody.innerHTML=`<tr><td colspan="6" class="admin-empty">Nenhum usuário encontrado.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="7" class="admin-empty">Nenhum usuário encontrado.</td></tr>`;
     return;
   }
   const sMap={pago:{cls:'pmt-pago',lbl:'✅ Em dia'},pendente:{cls:'pmt-pendente',lbl:'⏳ Pendente'},atrasado:{cls:'pmt-atrasado',lbl:'🔴 Atrasado'}};
@@ -8112,6 +8206,7 @@ function renderUserTabela(){
     const s=sMap[a.status]||{cls:'pmt-pendente',lbl:a.status};
     const blocked=!!a.bloqueado;
     const perfilUrl=perfilPublicoUrlPorUserId(a.user_id);
+    const numImoveis=ADMIN_IMOVEIS.filter(im=>im.user_id===a.user_id).length;
     return `<tr>
       <td>
         <div style="font-weight:700;color:var(--t1)">${escHTML(a.nome)}</div>
@@ -8120,6 +8215,7 @@ function renderUserTabela(){
       <td><span style="font-size:12px">${escHTML(a.plano||'Alta Performance')}</span></td>
       <td><span class="pmt-badge ${s.cls}">${s.lbl}</span></td>
       <td>${blocked?'<span class="badge-block">🔒 Bloqueado</span>':'<span class="badge-actv">✅ Ativo</span>'}</td>
+      <td style="text-align:center;font-weight:700;color:var(--t1)">${numImoveis}</td>
       <td>${perfilUrl?`<a href="${escHTML(perfilUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:var(--pl)">🔗 Ver perfil</a>`:'<span style="font-size:11px;color:var(--t3)">Não ativado</span>'}</td>
       <td style="text-align:center">
         <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
@@ -8148,10 +8244,16 @@ async function toggleBlockUser(id,currently_blocked){
 async function checkBlockedUser(){
   if(isAdmin()) return;
   try{
-    const {data}=await _sb.from('assinaturas').select('bloqueado').eq('user_id',_currentUser.id).single();
+    const {data}=await _sb.from('assinaturas').select('*').eq('user_id',_currentUser.id).single();
     if(data&&data.bloqueado){
-      showToast('❌ Sua conta está suspensa. Entre em contato com o Grupo Captar.','error');
-      setTimeout(async()=>{await _sb.auth.signOut();location.reload();},4000);
+      const valor=Number(data.valor)||897;
+      const plano=data.plano||'Alta Performance';
+      _pixValorAtual=valor;
+      document.getElementById('blocked-valor').textContent='R$ '+valor.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      document.getElementById('blocked-plano').textContent=`Plano ${plano}`;
+      document.getElementById('blocked-pix-key').textContent=PIX_KEY_FMT;
+      makeQR('blocked-pix-qr',buildPixPayload(valor),180);
+      document.getElementById('blocked-screen').classList.add('open');
     }
   }catch(e){}
 }
