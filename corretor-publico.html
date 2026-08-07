@@ -34,12 +34,13 @@
   a{color:inherit}
   ::selection{background:var(--purple-light);color:#fff}
 
-  header{display:flex;align-items:center;justify-content:center;padding:20px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--base) 88%, transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  header{display:flex;align-items:center;justify-content:center;gap:10px;padding:20px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--base) 88%, transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
   header a{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
   header img{height:24px;width:auto;opacity:.92}
   body.light-mode header img{filter:brightness(0) saturate(0);opacity:.82}
   .header-brand-sep{color:var(--t-40);font-weight:300;font-size:15px}
-  .header-brand-name{font-size:13px;font-weight:700;color:var(--t-55);letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:38vw}
+  .header-brand-name{font-size:13px;font-weight:700;color:var(--t-100);opacity:.92;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:38vw;cursor:pointer}
+  body.light-mode .header-brand-name{opacity:.82}
   .theme-toggle{
     position:absolute;right:20px;top:50%;transform:translateY(-50%);
     width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--line);cursor:pointer;
@@ -337,9 +338,9 @@
   <header>
     <a href="/index.html">
       <img src="/logo.svg" alt="Grupo Captar"/>
-      <span class="header-brand-sep" id="header-brand-sep" style="display:none">|</span>
-      <span class="header-brand-name" id="header-brand-name"></span>
     </a>
+    <span class="header-brand-sep" id="header-brand-sep" style="display:none">|</span>
+    <a href="#" class="header-brand-name" id="header-brand-name" style="display:none"></a>
     <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
   </header>
 
@@ -905,7 +906,10 @@ async function load(){
 
   document.title = `${perfil.nome || 'Corretor'} — Grupo Captar`;
   if(perfil.nome){
-    document.getElementById('header-brand-name').textContent = perfil.nome;
+    const brandNameEl = document.getElementById('header-brand-name');
+    brandNameEl.textContent = perfil.nome;
+    brandNameEl.href = perfil.slug ? `/c/${encodeURIComponent(perfil.slug)}` : `/corretor-publico.html?id=${encodeURIComponent(id)}`;
+    brandNameEl.style.display = '';
     document.getElementById('header-brand-sep').style.display = '';
   }
 
