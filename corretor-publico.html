@@ -149,10 +149,16 @@
   .filter-panel{
     position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);width:100%;max-width:480px;z-index:40;
     background:var(--surface);border:1px solid var(--line-mid);border-bottom:none;border-radius:22px 22px 0 0;
-    padding:22px 22px calc(22px + env(safe-area-inset-bottom));transition:transform .35s var(--ease);
-    max-height:80vh;overflow-y:auto;box-shadow:0 -24px 60px -20px rgba(0,0,0,.6);
+    padding:22px 22px calc(22px + env(safe-area-inset-bottom));transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+    max-height:80vh;overflow-y:auto;box-shadow:none;
   }
-  .filter-panel.open{transform:translate(-50%,0)}
+  /* O box-shadow só faz sentido com o painel aberto — como ele fica
+     sempre no DOM (só deslocado 100% pra baixo quando fechado, não
+     "display:none"), uma sombra na regra base ficava sempre visível
+     colada no rodapé da página, mesmo com todo painel fechado. Com 5
+     painéis (Filtrar/Favoritos/Vender/Alerta/Depoimento) todos no DOM
+     ao mesmo tempo, esse acúmulo virava uma mancha escura óbvia. */
+  .filter-panel.open{transform:translate(-50%,0);box-shadow:0 -24px 60px -20px rgba(0,0,0,.6)}
   .filter-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
   .filter-panel-head h3{font-size:16px;font-weight:800}
   .filter-panel-close{width:30px;height:30px;border-radius:50%;background:var(--surface-2);border:none;color:var(--t-70);cursor:pointer;display:flex;align-items:center;justify-content:center}
