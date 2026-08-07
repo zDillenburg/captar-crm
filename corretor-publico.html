@@ -468,7 +468,7 @@ const ICON_WHATSAPP = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16
 const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
 const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 const ICON_FILTER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>';
-const ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+const ICON_X = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 const ICON_EMPTY = '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>';
 const ICON_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
 
@@ -1185,7 +1185,7 @@ async function load(){
 
   document.body.insertAdjacentHTML('beforeend', `
     <button type="button" class="favoritos-fab" id="favoritos-fab" style="bottom:${waPhone ? 'calc(92px + env(safe-area-inset-bottom))' : '20px'}" onclick="toggleFavoritosPanel(true)">
-      ${ICON_HEART}<span id="favoritos-fab-count">0</span> favorito<span id="favoritos-fab-plural"></span>
+      ${ICON_HEART}<span class="favoritos-fab-label"><span id="favoritos-fab-count">0</span> favorito<span id="favoritos-fab-plural"></span></span>
     </button>
     <div class="filter-backdrop" id="favoritos-backdrop" onclick="if(event.target===this)toggleFavoritosPanel(false)"></div>
     <div class="filter-panel" id="favoritos-panel">
