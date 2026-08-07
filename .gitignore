@@ -31,6 +31,8 @@ supabase-leads-realtime.sql
 supabase-imovel-mostrar-mapa.sql
 supabase-tempo-resposta.sql
 supabase-depoimento-cliente-publico.sql
+supabase-loteamentos-publico.sql
+supabase-perfil-secoes-visiveis.sql
 .claude/
 .DS_Store
 *.env

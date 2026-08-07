@@ -38,6 +38,8 @@
   header a{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
   header img{height:24px;width:auto;opacity:.92}
   body.light-mode header img{filter:brightness(0) saturate(0);opacity:.82}
+  .header-brand-sep{color:var(--t-40);font-weight:300;font-size:15px}
+  .header-brand-name{font-size:13px;font-weight:700;color:var(--t-55);letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:38vw}
   .theme-toggle{
     position:absolute;right:20px;top:50%;transform:translateY(-50%);
     width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--line);cursor:pointer;
@@ -208,6 +210,18 @@
   .vendido-card-price{font-size:12.5px;font-weight:800;color:var(--t-100)}
   .vendido-card-addr{font-size:10.5px;color:var(--t-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 
+  .loteamentos-section{margin-bottom:28px}
+  .loteamentos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .loteamento-card{display:block;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s var(--ease)}
+  a.loteamento-card:hover{border-color:var(--purple-light);transform:translateY(-2px)}
+  .loteamento-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .loteamento-tipo{font-size:11px;font-weight:700;color:var(--t-40)}
+  .loteamento-status{font-size:10.5px;font-weight:700;color:var(--t-55);background:var(--surface-2);padding:3px 8px;border-radius:20px}
+  .loteamento-nome{font-size:15px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px}
+  .loteamento-local{font-size:12px;color:var(--t-40);margin-bottom:4px}
+  .loteamento-preco{font-size:13.5px;font-weight:800;color:var(--purple-light);margin-bottom:2px}
+  .loteamento-disp{font-size:11.5px;color:var(--t-55);font-weight:600}
+
   /* ── Favoritos ───────────────────────────── */
   .favoritos-fab{
     position:fixed;right:16px;z-index:19;display:none;align-items:center;gap:7px;
@@ -323,6 +337,8 @@
   <header>
     <a href="/index.html">
       <img src="/logo.svg" alt="Grupo Captar"/>
+      <span class="header-brand-sep" id="header-brand-sep" style="display:none">|</span>
+      <span class="header-brand-name" id="header-brand-name"></span>
     </a>
     <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
   </header>
@@ -848,6 +864,17 @@ async function fetchDepoimentosAprovados(id){
   return data || [];
 }
 
+// loteamentos.publico é coluna nova — se a migration ainda não rodou,
+// a query falha. Diferente do fallback de depoimentos, aqui o certo é
+// devolver vazio (nunca mostrar tudo): antes dessa coluna existir,
+// nenhum empreendimento era público, então "coluna ausente" não pode
+// virar "mostra tudo por engano".
+async function fetchLoteamentosPublicos(id){
+  const {data, error} = await _sb.from('loteamentos').select('*').eq('user_id', id).eq('publico', true).order('created_at', { ascending: false });
+  if(error) return [];
+  return data || [];
+}
+
 async function load(){
   const params = new URLSearchParams(location.search);
   // O rewrite do Vercel (/c/:slug -> /corretor-publico.html?u=:slug) é
@@ -877,18 +904,24 @@ async function load(){
   }
 
   document.title = `${perfil.nome || 'Corretor'} — Grupo Captar`;
+  if(perfil.nome){
+    document.getElementById('header-brand-name').textContent = perfil.nome;
+    document.getElementById('header-brand-sep').style.display = '';
+  }
 
   if(perfil.cor_destaque){
     document.documentElement.style.setProperty('--purple-light', perfil.cor_destaque);
     document.documentElement.style.setProperty('--purple', perfil.cor_destaque);
   }
 
-  const [{data: imoveisData}, depoimentosData, {data: tempoRespostaMin}] = await Promise.all([
+  const [{data: imoveisData}, depoimentosData, {data: tempoRespostaMin}, loteamentosData] = await Promise.all([
     _sb.from('imoveis').select('*').eq('user_id', id).eq('publico', true).order('created_at', { ascending: false }),
     fetchDepoimentosAprovados(id),
-    _sb.rpc('obter_tempo_resposta_publico', { p_user_id: id })
+    _sb.rpc('obter_tempo_resposta_publico', { p_user_id: id }),
+    fetchLoteamentosPublicos(id)
   ]);
   const depoimentos = depoimentosData || [];
+  const loteamentos = loteamentosData || [];
   // Imóveis marcados como destaque pelo corretor aparecem primeiro —
   // sort estável, então dentro de cada grupo (destaque / não-destaque)
   // a ordem por data mais recente já vinda do banco é preservada.
@@ -968,7 +1001,34 @@ async function load(){
         </button>
       </div>
 
-      ${vendidos.length>=2 ? `
+      ${loteamentos.length ? `
+      <div class="loteamentos-section fade-up d3">
+        <div class="section-label" style="margin-bottom:14px"><span>Empreendimentos</span><span class="section-label-count">${loteamentos.length}</span></div>
+        <div class="loteamentos-grid">
+          ${loteamentos.map(l=>{
+            const tipoLabel={loteamento:'📐 Loteamento',condominio:'🏘️ Condomínio',vertical:'🏢 Vertical',comercial:'🏪 Comercial',haras:'🐴 Rural',industrial:'🏭 Industrial'}[l.tipo]||'📐 Empreendimento';
+            const statusLabel={lancamento:'🚀 Lançamento',obras:'🏗️ Em obras',pronto:'✅ Pronto',encerrado:'🔒 Encerrado'}[l.status]||'';
+            const faixa=[l.preco_min,l.preco_max].filter(Boolean).map(v=>'R$ '+v).join(' — ');
+            const cidadeUf=[l.cidade,l.estado].filter(Boolean).join(' — ');
+            const conteudo=`
+              <div class="loteamento-card-head">
+                <span class="loteamento-tipo">${tipoLabel}</span>
+                ${statusLabel?`<span class="loteamento-status">${statusLabel}</span>`:''}
+              </div>
+              <div class="loteamento-nome">${escHtml(l.nome)}</div>
+              ${cidadeUf?`<div class="loteamento-local">📍 ${escHtml(cidadeUf)}</div>`:''}
+              ${faixa?`<div class="loteamento-preco">${escHtml(faixa)}</div>`:''}
+              ${l.unidades_disponiveis?`<div class="loteamento-disp">${escHtml(String(l.unidades_disponiveis))} unidade${l.unidades_disponiveis===1?'':'s'} disponíve${l.unidades_disponiveis===1?'l':'is'}</div>`:''}
+            `;
+            return l.url_site
+              ? `<a class="loteamento-card" href="${escHtml(l.url_site)}" target="_blank" rel="noopener noreferrer">${conteudo}</a>`
+              : `<div class="loteamento-card">${conteudo}</div>`;
+          }).join('')}
+        </div>
+      </div>
+      ` : ''}
+
+      ${vendidos.length>=2 && perfil.mostrar_vendidos!==false ? `
       <div class="vendidos-section fade-up d3">
         <div class="vendidos-title">🏆 Já vendemos</div>
         <div class="vendidos-scroll">
@@ -1022,6 +1082,7 @@ async function load(){
         </div>
       ` : `<div class="empty-imoveis" id="im-grid-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICON_EMPTY}</svg>Nenhum imóvel compartilhado publicamente no momento.</div>`}
 
+      ${perfil.mostrar_depoimentos!==false ? `
       <div class="depoimentos-section fade-up">
         <div class="depoimentos-head">
           <div class="depoimentos-title">O que meus clientes dizem</div>
@@ -1039,6 +1100,7 @@ async function load(){
         </div>
         ` : `<div class="favoritos-empty">Ainda não há depoimentos publicados. Seja o primeiro a deixar um!</div>`}
       </div>
+      ` : ''}
     </div>
   `;
 
