@@ -2585,6 +2585,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
           <button class="admin-tab-btn" onclick="switchAdminTab('imoveis',this)">🏠 Imóveis</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('assinaturas',this)">💳 Assinaturas</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('avisos',this)">📢 Avisos</button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('atividade',this)">🕒 Atividade</button>
           <button class="admin-tab-btn" onclick="switchAdminTab('demo',this)">🎯 Modo Demo</button>
         </div>
 
@@ -2627,6 +2628,17 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             </div>
           </div>
           <div id="adm-alert-wrap"></div>
+          <div class="admin-section">
+            <div class="admin-section-hdr">
+              <div class="admin-section-title">🔥 Corretores mais ativos (últimos 30 dias)</div>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="admin-table">
+                <thead><tr><th>#</th><th>Cliente</th><th style="text-align:center">Leads criados</th><th style="text-align:center">Imóveis publicados</th></tr></thead>
+                <tbody id="adm-ranking-tbody"></tbody>
+              </table>
+            </div>
+          </div>
           <div class="adm-charts-row">
             <div class="admin-section" style="margin-bottom:0">
               <div class="admin-section-hdr">
@@ -2657,7 +2669,13 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
                 Gerenciar Usuários
               </div>
-              <input id="adm-user-busca" type="text" placeholder="🔍  Buscar por nome ou e-mail…" oninput="filtrarUsuarios()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:7px 12px;font-size:12px;color:var(--t1);width:220px;outline:none">
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <input id="adm-user-busca" type="text" placeholder="🔍  Buscar por nome ou e-mail…" oninput="filtrarUsuarios()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:7px 12px;font-size:12px;color:var(--t1);width:220px;outline:none">
+                <button class="btn-add" style="gap:6px" onclick="exportCSV('admin-clientes')">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Exportar CSV
+                </button>
+              </div>
             </div>
             <div style="overflow-x:auto">
               <table class="admin-table">
@@ -2740,6 +2758,19 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             </button>
           </div>
           <div id="adm-avisos-list"><div class="admin-empty">Carregando avisos…</div></div>
+        </div>
+
+        <!-- ── TAB: ATIVIDADE (LOG DO ADMIN) ── -->
+        <div class="admin-tab-pane dash-anim" id="adm-pane-atividade">
+          <div class="admin-section">
+            <div class="admin-section-hdr">
+              <div class="admin-section-title">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Log de Atividade — ações administrativas
+              </div>
+            </div>
+            <div id="adm-log-list" style="padding:16px"><div class="admin-empty">Carregando…</div></div>
+          </div>
         </div>
 
         <!-- ── TAB: MODO DEMO ── -->
@@ -7736,6 +7767,16 @@ function isAdmin(){
   return appMeta.role==='admin';
 }
 
+// Auditoria — fire-and-forget de propósito: se o log falhar (ex: migration
+// supabase-admin-leads-log.sql ainda não rodada), a ação real do admin
+// (bloquear, confirmar pagamento etc) já aconteceu e não pode travar por
+// causa disso.
+function logAdminAction(acao,detalhe){
+  if(!isAdmin())return;
+  const nome=_currentUser?.user_metadata?.nome||_currentUser?.email?.split('@')[0]||'Admin';
+  _sb.from('admin_log').insert([{admin_user_id:_currentUser.id,admin_nome:nome,acao,detalhe:detalhe||''}]).then(()=>{},()=>{});
+}
+
 // Array local com todas as assinaturas (admin vê tudo via RLS)
 let ASSINATURAS = [];
 let _admEditId = null;   // null = novo, string = editar
@@ -7758,6 +7799,18 @@ async function loadAdminImoveis(){
   if(error){showToast('Erro ao carregar imóveis: '+error.message,'error');return;}
   ADMIN_IMOVEIS.length = 0;
   if(data) ADMIN_IMOVEIS.push(...data);
+}
+
+// Só user_id + created_at — o ranking de atividade não precisa (nem deve
+// puxar) nome/telefone dos leads de cada cliente, só contar quantos.
+// Precisa da policy "leads_admin_select" (supabase-admin-leads-log.sql);
+// sem ela, RLS silenciosamente devolve zero linhas de outros usuários.
+let ADMIN_LEADS = [];
+async function loadAdminLeads(){
+  const {data,error} = await _sb.from('leads').select('user_id,created_at');
+  if(error){console.warn('loadAdminLeads:',error.message);return;}
+  ADMIN_LEADS.length = 0;
+  if(data) ADMIN_LEADS.push(...data);
 }
 
 // Links dos perfis públicos de todo mundo — não precisa de policy nova de
@@ -7851,6 +7904,7 @@ async function renderAdmin(){
   await loadAssinaturas();
   await loadAdminImoveis();
   await loadAdminPerfisPublicos();
+  await loadAdminLeads();
 
   const fmtBRL = v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
   const hoje = new Date(); hoje.setHours(0,0,0,0);
@@ -7936,6 +7990,7 @@ async function marcarPendenteAdmin(id){
     .update({status:'pendente', ultimo_pagamento: null})
     .eq('id', id);
   if(error){ showToast('Erro: '+error.message,'error'); return; }
+  logAdminAction('Marcou como pendente',ASSINATURAS.find(a=>String(a.id)===String(id))?.nome||'');
   showToast('⏳ Marcado como pendente','info');
   await renderAdmin();
 }
@@ -7947,6 +8002,7 @@ async function confirmarPagamentoAdmin(id){
     .update({status:'pago', ultimo_pagamento: hoje})
     .eq('id', id);
   if(error){ showToast('Erro ao confirmar: '+error.message,'error'); return; }
+  logAdminAction('Confirmou pagamento',ASSINATURAS.find(a=>String(a.id)===String(id))?.nome||'');
   showToast('✅ Pagamento confirmado!','success');
   await renderAdmin();
 }
@@ -8021,6 +8077,7 @@ async function saveAssinatura(){
   btn.disabled=false; btn.textContent='Salvar';
 
   if(error){ showToast('Erro: '+error.message,'error'); return; }
+  logAdminAction(_admEditId?'Editou assinatura':'Criou cliente',nome);
   showToast(_admEditId?'Assinatura atualizada!':'Cliente adicionado!','success');
   closeAdmModal();
   await renderAdmin();
@@ -8040,6 +8097,7 @@ async function deleteAssinatura(id, nome){
   document.getElementById('confirm-delete').classList.remove('open');
   const {error} = await _sb.from('assinaturas').delete().eq('id',id);
   if(error){ showToast('Erro: '+error.message,'error'); return; }
+  logAdminAction('Apagou assinatura',nome);
   const idx = ASSINATURAS.findIndex(x=>String(x.id)===String(id));
   if(idx>-1) ASSINATURAS.splice(idx,1);
   renderAdmTabela();
@@ -8074,6 +8132,7 @@ function switchAdminTab(tab, btn){
   if(tab==='usuarios')    renderUsuarios();
   if(tab==='imoveis')     renderAdminImoveisGrouped();
   if(tab==='avisos')      loadAvisos().then(()=>renderAvisos());
+  if(tab==='atividade')   renderAdminLog();
   if(tab==='demo')        initDemoToggle();
 }
 
@@ -8120,6 +8179,38 @@ function renderAdminGeral(){
     if(atrasNomes.length) html+=`<div class="pag-alert danger" style="margin-bottom:16px"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div><strong>${atrasNomes.length} cliente${atrasNomes.length>1?'s':''} em atraso:</strong> ${atrasNomes.slice(0,5).join(', ')}${atrasNomes.length>5?'…':''}</div></div>`;
     if(bloqueados.length) html+=`<div class="pag-alert warn" style="margin-bottom:16px"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><div>${bloqueados.length} conta${bloqueados.length>1?'s':''} bloqueada${bloqueados.length>1?'s':''}: ${bloqueados.map(a=>escHTML(a.nome)).join(', ')}</div></div>`;
     alertWrap.innerHTML=html;
+  }
+  // Ranking de atividade — leads criados + imóveis publicados nos
+  // últimos 30 dias, por cliente. Sinal de USO real, diferente do
+  // total de imóveis (que só mostra volume acumulado, não atividade
+  // recente).
+  const rankTbody=document.getElementById('adm-ranking-tbody');
+  if(rankTbody){
+    const trintaDiasAtras=new Date(Date.now()-30*24*60*60*1000);
+    const leadsPor=new Map(), imoveisPor=new Map();
+    ADMIN_LEADS.forEach(l=>{
+      if(!l.created_at||!l.user_id)return;
+      if(new Date(l.created_at)<trintaDiasAtras)return;
+      leadsPor.set(l.user_id,(leadsPor.get(l.user_id)||0)+1);
+    });
+    ADMIN_IMOVEIS.forEach(im=>{
+      if(!im.created_at||!im.user_id)return;
+      if(new Date(im.created_at)<trintaDiasAtras)return;
+      imoveisPor.set(im.user_id,(imoveisPor.get(im.user_id)||0)+1);
+    });
+    const uids=new Set([...leadsPor.keys(),...imoveisPor.keys()]);
+    const ranking=[...uids].map(uid=>{
+      const leads=leadsPor.get(uid)||0, imv=imoveisPor.get(uid)||0;
+      return {nome:clienteLabelPorUserId(uid).nome,leads,imv,total:leads+imv};
+    }).sort((a,b)=>b.total-a.total).slice(0,10);
+    rankTbody.innerHTML=ranking.length
+      ? ranking.map((r,i)=>`<tr>
+          <td style="color:var(--t3);font-weight:700">${i+1}</td>
+          <td style="font-weight:700;color:var(--t1)">${escHTML(r.nome)}</td>
+          <td style="text-align:center">${r.leads}</td>
+          <td style="text-align:center">${r.imv}</td>
+        </tr>`).join('')
+      : `<tr><td colspan="4" class="admin-empty">Nenhuma atividade nos últimos 30 dias.</td></tr>`;
   }
   // Distribuição por status (doughnut)
   const pend=ASSINATURAS.filter(a=>a.status==='pendente').length;
@@ -8183,6 +8274,32 @@ function renderAdminGeral(){
   }
 }
 
+// ── Log de atividade ─────────────────────────────────
+async function renderAdminLog(){
+  const el=document.getElementById('adm-log-list');
+  if(!el)return;
+  const {data,error}=await _sb.from('admin_log').select('*').order('created_at',{ascending:false}).limit(100);
+  if(error){
+    el.innerHTML=`<div class="admin-empty">Log ainda não disponível — rode a migration supabase-admin-leads-log.sql.</div>`;
+    return;
+  }
+  if(!data||!data.length){
+    el.innerHTML=`<div class="admin-empty">Nenhuma ação registrada ainda.</div>`;
+    return;
+  }
+  el.innerHTML=data.map(l=>{
+    const quando=new Date(l.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;color:var(--t3);white-space:nowrap;flex-shrink:0;padding-top:2px">${quando}</div>
+      <div style="flex:1;min-width:0">
+        <span style="font-size:12.5px;font-weight:700;color:var(--t1)">${escHTML(l.admin_nome||'Admin')}</span>
+        <span style="font-size:12.5px;color:var(--t2)"> ${escHTML(l.acao)}</span>
+        ${l.detalhe?`<span style="font-size:12.5px;color:var(--pl);font-weight:600"> — ${escHTML(l.detalhe)}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
 // ── Usuários ────────────────────────────────────────
 let _userFilteredRows=[];
 function renderUsuarios(){
@@ -8233,6 +8350,7 @@ async function toggleBlockUser(id,currently_blocked){
   const novo=!currently_blocked;
   const {error}=await _sb.from('assinaturas').update({bloqueado:novo}).eq('id',id);
   if(error){showToast('Erro: '+error.message,'error');return;}
+  logAdminAction(novo?'Bloqueou cliente':'Desbloqueou cliente',nome);
   const idx=ASSINATURAS.findIndex(a=>String(a.id)===String(id));
   if(idx>-1) ASSINATURAS[idx].bloqueado=novo;
   _userFilteredRows=_userFilteredRows.map(a=>String(a.id)===String(id)?{...a,bloqueado:novo}:a);
@@ -10370,6 +10488,16 @@ function exportCSV(tipo){
       ...TRANSACOES.saidas.map(t=>['Saída',esc(t.desc),esc(t.cat),esc(t.data),t.val])
     ];
     filename='financeiro-captar.csv';
+  } else if(tipo==='admin-clientes'){
+    if(!isAdmin())return;
+    headers=['Nome','E-mail','Plano','Valor/mês','Status','Bloqueado','Imóveis','Perfil Público'];
+    rows=ASSINATURAS.map(a=>[
+      esc(a.nome),esc(a.email),esc(a.plano||''),a.valor||0,esc(a.status||''),
+      a.bloqueado?'Sim':'Não',
+      ADMIN_IMOVEIS.filter(im=>im.user_id===a.user_id).length,
+      perfilPublicoUrlPorUserId(a.user_id)?'Ativado':'Não ativado'
+    ]);
+    filename='clientes-captar-admin.csv';
   }
   const csv=[headers.join(';'),...rows.map(r=>r.join(';'))].join('\n');
   downloadFile('﻿'+csv,'text/csv;charset=utf-8;',filename);
