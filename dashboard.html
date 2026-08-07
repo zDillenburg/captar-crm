@@ -439,6 +439,39 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--t1);-webk
 .ia-help-btn:hover{background:rgba(133,2,119,.2);border-color:var(--p)}
 .ia-help-btn svg{width:12px;height:12px;flex-shrink:0}
 .pp-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+
+/* Refino visual só desta página — cards mais respiráveis, sombra suave
+   em vez de só borda, leve elevação no hover (sensação mais "nativa"
+   do que a borda seca padrão usada no resto do dashboard). Escopado a
+   #page-perfilpublico pra não mudar a aparência de .config-card em
+   nenhuma outra página. */
+#page-perfilpublico .pp-checklist-card,
+#page-perfilpublico .pp-link-card,
+#page-perfilpublico .config-card{
+  border-radius:18px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px -12px rgba(0,0,0,.18);
+  transition:box-shadow .25s ease,transform .25s ease;
+}
+#page-perfilpublico .config-card{padding:26px 26px 28px}
+#page-perfilpublico .config-card:hover,
+#page-perfilpublico .pp-link-card:hover{
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 14px 32px -14px rgba(0,0,0,.26);
+}
+#page-perfilpublico .config-card-title{
+  display:flex;align-items:center;font-size:15px;letter-spacing:-.005em;margin-bottom:22px;
+}
+#page-perfilpublico .pp-section-num{width:22px;height:22px;font-size:11.5px;box-shadow:0 3px 8px -2px rgba(133,2,119,.5)}
+#page-perfilpublico .config-form-group{margin-bottom:18px}
+#page-perfilpublico .config-input,#page-perfilpublico .config-select{border-radius:11px}
+#page-perfilpublico .pp-section-visibility{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin:-4px 0 20px;padding-bottom:18px;border-bottom:1px solid var(--border);
+}
+#page-perfilpublico .pp-section-visibility-label{font-size:12px;color:var(--t3);font-weight:600}
+#page-perfilpublico .pp-extra-card-desc{font-size:11.5px;color:var(--t3);line-height:1.55;margin-bottom:4px}
+#page-perfilpublico .pp-extra-link-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg3);border-radius:13px;padding:14px 16px;margin-top:14px}
+#page-perfilpublico .pp-extra-link-btn{background:none;border:1px solid var(--border2);color:var(--t1);font:inherit;font-size:12px;font-weight:700;padding:8px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:border-color .18s,background .18s}
+#page-perfilpublico .pp-extra-link-btn:hover{border-color:var(--p);background:rgba(133,2,119,.08)}
 .pp-form-col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .pp-link-card{background:linear-gradient(135deg,rgba(133,2,119,.16),rgba(98,1,88,.1));border:1px solid rgba(133,2,119,.35);border-radius:var(--r2);padding:18px 20px}
 .pp-activate-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid rgba(133,2,119,.25)}
@@ -1791,7 +1824,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             <div class="pp-link-card">
               <div class="pp-activate-row">
                 <div class="toggle-info">
-                  <div class="toggle-name"><span class="pp-section-num">1</span>Perfil público</div>
+                  <div class="toggle-name"><span class="pp-section-num">1</span>🔗 Perfil público</div>
                   <div class="toggle-desc" id="pp-activate-desc">Desativado — ative pra liberar o link com todos os seus imóveis compartilhados</div>
                 </div>
                 <button class="toggle off" id="perfil-pub-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off');atualizarLinkPerfilPublico();atualizarPreviewPerfilPublico()"></button>
@@ -1819,7 +1852,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             </div>
 
             <div class="config-card">
-              <div class="config-card-title"><span class="pp-section-num">2</span>Aparência</div>
+              <div class="config-card-title"><span class="pp-section-num">2</span>🎨 Aparência</div>
               <div class="config-form-group">
                 <label class="config-label">Foto de perfil</label>
                 <div style="font-size:11.5px;color:var(--t3);margin-bottom:8px">Sua foto de rosto — aparece no seu perfil e nos imóveis que você anuncia. É diferente do logo da imobiliária usado pela Captar IA.</div>
@@ -1851,7 +1884,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             </div>
 
             <div class="config-card">
-              <div class="config-card-title"><span class="pp-section-num">3</span>Sobre você</div>
+              <div class="config-card-title"><span class="pp-section-num">3</span>✍️ Sobre você</div>
               <div class="config-form-group">
                 <label class="config-label">CRECI</label>
                 <input class="config-input" type="text" id="pp-creci" maxlength="20" placeholder="Ex: RS-12.458" oninput="atualizarPreviewPerfilPublico()"/>
@@ -1868,7 +1901,7 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             </div>
 
             <div class="config-card">
-              <div class="config-card-title"><span class="pp-section-num">4</span>Redes e contato</div>
+              <div class="config-card-title"><span class="pp-section-num">4</span>📱 Redes e contato</div>
               <div class="config-form-group">
                 <label class="config-label">WhatsApp</label>
                 <input class="config-input" type="text" id="pp-whatsapp" placeholder="Ex: (54) 99999-9999" oninput="atualizarPreviewPerfilPublico()"/>
@@ -1885,8 +1918,12 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
             </div>
 
             <div class="config-card">
-              <div class="config-card-title"><span class="pp-section-num">5</span>Depoimentos</div>
-              <div style="font-size:11.5px;color:var(--t3);margin-bottom:14px">Cole aqui um recado de um cliente satisfeito (por WhatsApp, por exemplo) — aparece na sua página pública como prova social.</div>
+              <div class="config-card-title"><span class="pp-section-num">5</span>💬 Depoimentos</div>
+              <div class="pp-section-visibility">
+                <div class="pp-section-visibility-label">Mostrar esta seção no perfil público</div>
+                <button type="button" class="toggle on" id="pp-mostrar-depoimentos-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+              </div>
+              <div style="font-size:11.5px;color:var(--t3);margin-bottom:14px">Cole aqui um recado de um cliente satisfeito (por WhatsApp, por exemplo), ou aprove um enviado direto pelo cliente pelo link público — aparece na sua página como prova social.</div>
               <div id="pp-depoimentos-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
               <div class="config-form-group">
                 <label class="config-label">Nome do cliente</label>
@@ -1905,6 +1942,22 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
                 <textarea class="config-input" id="pp-dep-texto" rows="3" maxlength="400" placeholder="Ex: Atendimento excelente, me ajudou a encontrar o apartamento ideal em poucos dias." style="resize:vertical;font-family:inherit"></textarea>
               </div>
               <button type="button" class="config-save" onclick="adicionarDepoimento(this)" style="width:100%">+ Adicionar depoimento</button>
+            </div>
+
+            <div class="config-card">
+              <div class="config-card-title"><span class="pp-section-num">6</span>✨ Seções extras</div>
+              <div class="pp-section-visibility">
+                <div>
+                  <div class="pp-section-visibility-label" style="color:var(--t1);font-weight:700;margin-bottom:2px">Vitrine "Já vendemos"</div>
+                  <div class="pp-section-visibility-label">Mostra os imóveis marcados como Vendido (com 2 ou mais)</div>
+                </div>
+                <button type="button" class="toggle on" id="pp-mostrar-vendidos-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+              </div>
+              <div class="pp-extra-card-desc">Empreendimentos e loteamentos com várias unidades (apartamentos, lotes) têm sua própria vitrine, controlada individualmente.</div>
+              <div class="pp-extra-link-row">
+                <div class="pp-section-visibility-label">Marque "Visível no Perfil Público" em cada empreendimento pra ele aparecer aqui.</div>
+                <button type="button" class="pp-extra-link-btn" onclick="navigate('loteamentos',document.querySelector('.nav-item[onclick*=&quot;loteamentos&quot;]'))">Ir para Loteamentos →</button>
+              </div>
             </div>
 
           </div>
@@ -3447,6 +3500,15 @@ body.light-mode .captar-ia-card{background:linear-gradient(160deg,rgba(133,2,119
       <div class="full form-group">
         <label class="form-label">Descrição / Observações</label>
         <textarea class="form-input" id="lot-desc" rows="3" style="resize:vertical" placeholder="Diferenciais, infraestrutura, forma de pagamento…"></textarea>
+      </div>
+      <div class="full form-group">
+        <div class="toggle-row" style="padding:12px 14px;background:var(--bg3);border-radius:var(--r);margin:0">
+          <div class="toggle-info">
+            <div class="toggle-name">Visível no Perfil Público</div>
+            <div class="toggle-desc">Aparece numa vitrine própria "Empreendimentos" no seu link público, separada dos imóveis avulsos.</div>
+          </div>
+          <button type="button" class="toggle off" id="lot-publico-toggle" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+        </div>
       </div>
     </div>
     <div class="modal-actions">
@@ -8378,6 +8440,8 @@ async function loadPerfilPublico(){
   const siteEl=document.getElementById('pp-site');
   const slugEl=document.getElementById('pp-slug');
   const toggle=document.getElementById('perfil-pub-toggle');
+  const vendidosToggle=document.getElementById('pp-mostrar-vendidos-toggle');
+  const depoimentosToggle=document.getElementById('pp-mostrar-depoimentos-toggle');
   const metaCreci=(_currentUser?.user_metadata?.creci||'').trim();
   const metaTel=(_currentUser?.user_metadata?.tel||'').trim();
   const prefixEl=document.getElementById('pp-slug-prefix');
@@ -8393,6 +8457,11 @@ async function loadPerfilPublico(){
     _perfilPublicoCorAtual=data.cor_destaque||PERFIL_PUBLICO_CORES[0];
     _perfilPublicoAtivo=!!data.ativo;
     _perfilPublicoCapaPath=data.capa_path||'';
+    // Colunas novas — undefined (projeto sem a migration ainda) tem que
+    // continuar mostrando as seções, mesmo comportamento de antes delas
+    // existirem.
+    if(vendidosToggle){const on=data.mostrar_vendidos!==false;vendidosToggle.classList.toggle('on',on);vendidosToggle.classList.toggle('off',!on);}
+    if(depoimentosToggle){const on=data.mostrar_depoimentos!==false;depoimentosToggle.classList.toggle('on',on);depoimentosToggle.classList.toggle('off',!on);}
   }else{
     if(bioEl)bioEl.value='';
     if(taglineEl)taglineEl.value='';
@@ -8568,6 +8637,8 @@ async function salvarPerfilPublico(btn){
   const siteUrl=(document.getElementById('pp-site')?.value||'').trim();
   const toggle=document.getElementById('perfil-pub-toggle');
   const ativo=toggle?toggle.classList.contains('on'):false;
+  const mostrarVendidos=document.getElementById('pp-mostrar-vendidos-toggle')?.classList.contains('on')??true;
+  const mostrarDepoimentos=document.getElementById('pp-mostrar-depoimentos-toggle')?.classList.contains('on')??true;
   const meta=_currentUser?.user_metadata||{};
   const slugCandidato=slugify((document.getElementById('pp-slug')?.value||'').trim()||meta.nome||'');
   const oldText=btn.textContent;
@@ -8587,9 +8658,12 @@ async function salvarPerfilPublico(btn){
     cor_destaque:_perfilPublicoCorAtual,
     slug:slug||null,
     ativo,
+    mostrar_vendidos:mostrarVendidos,
+    mostrar_depoimentos:mostrarDepoimentos,
     updated_at:new Date().toISOString()
   });
-  let {error}=await _sb.from('perfil_publico').upsert(montarPayload(),{onConflict:'user_id'});
+  const camposOpcionaisPerfil=['mostrar_vendidos','mostrar_depoimentos'];
+  let {error}=await salvarImovelComFallback(p=>_sb.from('perfil_publico').upsert(p,{onConflict:'user_id'}),montarPayload(),camposOpcionaisPerfil);
   // resolverSlugUnico só enxerga slugs de perfis já ativos (RLS não deixa ver
   // os inativos de outra pessoa) — se mesmo assim colidir na constraint única
   // do banco, tenta de novo com o sufixo e, em último caso, sem slug nenhum.
@@ -8597,11 +8671,11 @@ async function salvarPerfilPublico(btn){
     const sufixo=`${slugCandidato}-${_currentUser.id.slice(0,4)}`;
     if(slug!==sufixo){
       slug=sufixo;
-      ({error}=await _sb.from('perfil_publico').upsert(montarPayload(),{onConflict:'user_id'}));
+      ({error}=await salvarImovelComFallback(p=>_sb.from('perfil_publico').upsert(p,{onConflict:'user_id'}),montarPayload(),camposOpcionaisPerfil));
     }
     if(error?.code==='23505'){
       slug='';
-      ({error}=await _sb.from('perfil_publico').upsert(montarPayload(),{onConflict:'user_id'}));
+      ({error}=await salvarImovelComFallback(p=>_sb.from('perfil_publico').upsert(p,{onConflict:'user_id'}),montarPayload(),camposOpcionaisPerfil));
       if(!error)showToast('Perfil salvo, mas não foi possível gerar um link personalizado agora — tente de novo em instantes.','success');
     }
   }
@@ -9450,6 +9524,8 @@ function openLoteamentoModal(id){
   ['lot-preco-min','lot-preco-max','lot-vgv'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
   document.getElementById('lot-tipo').value='loteamento';
   document.getElementById('lot-status').value='lancamento';
+  const lotPublicoToggle=document.getElementById('lot-publico-toggle');
+  if(lotPublicoToggle){lotPublicoToggle.classList.remove('on');lotPublicoToggle.classList.add('off');}
   const lotEstadoEl=document.getElementById('lot-estado');
   if(lotEstadoEl)lotEstadoEl.value='RS';
   document.getElementById('lot-modal-title').textContent='Novo Empreendimento';
@@ -9480,6 +9556,11 @@ function openLoteamentoModal(id){
       document.getElementById('lot-corretor').value=lot.corretor||meuNome;
       document.getElementById('lot-url').value=lot.url_site||'';
       document.getElementById('lot-desc').value=lot.descricao||'';
+      if(lotPublicoToggle){
+        const ehPublico=!!lot.publico;
+        lotPublicoToggle.classList.toggle('on',ehPublico);
+        lotPublicoToggle.classList.toggle('off',!ehPublico);
+      }
       document.getElementById('lot-modal-title').textContent='Editar Empreendimento';
       document.getElementById('lot-submit-btn').textContent='Salvar alterações';
     }
@@ -9513,16 +9594,18 @@ async function saveLoteamento(){
     previsao_entrega:document.getElementById('lot-entrega').value.trim(),
     corretor:document.getElementById('lot-corretor').value,
     url_site:document.getElementById('lot-url').value.trim(),
-    descricao:document.getElementById('lot-desc').value.trim()
+    descricao:document.getElementById('lot-desc').value.trim(),
+    publico:document.getElementById('lot-publico-toggle')?.classList.contains('on')??false
   };
+  const camposOpcionais=['publico'];
   if(id){
-    const {error}=await _sb.from('loteamentos').update(payload).eq('id',id);
+    const {error}=await salvarImovelComFallback(p=>_sb.from('loteamentos').update(p).eq('id',id),payload,camposOpcionais);
     if(error){showToast('Erro ao salvar: '+error.message,'error');return;}
     const idx=LOTEAMENTOS.findIndex(l=>String(l.id)===String(id));
     if(idx>=0) Object.assign(LOTEAMENTOS[idx],payload);
     showToast('Empreendimento atualizado!','success');
   } else {
-    const {data,error}=await _sb.from('loteamentos').insert([payload]).select().single();
+    const {data,error}=await salvarImovelComFallback(p=>_sb.from('loteamentos').insert([p]).select().single(),payload,camposOpcionais);
     if(error){showToast('Erro ao salvar: '+error.message,'error');return;}
     LOTEAMENTOS.unshift(data||{...payload,id:Date.now()});
     showToast('Empreendimento cadastrado!','success');
