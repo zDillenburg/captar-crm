@@ -33,6 +33,7 @@ supabase-tempo-resposta.sql
 supabase-depoimento-cliente-publico.sql
 supabase-loteamentos-publico.sql
 supabase-perfil-secoes-visiveis.sql
+supabase-bloqueio-paginas-publicas.sql
 .claude/
 .DS_Store
 *.env
